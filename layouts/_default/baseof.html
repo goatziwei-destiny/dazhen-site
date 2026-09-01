@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} — {{ .Site.Title }}{{ end }}</title>
+<meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+<meta property="og:title" content="{{ .Title }}">
+<meta property="og:description" content="{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+<meta property="og:locale" content="zh_TW">
+{{ with .Params.image }}<meta property="og:image" content="{{ . | absURL }}">{{ end }}
+<link rel="canonical" href="{{ .Permalink }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<style>
+:root{--navy:#1b2845;--navy-2:#21304c;--cream:#f5f3ef;--accent:#6292ab;--warm:#cc8854;--text-light:#c8cdd4;--text-muted:#8a95a5}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:"LXGW WenKai TC",sans-serif;color:var(--navy);background:var(--cream);line-height:1.8}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}img{max-width:100%;display:block}
+.container{max-width:800px;margin:0 auto;padding:0 24px}
+.site-nav{background:rgba(27,40,69,.95);backdrop-filter:blur(8px);padding:0 24px;position:sticky;top:0;z-index:100}
+.site-nav-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:56px}
+.site-nav-brand{font-size:16px;font-weight:700;color:#fff;letter-spacing:1px;text-decoration:none}
+.site-nav-brand span{color:var(--warm)}
+.site-nav-links{display:flex;gap:20px}
+.site-nav-links a{font-size:13px;color:var(--text-light);font-weight:500;text-decoration:none}
+.site-nav-links a:hover{color:#fff}
+.site-footer{background:var(--navy);color:var(--text-muted);text-align:center;padding:24px;font-size:12px;margin-top:60px}
+</style>
+{{ block "head" . }}{{ end }}
+</head>
+<body>
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a href="/" class="site-nav-brand">大正<span>·</span>命理諮詢</a>
+    <div class="site-nav-links">
+      <a href="/">首頁</a>
+      <a href="/blog/">文章</a>
+      <a href="/#booking">預約</a>
+    </div>
+  </div>
+</nav>
+
+{{ block "main" . }}{{ end }}
+
+<footer class="site-footer">
+  <p>© {{ now.Year }} 大正命理諮詢．保留所有權利</p>
+</footer>
+
+<script>
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", function(user) {
+      if (!user) { window.netlifyIdentity.on("login", function() { document.location.href = "/admin/"; }); }
+    });
+  }
+</script>
+</body>
+</html>

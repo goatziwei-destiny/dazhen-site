@@ -1,0 +1,70 @@
+{{ define "head" }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": {{ .Title | jsonify }},
+  "datePublished": "{{ .Date.Format "2006-01-02" }}",
+  "author": { "@type": "Person", "name": "大正" },
+  "description": {{ with .Description }}{{ . | jsonify }}{{ else }}""{{ end }}
+}
+</script>
+<style>
+.article-header{background:var(--navy);padding:80px 0 40px;color:#fff}
+.article-header .container{max-width:800px}
+.article-date{font-size:12px;color:var(--text-muted);margin-bottom:10px}
+.article-title{font-size:clamp(28px,5vw,40px);font-weight:700;line-height:1.3;margin-bottom:12px}
+.article-desc{color:var(--text-light);font-size:15px}
+.article-tags{margin-top:16px;display:flex;gap:6px;flex-wrap:wrap}
+.article-tag{font-size:11px;background:rgba(98,146,171,.2);padding:3px 12px;border-radius:12px;color:var(--accent);font-weight:700}
+.article-body{padding:40px 0}
+.article-body .container{max-width:800px}
+.article-body h2{font-size:24px;margin:32px 0 12px;color:var(--navy)}
+.article-body h3{font-size:20px;margin:24px 0 10px;color:var(--navy)}
+.article-body p{margin-bottom:16px;font-size:15px;color:#3d3d3d;line-height:2}
+.article-body ul,.article-body ol{margin:0 0 16px 20px}
+.article-body li{margin-bottom:6px;font-size:15px;color:#3d3d3d;line-height:1.8}
+.article-body img{border-radius:12px;margin:20px 0}
+.article-body blockquote{border-left:3px solid var(--accent);padding:10px 20px;margin:20px 0;background:#fff;border-radius:0 8px 8px 0;font-style:italic;color:#57534e}
+.article-cta{background:var(--navy);padding:48px 0;text-align:center}
+.article-cta p{color:var(--text-light);font-size:16px;margin-bottom:20px}
+.article-cta a{display:inline-block;background:var(--warm);color:#fff;padding:12px 28px;border-radius:8px;font-weight:700;text-decoration:none}
+.article-cta a:hover{background:#b07545;text-decoration:none}
+.article-back{margin-top:32px;font-size:14px}
+</style>
+{{ end }}
+
+{{ define "main" }}
+<div class="article-header">
+  <div class="container">
+    <div class="article-date">{{ .Date.Format "2006 年 1 月 2 日" }}</div>
+    <h1 class="article-title">{{ .Title }}</h1>
+    {{ with .Description }}<p class="article-desc">{{ . }}</p>{{ end }}
+    {{ with .Params.tags }}
+    <div class="article-tags">
+      {{ range . }}<span class="article-tag">{{ . }}</span>{{ end }}
+    </div>
+    {{ end }}
+  </div>
+</div>
+
+{{ with .Params.image }}
+<div style="max-width:800px;margin:0 auto;padding:0 24px;">
+  <img src="{{ . }}" alt="{{ $.Title }}" style="border-radius:12px;margin-top:-20px;">
+</div>
+{{ end }}
+
+<div class="article-body">
+  <div class="container">
+    {{ .Content }}
+    <div class="article-back">
+      <a href="/blog/">← 回到文章列表</a>
+    </div>
+  </div>
+</div>
+
+<div class="article-cta">
+  <p>想更深入了解你的命盤？</p>
+  <a href="{{ .Site.Params.lineUrl }}" target="_blank" rel="noopener">預約諮詢 →</a>
+</div>
+{{ end }}

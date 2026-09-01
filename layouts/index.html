@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title></title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link rel="canonical" href="">
+<meta property="og:title" content="">
+<meta property="og:description" content="">
+<meta property="og:type" content="website">
+<meta property="og:url" content="">
+<meta property="og:image" content="">
+<meta property="og:locale" content="zh_TW">
+<script type="application/ld+json" id="schema-ld"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root { --navy:#1b2845; --navy-2:#21304c; --navy-3:#3d5467; --cream:#f5f3ef; --accent:#6292ab; --warm:#cc8854; --text-light:#c8cdd4; --text-muted:#8a95a5; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:"LXGW WenKai TC","PingFang TC","Microsoft JhengHei",sans-serif;color:var(--navy);background:var(--cream);line-height:1.8;-webkit-font-smoothing:antialiased}img{max-width:100%;display:block}a{color:inherit;text-decoration:none}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}.section-dark{background:var(--navy);color:#fff}.section-light{background:var(--cream);color:var(--navy)}.section-white{background:#fff;color:var(--navy)}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;padding:14px 32px;border-radius:8px;border:none;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:background .2s,transform .15s;text-decoration:none}.btn-primary:hover{background:#4f7d94;transform:translateY(-1px)}
+.btn-warm{display:inline-flex;align-items:center;gap:8px;background:var(--warm);color:#fff;padding:14px 32px;border-radius:8px;border:none;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:background .2s,transform .15s;text-decoration:none}.btn-warm:hover{background:#b07545;transform:translateY(-1px)}
+.eyebrow{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:10px}
+.section-title{font-size:clamp(28px,5vw,40px);font-weight:700;line-height:1.3;margin-bottom:16px}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(27,40,69,.95);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08)}.nav-inner{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:center;height:56px}.nav-brand{font-size:16px;font-weight:700;color:#fff;letter-spacing:1px}.nav-links{display:flex;gap:24px}.nav-links a{font-size:13px;color:var(--text-light);font-weight:500;transition:color .2s}.nav-links a:hover{color:#fff}.nav-cta{background:var(--accent);color:#fff;padding:7px 18px;border-radius:6px;font-size:13px;font-weight:700;transition:background .2s}.nav-cta:hover{background:#4f7d94}
+.hero{background:var(--navy);padding:120px 0 80px;min-height:70vh;display:flex;align-items:center}.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(98,146,171,.15);border:1px solid rgba(98,146,171,.3);padding:5px 14px;border-radius:20px;font-size:11px;letter-spacing:2px;color:var(--accent);font-weight:700;margin-bottom:24px}.hero h1{font-size:clamp(36px,6vw,56px);font-weight:700;color:#fff;line-height:1.25;margin-bottom:24px}.hero h1 .dot{color:var(--warm)}.hero-tagline{font-size:14px;color:var(--text-muted);margin-bottom:12px;letter-spacing:2px}.hero-desc{font-size:16px;color:var(--text-light);line-height:1.9;margin-bottom:36px}.hero-card{background:rgba(255,255,255,.95);border-radius:16px;padding:28px 32px;box-shadow:0 20px 60px rgba(0,0,0,.2)}.hero-card-title{font-size:12px;color:var(--text-muted);letter-spacing:2px;margin-bottom:16px}.hero-card-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f0eeea;font-size:14px}.hero-card-row:last-child{border-bottom:none}.hero-card-label{color:var(--text-muted)}.hero-card-value{font-weight:700;color:var(--navy)}
+.about{padding:80px 0}.about-inner{display:grid;grid-template-columns:1fr 1.5fr;gap:60px;align-items:start}.about-photo-area{position:sticky;top:80px;text-align:center}.about-photo{width:200px;height:200px;margin:0 auto 16px;border-radius:50%;object-fit:cover;background:var(--navy-2)}.about-photo-placeholder{width:200px;height:200px;margin:0 auto 16px;border-radius:50%;background:var(--navy-2);display:flex;align-items:center;justify-content:center;font-size:64px;color:var(--accent)}.about-name{font-size:20px;font-weight:700}.about-role{font-size:13px;color:var(--text-muted);margin-top:4px}.about-content h3{font-size:20px;font-weight:700;margin-bottom:12px;color:var(--navy)}.about-content p{font-size:15px;line-height:2;color:#57534e;margin-bottom:20px}.about-style-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}.about-style-card{padding:16px;border-radius:10px;border:1px solid #e5e8ec}.about-style-card.do{background:#f0faf4;border-color:#c6f0d6}.about-style-card.dont{background:#fef2f2;border-color:#fecaca}.about-style-card h4{font-size:14px;font-weight:700;margin-bottom:8px}.about-style-card.do h4{color:#059669}.about-style-card.dont h4{color:#dc2626}.about-style-card li{font-size:13px;color:#57534e;line-height:1.8;list-style:none}.about-style-card.do li::before{content:"✓ ";color:#059669;font-weight:700}.about-style-card.dont li::before{content:"✗ ";color:#dc2626;font-weight:700}
+.service{padding:80px 0}.service-card{background:var(--navy-2);border-radius:16px;padding:40px;margin-top:32px}.service-card h3{font-size:22px;font-weight:700;margin-bottom:16px}.service-card p{color:var(--text-light);font-size:15px;line-height:1.9;margin-bottom:24px}.service-meta{display:flex;gap:24px;align-items:baseline;padding-top:20px;border-top:1px solid rgba(255,255,255,.1)}.service-price{font-size:32px;font-weight:700}.service-price-unit{font-size:13px;color:var(--text-muted)}.service-detail{font-size:13px;color:var(--text-muted);line-height:1.7}
+.try-chart{padding:80px 0}.try-chart .section-title{text-align:center}.try-chart .eyebrow{text-align:center}.try-chart-subtitle{text-align:center;color:var(--text-light);font-size:14px;margin-bottom:40px}.chart-iframe-wrap{border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.15);background:var(--cream);position:relative}.chart-iframe-wrap iframe{width:100%;border:none;display:block;height:85vh;min-height:700px}
+.process{padding:80px 0}.process-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:40px}.process-step{position:relative}.process-dot{width:12px;height:12px;border-radius:50%;background:var(--accent);margin-bottom:12px}.process-dot.hollow{background:transparent;border:2px solid var(--text-muted)}.process-line{position:absolute;top:6px;left:12px;right:-12px;height:2px;background:var(--navy)}.process-step:last-child .process-line{display:none}.process-label{font-size:11px;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px}.process-title{font-size:16px;font-weight:700;margin-bottom:8px}.process-desc{font-size:13px;color:#78716c;line-height:1.7}
+.notes{padding:80px 0}.notes-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:40px}.notes-left .section-title{font-size:32px}.note-item{margin-bottom:28px}.note-item-label{font-size:12px;font-weight:700;color:var(--warm);letter-spacing:1px;margin-bottom:6px}.note-item-title{font-size:17px;font-weight:700;margin-bottom:6px}.note-item-desc{font-size:14px;color:#78716c;line-height:1.8}
+.faq{padding:80px 0}.faq-list{max-width:760px;margin:32px auto 0}.faq-item{border-bottom:1px solid #e5e8ec}.faq-q{display:flex;justify-content:space-between;align-items:center;padding:20px 0;cursor:pointer;font-size:15px;font-weight:700;color:var(--navy);gap:12px}.faq-q::after{content:"+";font-size:20px;color:var(--accent);flex-shrink:0;transition:transform .2s}.faq-item.open .faq-q::after{transform:rotate(45deg)}.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;font-size:14px;color:#57534e;line-height:1.9}.faq-item.open .faq-a{max-height:500px}.faq-a-inner{padding:0 0 20px}
+.booking-embed{padding:80px 0}.booking-embed .section-title{text-align:center}.booking-embed .eyebrow{text-align:center}.booking-embed-subtitle{text-align:center;color:#78716c;font-size:14px;margin-bottom:40px}.booking-iframe-wrap{max-width:540px;margin:0 auto;border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.06);background:#fff}.booking-iframe-wrap iframe{width:100%;border:none;display:block;min-height:900px}
+.cta-section{padding:80px 0;text-align:center}.cta-section .section-title{color:#fff}.cta-section p{color:var(--text-light);font-size:16px;margin-bottom:32px}
+.footer{background:var(--navy);border-top:1px solid rgba(255,255,255,.06);padding:24px 0;text-align:center;font-size:12px;color:var(--text-muted)}
+@media(max-width:768px){.hero-inner{grid-template-columns:1fr;gap:40px}.hero-card{order:-1}.process-grid{grid-template-columns:1fr 1fr}.process-line{display:none}.notes-grid{grid-template-columns:1fr;gap:32px}.nav-links{display:none}.about-inner{grid-template-columns:1fr;gap:32px}.about-photo-area{position:static}.about-style-grid{grid-template-columns:1fr}}
+@media(max-width:480px){.process-grid{grid-template-columns:1fr}.service-meta{flex-direction:column;gap:12px}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ╔═══════════════════════════════════════════════════════════════════════════╗
+// ║  🔧 網站內容設定區：所有你想改的文字、圖片、連結都在這裡                    ║
+// ║  改完存檔、重新部署到 Netlify 就會生效，不用動下面的 HTML 結構              ║
+// ╚═══════════════════════════════════════════════════════════════════════════╝
+const SITE = {
+
+  // ── 基本資訊（SEO、社群分享會用到）──
+  siteTitle: "大正命理諮詢｜紫微斗數線上諮詢・本命盤・流年運勢",
+  siteDescription: "大正紫微斗數命理諮詢。不批評、好好聊，用命盤讀懂你的命運脈絡，找到屬於你的節奏與方向。線上預約，60分鐘深度諮詢。",
+  siteKeywords: "紫微斗數,命理諮詢,算命,本命盤,流年運勢,線上算命,大正",
+  siteUrl: "",              // 你正式的網址，例如 https://yourdomain.com
+  ogImage: "",              // 社群分享預覽圖（建議 1200×630px），貼圖片網址在這裡
+  lineUrl: "https://lin.ee/vlvPoMa",
+
+  // ── 品牌名稱 ──
+  brandName: "大正",
+  brandTitle: "大正·紫微斗數",
+  brandTagline: "DAZHEN × DESTINY READING",
+  brandBadge: "ZIWEI ASTROLOGY",
+
+  // ── Hero 區塊 ──
+  heroDesc: "不批評、好好聊。<br>用命盤讀懂你的命運脈絡，<br>找到屬於你的節奏與方向。",
+  heroInfoCard: [
+    { label: "服務項目", value: "紫微斗數" },
+    { label: "諮詢時長", value: "60 分鐘／次" },
+    { label: "預約方式", value: "線上預約" },
+    { label: "付款時間", value: "確認預約後" },
+    { label: "溝通風格", value: "輕鬆好聊，不批評" },
+  ],
+
+  // ── 關於我 ──
+  aboutPhoto: "",           // 貼你的頭貼圖片網址在這裡（留空會顯示🐏佔位符號）
+  aboutName: "大正",
+  aboutRole: "紫微斗數命理諮詢師",
+  aboutTitle: "不批評、好好聊",
+  aboutParagraphs: [
+    "我是大正。做紫微斗數命理諮詢，風格是「不批評、好好聊」——我不會跟你說哪顆星不好、你的命格有問題，因為每一顆星都有它的用法，沒有哪顆是該被貶低的。",
+    "來找我的人大多不是要聽一句「一切都會好」，而是想把眼前的狀況看清楚：現在走到哪了、接下來可能會遇到什麼、有哪些選項。我做的就是把命盤上的訊號一條一條講清楚，剩下的選擇你自己做。",
+    "每次諮詢 60 分鐘，時間內不限題數，一問一答，想問什麼都可以聊。透過 Google Meet 或 LINE@ 線上進行，帶著你的問題來就好。",
+  ],
+  aboutDo: ["把命盤跡象一條一條講清楚", "用你聽得懂的方式說明", "幫你看清楚目前的位置跟選項", "不限題數，想問什麼都可以"],
+  aboutDont: ["不恐嚇、不講血光之災", "不批評你的選擇或價值觀", "不鐵口直斷說一定會怎樣", "不賣開運改運商品"],
+
+  // ── 服務介紹 ──
+  serviceLabel: "紫微斗數命理諮詢",
+  serviceTitle: "本命盤 × 流年運勢 × 自由提問",
+  serviceDesc: "每次諮詢涵蓋本命盤解析、流年大限運勢，以及你最想釐清的問題——感情、工作、換跑道、人際關係都可以聊。採一問一答方式進行，時間內不限題數，帶著你的疑惑來，我們一起看命盤找答案。",
+  servicePrice: "$3,600",
+  servicePriceUnit: "NT，每次諮詢",
+  serviceDetail: "⏱ 60 分鐘，時間內不限題數<br>💻 Google Meet 或 LINE@ 線上進行",
+
+  // ── 排盤體驗（iframe 嵌入）──
+  // chartToolUrl 已移除（排盤體驗區塊暫時不使用）
+
+  // ── 預約流程 ──
+  processSteps: [
+    { title: "填寫預約表單", desc: "填入出生年月日時辰、想諮詢的方向，並直接在表單裡選擇希望的諮詢時段。", done: true },
+    { title: "收到確認信 & 付款資訊", desc: "送出後 Email 會收到確認信，裡面有匯款帳號與金額，請於 2 天內完成匯款。", done: true },
+    { title: "私訊 LINE@ 回報匯款", desc: "匯款完成後，私訊 LINE@ 告知訂單編號與匯款帳號末五碼，這才算正式完成預約。", done: false },
+    { title: "諮詢開始", desc: "準時上線，透過 Google Meet 或 LINE@ 輕鬆好好聊 60 分鐘。", done: false },
+  ],
+
+  // ── 注意事項 ──
+  noteItems: [
+    { title: "匯款後請私訊回報", desc: "收到確認信後請於 2 天內完成匯款，並私訊 LINE@ 官方帳號告知訂單編號與匯款帳號末五碼，這才算正式完成預約。逾期未匯款者，預約將自動取消。" },
+    { title: "諮詢方式與費用", desc: "諮詢透過 Google Meet 或 LINE@ 線上進行，費用為 $3,600／小時，時間內不限問題數，採一問一答方式進行。" },
+    { title: "出生時辰請確認正確", desc: "出生時辰是排盤最關鍵的資料。若不確定時辰，請先前往戶政事務所申請出生證明查詢，或在表單中註明不確定，可於諮詢前先討論。" },
+    { title: "外國出生或雙胞胎請務必告知", desc: "若為外國出生，請在表單中填寫出生國家與城市（涉及時區換算）。若為雙（多）胞胎，也請在表單中勾選並說明出生順序，這會影響命盤的排法。" },
+    { title: "不受理的諮詢範圍", desc: "以下事項不在諮詢範圍內：生死相關議題、重病治療建議、他人隱私、任何投資建議、違法或不道德事項。非本人命盤需當事人同意，家人與伴侶除外。" },
+  ],
+
+  // ── FAQ ──
+  faqItems: [
+    { q: "不知道確切的出生時辰怎麼辦？", a: "出生時辰是排盤最關鍵的資料。如果不確定，建議先到戶政事務所申請出生證明，上面會有登記的出生時間。真的查不到的話，可以在表單中註明，我會在諮詢前先協助判斷。" },
+    { q: "諮詢可以問什麼？有限制嗎？", a: "感情、工作、換跑道、人際關係、人生方向，基本上想問什麼都可以聊，60 分鐘內不限題數。但以下不在諮詢範圍：生死相關議題、重病治療建議、他人隱私、任何投資建議、違法或不道德事項。" },
+    { q: "線上諮詢怎麼進行？", a: "透過 Google Meet 或 LINE@ 線上進行，到了預約時間直接上線就好。我會事先排好你的命盤，諮詢時直接進入主題，不用花時間等排盤。" },
+    { q: "可以幫別人問嗎？例如幫家人預約", a: "可以，表單支援一次填寫多位命主的資料（最多5位），一起收到所有人的命盤。非本人命盤請確認當事人知情同意，家人與伴侶除外。" },
+    { q: "我是在國外出生的，可以諮詢嗎？", a: "可以。請在表單中填寫出生國家與城市，因為不同地區的時區會影響命盤計算，我需要換算成正確的時間。" },
+    { q: "我是雙胞胎，需要特別說明嗎？", a: "需要。請在表單中勾選雙（多）胞胎選項，並說明出生順序（老大、老二等），這會影響命盤的排法。龍鳳胎（男女配對）也請標明。" },
+    { q: "諮詢內容會被公開嗎？", a: "不會。未經你同意，不會分享任何諮詢內容。" },
+    { q: "怎麼付款？", a: "送出預約表單後，Email 會收到確認信，裡面有匯款帳號與金額。請於 2 天內完成匯款，然後私訊 LINE@ 告知訂單編號與匯款帳號末五碼，預約即正式成立。逾期未匯款者，預約將自動取消。" },
+  ],
+
+  // ── 線上預約（iframe 嵌入）──
+  bookingFormUrl: "YOUR_APPS_SCRIPT_URL",  // 你部署好的 Apps Script 網址（.../exec 結尾那個）
+
+  // ── 頁尾 ──
+  footerText: "© 2026 大正命理諮詢．保留所有權利",
+};
+
+// ╔═══════════════════════════════════════════════════════════════════════════╗
+// ║  以下是自動渲染程式碼，不用動                                              ║
+// ╚═══════════════════════════════════════════════════════════════════════════╝
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function renderSite(S) {
+  document.title = S.siteTitle || '';
+  try { document.querySelector('meta[name="description"]').content = S.siteDescription || ''; } catch(e){}
+  try { document.querySelector('link[rel="canonical"]').href = S.siteUrl || ''; } catch(e){}
+  var heroDesc = (S.heroDesc || '').replace(/\\n/g, '\n').replace(/\n/g, '<br>');
+  var aboutParas = S.aboutParagraphs || [S.aboutP1, S.aboutP2, S.aboutP3].filter(Boolean);
+  var aboutDo = S.aboutDo || [];
+  var aboutDont = S.aboutDont || [];
+
+  document.getElementById('app').innerHTML =
+'<nav class="nav"><div class="nav-inner">' +
+  '<div class="nav-brand">' + esc(S.brandName||'') + '<span style="color:var(--warm)">·</span>命理諮詢</div>' +
+  '<div class="nav-links">' +
+    '<a href="#about">關於我</a><a href="#service">服務內容</a><a href="#process">預約流程</a>' +
+    '<a href="#notes">注意事項</a><a href="#faq">常見問題</a><a href="#booking">線上預約</a>' +
+  '</div>' +
+  '<a href="#booking" class="nav-cta">立即預約 →</a>' +
+'</div></nav>' +
+
+'<section class="hero section-dark"><div class="container"><div class="hero-inner">' +
+  '<div>' +
+    '<div class="hero-badge">' + esc(S.brandBadge||'ZIWEI ASTROLOGY') + '</div>' +
+    '<h1>' + esc(S.brandTitle||'').replace('·','<span class="dot">·</span>') + '</h1>' +
+    '<div class="hero-tagline">' + esc(S.brandTagline||'') + '</div>' +
+    '<p class="hero-desc">' + heroDesc + '</p>' +
+    '<a href="#booking" class="btn-primary">立即預約諮詢 →</a>' +
+  '</div>' +
+  '<div class="hero-card">' +
+    '<div class="hero-card-title">// 基本資訊</div>' +
+    (S.heroInfoCard||[]).map(function(r){return '<div class="hero-card-row"><span class="hero-card-label">'+esc(r.label)+'</span><span class="hero-card-value">'+esc(r.value)+'</span></div>';}).join('') +
+  '</div>' +
+'</div></div></section>' +
+
+'<section id="about" class="about section-light"><div class="container"><div class="about-inner">' +
+  '<div class="about-photo-area">' +
+    (S.aboutPhoto ? '<img src="'+S.aboutPhoto+'" class="about-photo" alt="'+esc(S.aboutName||'')+'">' : '<div class="about-photo-placeholder">🐏</div>') +
+    '<div class="about-name">' + esc(S.aboutName||'') + '</div>' +
+    '<div class="about-role">' + esc(S.aboutRole||'') + '</div>' +
+  '</div>' +
+  '<div class="about-content">' +
+    '<div class="eyebrow" style="color:var(--navy-3);">ABOUT</div>' +
+    '<h3>' + esc(S.aboutTitle||'') + '</h3>' +
+    aboutParas.map(function(p){return '<p>'+esc(p)+'</p>';}).join('') +
+    (aboutDo.length||aboutDont.length ?
+      '<div class="about-style-grid">' +
+      (aboutDo.length ? '<div class="about-style-card do"><h4>我會做的事</h4><ul>'+aboutDo.map(function(i){return '<li>'+esc(i)+'</li>';}).join('')+'</ul></div>' : '') +
+      (aboutDont.length ? '<div class="about-style-card dont"><h4>我不會做的事</h4><ul>'+aboutDont.map(function(i){return '<li>'+esc(i)+'</li>';}).join('')+'</ul></div>' : '') +
+      '</div>' : '') +
+  '</div>' +
+'</div></div></section>' +
+
+'<section id="service" class="service section-dark"><div class="container">' +
+  '<div class="eyebrow">SERVICE</div><div class="section-title">諮詢服務</div>' +
+  '<div class="service-card">' +
+    '<div class="eyebrow" style="color:var(--warm);">' + esc(S.serviceLabel||'') + '</div>' +
+    '<h3>' + esc(S.serviceTitle||'') + '</h3>' +
+    '<p>' + esc(S.serviceDesc||'') + '</p>' +
+    '<div class="service-meta">' +
+      '<div><div class="service-price">' + esc(S.servicePrice||'') + '</div><div class="service-price-unit">' + esc(S.servicePriceUnit||'') + '</div></div>' +
+      '<div class="service-detail">' + (S.serviceDetail||'') + '</div>' +
+    '</div>' +
+  '</div>' +
+'</div></section>' +
+
+'<section id="process" class="process section-white"><div class="container">' +
+  '<div class="eyebrow" style="color:var(--navy-3);">PROCESS</div><div class="section-title">預約流程</div>' +
+  '<div class="process-grid">' +
+    (S.processSteps||[]).map(function(s,i,arr){return '<div class="process-step">'+
+      '<div class="process-dot'+(s.done?'':' hollow')+'"></div>'+(i<arr.length-1?'<div class="process-line"></div>':'')+
+      '<div class="process-label">STEP '+String(i+1).padStart(2,'0')+'</div>'+
+      '<div class="process-title">'+esc(s.title)+'</div>'+
+      '<div class="process-desc">'+esc(s.desc)+'</div></div>';}).join('') +
+  '</div>' +
+'</div></section>' +
+
+'<section id="notes" class="notes section-light"><div class="container"><div class="notes-grid">' +
+  '<div class="notes-left"><div class="eyebrow" style="color:var(--navy-3);">NOTES</div><div class="section-title">預約<br>注意事項</div></div>' +
+  '<div class="notes-right">' +
+    (S.noteItems||[]).map(function(n,i){return '<div class="note-item"><div class="note-item-label">N.'+String(i+1).padStart(2,'0')+'</div><div class="note-item-title">'+esc(n.title)+'</div><div class="note-item-desc">'+esc(n.desc)+'</div></div>';}).join('') +
+  '</div>' +
+'</div></div></section>' +
+
+'<section id="faq" class="faq section-white"><div class="container">' +
+  '<div class="eyebrow" style="text-align:center;color:var(--navy-3);">FAQ</div>' +
+  '<div class="section-title" style="text-align:center;">常見問題</div>' +
+  '<div class="faq-list">' +
+    (S.faqItems||[]).map(function(f){return '<div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle(\'open\')">'+esc(f.q)+'</div><div class="faq-a"><div class="faq-a-inner">'+esc(f.a)+'</div></div></div>';}).join('') +
+  '</div>' +
+'</div></section>' +
+
+(S.bookingFormUrl && S.bookingFormUrl !== 'YOUR_APPS_SCRIPT_URL' ?
+  '<section id="booking" class="booking-embed section-white"><div class="container">' +
+    '<div class="eyebrow" style="color:var(--navy-3);">BOOKING</div>' +
+    '<div class="section-title">線上預約</div>' +
+    '<p class="booking-embed-subtitle">填寫出生資料並選擇方便的諮詢時段</p>' +
+    '<div class="booking-iframe-wrap"><iframe src="'+S.bookingFormUrl+'" title="線上預約表單" loading="lazy"></iframe></div>' +
+  '</div></section>' :
+  '<section id="booking" class="cta-section section-dark"><div class="container">' +
+    '<div class="section-title">準備好了嗎？</div>' +
+    '<p>帶著你的問題來，加入 LINE@ 立即預約諮詢</p>' +
+    '<a href="'+(S.lineUrl||'')+'" target="_blank" rel="noopener" class="btn-warm">加入 LINE@ 立即預約 →</a>' +
+  '</div></section>') +
+
+'<section class="cta-section section-dark"><div class="container">' +
+  '<div class="section-title">填完表單了嗎？</div>' +
+  '<p>匯款完成後，記得私訊 LINE@ 告知訂單編號與匯款末五碼！</p>' +
+  '<a href="'+(S.lineUrl||'')+'" target="_blank" rel="noopener" class="btn-warm">加入 LINE@ 完成預約 →</a>' +
+'</div></section>' +
+
+'<footer class="footer"><div class="container"><p>' + (S.footerText||'') + '</p></div></footer>';
+}
+
+// 先用 SITE 預設值立即渲染（SEO + 快速顯示）
+renderSite(SITE);
+
+// 背景載入試算表最新資料，有更新就重新渲染（不用重新部署 Netlify）
+(function() {
+  var apiBase = SITE.bookingFormUrl;
+  if (!apiBase || apiBase === 'YOUR_APPS_SCRIPT_URL') return;
+  var s = document.createElement('script');
+  s.src = apiBase + '?page=siteConfig&callback=_siteConfigCb';
+  window._siteConfigCb = function(data) {
+    if (!data) return;
+    var merged = {};
+    for (var k in SITE) merged[k] = SITE[k];
+    for (var k in data) if (data[k] !== '' && data[k] !== undefined) merged[k] = data[k];
+    if (data.aboutP1 || data.aboutP2 || data.aboutP3) {
+      merged.aboutParagraphs = [data.aboutP1, data.aboutP2, data.aboutP3].filter(Boolean);
+    }
+    renderSite(merged);
+  };
+  document.body.appendChild(s);
+})();
+</script>
+</body>
+</html>

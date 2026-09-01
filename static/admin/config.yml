@@ -1,0 +1,22 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "static/images/uploads"
+public_folder: "/images/uploads"
+locale: "zh_Hant"
+
+collections:
+  - name: "blog"
+    label: "部落格文章"
+    folder: "content/blog"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "標題", name: "title", widget: "string" }
+      - { label: "發布日期", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
+      - { label: "摘要（會顯示在列表頁跟 Google 搜尋結果）", name: "description", widget: "text", required: false }
+      - { label: "封面圖片", name: "image", widget: "image", required: false }
+      - { label: "標籤", name: "tags", widget: "list", required: false }
+      - { label: "草稿", name: "draft", widget: "boolean", default: false }
+      - { label: "內文", name: "body", widget: "markdown" }
