@@ -1,7 +1,6 @@
 baseURL = "https://example.com/"
 languageCode = "zh-Hant"
 title = "大正命理諮詢｜紫微斗數線上諮詢"
-theme = ""
 
 [params]
   description = "大正紫微斗數命理諮詢。不批評、好好聊，用命盤讀懂你的命運脈絡。"
