@@ -19,7 +19,7 @@
 {{ define "main" }}
 <div class="blog-header">
   <div class="container">
-    <h1>文章</h1>
+    <h1>命理文章</h1>
     <p>紫微斗數觀點、命理知識、生活分享</p>
   </div>
 </div>
@@ -33,6 +33,11 @@
           <div class="blog-card-date">{{ .Date.Format "2006-01-02" }}</div>
           <div class="blog-card-title">{{ .Title }}</div>
           {{ with .Description }}<div class="blog-card-desc">{{ . }}</div>{{ end }}
+          {{ with .Params.categories }}
+          <div class="blog-card-tags">
+            {{ range . }}<span class="blog-card-tag" style="background:rgba(204,136,84,.1);color:#cc8854;">{{ . }}</span>{{ end }}
+          </div>
+          {{ end }}
           {{ with .Params.tags }}
           <div class="blog-card-tags">
             {{ range . }}<span class="blog-card-tag">{{ . }}</span>{{ end }}
