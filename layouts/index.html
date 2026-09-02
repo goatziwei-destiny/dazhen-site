@@ -60,8 +60,8 @@ const SITE = {
   // ── 品牌名稱 ──
   brandName: "大正",
   brandTitle: "大正·紫微斗數",
-  brandTagline: "DAZHEN × DESTINY READING",
-  brandBadge: "ZIWEI ASTROLOGY",
+  brandTagline: "",
+  brandBadge: "",
 
   // ── Hero 區塊 ──
   heroDesc: "不批評、好好聊。<br>用命盤讀懂你的命運脈絡，<br>找到屬於你的節奏與方向。",
@@ -92,7 +92,7 @@ const SITE = {
   serviceDesc: "每次諮詢涵蓋本命盤解析、流年大限運勢，以及你最想釐清的問題——感情、工作、換跑道、人際關係都可以聊。採一問一答方式進行，時間內不限題數，帶著你的疑惑來，我們一起看命盤找答案。",
   servicePrice: "$3,600",
   servicePriceUnit: "NT，每次諮詢",
-  serviceDetail: "⏱ 60 分鐘，時間內不限題數<br>💻 Google Meet 或 LINE@ 線上進行",
+  serviceDetail: "⏱ 60 分鐘，時間內不限題數<br>💻 Google Meet 或 LINE@ 線上進行<br>📷 如需觀看面相，請使用 Google Meet，預約成功後會收到會議室連結",
 
   // ── 排盤體驗（iframe 嵌入）──
   // chartToolUrl 已移除（排盤體驗區塊暫時不使用）
@@ -152,16 +152,16 @@ function renderSite(S) {
   '<div class="nav-brand">' + esc(S.brandName||'') + '<span style="color:var(--warm)">·</span>命理諮詢</div>' +
   '<div class="nav-links">' +
     '<a href="#about">關於我</a><a href="#service">服務內容</a><a href="#process">預約流程</a>' +
-    '<a href="#notes">注意事項</a><a href="#faq">常見問題</a><a href="/blog/">文章</a><a href="#booking">線上預約</a>' +
+    '<a href="#notes">注意事項</a><a href="#faq">常見問題</a><a href="/blog/">命理文章</a>' +
   '</div>' +
-  '<a href="#booking" class="nav-cta">立即預約 →</a>' +
+  '<a href="#booking" class="nav-cta">立即預約諮詢 →</a>' +
 '</div></nav>' +
 
 '<section class="hero section-dark"><div class="container"><div class="hero-inner">' +
   '<div>' +
-    '<div class="hero-badge">' + esc(S.brandBadge||'ZIWEI ASTROLOGY') + '</div>' +
+    (S.brandBadge ? '<div class="hero-badge">' + esc(S.brandBadge) + '</div>' : '') +
     '<h1>' + esc(S.brandTitle||'').replace('·','<span class="dot">·</span>') + '</h1>' +
-    '<div class="hero-tagline">' + esc(S.brandTagline||'') + '</div>' +
+    (S.brandTagline ? '<div class="hero-tagline">' + esc(S.brandTagline) + '</div>' : '') +
     '<p class="hero-desc">' + heroDesc + '</p>' +
     '<a href="#booking" class="btn-primary">立即預約諮詢 →</a>' +
   '</div>' +
