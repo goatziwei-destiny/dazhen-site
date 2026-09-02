@@ -1,24 +1,15 @@
-backend:
-  name: git-gateway
-  branch: main
- 
-media_folder: "static/images/uploads"
-public_folder: "/images/uploads"
-locale: "zh_Hant"
- 
-collections:
-  - name: "blog"
-    label: "部落格文章"
-    folder: "content/blog"
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - { label: "標題", name: "title", widget: "string" }
-      - { label: "發布日期", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
-      - { label: "摘要（會顯示在列表頁跟 Google 搜尋結果）", name: "description", widget: "text", required: false }
-      - { label: "封面圖片", name: "image", widget: "image", required: false }
-      - { label: "分類", name: "categories", widget: "select", options: ["紫微斗數", "命理知識", "生活觀察", "公告"], multiple: true, required: false }
-      - { label: "標籤", name: "tags", widget: "list", required: false }
-      - { label: "草稿", name: "draft", widget: "boolean", default: false }
-      - { label: "內文", name: "body", widget: "markdown" }
- 
+baseURL = "https://dazhen-site.netlify.app/"
+languageCode = "zh-Hant"
+title = "大正命理諮詢｜紫微斗數線上諮詢"
+
+[params]
+  description = "大正紫微斗數命理諮詢。不批評、好好聊，用命盤讀懂你的命運脈絡。"
+  lineUrl = "https://lin.ee/vlvPoMa"
+
+[permalinks]
+  blog = "/blog/:slug/"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
