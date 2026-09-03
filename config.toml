@@ -5,6 +5,63 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
 [params]
   description = "大正紫微斗數命理諮詢。不批評、好好聊，用命盤讀懂你的命運脈絡。"
   lineUrl = "https://lin.ee/vlvPoMa"
+  # 瀏覽次數統計用的 Apps Script 網址（跟預約系統共用同一個 WEB_APP_URL）
+  webAppUrl = "https://script.google.com/macros/s/AKfycbx3aDlFDBayTKgvGtQMrWrpDMx3WuU5Yd3Uh4c6BJK5kmKpZnBsXH7fK97yrkQkgx9fkQ/exec"
+
+  # ── 社群連結（給文章頁/首頁以外頁面的頁尾用）──
+  # ⚠️ 這裡跟 layouts/index.html 裡的 SITE.socialLinks 是兩份分開的設定（因為首頁是自己刻的 JS 渲染，
+  #    其他頁面走 Hugo 樣板），兩邊的 url 要分別填，跟 lineUrl 目前的做法一樣。
+  # 留空 url 的平台不會顯示圖示，不用刪除整個區塊。
+  [[params.social]]
+    key = "facebook"
+    label = "Facebook"
+    url = ""
+    color = "#1877F2"
+  [[params.social]]
+    key = "instagram"
+    label = "Instagram"
+    url = ""
+    color = "#E4405F"
+  [[params.social]]
+    key = "threads"
+    label = "Threads"
+    url = ""
+    color = "#000000"
+  [[params.social]]
+    key = "line"
+    label = "LINE"
+    url = ""
+    color = "#06C755"
+  [[params.social]]
+    key = "youtube"
+    label = "YouTube"
+    url = ""
+    color = "#FF0000"
+  [[params.social]]
+    key = "tiktok"
+    label = "TikTok"
+    url = ""
+    color = "#000000"
+  [[params.social]]
+    key = "xiaohongshu"
+    label = "小紅書"
+    url = ""
+    color = "#FF2442"
+  [[params.social]]
+    key = "x"
+    label = "X"
+    url = ""
+    color = "#000000"
+  [[params.social]]
+    key = "telegram"
+    label = "Telegram"
+    url = ""
+    color = "#26A5E4"
+  [[params.social]]
+    key = "email"
+    label = "Email"
+    url = ""
+    color = "#57534e"
 
 [permalinks]
   blog = "/blog/:slug/"
