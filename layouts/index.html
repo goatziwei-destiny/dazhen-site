@@ -136,7 +136,7 @@ const SITE = {
 
   // ── FAQ ──
   faqItems: [
-    { q: "不知道確切的出生時辰怎麼辦？", a: "出生時辰是排盤最關鍵的資料。如果不確定，建議先到戶政事務所申請出生證明。" },
+    { q: "不知道確切的出生時辰怎麼辦？", a: "出生時辰是排盤最關鍵的資料。如果不確定，建議先到戶政事務所申請出生證明，上面會有登記的出生時間。真的查不到的話，可以在表單中註明，我會在諮詢前先協助判斷。" },
     { q: "諮詢可以問什麼？有限制嗎？", a: "感情、工作、換跑道、人際關係、人生方向，基本上想問什麼都可以聊，60 分鐘內不限題數。但以下不在諮詢範圍：生死相關議題、重病治療建議、他人隱私、任何投資建議、違法或不道德事項。" },
     { q: "線上諮詢怎麼進行？", a: "透過 Google Meet 或 LINE@ 線上進行，到了預約時間直接上線就好。我會事先排好你的命盤，諮詢時直接進入主題，不用花時間等排盤。" },
     { q: "可以幫別人問嗎？例如幫家人預約", a: "可以，表單支援一次填寫多位命主的資料（最多5位），一起收到所有人的命盤。非本人命盤請確認當事人知情同意，家人與伴侶除外。" },
@@ -306,9 +306,56 @@ renderSite(SITE);
     var merged = {};
     for (var k in SITE) merged[k] = SITE[k];
     for (var k in data) if (data[k] !== '' && data[k] !== undefined) merged[k] = data[k];
+
+    // 「關於我」三段文字（後台是拆成 aboutP1/aboutP2/aboutP3 三個欄位存的）
     if (data.aboutP1 || data.aboutP2 || data.aboutP3) {
       merged.aboutParagraphs = [data.aboutP1, data.aboutP2, data.aboutP3].filter(Boolean);
     }
+
+    // 「我會做的事／不會做的事」（後台是 aboutDo1~4／aboutDont1~4 四個欄位存的，留空的那格不會出現在清單裡）
+    var aboutDo = [data.aboutDo1, data.aboutDo2, data.aboutDo3, data.aboutDo4].filter(Boolean);
+    if (aboutDo.length) merged.aboutDo = aboutDo;
+    var aboutDont = [data.aboutDont1, data.aboutDont2, data.aboutDont3, data.aboutDont4].filter(Boolean);
+    if (aboutDont.length) merged.aboutDont = aboutDont;
+
+    // Hero 資訊卡（後台開了 5 格 heroCard1Label/Value ~ heroCard5Label/Value，標籤跟內容都填了才算一格）
+    var heroCards = [];
+    for (var i = 1; i <= 5; i++) {
+      var label = data['heroCard' + i + 'Label'], value = data['heroCard' + i + 'Value'];
+      if (label && value) heroCards.push({ label: label, value: value });
+    }
+    if (heroCards.length) merged.heroInfoCard = heroCards;
+
+    // 預約流程（後台開了 6 格，標題留空代表這格不使用）
+    var steps = [];
+    for (var i = 1; i <= 6; i++) {
+      var title = data['processStep' + i + 'Title'];
+      if (title) steps.push({ title: title, desc: data['processStep' + i + 'Desc'] || '', done: data['processStep' + i + 'Done'] === true });
+    }
+    if (steps.length) merged.processSteps = steps;
+
+    // 注意事項（後台開了 6 格，標題留空代表這格不使用）
+    var notes = [];
+    for (var i = 1; i <= 6; i++) {
+      var title = data['note' + i + 'Title'];
+      if (title) notes.push({ title: title, desc: data['note' + i + 'Desc'] || '' });
+    }
+    if (notes.length) merged.noteItems = notes;
+
+    // 常見問題（後台開了 8 格，問題留空代表這格不使用）
+    var faqs = [];
+    for (var i = 1; i <= 8; i++) {
+      var q = data['faq' + i + 'Q'];
+      if (q) faqs.push({ q: q, a: data['faq' + i + 'A'] || '' });
+    }
+    if (faqs.length) merged.faqItems = faqs;
+
+    // 社群連結（後台用 social_facebook／social_instagram... 這種攤平欄位存網址，key／label／color 還是用網頁預設的）
+    merged.socialLinks = (SITE.socialLinks || []).map(function (s) {
+      var url = data['social_' + s.key];
+      return url ? Object.assign({}, s, { url: url }) : s;
+    });
+
     renderSite(merged);
   };
   document.body.appendChild(s);
