@@ -3,6 +3,10 @@
 .blog-header{background:var(--navy);padding:80px 0 40px;color:#fff;text-align:center}
 .blog-header h1{font-size:36px;margin-bottom:8px}
 .blog-header p{color:var(--text-muted);font-size:14px}
+.blog-header-total{color:var(--text-muted);font-size:12px;margin-top:10px}
+.blog-card-date{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.blog-card-views{color:var(--text-muted)}
+.hot-badge{display:inline-block;background:var(--warm);color:#fff;font-size:11px;padding:2px 9px;border-radius:10px;font-weight:700}
 .blog-list{padding:40px 0}
 .blog-card{background:#fff;border-radius:12px;padding:24px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.04);transition:transform .15s}
 .blog-card:hover{transform:translateY(-2px)}
@@ -21,6 +25,7 @@
   <div class="container">
     <h1>命理文章</h1>
     <p>紫微斗數觀點、命理知識、生活分享</p>
+    <div class="blog-header-total" id="site-total-views"></div>
   </div>
 </div>
 <div class="blog-list">
@@ -28,9 +33,14 @@
     {{ $pages := where .Pages "Params.draft" "ne" true }}
     {{ if $pages }}
       {{ range $pages.ByDate.Reverse }}
-      <div class="blog-card">
+      {{ $pid := "" }}{{ with .File }}{{ $pid = .ContentBaseName }}{{ end }}
+      <div class="blog-card" data-slug="{{ $pid }}">
         <a href="{{ .Permalink }}">
-          <div class="blog-card-date">{{ .Date.Format "2006-01-02" }}</div>
+          <div class="blog-card-date">
+            <span>{{ .Date.Format "2006-01-02" }}</span>
+            <span class="blog-card-views" id="view-{{ $pid }}"></span>
+            <span class="hot-badge-slot"></span>
+          </div>
           <div class="blog-card-title">{{ .Title }}</div>
           {{ with .Description }}<div class="blog-card-desc">{{ . }}</div>{{ end }}
           {{ with .Params.categories }}
@@ -53,4 +63,38 @@
     {{ end }}
   </div>
 </div>
+
+{{ with .Site.Params.webAppUrl }}
+<script>
+// 讀取全站瀏覽次數統計（不會 +1，純顯示）：填入每篇文章卡片的瀏覽數、顯示全站累計次數，
+// 並把瀏覽數最高的前三篇標上「熱門」，方便一眼看出哪些文章比較受歡迎。
+(function () {
+  var WEB_APP_URL = {{ . }};
+  var cbName = '_viewStatsCb' + Math.floor(Math.random() * 1e9);
+  window[cbName] = function (data) {
+    if (!data) { delete window[cbName]; return; }
+    var totalEl = document.getElementById('site-total-views');
+    if (totalEl && typeof data.totalViews === 'number') {
+      totalEl.textContent = '本站累計 ' + data.totalViews.toLocaleString('zh-Hant') + ' 次瀏覽';
+    }
+    var views = data.views || {};
+    for (var slug in views) {
+      var el = document.getElementById('view-' + slug);
+      if (el) el.textContent = '👁 ' + views[slug];
+    }
+    // 找出瀏覽數前三高的文章，標上熱門徽章
+    var sorted = Object.keys(views).sort(function (a, b) { return (views[b] || 0) - (views[a] || 0); });
+    sorted.slice(0, 3).forEach(function (slug) {
+      if (!views[slug]) return; // 0 次瀏覽不算熱門
+      var card = document.querySelector('.blog-card[data-slug="' + slug + '"] .hot-badge-slot');
+      if (card) card.innerHTML = '<span class="hot-badge">🔥 熱門</span>';
+    });
+    delete window[cbName];
+  };
+  var s = document.createElement('script');
+  s.src = WEB_APP_URL + '?page=viewStats&callback=' + cbName;
+  document.body.appendChild(s);
+})();
+</script>
+{{ end }}
 {{ end }}
