@@ -217,7 +217,7 @@ function renderSite(S) {
 
 '<section id="about" class="about section-light"><div class="container"><div class="about-inner">' +
   '<div class="about-photo-area">' +
-    (S.aboutPhoto ? '<img src="'+S.aboutPhoto+'" class="about-photo" alt="'+esc(S.aboutName||'')+'">' : '<div class="about-photo-placeholder">🐏</div>') +
+    (S.aboutPhoto ? '<img src="'+S.aboutPhoto+'" class="about-photo" alt="'+esc(S.aboutName||'')+'" onerror="this.outerHTML=\'<div class=&quot;about-photo-placeholder&quot;>🐏</div>\'">' : '<div class="about-photo-placeholder">🐏</div>') +
     '<div class="about-name">' + esc(S.aboutName||'') + '</div>' +
     '<div class="about-role">' + esc(S.aboutRole||'') + '</div>' +
   '</div>' +
