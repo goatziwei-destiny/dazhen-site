@@ -3,12 +3,14 @@
 {
   "@context": "https://schema.org",
   "@type": "Article",
-  "headline": {{ .Title | jsonify }},
+  "headline": {{ .Title }},
   "datePublished": "{{ .Date.Format "2006-01-02" }}",
   "author": { "@type": "Person", "name": "大正" },
-  "description": {{ with .Description }}{{ . | jsonify }}{{ else }}""{{ end }}
+  "description": {{ with .Description }}{{ . }}{{ else }}""{{ end }}{{ with .Params.tags }},
+  "keywords": {{ delimit . ", " }}{{ end }}
 }
 </script>
+{{ with .Params.tags }}<meta name="keywords" content="{{ delimit . ", " }}">{{ end }}
 <style>
 .article-header{background:var(--navy);padding:80px 0 40px;color:#fff}
 .article-header .container{max-width:800px}
@@ -17,7 +19,8 @@
 .article-title{font-size:clamp(28px,5vw,40px);font-weight:700;line-height:1.3;margin-bottom:12px}
 .article-desc{color:var(--text-light);font-size:15px}
 .article-tags{margin-top:16px;display:flex;gap:6px;flex-wrap:wrap}
-.article-tag{font-size:11px;background:rgba(98,146,171,.2);padding:3px 12px;border-radius:12px;color:var(--accent);font-weight:700}
+.article-tag{font-size:11px;background:rgba(98,146,171,.2);padding:3px 12px;border-radius:12px;color:var(--accent);font-weight:700;text-decoration:none}
+.article-tag:hover{background:var(--accent);color:#fff}
 .article-body{padding:40px 0}
 .article-body .container{max-width:800px}
 .article-body h2{font-size:24px;margin:32px 0 12px;color:var(--navy)}
@@ -43,7 +46,7 @@
     {{ with .Description }}<p class="article-desc">{{ . }}</p>{{ end }}
     {{ with .Params.tags }}
     <div class="article-tags">
-      {{ range . }}<span class="article-tag">{{ . }}</span>{{ end }}
+      {{ range . }}<a href="{{ (path.Join "/tags" . | urlize) | relLangURL }}/" class="article-tag">{{ . }}</a>{{ end }}
     </div>
     {{ end }}
   </div>
