@@ -36,6 +36,10 @@
 .booking-embed{padding:80px 0}.booking-embed .section-title{text-align:center}.booking-embed .eyebrow{text-align:center}.booking-embed-subtitle{text-align:center;color:#78716c;font-size:14px;margin-bottom:40px}.booking-iframe-wrap{max-width:540px;margin:0 auto;border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.06);background:#fff}.booking-iframe-wrap iframe{width:100%;border:none;display:block;min-height:900px}
 .cta-section{padding:80px 0;text-align:center}.cta-section .section-title{color:#fff}.cta-section p{color:var(--text-light);font-size:16px;margin-bottom:32px}
 .footer{background:var(--navy);border-top:1px solid rgba(255,255,255,.06);padding:24px 0;text-align:center;font-size:12px;color:var(--text-muted)}
+.social-links{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.social-icon{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .15s,opacity .15s}
+.social-icon:hover{transform:translateY(-3px);opacity:.85}
+.social-icon svg{width:18px;height:18px;display:block}
 @media(max-width:768px){.hero-inner{grid-template-columns:1fr;gap:40px}.hero-card{order:-1}.process-grid{grid-template-columns:1fr 1fr}.process-line{display:none}.notes-grid{grid-template-columns:1fr;gap:32px}.nav-links{display:none}.about-inner{grid-template-columns:1fr;gap:32px}.about-photo-area{position:static}.about-style-grid{grid-template-columns:1fr}}
 @media(max-width:480px){.process-grid{grid-template-columns:1fr}.service-meta{flex-direction:column;gap:12px}}
 </style>
@@ -56,6 +60,22 @@ const SITE = {
   siteUrl: "",              // 你正式的網址，例如 https://yourdomain.com
   ogImage: "",              // 社群分享預覽圖（建議 1200×630px），貼圖片網址在這裡
   lineUrl: "https://lin.ee/vlvPoMa",
+
+  // ── 社群連結（填了 url 才會顯示圖示，留空的平台自動隱藏）──
+  // ⚠️ 這份是首頁專用的設定；文章頁/列表頁的社群連結是另外在 config.toml 的 [[params.social]] 設定，
+  //    兩邊要各自填一次（跟 lineUrl 目前的作法一樣）。
+  socialLinks: [
+    { key: "facebook",    label: "Facebook",  url: "", color: "#1877F2" },
+    { key: "instagram",   label: "Instagram", url: "", color: "#E4405F" },
+    { key: "threads",     label: "Threads",   url: "", color: "#000000" },
+    { key: "line",        label: "LINE",      url: "", color: "#06C755" },
+    { key: "youtube",     label: "YouTube",   url: "", color: "#FF0000" },
+    { key: "tiktok",      label: "TikTok",    url: "", color: "#000000" },
+    { key: "xiaohongshu", label: "小紅書",     url: "", color: "#FF2442" },
+    { key: "x",           label: "X",         url: "", color: "#000000" },
+    { key: "telegram",    label: "Telegram",  url: "", color: "#26A5E4" },
+    { key: "email",       label: "Email",     url: "", color: "#57534e" },
+  ],
 
   // ── 品牌名稱 ──
   brandName: "大正",
@@ -137,6 +157,30 @@ const SITE = {
 // ║  以下是自動渲染程式碼，不用動                                              ║
 // ╚═══════════════════════════════════════════════════════════════════════════╝
 function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+// 10 個社群平台的簡化圖示（單色線條/色塊，配合各平台官方色當底色）
+var SOCIAL_ICONS = {
+  facebook: '<path fill="#fff" d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>',
+  instagram: '<rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="17.3" cy="6.7" r="1.1" fill="#fff"/>',
+  threads: '<text x="12" y="17" font-size="15" text-anchor="middle" fill="#fff" font-family="Georgia,serif" font-weight="700">@</text>',
+  line: '<path fill="#fff" d="M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9l-4 4v-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>',
+  youtube: '<path fill="#fff" d="M9.5 7.5l8 4.5-8 4.5v-9z"/>',
+  tiktok: '<path fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M9 18V6l9-1.5v9"/><circle cx="7" cy="18" r="2.3" fill="#fff"/><circle cx="16" cy="13" r="2.3" fill="#fff"/>',
+  xiaohongshu: '<path fill="#fff" d="M6 3h12a1 1 0 0 1 1 1v16l-7-4-7 4V4a1 1 0 0 1 1-1z"/>',
+  x: '<path stroke="#fff" stroke-width="2" stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/>',
+  telegram: '<path fill="#fff" d="M21 3L2 11l6 2 2 6 3-4 5 4z"/>',
+  email: '<path fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3.5 6h17v12h-17V6zm0 0l8.5 6.5L20.5 6"/>',
+};
+
+function renderSocialLinks(list) {
+  var items = (list || []).filter(function(s) { return s.url && String(s.url).trim(); });
+  if (!items.length) return '';
+  return '<div class="social-links">' + items.map(function(s) {
+    var href = s.key === 'email' ? ('mailto:' + s.url) : s.url;
+    var icon = SOCIAL_ICONS[s.key] || '';
+    return '<a href="' + esc(href) + '" target="_blank" rel="noopener" class="social-icon" style="background:' + s.color + '" title="' + esc(s.label) + '"><svg viewBox="0 0 24 24">' + icon + '</svg></a>';
+  }).join('') + '</div>';
+}
 
 function renderSite(S) {
   document.title = S.siteTitle || '';
@@ -242,7 +286,10 @@ function renderSite(S) {
   '<a href="'+(S.lineUrl||'')+'" target="_blank" rel="noopener" class="btn-warm">加入 LINE@ →</a>' +
 '</div></section>' +
 
-'<footer class="footer"><div class="container"><p>' + (S.footerText||'') + '</p></div></footer>';
+'<footer class="footer"><div class="container">' +
+  renderSocialLinks(S.socialLinks) +
+  '<p>' + (S.footerText||'') + '</p>' +
+'</div></footer>';
 }
 
 // 先用 SITE 預設值立即渲染（SEO + 快速顯示）
