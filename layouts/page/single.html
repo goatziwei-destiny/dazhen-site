@@ -1,0 +1,32 @@
+{{ define "head" }}
+<style>
+.policy-header{background:var(--navy);padding:70px 0 36px;color:#fff}
+.policy-header .container{max-width:760px}
+.policy-header h1{font-size:clamp(26px,5vw,34px);font-weight:700}
+.policy-updated{font-size:12px;color:var(--text-muted);margin-top:10px}
+.policy-body{padding:40px 0 60px}
+.policy-body .container{max-width:760px}
+.policy-body h2{font-size:20px;margin:32px 0 12px;color:var(--navy)}
+.policy-body p{margin-bottom:14px;font-size:15px;color:#3d3d3d;line-height:2}
+.policy-body ul,.policy-body ol{margin:0 0 14px 20px}
+.policy-body li{margin-bottom:6px;font-size:15px;color:#3d3d3d;line-height:1.8}
+.policy-body a{color:var(--accent)}
+.policy-back{margin-top:32px;font-size:14px}
+</style>
+{{ end }}
+
+{{ define "main" }}
+<div class="policy-header">
+  <div class="container">
+    <h1>{{ .Title }}</h1>
+  </div>
+</div>
+<div class="policy-body">
+  <div class="container">
+    {{ .Content }}
+    <div class="policy-back">
+      <a href="/">← 回到首頁</a>
+    </div>
+  </div>
+</div>
+{{ end }}
