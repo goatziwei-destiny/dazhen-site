@@ -8,6 +8,10 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
   # 瀏覽次數統計用的 Apps Script 網址（跟預約系統共用同一個 WEB_APP_URL）
   webAppUrl = "https://script.google.com/macros/s/AKfycbx3aDlFDBayTKgvGtQMrWrpDMx3WuU5Yd3Uh4c6BJK5kmKpZnBsXH7fK97yrkQkgx9fkQ/exec"
 
+  # 去 Google Search Console 驗證網站所有權時，如果選「HTML 標籤」那個方式，把它給你的一串代碼（content="..." 裡面那段）貼在這裡就好，
+  # 不用自己去改 HTML 檔案。沒有要驗證的話留空即可。
+  googleSiteVerification = ""
+
   # ── 社群連結（給文章頁/首頁以外頁面的頁尾用）──
   # ⚠️ 這裡跟 layouts/index.html 裡的 SITE.socialLinks 是兩份分開的設定（因為首頁是自己刻的 JS 渲染，
   #    其他頁面走 Hugo 樣板），兩邊的 url 要分別填，跟 lineUrl 目前的做法一樣。
