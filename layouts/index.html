@@ -7,6 +7,7 @@
 <meta name="description" content="">
 <meta name="keywords" content="">
 <link rel="canonical" href="">
+{{ with .Site.Params.googleSiteVerification }}<meta name="google-site-verification" content="{{ . }}">{{ end }}
 <meta property="og:title" content="">
 <meta property="og:description" content="">
 <meta property="og:type" content="website">
@@ -288,7 +289,7 @@ function renderSite(S) {
 
 '<footer class="footer"><div class="container">' +
   renderSocialLinks(S.socialLinks) +
-  '<p>' + (S.footerText||'') + '</p>' +
+  '<p>' + (S.footerText||'') + '　·　<a href="/privacy-policy/" style="color:inherit">隱私權政策</a></p>' +
 '</div></footer>';
 }
 
