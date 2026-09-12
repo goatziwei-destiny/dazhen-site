@@ -1,0 +1,69 @@
+{{ define "head" }}
+<style>
+.testi-header{background:var(--navy);padding:70px 0 36px;color:#fff;text-align:center}
+.testi-header h1{font-size:clamp(28px,5vw,36px);font-weight:700;margin-bottom:8px}
+.testi-header p{color:var(--text-muted);font-size:14px}
+.testi-list{padding:40px 0 60px}
+.testi-list .container{max-width:760px}
+.testi-card{background:#fff;border-radius:12px;padding:22px 24px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.testi-stars{color:#f59e0b;font-size:16px;letter-spacing:2px;margin-bottom:8px}
+.testi-comment{font-size:15px;color:#3d3d3d;line-height:1.9;margin-bottom:12px;white-space:pre-wrap}
+.testi-meta{font-size:12px;color:var(--text-muted);display:flex;justify-content:space-between}
+.testi-empty{text-align:center;padding:60px 20px;color:var(--text-muted)}
+.testi-loading{text-align:center;padding:60px 20px;color:var(--text-muted)}
+</style>
+{{ end }}
+
+{{ define "main" }}
+<div class="testi-header">
+  <div class="container">
+    <h1>顧客好評</h1>
+    <p>這裡是客人諮詢後，願意公開分享的真實心得</p>
+  </div>
+</div>
+<div class="testi-list">
+  <div class="container" id="testi-container">
+    <div class="testi-loading">載入中…</div>
+  </div>
+</div>
+
+{{ with .Site.Params.webAppUrl }}
+<script>
+(function () {
+  var WEB_APP_URL = {{ . }};
+  var container = document.getElementById('testi-container');
+
+  function renderStars(rating) {
+    var n = Number(rating) || 0;
+    var full = '★'.repeat(Math.max(0, Math.min(5, n)));
+    var empty = '☆'.repeat(Math.max(0, 5 - n));
+    return full + empty;
+  }
+  function escHtml(s) {
+    var d = document.createElement('div');
+    d.textContent = s || '';
+    return d.innerHTML;
+  }
+
+  fetch(WEB_APP_URL + '?page=testimonials')
+    .then(function (res) { return res.json(); })
+    .then(function (list) {
+      if (!list || !list.length) {
+        container.innerHTML = '<div class="testi-empty">目前還沒有公開的顧客心得，敬請期待。</div>';
+        return;
+      }
+      container.innerHTML = list.map(function (t) {
+        return '<div class="testi-card">' +
+          (t.rating ? '<div class="testi-stars">' + renderStars(t.rating) + '</div>' : '') +
+          '<div class="testi-comment">' + escHtml(t.comment) + '</div>' +
+          '<div class="testi-meta"><span>' + escHtml(t.name) + '</span><span>' + escHtml(t.date) + '</span></div>' +
+        '</div>';
+      }).join('');
+    })
+    .catch(function () {
+      container.innerHTML = '<div class="testi-empty">好評載入失敗，麻煩稍後重新整理再試一次。</div>';
+    });
+})();
+</script>
+{{ end }}
+{{ end }}
