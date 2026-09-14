@@ -1,0 +1,56 @@
+{{ define "head" }}
+<style>
+.lr-wrap{min-height:60vh;display:flex;align-items:center;justify-content:center;padding:60px 20px;text-align:center;}
+.lr-box{max-width:360px;}
+.lr-box img{border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.08);margin:16px 0;}
+.lr-title{font-weight:700;font-size:18px;margin-bottom:8px;color:var(--navy);}
+.lr-desc{color:var(--text-muted);font-size:14px;margin-bottom:8px;}
+.lr-btn{display:inline-block;margin-top:12px;background:#06c755;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;}
+.lr-btn-alt{display:inline-block;margin-top:10px;background:#fff;color:#06c755;padding:10px 24px;border-radius:8px;text-decoration:none;font-weight:bold;border:2px solid #06c755;font-size:14px;}
+.lr-btn-alt:hover{background:#f0fdf4;}
+.lr-divider{margin:20px 0 12px;color:var(--text-muted);font-size:12px;}
+</style>
+{{ end }}
+
+{{ define "main" }}
+<div class="lr-wrap">
+  <div class="lr-box">
+    <div id="lr-loading">
+      <p class="lr-desc">正在為您導向 LINE…</p>
+    </div>
+    <div id="lr-qr" style="display:none;">
+      <p class="lr-title">請用手機掃描加入好友</p>
+      <p class="lr-desc">掃描後按「傳送」即可完成預約流程</p>
+      <img id="lr-qr-img" width="240" height="240" alt="LINE 官方帳號 QR Code">
+      <div class="lr-divider">── 或 ──</div>
+      <p><a id="lr-desktop-btn" class="lr-btn-alt" href="#">💻 我有 LINE 桌面版，直接開啟</a></p>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:6px;">點擊後會自動開啟您電腦上的 LINE 並帶入訂單編號</p>
+    </div>
+  </div>
+</div>
+
+{{ with .Site.Params.lineBasicId }}
+<script>
+(function () {
+  var basicId = {{ . }};
+  var params = new URLSearchParams(window.location.search);
+  var batchId = params.get('batch') || '';
+
+  var mobileUrl = 'https://line.me/R/oaMessage/' + encodeURIComponent(basicId) + '/?text=' + encodeURIComponent('預約編號：' + batchId);
+  var qrTargetUrl = 'https://line.me/ti/p/' + basicId;
+
+  var ua = navigator.userAgent || '';
+  var isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+
+  if (isMobile) {
+    window.location.href = mobileUrl;
+  } else {
+    document.getElementById('lr-loading').style.display = 'none';
+    document.getElementById('lr-qr').style.display = 'block';
+    document.getElementById('lr-qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + encodeURIComponent(qrTargetUrl);
+    document.getElementById('lr-desktop-btn').href = mobileUrl;
+  }
+})();
+</script>
+{{ end }}
+{{ end }}
