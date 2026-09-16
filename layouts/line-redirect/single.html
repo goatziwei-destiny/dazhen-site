@@ -36,8 +36,8 @@
   var params = new URLSearchParams(window.location.search);
   var batchId = params.get('batch') || '';
 
-  var mobileUrl = 'https://line.me/R/oaMessage/' + encodeURIComponent(basicId) + '/?text=' + encodeURIComponent('預約編號：' + batchId);
-  var qrTargetUrl = 'https://line.me/ti/p/' + basicId;
+  var mobileUrl = 'https://line.me/R/oaMessage/' + encodeURIComponent(basicId) + '/?text=' + encodeURIComponent('我的訂單編號：' + batchId);
+  var qrTargetUrl = 'https://line.me/R/ti/p/' + basicId;
 
   var ua = navigator.userAgent || '';
   var isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
@@ -48,7 +48,7 @@
     document.getElementById('lr-loading').style.display = 'none';
     document.getElementById('lr-qr').style.display = 'block';
     document.getElementById('lr-qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + encodeURIComponent(qrTargetUrl);
-    document.getElementById('lr-desktop-btn').href = mobileUrl;
+    document.getElementById('lr-desktop-btn').href = qrTargetUrl;
   }
 })();
 </script>
