@@ -1,14 +1,17 @@
 {{ define "head" }}
 <style>
 .lr-wrap{min-height:60vh;display:flex;align-items:center;justify-content:center;padding:60px 20px;text-align:center;}
-.lr-box{max-width:360px;}
-.lr-box img{border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.08);margin:16px 0;}
-.lr-title{font-weight:700;font-size:18px;margin-bottom:8px;color:var(--navy);}
-.lr-desc{color:var(--text-muted);font-size:14px;margin-bottom:8px;}
-.lr-btn{display:inline-block;margin-top:12px;background:#06c755;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;}
-.lr-btn-alt{display:inline-block;margin-top:10px;background:#fff;color:#06c755;padding:10px 24px;border-radius:8px;text-decoration:none;font-weight:bold;border:2px solid #06c755;font-size:14px;}
-.lr-btn-alt:hover{background:#f0fdf4;}
-.lr-divider{margin:20px 0 12px;color:var(--text-muted);font-size:12px;}
+.lr-box{max-width:400px;}
+.lr-title{font-weight:700;font-size:20px;margin-bottom:12px;color:var(--navy);}
+.lr-desc{color:var(--text-muted);font-size:14px;margin-bottom:8px;line-height:1.7;}
+.lr-lineid{display:inline-block;background:#06c755;color:#fff;font-weight:700;font-size:16px;padding:6px 18px;border-radius:8px;margin:6px 0 14px;letter-spacing:1px;}
+.lr-orderbox{background:var(--cream,#f5f3ef);border-radius:12px;padding:18px;margin:16px 0;}
+.lr-orderbox .lbl{font-size:12px;color:var(--text-muted);margin-bottom:4px;}
+.lr-orderbox .oid{font-size:22px;font-weight:700;letter-spacing:1px;color:var(--navy);margin-bottom:12px;word-break:break-all;}
+.lr-copy-btn{display:inline-block;background:#cc8854;color:#fff;padding:12px 28px;border-radius:8px;border:none;font-weight:bold;font-size:15px;cursor:pointer;font-family:inherit;}
+.lr-copy-btn:active{opacity:.8;}
+.lr-steps{text-align:left;font-size:13px;color:var(--text-muted);line-height:2;margin-top:16px;background:#fff;border:1px solid #eee;border-radius:10px;padding:14px 18px;}
+.lr-steps b{color:var(--navy);}
 </style>
 {{ end }}
 
@@ -18,13 +21,25 @@
     <div id="lr-loading">
       <p class="lr-desc">正在為您導向 LINE…</p>
     </div>
-    <div id="lr-qr" style="display:none;">
-      <p class="lr-title">請用手機掃描加入好友</p>
-      <p class="lr-desc">掃描後按「傳送」即可完成預約流程</p>
-      <img id="lr-qr-img" width="240" height="240" alt="LINE 官方帳號 QR Code">
-      <div class="lr-divider">── 或 ──</div>
-      <p><a id="lr-desktop-btn" class="lr-btn-alt" href="#">💻 我有 LINE 桌面版，直接開啟</a></p>
-      <p style="font-size:11px;color:var(--text-muted);margin-top:6px;">點擊後會自動開啟您電腦上的 LINE 並帶入訂單編號</p>
+
+    <div id="lr-desktop" style="display:none;">
+      <p class="lr-title">✅ 預約成功！</p>
+      <p class="lr-desc">接下來請加入大正的官方 LINE，完成後續確認與付款回報：</p>
+      <div class="lr-lineid" id="lr-lineid"></div>
+
+      <div class="lr-orderbox">
+        <div class="lbl">您的訂單編號</div>
+        <div class="oid" id="lr-order-id"></div>
+        <button class="lr-copy-btn" id="lr-copy-btn">📋 複製訂單編號訊息</button>
+      </div>
+
+      <div class="lr-steps">
+        <b>加入 LINE 後的步驟：</b><br>
+        1. 在 LINE 搜尋上方的 ID 加好友<br>
+        2. 貼上剛剛複製的訂單編號訊息給大正<br>
+        3. 匯款完成後，再私訊「末五碼 + 帳號末五碼」<br>
+        <span style="font-size:12px;">（例如：末五碼 12345）</span>
+      </div>
     </div>
   </div>
 </div>
@@ -36,19 +51,45 @@
   var params = new URLSearchParams(window.location.search);
   var batchId = params.get('batch') || '';
 
-  var mobileUrl = 'https://line.me/R/oaMessage/' + encodeURIComponent(basicId) + '/?text=' + encodeURIComponent('我的訂單編號：' + batchId);
-  var qrTargetUrl = 'https://line.me/R/ti/p/' + basicId;
+  var mobileUrl = 'https://line.me/R/oaMessage/' + encodeURIComponent(basicId) + '/?text=' + encodeURIComponent('大正，我的訂單編號是「' + batchId + '」');
+  var copyText = '大正，我的訂單編號是「' + batchId + '」';
 
   var ua = navigator.userAgent || '';
   var isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
 
   if (isMobile) {
+    // 手機：照舊自動跳轉，自動帶入訂單編號定型文
     window.location.href = mobileUrl;
   } else {
+    // 電腦：先不放 LINE 按鈕跟 QR Code（未認證帳號會跳首頁），改用文字引導 + 訂單編號 + 複製定型文
     document.getElementById('lr-loading').style.display = 'none';
-    document.getElementById('lr-qr').style.display = 'block';
-    document.getElementById('lr-qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + encodeURIComponent(qrTargetUrl);
-    document.getElementById('lr-desktop-btn').href = qrTargetUrl;
+    document.getElementById('lr-desktop').style.display = 'block';
+    document.getElementById('lr-lineid').textContent = basicId;
+    document.getElementById('lr-order-id').textContent = batchId || '（找不到訂單編號，請看確認信）';
+
+    var btn = document.getElementById('lr-copy-btn');
+    btn.addEventListener('click', function () {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(copyText).then(function () {
+          btn.textContent = '✅ 已複製！貼到 LINE 給大正即可';
+          setTimeout(function () { btn.textContent = '📋 複製訂單編號訊息'; }, 2500);
+        }).catch(function () { fallbackCopy(); });
+      } else {
+        fallbackCopy();
+      }
+    });
+
+    function fallbackCopy() {
+      var ta = document.createElement('textarea');
+      ta.value = copyText;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); btn.textContent = '✅ 已複製！貼到 LINE 給大正即可'; setTimeout(function () { btn.textContent = '📋 複製訂單編號訊息'; }, 2500); }
+      catch (e) { btn.textContent = '請手動複製：' + copyText; }
+      document.body.removeChild(ta);
+    }
   }
 })();
 </script>
