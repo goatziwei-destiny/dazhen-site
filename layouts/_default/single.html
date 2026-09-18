@@ -6,11 +6,25 @@
   "headline": {{ .Title }},
   "datePublished": "{{ .Date.Format "2006-01-02" }}",
   "author": { "@type": "Person", "name": "大正" },
-  "description": {{ with .Description }}{{ . }}{{ else }}""{{ end }}{{ with .Params.tags }},
-  "keywords": {{ delimit . ", " }}{{ end }}
+  "description": {{ with .Params.seo }}{{ with .metaDescription }}{{ . }}{{ else }}{{ with $.Description }}{{ . }}{{ else }}""{{ end }}{{ end }}{{ else }}{{ with .Description }}{{ . }}{{ else }}""{{ end }}{{ end }}{{ with .Params.seo }}{{ with .keyword }},
+  "keywords": {{ . }}{{ end }}{{ else }}{{ with .Params.tags }},
+  "keywords": {{ delimit . ", " }}{{ end }}{{ end }}
 }
 </script>
-{{ with .Params.tags }}<meta name="keywords" content="{{ delimit . ", " }}">{{ end }}
+{{ with .Params.seo }}{{ with .geoAnswer }}
+<meta name="geo-answer" content="{{ . }}">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [{
+    "@type": "Question",
+    "name": {{ $.Title }},
+    "acceptedAnswer": { "@type": "Answer", "text": {{ . }} }
+  }]
+}
+</script>
+{{ end }}{{ end }}
 <style>
 .article-header{background:var(--navy);padding:80px 0 40px;color:#fff}
 .article-header .container{max-width:800px}
