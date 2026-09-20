@@ -24,8 +24,9 @@
 
     <div id="lr-desktop" style="display:none;">
       <p class="lr-title">✅ 預約成功！</p>
-      <p class="lr-desc">接下來請加入大正的官方 LINE，完成後續確認與付款回報：</p>
-      <div class="lr-lineid" id="lr-lineid"></div>
+      <p class="lr-desc">請用手機掃描下方 QR Code 加入官方 LINE，完成後續確認與付款回報：</p>
+
+      <img id="lr-qr-img" width="220" height="220" alt="LINE 官方帳號 QR Code" style="border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.08);margin:12px 0;">
 
       <div class="lr-orderbox">
         <div class="lbl">您的訂單編號</div>
@@ -35,9 +36,9 @@
 
       <div class="lr-steps">
         <b>加入 LINE 後的步驟：</b><br>
-        1. 在 LINE 搜尋上方的 ID 加好友<br>
-        2. 貼上剛剛複製的訂單編號訊息給大正<br>
-        3. 匯款完成後，再私訊「末五碼 + 帳號末五碼」<br>
+        1. 掃描上方 QR Code 加入好友<br>
+        2. 貼上剛才複製的訂單編號訊息給大正<br>
+        3. 匯款完成後，請直接輸入帳號末五碼，費用請備註論命費用<br>
         <span style="font-size:12px;">（例如：末五碼 12345）</span>
       </div>
     </div>
@@ -62,9 +63,10 @@
     window.location.href = mobileUrl;
   } else {
     // 電腦：先不放 LINE 按鈕跟 QR Code（未認證帳號會跳首頁），改用文字引導 + 訂單編號 + 複製定型文
+    var qrTargetUrl = 'https://line.me/R/ti/p/' + basicId;
     document.getElementById('lr-loading').style.display = 'none';
     document.getElementById('lr-desktop').style.display = 'block';
-    document.getElementById('lr-lineid').textContent = basicId;
+    document.getElementById('lr-qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(qrTargetUrl);
     document.getElementById('lr-order-id').textContent = batchId || '（找不到訂單編號，請看確認信）';
 
     var btn = document.getElementById('lr-copy-btn');
