@@ -19,7 +19,7 @@
 <div class="lr-wrap">
   <div class="lr-box">
     <div id="lr-loading">
-      <p class="lr-desc">正在為您導向 LINE…</p>
+      <p class="lr-desc">正在為您導向 LINE…</p><a id="lr-open" href="#">若未開啟，點此開啟 LINE</a>
     </div>
 
     <div id="lr-desktop" style="display:none;">
@@ -52,7 +52,8 @@
   var params = new URLSearchParams(window.location.search);
   var batchId = params.get('batch') || '';
 
-  var mobileUrl = 'https://line.me/R/oaMessage/' + encodeURIComponent(basicId) + '/?text=' + encodeURIComponent('大正，我的訂單編號是「' + batchId + '」');
+  var mobileUrl = 'https://line.me/R/oaMessage/' + encodeURIComponent(basicId) + '/?' + encodeURIComponent('大正，我的訂單編號是「' + batchId + '」');
+  document.getElementById('lr-open').href = mobileUrl;
   var copyText = '大正，我的訂單編號是「' + batchId + '」';
 
   var ua = navigator.userAgent || '';
@@ -63,7 +64,7 @@
     window.location.href = mobileUrl;
   } else {
     // 電腦：先不放 LINE 按鈕跟 QR Code（未認證帳號會跳首頁），改用文字引導 + 訂單編號 + 複製定型文
-    var qrTargetUrl = 'https://line.me/R/ti/p/' + basicId;
+    var qrTargetUrl = mobileUrl;
     document.getElementById('lr-loading').style.display = 'none';
     document.getElementById('lr-desktop').style.display = 'block';
     document.getElementById('lr-qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(qrTargetUrl);

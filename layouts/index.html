@@ -47,6 +47,7 @@
 </head>
 <body>
 <div id="app"></div>
+<script src="/booking-bridge.js"></script>
 <script>
 // ╔═══════════════════════════════════════════════════════════════════════════╗
 // ║  🔧 網站內容設定區：所有你想改的文字、圖片、連結都在這裡                    ║
@@ -278,7 +279,7 @@ function renderSite(S) {
     '<div class="eyebrow" style="color:var(--navy-3);">BOOKING</div>' +
     '<div class="section-title">線上預約</div>' +
     '<p class="booking-embed-subtitle">填寫出生資料並選擇方便的諮詢時段</p>' +
-    '<div class="booking-iframe-wrap"><iframe src="'+S.bookingFormUrl+'" title="線上預約表單" loading="lazy"></iframe></div>' +
+    '<div class="booking-iframe-wrap"><iframe src="'+esc(window.dazhenBookingUrl(S.bookingFormUrl))+'" title="線上預約表單" loading="lazy"></iframe></div>' +
   '</div></section>' : '') +
 
 '<section class="cta-section section-dark"><div class="container">' +
