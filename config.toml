@@ -70,6 +70,17 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
     url = ""
     color = "#57534e"
 
+[related]
+  includeNewer = true
+  threshold = 0
+  toLower = false
+  [[related.indices]]
+    name = "categories"
+    weight = 100
+  [[related.indices]]
+    name = "tags"
+    weight = 60
+
 [permalinks]
   blog = "/blog/:slug/"
 

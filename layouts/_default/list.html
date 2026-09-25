@@ -25,6 +25,18 @@
 .blog-card-tags{margin-top:12px;display:flex;gap:6px;flex-wrap:wrap}
 .blog-card-tag{font-size:11px;background:var(--cream);padding:3px 11px;border-radius:12px;color:var(--accent);font-weight:700;text-decoration:none}
 .blog-card-tag:hover{background:var(--accent);color:#fff}
+.cat-tabs{padding:28px 0 0}
+.cat-tabs-list{display:flex;gap:8px;flex-wrap:wrap}
+.cat-tab{font-size:14px;padding:8px 16px;border-radius:22px;background:#fff;color:var(--navy);text-decoration:none;font-weight:700;border:1px solid #e7e5e4}
+.cat-tab span{color:var(--text-muted);font-weight:400;margin-left:3px}
+.cat-tab:hover{border-color:var(--accent)}
+.cat-tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.cat-tab.active span{color:rgba(255,255,255,.7)}
+.blog-card-cat{display:inline-block;font-size:12px;color:var(--warm);font-weight:700;margin-bottom:4px;text-decoration:none}
+.blog-card{display:flex;gap:18px;align-items:flex-start}
+.blog-card-thumb{flex:0 0 160px;width:160px;max-width:160px;min-width:0;height:auto;aspect-ratio:3/2;border-radius:10px;object-fit:cover;background:var(--cream);display:block}
+.blog-card-body{flex:1;min-width:0}
+@media (max-width:600px){.blog-card{flex-direction:column}.blog-card-thumb{flex:none;width:100%;max-width:100%}.blog-card-body{width:100%}}
 .blog-empty{text-align:center;padding:60px 0;color:var(--text-muted)}
 </style>
 {{ end }}
@@ -33,8 +45,13 @@
 <div class="blog-header">
   <div class="container">
     {{ if eq .Kind "term" }}
+      {{ if eq .Data.Plural "categories" }}
+      <h1>{{ .Title }}</h1>
+      <p>這個分類下的所有文章</p>
+      {{ else }}
       <h1>標籤：{{ .Title }}</h1>
       <p>這個標籤下的所有文章</p>
+      {{ end }}
       <a href="{{ "/blog/" | relLangURL }}" class="blog-header-back">← 查看全部文章</a>
     {{ else }}
       <h1>命理文章</h1>
@@ -43,6 +60,22 @@
     {{ end }}
   </div>
 </div>
+{{ $cats := .Site.Taxonomies.categories }}
+{{ if and $cats (or (eq .Kind "section") (eq .Data.Plural "categories")) }}
+{{ $order := slice "感情" "家庭與親子" "職涯與人生選擇" "命理與星曜" "宗教與民間信仰" "生活觀察" }}
+<div class="cat-tabs">
+  <div class="container">
+    <div class="cat-tabs-list">
+      <a href="{{ "/blog/" | relLangURL }}" class="cat-tab{{ if eq .Kind "section" }} active{{ end }}">全部</a>
+      {{ range $order }}
+        {{ with index $cats (lower .) }}
+        <a href="{{ .Page.RelPermalink }}" class="cat-tab{{ if eq $.RelPermalink .Page.RelPermalink }} active{{ end }}">{{ .Page.Title }}<span>{{ .Count }}</span></a>
+        {{ end }}
+      {{ end }}
+    </div>
+  </div>
+</div>
+{{ end }}
 {{ if eq .Kind "section" }}
 {{ $tagTerms := .Site.Taxonomies.tags }}
 {{ if $tagTerms }}
@@ -63,8 +96,12 @@
     {{ $pages := where .Pages "Params.draft" "ne" true }}
     {{ if $pages }}
       {{ range $pages.ByDate.Reverse }}
+      {{ $card := . }}
       {{ $pid := "" }}{{ with .File }}{{ $pid = .ContentBaseName }}{{ end }}
       <div class="blog-card" data-slug="{{ $pid }}">
+        {{ with .Params.image }}<a href="{{ $card.Permalink }}" style="display:contents"><img class="blog-card-thumb" src="{{ . }}" alt="" loading="lazy"></a>{{ end }}
+        <div class="blog-card-body">
+        {{ with .Params.categories }}<a class="blog-card-cat" href="{{ (path.Join "/categories" (index . 0) | urlize) | relLangURL }}/">{{ index . 0 }}</a>{{ end }}
         <a href="{{ .Permalink }}">
           <div class="blog-card-date">
             <span>{{ .Date.Format "2006-01-02" }}</span>
@@ -79,6 +116,7 @@
           {{ range . }}<a href="{{ (path.Join "/tags" . | urlize) | relLangURL }}/" class="blog-card-tag">{{ . }}</a>{{ end }}
         </div>
         {{ end }}
+        </div>
       </div>
       {{ end }}
     {{ else }}

@@ -14,11 +14,13 @@ collections:
     slug: "{{slug}}"
     fields:
       - { label: "標題", name: "title", widget: "string" }
-      - { label: "自訂網址（選填，英文，用 - 連接，例如 holiday-home-family-boundaries）", name: "slug", widget: "string", required: false, hint: "不填的話會自動用標題產生。填了之後網址會變成 /blog/你填的內容/" }
+      - { label: "自訂網址（選填，英文，用 - 連接，例如 holiday-home-family-boundaries）", name: "slug", widget: "string", required: false, pattern: ["^[a-z0-9]+(-[a-z0-9]+)*$", "只能用小寫英文、數字和 -，不要加 /blog/ 或空白、符號"], hint: "只填英文代稱就好，不要加 /blog/。不填的話會自動用標題產生。" }
+      - { label: "文章分類", name: "categories", widget: "select", multiple: true, min: 1, max: 2, options: ["感情", "家庭與親子", "職涯與人生選擇", "命理與星曜", "宗教與民間信仰", "生活觀察"], hint: "選 1～2 個。文章列表會依分類整理，也會用來推薦「延伸閱讀」。" }
       - { label: "發布日期", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
       - { label: "摘要（會顯示在列表頁跟 Google 搜尋結果）", name: "description", widget: "text", required: false }
       - { label: "封面圖片", name: "image", widget: "image", required: false }
       - { label: "標籤", name: "tags", widget: "list", required: false }
+      - { label: "延伸閱讀（選填，挑幾篇相關文章）", name: "furtherReading", widget: "relation", collection: "blog", search_fields: ["title"], value_field: "{{slug}}", display_fields: ["title"], multiple: true, max: 5, required: false, hint: "會顯示在文章最後面。不選就不顯示，下方仍會有系統自動推薦的「你可能喜歡」。" }
       - { label: "草稿", name: "draft", widget: "boolean", default: false }
       - label: "SEO 設定（選填，不填也能發布）"
         name: "seo"
@@ -29,4 +31,4 @@ collections:
           - { label: "主要關鍵字", name: "keyword", widget: "string", required: false, hint: "這篇文章最重要的一個搜尋關鍵字" }
           - { label: "Meta Description（Google 搜尋結果顯示的描述）", name: "metaDescription", widget: "text", required: false, hint: "不填的話會用上面的「摘要」。填了的話 Google 搜尋結果會優先用這段" }
           - { label: "GEO 核心回答（AI 搜尋引擎用）", name: "geoAnswer", widget: "text", required: false, hint: "一段簡潔的回答，幫助 AI 搜尋引擎理解這篇文章的核心觀點" }
-      - { label: "內文", name: "body", widget: "markdown" }
+      - { label: "內文", name: "body", widget: "markdown", hint: "插入圖片：點工具列的「＋」→「Image」，可以插入多張，每張放在想出現的段落之間。圖片的「Alt」會變成圖片下方的說明文字。" }

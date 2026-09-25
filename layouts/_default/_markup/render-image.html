@@ -1,0 +1,5 @@
+{{- /* 文章內每張圖片自動包成 figure：限制寬度不撐版、延遲載入，Alt 文字顯示為圖片說明 */ -}}
+<figure>
+  <img src="{{ .Destination | safeURL }}" alt="{{ .Text }}" loading="lazy" decoding="async"{{ with .Title }} title="{{ . }}"{{ end }}>
+  {{- with (or .Title .Text) }}<figcaption>{{ . }}</figcaption>{{ end }}
+</figure>

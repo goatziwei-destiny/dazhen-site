@@ -35,15 +35,55 @@
 .article-tags{margin-top:16px;display:flex;gap:6px;flex-wrap:wrap}
 .article-tag{font-size:11px;background:rgba(98,146,171,.2);padding:3px 12px;border-radius:12px;color:var(--accent);font-weight:700;text-decoration:none}
 .article-tag:hover{background:var(--accent);color:#fff}
-.article-body{padding:40px 0}
-.article-body .container{max-width:800px}
-.article-body h2{font-size:24px;margin:32px 0 12px;color:var(--navy)}
-.article-body h3{font-size:20px;margin:24px 0 10px;color:var(--navy)}
-.article-body p{margin-bottom:16px;font-size:15px;color:#3d3d3d;line-height:2}
-.article-body ul,.article-body ol{margin:0 0 16px 20px}
-.article-body li{margin-bottom:6px;font-size:15px;color:#3d3d3d;line-height:1.8}
-.article-body img{border-radius:12px;margin:20px 0}
-.article-body blockquote{border-left:3px solid var(--accent);padding:10px 20px;margin:20px 0;background:#fff;border-radius:0 8px 8px 0;font-style:italic;color:#57534e}
+.article-body{padding:48px 0}
+.article-body .container{max-width:720px}
+.article-body{font-size:17px;color:#2b2b2b;letter-spacing:.03em}
+.article-body h2{font-size:26px;line-height:1.5;margin:48px 0 16px;color:var(--navy);padding-bottom:8px;border-bottom:2px solid rgba(98,146,171,.25)}
+.article-body h3{font-size:21px;line-height:1.5;margin:32px 0 12px;color:var(--navy)}
+.article-body p{margin:0 0 22px;font-size:17px;color:#2b2b2b;line-height:1.95}
+.article-body ul,.article-body ol{margin:0 0 22px 1.4em}
+.article-body li{margin-bottom:10px;font-size:17px;color:#2b2b2b;line-height:1.85}
+.article-body strong{color:var(--navy);background:linear-gradient(transparent 62%,rgba(204,136,84,.22) 62%)}
+.article-body a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.article-body img{display:block;max-width:100%;height:auto;border-radius:12px;margin:0 auto}
+.article-body figure{margin:32px 0}
+.article-body figcaption{text-align:center;font-size:14px;color:#78716c;margin-top:10px;line-height:1.6}
+.article-body blockquote{border-left:4px solid var(--warm);padding:14px 22px;margin:28px 0;background:#fff;border-radius:0 10px 10px 0;color:#44403c}
+.article-body blockquote p{margin:0;font-size:17px}
+.article-body hr{border:none;border-top:1px dashed #d6d3d1;margin:40px 0}
+@media (max-width:640px){
+  .article-body,.article-body p,.article-body li,.article-body blockquote p{font-size:16px}
+  .article-body h2{font-size:22px;margin-top:40px}
+  .article-body h3{font-size:19px}
+  .article-body .container{padding:0 20px}
+}
+.article-cat{display:inline-block;font-size:13px;font-weight:700;color:#fff;background:var(--warm);padding:3px 12px;border-radius:12px;margin:0 6px 12px 0;text-decoration:none}
+.article-cat:hover{background:#b07545;text-decoration:none}
+.further .container,.prevnext .container{max-width:720px}
+.further{padding:0 0 8px}
+.further-box{background:#fff;border-left:4px solid var(--warm);border-radius:0 12px 12px 0;padding:18px 22px}
+.further-title{font-weight:700;color:var(--navy);font-size:17px;margin-bottom:8px}
+.further-box ul{margin:0;padding-left:1.2em}
+.further-box li{margin:6px 0;font-size:16px;line-height:1.7}
+.further-box a{color:var(--accent);text-underline-offset:3px}
+.prevnext{padding:28px 0 8px}
+.prevnext-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.prevnext-card{background:#fff;border-radius:12px;padding:14px 16px;text-decoration:none;color:inherit;box-shadow:0 2px 8px rgba(0,0,0,.05);display:flex;flex-direction:column;gap:4px}
+.prevnext-card.next{text-align:right}
+.prevnext-card:hover{text-decoration:none;transform:translateY(-2px)}
+.prevnext-label{font-size:12px;color:var(--text-muted)}
+.prevnext-name{font-size:15px;font-weight:700;color:var(--navy);line-height:1.5}
+@media (max-width:600px){.prevnext-grid{grid-template-columns:1fr}.prevnext-card.next{text-align:left}}
+.related{padding:32px 0 56px}
+.related .container{max-width:900px}
+.related h2{font-size:22px;color:var(--navy);margin-bottom:18px}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.related-card{background:#fff;border-radius:12px;overflow:hidden;text-decoration:none;color:inherit;box-shadow:0 2px 8px rgba(0,0,0,.05);transition:transform .15s;display:flex;flex-direction:column}
+.related-card:hover{transform:translateY(-2px);text-decoration:none}
+.related-card img{width:100%;aspect-ratio:3/2;object-fit:cover;display:block;background:var(--cream)}
+.related-card-body{padding:14px 16px 16px}
+.related-card-cat{font-size:12px;color:var(--warm);font-weight:700}
+.related-card-title{font-size:16px;font-weight:700;color:var(--navy);line-height:1.5;margin-top:4px}
 .article-cta{background:var(--navy);padding:48px 0;text-align:center}
 .article-cta p{color:var(--text-light);font-size:16px;margin-bottom:20px}
 .article-cta a{display:inline-block;background:var(--warm);color:#fff;padding:12px 28px;border-radius:8px;font-weight:700;text-decoration:none}
@@ -55,6 +95,7 @@
 {{ define "main" }}
 <div class="article-header">
   <div class="container">
+    {{ with .Params.categories }}<div>{{ range . }}<a class="article-cat" href="{{ (path.Join "/categories" . | urlize) | relLangURL }}/">{{ . }}</a>{{ end }}</div>{{ end }}
     <div class="article-date">{{ .Date.Format "2006 年 1 月 2 日" }} · <span id="view-count" class="article-views">－ 次瀏覽</span></div>
     <h1 class="article-title">{{ .Title }}</h1>
     {{ with .Description }}<p class="article-desc">{{ . }}</p>{{ end }}
@@ -80,6 +121,68 @@
     </div>
   </div>
 </div>
+
+{{ $blog := (where .Site.RegularPages "Section" "blog").ByDate }}
+{{ $cur := . }}
+
+{{/* ① 延伸閱讀：作者在後台手動挑選 */}}
+{{ $manual := slice }}
+{{ range .Params.furtherReading }}
+  {{ $id := . }}
+  {{ range $blog }}{{ $p := . }}{{ with .File }}{{ if eq .ContentBaseName $id }}{{ $manual = $manual | append $p }}{{ end }}{{ end }}{{ end }}
+{{ end }}
+{{ with $manual }}
+<div class="further">
+  <div class="container">
+    <div class="further-box">
+      <div class="further-title">延伸閱讀</div>
+      <ul>{{ range . }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>{{ end }}</ul>
+    </div>
+  </div>
+</div>
+{{ end }}
+
+{{/* ② 上一篇／下一篇：依發文日期 */}}
+{{ $older := "" }}{{ $newer := "" }}
+{{ range $i, $p := $blog }}{{ if eq $p.Permalink $cur.Permalink }}
+  {{ if gt $i 0 }}{{ $older = index $blog (sub $i 1) }}{{ end }}
+  {{ if lt (add $i 1) (len $blog) }}{{ $newer = index $blog (add $i 1) }}{{ end }}
+{{ end }}{{ end }}
+{{ if or $older $newer }}
+<div class="prevnext">
+  <div class="container">
+    <div class="prevnext-grid">
+      {{ with $older }}<a class="prevnext-card" href="{{ .RelPermalink }}"><span class="prevnext-label">← 上一篇</span><span class="prevnext-name">{{ .Title }}</span></a>{{ else }}<span></span>{{ end }}
+      {{ with $newer }}<a class="prevnext-card next" href="{{ .RelPermalink }}"><span class="prevnext-label">下一篇 →</span><span class="prevnext-name">{{ .Title }}</span></a>{{ end }}
+    </div>
+  </div>
+</div>
+{{ end }}
+
+{{/* ③ 你可能喜歡：依分類、標籤自動推薦，不足用最新文章補，排除已在延伸閱讀的 */}}
+{{ $related := where (.Site.RegularPages.Related .) "Section" "blog" }}
+{{ $others := where (where .Site.RegularPages "Section" "blog") "Permalink" "ne" .Permalink }}
+{{ $pool := union $related $others.ByDate.Reverse }}
+{{ range $manual }}{{ $pool = where $pool "Permalink" "ne" .Permalink }}{{ end }}
+{{ $picks := first 3 $pool }}
+{{ with $picks }}
+<div class="related">
+  <div class="container">
+    <h2>你可能喜歡</h2>
+    <div class="related-grid">
+      {{ range . }}
+      <a class="related-card" href="{{ .RelPermalink }}">
+        {{ with .Params.image }}<img src="{{ . }}" alt="" loading="lazy">{{ end }}
+        <div class="related-card-body">
+          {{ with .Params.categories }}<div class="related-card-cat">{{ index . 0 }}</div>{{ end }}
+          <div class="related-card-title">{{ .Title }}</div>
+        </div>
+      </a>
+      {{ end }}
+    </div>
+  </div>
+</div>
+{{ end }}
 
 <div class="article-cta">
   <p>想更深入了解你的命盤？</p>
