@@ -16,3 +16,9 @@
   [headers.values]
     Access-Control-Allow-Origin = "*"
     Cache-Control = "public, max-age=31536000, immutable"
+
+# 顧客好評頁隱藏期間，舊網址自動導回首頁（頁面公開後這條會自動失效，不用刪）
+[[redirects]]
+  from = "/testimonials/*"
+  to = "/"
+  status = 302

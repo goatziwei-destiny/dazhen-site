@@ -60,6 +60,19 @@
 .style-title{font-size:22px;font-weight:700;color:var(--navy);margin-top:6px}
 .style-sub{font-size:15px;color:var(--navy-3,#6292ab);margin:4px 0 10px;font-weight:700}
 .style-card p{font-size:15px;line-height:1.9;color:#44403c;margin:0}
+.first{padding:80px 0}.first-intro{font-size:16px;color:#57534e;line-height:1.9;max-width:640px;margin-bottom:36px}
+.first-list{list-style:none;margin:0;padding:0;max-width:760px;position:relative}
+.first-list:before{content:"";position:absolute;left:19px;top:20px;bottom:20px;width:2px;background:rgba(27,40,69,.12)}
+.first-item{display:grid;grid-template-columns:40px 1fr;gap:18px;padding:0 0 26px;position:relative}
+.first-item:last-child{padding-bottom:0}
+.first-num{width:40px;height:40px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;position:relative;z-index:1}
+.first-body{background:#fff;border-radius:14px;padding:18px 22px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.first-when{font-size:12px;font-weight:700;color:var(--warm);letter-spacing:1px;margin-bottom:2px}
+.first-title{font-size:17px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.first-desc{font-size:15px;line-height:1.85;color:#57534e}
+.service-cards{display:grid;gap:24px}.service-cards.two{grid-template-columns:1fr 1fr}.service-cards.two .service-card{display:flex;flex-direction:column}.service-cards.two .service-meta{margin-top:auto;flex-direction:column;gap:12px}
+.service-card .svc-btn{display:inline-block;margin-top:20px;align-self:flex-start}
+@media(max-width:768px){.service-cards.two{grid-template-columns:1fr}}
 .latest{padding:80px 0}
 .latest-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:24px}
 .latest-card{background:#fff;border-radius:14px;overflow:hidden;text-decoration:none;color:inherit;box-shadow:0 2px 10px rgba(0,0,0,.05);display:flex;flex-direction:column;transition:transform .15s}
@@ -74,6 +87,7 @@
 .svc-list li{display:flex;align-items:flex-start;gap:10px;line-height:1.7}
 .svc-list svg{flex:0 0 20px;width:20px;height:20px;margin-top:3px;fill:none;stroke:var(--warm);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 </style>
+{{ partial "analytics.html" . }}
 </head>
 <body>
 <div id="app"></div>
@@ -84,6 +98,8 @@
 // ║  改完存檔、重新部署到 Netlify 就會生效，不用動下面的 HTML 結構              ║
 // ╚═══════════════════════════════════════════════════════════════════════════╝
 const LATEST_POSTS = [{{ range $i, $p := first 3 (where .Site.RegularPages "Section" "blog").ByDate.Reverse }}{{ if $i }},{{ end }}{ "title": {{ $p.Title }}, "url": {{ $p.RelPermalink }}, "image": {{ with $p.Params.image }}{{ . }}{{ else }}""{{ end }}, "cat": {{ with $p.Params.categories }}{{ index . 0 }}{{ else }}""{{ end }}, "desc": {{ with $p.Description }}{{ . }}{{ else }}{{ $p.Summary | plainify | truncate 60 }}{{ end }} }{{ end }}];
+const TESTIMONIALS_URL = {{ with site.GetPage "/testimonials" }}{{ .RelPermalink }}{{ else }}""{{ end }};
+const SHOW_TEXT_SERVICE = {{ if site.Params.showTextService }}true{{ else }}false{{ end }};
 const SITE = {
 
   // ── 基本資訊（SEO、社群分享會用到）──
@@ -159,6 +175,25 @@ const SITE = {
   servicePriceUnit: "每次 60 分鐘",
   serviceDetail: "⏱ 60 分鐘，時間內不限題數<br>💻 Google Meet 或 LINE@ 線上進行<br>📷 如需觀看面相，請使用 Google Meet，預約成功後會收到會議室連結",
 
+  // ── 文字版諮詢（先做好、暫不顯示；要上線時把 config.toml 的 showTextService 改成 true）──
+  textServiceLabel: "文字版諮詢",
+  textServiceTitle: "用文字慢慢問，回覆可以反覆看",
+  textServiceDesc: "適合不方便通話、講話會緊張，或想把回答留下來慢慢看的人。你用文字寫下想問的事，我看完命盤後，用文字一題一題回覆。",
+  textServicePrice: "價格待定",
+  textServicePriceUnit: "上線前公布",
+  textServiceDetail: "✍️ 文字提問、文字回覆<br>💬 透過 LINE 傳訊息進行，不用另外約時段",
+  textServiceBtn: "用 LINE 詢問文字版諮詢",
+
+  // ── 第一次諮詢怎麼進行 ──
+  firstIntro: "第一次找人算命，會緊張很正常。這一小時大概是這樣進行的，你不用先做任何功課。",
+  firstSteps: [
+    { when: "諮詢前", title: "我先排好你的命盤", desc: "收到出生資料後，我會先把命盤排好、看過一遍。你只要想想最在意的一兩件事；想不清楚也沒關係，當天可以一起整理。" },
+    { when: "剛開始", title: "確認資料，聽你說", desc: "上線後先確認出生時間這些基本資料，再請你說說最近的狀況，和這次最想弄清楚的事。" },
+    { when: "主要時間", title: "一起看盤，一問一答", desc: "我會把命盤裡的線索講成白話，也會反過來問你問題。聽不懂可以隨時打斷我，你補充的一句話，常常會改變整張盤的讀法。" },
+    { when: "快結束時", title: "整理重點和下一步", desc: "一起整理今天談到的重點、你手上的選項，和離開後可以先做的一件事。" },
+    { when: "諮詢後", title: "一份簡短的回饋問卷", desc: "之後會收到一封回饋問卷，幫我知道哪裡可以做得更好。要不要公開你的感想，由你自己決定。" },
+  ],
+
   // ── 排盤體驗（iframe 嵌入）──
   // chartToolUrl 已移除（排盤體驗區塊暫時不使用）
 
@@ -233,6 +268,7 @@ var SVC_ICONS = {
   video: '<rect x="3" y="7" width="13" height="10" rx="2"/><path d="M16 11l5-3v8l-5-3"/>',
   camera:'<path d="M4 8h3l2-2h6l2 2h3v10H4z"/><circle cx="12" cy="13" r="3.2"/>',
   chat:  '<path d="M5 5h14v10H9l-4 4z"/>',
+  pen:   '<path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/>',
   dot:   '<circle cx="12" cy="12" r="2.5"/>'
 };
 function renderServiceDetail(html) {
@@ -240,7 +276,7 @@ function renderServiceDetail(html) {
     return l.replace(/<[^>]*>/g, '').replace(/^[\s\u2190-\u2BFF\uFE0F\u200D]+/, '').replace(/^(?:\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|\uD83E[\uDC00-\uDFFF])+\s*/, '').trim();
   }).filter(Boolean);
   return '<ul class="svc-list">' + lines.map(function (l) {
-    var k = /分鐘|時間|題數/.test(l) ? 'time' : /面相|相機|鏡頭/.test(l) ? 'camera' : /Meet|視訊|線上/.test(l) ? 'video' : /LINE|語音|通話/.test(l) ? 'chat' : 'dot';
+    var k = /分鐘|時間|題數/.test(l) ? 'time' : /面相|相機|鏡頭/.test(l) ? 'camera' : /Meet|視訊|線上/.test(l) ? 'video' : /LINE|語音|通話/.test(l) ? 'chat' : /文字|書面/.test(l) ? 'pen' : 'dot';
     return '<li><svg viewBox="0 0 24 24" aria-hidden="true">' + SVC_ICONS[k] + '</svg><span>' + esc(l) + '</span></li>';
   }).join('') + '</ul>';
 }
@@ -259,7 +295,7 @@ function renderSite(S) {
   '<div class="nav-brand">' + esc(S.brandName||'') + '<span style="color:var(--warm)">·</span>命理諮詢</div>' +
   '<div class="nav-links">' +
     '<a href="/about/">關於大正</a><a href="#service">服務內容</a><a href="#process">預約流程</a>' +
-    '<a href="#faq">常見問題</a><a href="/blog/">命理文章</a><a href="/testimonials/">顧客好評</a>' +
+    '<a href="#faq">常見問題</a><a href="/blog/">命理文章</a>' + (TESTIMONIALS_URL ? '<a href="' + TESTIMONIALS_URL + '">顧客好評</a>' : '') +
   '</div>' +
   '<a href="/booking/" class="nav-cta">立即預約諮詢</a>' +
 '</div></nav>' +
@@ -315,6 +351,7 @@ function renderSite(S) {
 
 '<section id="service" class="service section-dark"><div class="container">' +
   '<div class="eyebrow">SERVICE</div><div class="section-title">諮詢服務</div>' +
+  '<div class="service-cards' + (SHOW_TEXT_SERVICE ? ' two' : '') + '">' +
   '<div class="service-card">' +
     '<div class="eyebrow" style="color:var(--warm);">' + esc(S.serviceLabel||'') + '</div>' +
     '<h3>' + esc(S.serviceTitle||'') + '</h3>' +
@@ -323,8 +360,28 @@ function renderSite(S) {
       '<div><div class="service-price">' + esc(S.servicePrice||'') + '</div><div class="service-price-unit">' + esc(S.servicePriceUnit||'') + '</div></div>' +
       '<div class="service-detail">' + renderServiceDetail(S.serviceDetail||'') + '</div>' +
     '</div>' +
+    (SHOW_TEXT_SERVICE ? '<a href="/booking/" class="btn-primary svc-btn">預約一對一諮詢</a>' : '') +
+  '</div>' +
+  (SHOW_TEXT_SERVICE ?
+  '<div class="service-card">' +
+    '<div class="eyebrow" style="color:var(--warm);">' + esc(S.textServiceLabel||'') + '</div>' +
+    '<h3>' + esc(S.textServiceTitle||'') + '</h3>' +
+    '<p>' + esc(S.textServiceDesc||'') + '</p>' +
+    '<div class="service-meta">' +
+      '<div><div class="service-price">' + esc(S.textServicePrice||'') + '</div><div class="service-price-unit">' + esc(S.textServicePriceUnit||'') + '</div></div>' +
+      '<div class="service-detail">' + renderServiceDetail(S.textServiceDetail||'') + '</div>' +
+    '</div>' +
+    '<a href="' + (S.lineUrl||'') + '" target="_blank" rel="noopener" class="btn-warm svc-btn">' + esc(S.textServiceBtn||'用 LINE 詢問') + '</a>' +
+  '</div>' : '') +
   '</div>' +
 '</div></section>' +
+
+((S.firstSteps||[]).length ?
+'<section id="first-time" class="first section-light"><div class="container">' +
+  '<div class="eyebrow" style="color:var(--navy-3);">FIRST TIME</div><div class="section-title">第一次諮詢怎麼進行</div>' +
+  (S.firstIntro ? '<p class="first-intro">' + esc(S.firstIntro) + '</p>' : '') +
+  '<ol class="first-list">' + S.firstSteps.map(function(f,i){return '<li class="first-item"><div class="first-num">'+(i+1)+'</div><div class="first-body">'+(f.when?'<div class="first-when">'+esc(f.when)+'</div>':'')+'<div class="first-title">'+esc(f.title)+'</div><div class="first-desc">'+esc(f.desc||'')+'</div></div></li>';}).join('') + '</ol>' +
+'</div></section>' : '') +
 
 '<section id="process" class="process section-white"><div class="container">' +
   '<div class="eyebrow" style="color:var(--navy-3);">PROCESS</div><div class="section-title">預約流程</div>' +
@@ -414,6 +471,14 @@ renderSite(SITE);
       if (label && value) heroCards.push({ label: label, value: value });
     }
     if (heroCards.length) merged.heroInfoCard = heroCards;
+
+    // 第一次諮詢怎麼進行（後台開了 6 格 first1When/Title/Desc ~ first6…，標題留空代表這格不使用）
+    var firsts = [];
+    for (var fi = 1; fi <= 6; fi++) {
+      var ft = data['first' + fi + 'Title'];
+      if (ft) firsts.push({ when: data['first' + fi + 'When'] || '', title: ft, desc: data['first' + fi + 'Desc'] || '' });
+    }
+    if (firsts.length) merged.firstSteps = firsts;
 
     // 預約流程（後台開了 6 格，標題留空代表這格不使用）
     var steps = [];

@@ -43,6 +43,7 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}img
 .social-icon svg{width:17px;height:17px;display:block}
 </style>
 {{ block "head" . }}{{ end }}
+{{ partial "analytics.html" . }}
 </head>
 <body>
 <nav class="site-nav">
@@ -52,7 +53,7 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}img
       <a href="/">首頁</a>
       <a href="/about/">關於大正</a>
       <a href="/blog/">命理文章</a>
-      <a href="/testimonials/">顧客好評</a>
+      {{ with site.GetPage "/testimonials" }}{{ with .RelPermalink }}<a href="{{ . }}">顧客好評</a>{{ end }}{{ end }}
       <a href="/booking/">預約</a>
     </div>
   </div>

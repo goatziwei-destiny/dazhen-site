@@ -1,12 +1,16 @@
 (function () {
   'use strict';
-  var nonce = '', redirected = false;
+  var nonce = '', redirected = false, started = false;
+  function track(name, params, done) {
+    if (window.dzTrack) window.dzTrack(name, params, done); else if (done) done();
+  }
   window.dazhenBookingUrl = function (raw) {
     var url = new URL(raw);
     var bytes = new Uint8Array(16);
     window.crypto.getRandomValues(bytes);
     nonce = Array.from(bytes, function (b) { return b.toString(16).padStart(2, '0'); }).join('');
     redirected = false;
+    track('booking_view', { page: location.pathname });
     url.searchParams.set('bridge', nonce);
     return url.href;
   };
@@ -19,6 +23,15 @@
     var h = Math.max(600, Math.min(20000, Number(d.height) || 0));
     document.querySelectorAll('iframe[data-booking-frame], .booking-iframe-wrap iframe').forEach(function (f) { f.style.height = (h + 24) + 'px'; });
   });
+  // 表單回報「客人開始填寫」→ 記錄漏斗第 ③ 步（每次打開只記一次）
+  window.addEventListener('message', function (event) {
+    var d = event.data;
+    if (started || !d || d.type !== 'dazhen-booking-start' || !nonce || d.nonce !== nonce) return;
+    var o; try { o = new URL(event.origin); } catch (_) { return; }
+    if (o.protocol !== 'https:' || !/^(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(o.hostname)) return;
+    started = true;
+    track('booking_form_start', { page: location.pathname });
+  });
   window.addEventListener('message', function (event) {
     var data = event.data;
     if (redirected || !nonce || !data || data.type !== 'dazhen-booking-success' || data.nonce !== nonce) return;
@@ -29,12 +42,15 @@
     if (!/^GR\d{8}-\d{2}$/.test(data.batchId) || !/^@[a-zA-Z0-9._-]+$/.test(data.basicId)) return;
     redirected = true;
     var text = '大正，我的訂單編號是「' + data.batchId + '」';
+    var go;
     var mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     if (mobile) {
-      window.location.assign('https://line.me/R/oaMessage/' + encodeURIComponent(data.basicId) + '/?' + encodeURIComponent(text));
+      go = 'https://line.me/R/oaMessage/' + encodeURIComponent(data.basicId) + '/?' + encodeURIComponent(text);
     } else {
-      window.location.assign('/line-redirect/?batch=' + encodeURIComponent(data.batchId));
+      go = '/line-redirect/?batch=' + encodeURIComponent(data.batchId);
     }
+    // 先把「送出成功」送到 GA（最多等 1.3 秒），再跳轉；沒有 GA 就立刻跳
+    track('booking_submit', { page: location.pathname, device: mobile ? 'mobile' : 'desktop' }, function () { window.location.assign(go); });
   });
 })();

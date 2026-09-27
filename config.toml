@@ -16,6 +16,14 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
   # 不用自己去改 HTML 檔案。沒有要驗證的話留空即可。
   googleSiteVerification = ""
 
+  # ── Google Analytics 4（流量分析＋預約漏斗）──
+  # 貼上 GA4 的評估 ID（G- 開頭，例如 G-AB12CD34EF）就會開始統計；留空則完全不載入任何追蹤碼。
+  ga4Id = ""
+
+  # ── 文字版諮詢 ──
+  # 內容已做好但先不顯示；要上線時改成 true，首頁「諮詢服務」會變成兩張卡片。
+  showTextService = false
+
   # ── 社群連結（給文章頁/首頁以外頁面的頁尾用）──
   # ⚠️ 這裡跟 layouts/index.html 裡的 SITE.socialLinks 是兩份分開的設定（因為首頁是自己刻的 JS 渲染，
   #    其他頁面走 Hugo 樣板），兩邊的 url 要分別填，跟 lineUrl 目前的做法一樣。
