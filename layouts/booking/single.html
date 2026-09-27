@@ -1,0 +1,23 @@
+{{ define "head" }}
+<style>
+.bk-page{padding:48px 0 72px}
+.bk-page .container{max-width:640px}
+.bk-page h1{text-align:center;font-size:clamp(26px,5vw,32px);color:var(--navy);margin-bottom:10px}
+.bk-page .bk-lead{text-align:center;color:#78716c;font-size:15px;line-height:1.8;margin-bottom:28px}
+.bk-frame{width:100%;height:1600px;border:0;display:block;background:transparent;transition:height .2s}
+@media (max-width:640px){.bk-page{padding:28px 0 48px}.bk-page .container{padding:0 8px}}
+</style>
+{{ end }}
+{{ define "main" }}
+<div class="bk-page">
+  <div class="container">
+    <h1>{{ .Title }}</h1>
+    {{ with .Params.lead }}<p class="bk-lead">{{ . }}</p>{{ end }}
+    <iframe class="bk-frame" id="bookingFrame" data-booking-frame title="線上預約表單"></iframe>
+  </div>
+</div>
+<script src="/booking-bridge.js"></script>
+<script>
+  document.getElementById('bookingFrame').src = window.dazhenBookingUrl({{ .Site.Params.bookingFormUrl }});
+</script>
+{{ end }}

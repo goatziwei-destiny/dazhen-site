@@ -14,14 +14,19 @@
 {{ with .Params.tags }}<meta name="keywords" content="{{ delimit . ", " }}">{{ end }}
 <link rel="canonical" href="{{ .Permalink }}">
 {{ with .Site.Params.googleSiteVerification }}<meta name="google-site-verification" content="{{ . }}">{{ end }}
+<link rel="preload" href="/fonts/dazhen-wenkai-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/dazhen-wenkai-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <style>
+@font-face{font-family:"Dazhen WenKai";src:url("/fonts/dazhen-wenkai-400.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Dazhen WenKai";src:url("/fonts/dazhen-wenkai-700.woff2") format("woff2");font-weight:700;font-display:swap}
+
 :root{--navy:#1b2845;--navy-2:#21304c;--cream:#f5f3ef;--accent:#6292ab;--warm:#cc8854;--text-light:#c8cdd4;--text-muted:#8a95a5}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
-body{font-family:"LXGW WenKai TC",sans-serif;color:var(--navy);background:var(--cream);line-height:1.8}
+body{font-family:"Dazhen WenKai","LXGW WenKai TC","PingFang TC","Microsoft JhengHei",sans-serif;color:var(--navy);background:var(--cream);line-height:1.8}
 a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}img{max-width:100%;display:block}
 .container{max-width:800px;margin:0 auto;padding:0 24px}
 .site-nav{background:rgba(27,40,69,.95);backdrop-filter:blur(8px);padding:0 24px;position:sticky;top:0;z-index:100}
@@ -45,9 +50,10 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}img
     <a href="/" class="site-nav-brand">大正<span>·</span>命理諮詢</a>
     <div class="site-nav-links">
       <a href="/">首頁</a>
+      <a href="/about/">關於大正</a>
       <a href="/blog/">命理文章</a>
       <a href="/testimonials/">顧客好評</a>
-      <a href="/#booking">預約</a>
+      <a href="/booking/">預約</a>
     </div>
   </div>
 </nav>

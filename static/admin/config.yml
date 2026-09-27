@@ -31,4 +31,24 @@ collections:
           - { label: "主要關鍵字", name: "keyword", widget: "string", required: false, hint: "這篇文章最重要的一個搜尋關鍵字" }
           - { label: "Meta Description（Google 搜尋結果顯示的描述）", name: "metaDescription", widget: "text", required: false, hint: "不填的話會用上面的「摘要」。填了的話 Google 搜尋結果會優先用這段" }
           - { label: "GEO 核心回答（AI 搜尋引擎用）", name: "geoAnswer", widget: "text", required: false, hint: "一段簡潔的回答，幫助 AI 搜尋引擎理解這篇文章的核心觀點" }
-      - { label: "內文", name: "body", widget: "markdown", hint: "插入圖片：點工具列的「＋」→「Image」，可以插入多張，每張放在想出現的段落之間。圖片的「Alt」會變成圖片下方的說明文字。" }
+      - label: "內文"
+        name: "body"
+        widget: "markdown"
+        modes: ["rich_text", "raw"]
+        buttons: ["bold", "italic", "link", "heading-two", "heading-three", "heading-four", "quote", "bulleted-list", "numbered-list"]
+        editor_components: ["image"]
+        hint: "【標題】工具列的 Headings：Heading 2＝大標題、Heading 3＝中標題、Heading 4＝小標題。【圖片】點工具列「＋」→「Image」，可以插入很多張，放在想出現的段落之間，Alt 會變成圖片說明。【貼上 AI 寫好的文章】點這個欄位右上角切換成「Markdown」，整篇貼上，再切回「Rich Text」檢查。"
+
+  - name: "pages"
+    label: "網站頁面"
+    files:
+      - label: "關於大正"
+        name: "about"
+        file: "content/about.md"
+        fields:
+          - { label: "頁面標題", name: "title", widget: "string" }
+          - { label: "頁面類型（請勿修改）", name: "type", widget: "hidden", default: "about" }
+          - { label: "開場一句話", name: "lead", widget: "string", required: false }
+          - { label: "搜尋結果描述（Meta Description）", name: "description", widget: "text", required: false }
+          - { label: "大頭貼（選填，不放會用首頁同一張 about.jpg）", name: "photo", widget: "image", required: false }
+          - { label: "內文", name: "body", widget: "markdown" }

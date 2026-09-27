@@ -1,0 +1,55 @@
+{{ define "head" }}
+<style>
+.ab-hero{background:var(--navy);color:#fff;padding:76px 0 56px;text-align:center}
+.ab-hero .container{max-width:720px}
+.ab-avatar{width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:60px;margin:0 auto 18px;overflow:hidden}
+.ab-avatar img{width:100%;height:100%;object-fit:cover}
+.ab-hero h1{font-size:clamp(26px,5vw,34px);font-weight:700}
+.ab-lead{font-size:18px;color:var(--warm);margin-top:14px;line-height:1.7}
+.ab-stats{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:28px}
+.ab-stat{background:rgba(255,255,255,.08);border-radius:12px;padding:12px 18px;min-width:110px}
+.ab-stat b{display:block;font-size:22px;color:#fff}
+.ab-stat span{font-size:12px;color:rgba(255,255,255,.7)}
+.ab-body{padding:48px 0 24px}
+.ab-body .container{max-width:720px}
+.ab-body h2{font-size:24px;color:var(--navy);margin:44px 0 14px;padding-bottom:8px;border-bottom:2px solid rgba(98,146,171,.25)}
+.ab-body h2:first-child{margin-top:0}
+.ab-body p{font-size:17px;line-height:1.95;color:#2b2b2b;margin:0 0 20px;letter-spacing:.03em}
+.ab-body strong{color:var(--navy);background:linear-gradient(transparent 62%,rgba(204,136,84,.22) 62%)}
+.ab-cta{padding:8px 0 64px}
+.ab-cta .container{max-width:720px}
+.ab-cta-box{background:var(--navy);border-radius:16px;padding:32px 24px;text-align:center;color:#fff}
+.ab-cta-box p{color:rgba(255,255,255,.8);margin:0 0 18px;font-size:16px}
+.ab-cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.ab-cta-btns a{padding:13px 24px;border-radius:10px;font-weight:700;text-decoration:none}
+.ab-cta-btns .a1{background:var(--warm);color:#fff}
+.ab-cta-btns .a2{border:1px solid rgba(255,255,255,.45);color:#fff}
+@media (max-width:640px){.ab-body p{font-size:16px}.ab-body h2{font-size:21px}}
+</style>
+{{ end }}
+
+{{ define "main" }}
+<div class="ab-hero">
+  <div class="container">
+    <div class="ab-avatar"><img src="{{ .Params.photo | default "/images/about.jpg" }}" alt="大正" onerror="this.outerHTML='🐏'"></div>
+    <h1>{{ .Title }}</h1>
+    {{ with .Params.lead }}<div class="ab-lead">{{ . }}</div>{{ end }}
+    <div class="ab-stats">
+      <div class="ab-stat"><b>3 年</b><span>諮詢經驗</span></div>
+      <div class="ab-stat"><b>500+</b><span>看過的命盤</span></div>
+    </div>
+  </div>
+</div>
+<div class="ab-body"><div class="container">{{ .Content }}</div></div>
+<div class="ab-cta">
+  <div class="container">
+    <div class="ab-cta-box">
+      <p>帶著你的問題來吧。</p>
+      <div class="ab-cta-btns">
+        <a class="a1" href="/booking/">預約一對一諮詢</a>
+        <a class="a2" href="{{ .Site.Params.lineUrl | default "https://lin.ee/vlvPoMa" }}" target="_blank" rel="noopener">諮詢前，請先加入 LINE</a>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}

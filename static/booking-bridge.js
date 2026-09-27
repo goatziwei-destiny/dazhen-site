@@ -10,6 +10,15 @@
     url.searchParams.set('bridge', nonce);
     return url.href;
   };
+  // 表單回報自己的高度 → 把外框撐到剛好，整頁只剩一條捲軸
+  window.addEventListener('message', function (event) {
+    var d = event.data;
+    if (!d || d.type !== 'dazhen-booking-height' || !nonce || d.nonce !== nonce) return;
+    var o; try { o = new URL(event.origin); } catch (_) { return; }
+    if (o.protocol !== 'https:' || !/^(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(o.hostname)) return;
+    var h = Math.max(600, Math.min(20000, Number(d.height) || 0));
+    document.querySelectorAll('iframe[data-booking-frame], .booking-iframe-wrap iframe').forEach(function (f) { f.style.height = (h + 24) + 'px'; });
+  });
   window.addEventListener('message', function (event) {
     var data = event.data;
     if (redirected || !nonce || !data || data.type !== 'dazhen-booking-success' || data.nonce !== nonce) return;
