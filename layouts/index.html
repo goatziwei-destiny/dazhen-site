@@ -199,10 +199,11 @@ const SITE = {
 
   // ── 預約流程 ──
   processSteps: [
-    { title: "填寫預約表單", desc: "填入出生年月日時辰、想諮詢的方向，並直接在表單裡選擇希望的諮詢時段。", done: true },
-    { title: "收到確認信 & 付款資訊", desc: "送出後 Email 會收到確認信，裡面有匯款帳號與金額，請於 2 天內完成匯款。", done: true },
-    { title: "私訊 LINE@ 回報匯款", desc: "匯款完成後，私訊 LINE@ 告知訂單編號與匯款帳號末五碼，這才算正式完成預約。", done: false },
-    { title: "諮詢開始", desc: "準時上線，透過 Google Meet 或 LINE@ 輕鬆好好聊 60 分鐘。", done: false },
+    { title: "填寫預約表單", desc: "選擇諮詢方式和時段，填寫出生資料。不確定準確的出生時間也沒關係，勾選後大正會在諮詢時協助定盤。", done: true },
+    { title: "加入 LINE、送出訂單編號", desc: "用手機預約，送出後會自動開啟 LINE，訂單編號已經帶入，按傳送就好；用電腦的話，用手機掃畫面上的 QR Code。", done: true },
+    { title: "匯款並回覆末五碼", desc: "請在 48 小時內匯款 NT$3,600，匯款後在 LINE 直接回覆帳號末五碼（5 個數字）就完成了。", done: false },
+    { title: "收到預約成功通知", desc: "確認收款後，LINE 和 Email 都會通知你；選 Google Meet 的話，會附上視訊連結並加入你的行事曆。", done: false },
+    { title: "諮詢當天準時上線", desc: "諮詢前一天會再提醒你一次。Google Meet 點連結加入；選 LINE 語音的話，時間到了大正會撥給你。", done: false },
   ],
 
   // ── 注意事項 ──
