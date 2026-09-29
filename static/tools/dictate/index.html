@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>錄音小視窗｜大正</title>
+<style>
+:root{--ink:#1b2845;--warm:#cc8854;--line:#e7e0d4;--muted:#857c70}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;background:#fbf8f3;color:#2b2b2b;padding:14px}
+h1{font-size:17px;margin:0 0 4px;color:var(--ink)}
+.sub{font-size:12.5px;color:var(--muted);line-height:1.6;margin:0 0 10px}
+.rec{width:100%;border:0;border-radius:14px;padding:14px;font-size:17px;font-weight:700;cursor:pointer;background:var(--ink);color:#fff;font-family:inherit}
+.rec.on{background:#b91c1c}
+.status{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin:10px 0 6px;min-height:20px}
+.dot{width:10px;height:10px;border-radius:50%;background:#d6d3d1}
+.on .dot,.status.on .dot{background:#dc2626;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.25}}
+textarea{width:100%;height:calc(100vh - 290px);min-height:180px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:15px;line-height:1.8;font-family:inherit;background:#fff;resize:vertical}
+.interim{color:#a8a29e;font-size:14px;line-height:1.7;min-height:22px;margin:6px 2px}
+.row{display:flex;gap:8px;margin-top:8px}
+.row button{flex:1;border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px;font-size:14px;cursor:pointer;font-family:inherit;color:var(--ink)}
+.row button.send{background:var(--warm);border-color:var(--warm);color:#fff;font-weight:700}
+.msg{font-size:13px;margin-top:8px;min-height:18px}
+.err{background:#fef2f2;color:#b91c1c;border-radius:10px;padding:10px 12px;font-size:13.5px;line-height:1.7;display:none}
+</style>
+</head>
+<body>
+<h1 id="title">🎙️ 錄音小視窗</h1>
+<p class="sub">按「開始錄音」後一直講就好。這個視窗可以放在螢幕角落，去操作排盤軟體也會繼續錄（不要把它縮小到工作列）。講完按「送回工作台」。</p>
+<div class="err" id="err"></div>
+<button class="rec" id="recBtn">開始錄音</button>
+<div class="status" id="status"><span class="dot"></span><span id="statusText">尚未開始</span></div>
+<textarea id="text" placeholder="講的內容會出現在這裡，也可以直接修改"></textarea>
+<div class="interim" id="interim"></div>
+<div class="row"><button class="send" id="sendBtn">送回工作台</button></div>
+<div class="row"><button id="copyBtn">複製全部</button><button id="clearBtn">清除</button></div>
+<div class="msg" id="msg"></div>
+<script>
+(function () {
+  var qp = new URLSearchParams(location.search), part = qp.get('part') || '', label = qp.get('label') || '';
+  if (label) { document.getElementById('title').textContent = '🎙️ 錄音：' + label; document.title = '錄音：' + label; }
+  var ta = document.getElementById('text'), interimEl = document.getElementById('interim'), btn = document.getElementById('recBtn');
+  var statusEl = document.getElementById('status'), statusText = document.getElementById('statusText'), msgEl = document.getElementById('msg');
+  var saveKey = 'dazhen_dictation_' + part;
+  try { ta.value = localStorage.getItem(saveKey) || ''; } catch (e) {}
+  var persist = function () { try { localStorage.setItem(saveKey, ta.value); } catch (e) {} };
+  ta.addEventListener('input', persist);
+  var msg = function (t, bad) { msgEl.textContent = t; msgEl.style.color = bad ? '#b91c1c' : '#15803d'; if (t) setTimeout(function () { if (msgEl.textContent === t) msgEl.textContent = ''; }, 5000); };
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { var er = document.getElementById('err'); er.style.display = 'block'; er.textContent = '這個瀏覽器不支援語音辨識，請改用 Chrome 或 Edge 打開。'; btn.disabled = true; }
+  var rec = null, wanted = false;
+  function setUi(on) { btn.textContent = on ? '暫停錄音' : '開始錄音'; btn.classList.toggle('on', on); statusEl.classList.toggle('on', on); statusText.textContent = on ? '錄音中…（可以切到別的視窗）' : '已暫停'; }
+  function start() {
+    rec = new SR(); rec.lang = 'zh-TW'; rec.continuous = true; rec.interimResults = true;
+    rec.onresult = function (e) {
+      var interim = '';
+      for (var i = e.resultIndex; i < e.results.length; i++) {
+        var t = e.results[i][0].transcript;
+        if (e.results[i].isFinal) { ta.value += (ta.value && !/\s$/.test(ta.value) ? ' ' : '') + t.trim(); persist(); ta.scrollTop = ta.scrollHeight; }
+        else interim += t;
+      }
+      interimEl.textContent = interim;
+    };
+    rec.onerror = function (e) {
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { wanted = false; setUi(false); var er = document.getElementById('err'); er.style.display = 'block'; er.textContent = '沒有麥克風權限。請點網址列左邊的圖示，把「麥克風」改成允許，再重新整理。'; }
+    };
+    rec.onend = function () { interimEl.textContent = ''; if (wanted) setTimeout(function () { try { start(); } catch (x) {} }, 200); else setUi(false); }; // 瀏覽器會自動停，錄音中就自動接回去
+    rec.start();
+  }
+  btn.onclick = function () {
+    if (!SR) return;
+    if (wanted) { wanted = false; try { rec.stop(); } catch (e) {} setUi(false); }
+    else { wanted = true; setUi(true); try { start(); } catch (e) {} }
+  };
+  document.getElementById('sendBtn').onclick = function () {
+    var text = ta.value.trim(); if (!text) { msg('還沒有內容', true); return; }
+    if (window.opener && !window.opener.closed) {
+      window.opener.postMessage({ type: 'dazhen-dictation', part: part, text: text }, '*');
+      msg('已送回工作台「' + (label || '這一格') + '」。');
+      ta.value = ''; persist();
+    } else { navigator.clipboard.writeText(text).then(function () { msg('找不到工作台視窗，已改成複製，請到工作台貼上。', true); }); }
+  };
+  document.getElementById('copyBtn').onclick = function () { navigator.clipboard.writeText(ta.value).then(function () { msg('已複製。'); }); };
+  document.getElementById('clearBtn').onclick = function () { if (ta.value && !confirm('確定清除這個視窗裡的內容？')) return; ta.value = ''; persist(); };
+})();
+</script>
+</body>
+</html>
