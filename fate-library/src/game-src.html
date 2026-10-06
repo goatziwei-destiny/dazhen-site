@@ -264,8 +264,8 @@ const S={
  temple:[{fx:'tin',pose:'kt:0',dur:1.4},
   {pose:'kt:0',stay:1}],
  tc:[{say:'經典的修行方式，能抄、能唸，也能恭敬地供養。',pose:'kwrite',dg:'dgC'},
-  {fx:'cclose',say:'抄好的經典，闔起來恭敬地捧在手上。',pose:'kh:0'},
-  {fx:'csutra',say:'把整本經典安放在佛前，就是一種供養。'},
+  {fx:'cclose',say:'供養在佛前的，是請購或結緣來的經典，不是自己抄的那本。',pose:'kh:0'},
+  {fx:'csutra',say:'把整本經典恭敬地安放在佛前，就是一種供養。'},
   {say:'每天換一杯清水，也是供養。',pose:'ktalk'},
   {say:'恭敬禮拜，本身就是修持。',pose:'kneel:0>1>2@.9'},
   {fx:'tend',say:'還想知道什麼呢？',pose:'ktalk',stay:1}],
@@ -279,6 +279,22 @@ const S={
   {fx:'elamps',say:'點了一百盞，第一盞的光也不會變少。',pose:'ktalk'},
   {say:'可以迴向給自己。',pose:'kneel:1'},
   {fx:'espark',say:'也可以迴向給需要的人，光就越來越亮。',pose:'kneel:1'},
+  {fx:'tend',say:'還想知道什麼呢？',pose:'ktalk',stay:1}],
+ tf:[{say:'抄好的經典，有兩種處理方式。',pose:'ktalk'},
+  {fx:'fwrap',say:'第一種：用乾淨的紙或袋子包好，再丟進垃圾桶。',pose:'ktalk'},
+  {fx:'fburn0',say:'第二種：焚燒。',pose:'ktalk'},
+  {fx:'fburn',say:'一邊燒，一邊誦持心經最後的偈頌：',pose:'ktalk'},
+  {fx:'fburn',say:'揭諦揭諦，波羅揭諦，波羅僧揭諦，菩提薩婆訶。',pose:'ktalk',cps:5},
+  {fx:'fash',say:'燒完的灰燼，記得收集好，再拿去丟棄。',pose:'ktalk'},
+  {fx:'tend',say:'還想知道什麼呢？',pose:'ktalk',stay:1}],
+ tg:[{say:'迴向文其實沒有固定的格式，用自己的話說就可以。',pose:'ktalk'},
+  {say:'你祈禱的對象，是世界上最慈愛、最有智慧的人，一定能明白你的意思。',pose:'ktalk'},
+  {say:'像我這樣——',pose:'ktalk'},
+  {fx:'gpray',say:'我希望我有好吃的牧草，也希望大家都跟我一樣。',pose:'kneel:1',cps:8},
+  {fx:'tend',say:'還想知道什麼呢？',pose:'ktalk',stay:1}],
+ th:[{say:'帶著目的做善事，是可以的。',pose:'ktalk'},
+  {say:'完全不求回報，那不是凡人的境界。',pose:'ktalk'},
+  {say:'所以，不需要因為有私心，就覺得愧疚。',pose:'kneel:1'},
   {fx:'tend',say:'還想知道什麼呢？',pose:'ktalk',stay:1}],
  palace:[{say:'這是十二宮圖鑑。點一張卡片，我告訴你那一宮在看什麼。',pose:'present:1',stay:1}],
  faq:[{ch:'怎麼預約？',say:'怎麼預約？',pose:'think:1'},
@@ -346,8 +362,9 @@ let T=0,INTRO_T0=0;const G={x:0,walking:false};
 const ST={scene:'intro',bi:0,bt:0,typed:0,fade:0,next:null,ch:''};
 function beat(){return S[ST.scene][ST.bi];}
 function beatText(b){return b&&b.say?[...b.say]:[];}
-function typeDur(b){return beatText(b).length/CPS;}
-function startBeat(){ST.bt=0;ST.typed=0;const b=beat();if(!b)return;if(b.ch)ST.ch=b.ch;
+function cpsOf(b){return (b&&b.cps)||CPS;}
+function typeDur(b){return beatText(b).length/cpsOf(b);}
+function startBeat(){ST.bt=0;ST.typed=0;const b=beat();if(!b)return;if(b.fx==='fburn'&&(S[ST.scene][ST.bi-1]||{}).fx!=='fburn')BURN.t0=T;if(b.ch)ST.ch=b.ch;
   if(b.fx==='walkin'){G.x=W+300;G.walking=true;}
   if(b.fx==='held'){FLASH=T;}
   if(b.fx==='cardsOut'){const A=airPos();CARDS.src={x:A.x,y:A.y-20};CARDS.mode='out';CARDS.t0=T;}
@@ -392,7 +409,7 @@ function update(dt){T+=dt;
   if(b.fx==='topen'){G.x=WDOOR[TALL?'t':'w'].stand;G.walking=false;}
   if(b.fx==='tenter'){const D=WDOOR[TALL?'t':'w'];G.x=D.stand+((D.x0+D.x1)/2+40-D.stand)*prog(ST.bt,0,1.0);G.walking=true;G.left=true;}
   if(b.fx==='cardsOut'&&ST.bt>2.6)CARDS.mode='ring';
-  if(b.say){const n=Math.min(beatText(b).length,Math.floor(ST.bt*CPS));if(n>ST.typed&&n%2===0)blips.push(T);ST.typed=n;}
+  if(b.say){const n=Math.min(beatText(b).length,Math.floor(ST.bt*cpsOf(b)));if(n>ST.typed&&n%2===0)blips.push(T);ST.typed=n;}
   const total=b.dur!==undefined?b.dur:typeDur(b)+HOLD;
   if(!b.stay&&ST.bt>=total)nextBeat();
   if(CARDS.mode==='flip'&&T-CARDS.t0>12*.18+.5)CARDS.mode='front';}
@@ -402,7 +419,7 @@ function poseFrame(b){if(G.walking)return (G.left?'wl':'walk')+(Math.floor(T*7)%
   {const ip=idlePose();if(ip)return ip;const qp=quipPose();if(qp)return qp;}
   if(TITLE[ST.scene]){const rt=retT();if(rt>=0)return rt<1.35?'welcome1':'book0';if(ST.bi===0&&ST.bt<.9)return ST.bt<.1?'book0':'welcome1';}
   if(b&&b.fx==='csutra')return ST.bt<.7?'kh1':(ST.bt<typeDur(b)?(Math.floor(ST.bt/.13)%2?'kt1':'kt0'):'kt0');
-  if(b&&b.fx==='cclose')return ST.bt<.6?'kw0':'kh0';
+  if(b&&b.fx==='cclose')return 'kh0';
   if(b&&b.fx==='dcount')return 'kc'+(Math.floor(ST.bt/.25)%2);
   if(b&&b.fx==='dbeads')return 'kb'+(Math.floor(ST.bt/.45)%3);
   if(b&&b.pose==='kwrite')return 'kw'+(Math.floor(ST.bt/.3)%3);
@@ -635,7 +652,7 @@ function drawZzz(){if(IDLE.st!=='sit'||T-IDLE.t0<6.4)return;const bb=goatBox('si
   for(let i=0;i<3;i++){const ph=((T-IDLE.t0)*.45+i/3)%1;const a=Math.min(1,ph*4)*(1-ph);const sz=Math.round(30+30*ph);ctx.globalAlpha=a;text('Z',hx+ph*80+Math.sin(ph*6+i)*12,hy-ph*170,sz,C.cream,'center');ctx.globalAlpha=1;}}
 
 // ================= 小佛堂 =================
-const TSC={temple:1,tc:1,td:1,te:1};function inTemple(){return !!TSC[ST.scene];}
+const TSC={temple:1,tc:1,td:1,te:1,tf:1,tg:1,th:1};function inTemple(){return !!TSC[ST.scene];}
 let TEMPLE_SEEN=false;
 const WDOOR={w:{x0:95,y0:100,x1:418,y1:866,stand:680},t:{x0:40,y0:778,x1:212,y1:1197,stand:440}};
 const TP={w:{door:{x:900,y:960,h:560},altar:{y:672,x0:430,x1:1160},cup:{x:878,y:632},sutra:{x:796,y:661},cushion:{x:795,feet:912,s:.72},budd:{x:797,y:253},floorY:835,win:{x:1780,y:248},dg:{x:60,y:60,w:560,h:420},ctr:{x:1260,y:430,w:300},candles:[[547,271],[1038,271],[1017,556]]},
@@ -688,9 +705,62 @@ function drawTempleFront(){if(!inTemple())return;const P=tp(),b=beat();
   if(b&&b.dg){const D=b.dgc?(TALL?{x:90,y:330,w:900,h:675}:{x:560,y:110,w:800,h:600}):P.dg,a=eo(prog(ST.bt,0,.5))*(1-prog(ST.bt,typeDur(b)+1.2,typeDur(b)+1.8));if(a>0){ctx.globalAlpha=a;parchBox(D.x-14,D.y-14,D.w+28,D.h+28);ctx.imageSmoothingEnabled=true;sprite(b.dg,D.x,D.y,D.w,D.h);ctx.imageSmoothingEnabled=false;ctx.globalAlpha=1;}}}
 function sceneTemple(){const b=beat();if(!b||!b.stay||ST.scene!=='temple'||quipOn()||IDLE.st!=='none')return;const D=LY.dlg,a=eo(prog(ST.bt,0,.4));ctx.globalAlpha=a;
   frameBox(D.x,D.y,D.w,D.h);frameBox(D.x+30,D.y-66,240,72,C.panel2);text('大正',D.x+150,D.y-16,44,C.gold,'center');
-  text('這裡是小佛堂。想知道什麼呢？',D.x+60,D.y+(TALL?72:66),TALL?40:42,C.paper);
+  text('這裡是小佛堂。想知道什麼呢？',D.x+60,D.y+(TALL?72:66),TALL?40:42,C.paper);text((TPAGE+1)+'／2',D.x+D.w-60,D.y+(TALL?72:66),TALL?30:32,C.muted,'right');
   const cw=(D.w-120)/2,fs=TALL?32:38,r0=D.y+(TALL?152:140),rh=TALL?78:70;
-  [['tc','經典只能抄或念嗎？'],['td','持咒念佛，怎麼計數更好？'],['te','迴向，功德會變少嗎？'],['menu','回到命運書庫']].forEach(([id,l],i)=>item(id,l,D.x+40+(i%2)*(cw+40),r0+Math.floor(i/2)*rh,cw,fs));ctx.globalAlpha=1;}
+  TMENU[TPAGE].forEach(([id,l],i)=>item(id,l,D.x+40+(i%2)*(cw+40),r0+Math.floor(i/2)*rh,cw,fs));ctx.globalAlpha=1;
+  pill('menu','◀ 回到命運書庫',40,40);}
+// 小佛堂選單：兩頁，每頁三個主題＋換頁
+let TPAGE=0;
+const TMENU=[[['tc','經典只能抄或念嗎？'],['td','持咒念佛，怎麼計數更好？'],['te','迴向，功德會變少嗎？'],['tpage','下一頁 ▶']],
+  [['tf','抄好的經典，怎麼處理？'],['tg','迴向文，要怎麼說？'],['th','做善事，可以有目的嗎？'],['tpage','◀ 上一頁']]];
+// 圖解框：抄好的經典怎麼處理（用程式畫：包裝、垃圾桶、銅盆、火焰、煙、灰燼）
+const BURN={t0:0,cv:null};
+function burnCanvas(w,h){if(!BURN.cv)BURN.cv=document.createElement('canvas');if(BURN.cv.width!==w||BURN.cv.height!==h){BURN.cv.width=w;BURN.cv.height=h;}return BURN.cv;}
+function tfBox(){return TALL?{x:90,y:110,w:900,h:675}:{x:60,y:60,w:560,h:420};}
+function flame(x,y,w,h,a){if(h<=2||a<=0)return;ctx.save();ctx.globalAlpha=a;const g=ctx.createLinearGradient(0,y,0,y-h);g.addColorStop(0,'rgba(255,120,30,.95)');g.addColorStop(.45,'rgba(255,190,70,.9)');g.addColorStop(1,'rgba(255,240,180,0)');
+  ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(x-w/2,y);ctx.quadraticCurveTo(x-w*.55,y-h*.45,x,y-h);ctx.quadraticCurveTo(x+w*.55,y-h*.45,x+w/2,y);ctx.closePath();ctx.fill();
+  const c=ctx.createLinearGradient(0,y,0,y-h*.6);c.addColorStop(0,'rgba(255,250,220,.9)');c.addColorStop(1,'rgba(255,250,220,0)');ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(x-w*.22,y);ctx.quadraticCurveTo(x-w*.25,y-h*.3,x,y-h*.6);ctx.quadraticCurveTo(x+w*.25,y-h*.3,x+w*.22,y);ctx.closePath();ctx.fill();ctx.restore();}
+function basin(cx,by,w,front){const h=w*.32;ctx.save();if(!front){ctx.fillStyle='#3b2a1c';ctx.beginPath();ctx.ellipse(cx,by-h,w/2,h*.28,0,0,Math.PI*2);ctx.fill();}
+  else{ctx.fillStyle='#8a5a2b';ctx.beginPath();ctx.moveTo(cx-w/2,by-h);ctx.lineTo(cx+w/2,by-h);ctx.lineTo(cx+w*.36,by);ctx.lineTo(cx-w*.36,by);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#b07a3c';ctx.fillRect(cx-w/2,by-h-4,w,8);ctx.fillStyle='rgba(255,230,170,.35)';ctx.fillRect(cx-w*.4,by-h+10,w*.8,4);}ctx.restore();}
+function drawTF(){if(ST.scene!=='tf')return;const b=beat();if(!b||ST.bi<1||b.fx==='tend')return;const D=tfBox(),a=ST.bi===1?eo(prog(ST.bt,0,.5)):1,t=ST.bt;
+  ctx.save();ctx.globalAlpha=a;parchBox(D.x-14,D.y-14,D.w+28,D.h+28);const g=ctx.createLinearGradient(0,D.y,0,D.y+D.h);g.addColorStop(0,'#2b1d14');g.addColorStop(1,'#140c08');ctx.fillStyle=g;ctx.fillRect(D.x,D.y,D.w,D.h);
+  ctx.beginPath();ctx.rect(D.x,D.y,D.w,D.h);ctx.clip();const fl=D.y+D.h*.86;ctx.fillStyle='#3a2617';ctx.fillRect(D.x,fl,D.w,D.y+D.h-fl);
+  const m=FM.p_sutraC,bh=D.h*.42,bw=bh*m.w/m.h;
+  if(b.fx==='fwrap'){// 包好 → 丟進垃圾桶
+    const bx=D.x+D.w*.36,k=ez(prog(t,.4,1.6)),mv=ez(prog(t,2.0,3.0)),bin={x:D.x+D.w*.76,y:fl,w:D.w*.2,h:D.h*.34};
+    const px=bx+(bin.x-bx)*mv,py=fl-bin.h*.4*mv-Math.sin(Math.PI*mv)*D.h*.25,sc=1-.35*mv;
+    // 垃圾桶（後半）
+    ctx.fillStyle='#55606a';ctx.beginPath();ctx.ellipse(bin.x,bin.y-bin.h,bin.w/2,bin.w*.12,0,0,Math.PI*2);ctx.fill();
+    if(mv<.98){const w2=bw*sc,h2=bh*sc,x2=px-w2/2,y2=py-h2;ctx.imageSmoothingEnabled=true;if(k<1)sprite('p_sutraC',x2,y2,w2,h2);ctx.imageSmoothingEnabled=false;
+      if(k>0){const cw=w2*1.12,ch=h2*1.04;ctx.fillStyle='#f4ecdc';ctx.fillRect(px-cw/2,y2-h2*.02,cw*Math.min(1,k*1.02)/2,ch);ctx.fillRect(px+cw/2-cw*k/2,y2-h2*.02,cw*k/2,ch);
+        if(k>=1){ctx.fillStyle='rgba(120,90,60,.35)';ctx.fillRect(px-1,y2,2,ch);ctx.fillStyle='#b8452f';ctx.fillRect(px-cw/2,y2+ch*.48,cw,6);ctx.fillRect(px-3,y2,6,ch);}}}
+    // 垃圾桶（前半）
+    ctx.fillStyle='#6f7b86';ctx.beginPath();ctx.moveTo(bin.x-bin.w/2,bin.y-bin.h);ctx.lineTo(bin.x+bin.w/2,bin.y-bin.h);ctx.lineTo(bin.x+bin.w*.4,bin.y);ctx.lineTo(bin.x-bin.w*.4,bin.y);ctx.closePath();ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.18)';for(let i=1;i<4;i++)ctx.fillRect(bin.x-bin.w/2+bin.w*i/4,bin.y-bin.h+6,4,bin.h-12);
+    if(k>=1&&mv<=0)for(let j=0;j<5;j++){const ph=(T*.6+j/5)%1;fxSprite([2,5,6][j%3],bx+Math.sin(j*2.1)*bw*.7,fl-bh-ph*60,.24,(1-ph)*.8,0);}}
+  else{// 焚燒：銅盆裡的經典慢慢燒完，邊燒邊念偈頌；最後只剩灰燼
+    const cx=D.x+D.w/2,bwid=D.w*.42,rim=fl-bwid*.32,burn=b.fx==='fash'?1:(b.fx==='fburn'?prog(T-BURN.t0,.4,9):0),ig=b.fx==='fburn0'?prog(t,1.0,1.8):1;
+    const glowA=b.fx==='fash'?.12*(1-prog(t,0,3)):(.25+.3*ig*(1-burn*.6))+.05*Math.sin(T*9);soft(cx,rim-bh*.3,D.w*.45,glowA,WARM);
+    basin(cx,fl,bwid,false);
+    if(burn<1){const hh=bh*(1-burn*.92),y0=rim+bh*.15-hh;
+      // 經典本身：只把書變暗（用小畫布），上緣燒焦，慢慢往下燒短
+      const oc=burnCanvas(Math.ceil(bw),Math.ceil(bh)),ox=oc.getContext('2d');ox.clearRect(0,0,oc.width,oc.height);ox.globalCompositeOperation='source-over';ox.imageSmoothingEnabled=true;const im=IM.p_sutraC;if(im)ox.drawImage(im,0,0,oc.width,oc.height);
+      ox.globalCompositeOperation='source-atop';ox.fillStyle=`rgba(25,12,6,${.15+.75*burn})`;ox.fillRect(0,0,oc.width,oc.height);const cy0=oc.height-hh;ox.fillStyle='rgba(15,8,4,.9)';ox.fillRect(0,cy0,oc.width,8);
+      ctx.drawImage(oc,0,cy0,oc.width,hh,cx-bw/2,y0,bw,hh);
+      const fA=(b.fx==='fburn0'?ig:1)*(1-prog(burn,.85,1)),top=y0;
+      for(let i=0;i<9;i++){const u=i/8-.5,fx=cx+u*bw*1.1,fh=(bh*.55+bh*.35*Math.sin(T*7+i*1.7)*Math.sin(T*3.1+i))*(1-Math.abs(u)*.8)*(.4+.6*fA);flame(fx,top+bh*.08,bw*.32,fh,fA*.9);}
+      for(let j=0;j<10;j++){const ph=(T*.5+j/10)%1;fxSprite([2,5,6][j%3],cx+Math.sin(j*2.7+T)*bw*.6,top-ph*D.h*.45,.22,fA*(1-ph),0);}
+      for(let j=0;j<6;j++){const ph=(T*.18+j/6)%1;ctx.fillStyle=`rgba(150,140,130,${.22*fA*(1-ph)})`;ctx.beginPath();ctx.arc(cx+Math.sin(j*1.9+T*.6)*30*(1+ph),top-bh*.4-ph*D.h*.5,18+40*ph,0,Math.PI*2);ctx.fill();}}
+    if(burn>.6){const ak=prog(burn,.6,1);ctx.fillStyle=`rgba(118,112,106,${ak})`;ctx.beginPath();ctx.ellipse(cx,rim+2,bwid*.34,bwid*.12,0,Math.PI,0);ctx.fill();ctx.fillStyle=`rgba(150,145,138,${ak})`;ctx.beginPath();ctx.ellipse(cx-bwid*.05,rim-bwid*.03,bwid*.18,bwid*.06,0,Math.PI,0);ctx.fill();
+      for(let j=0;j<14;j++){const ox=Math.sin(j*12.9)*bwid*.3,oy=Math.cos(j*7.3)*6;ctx.fillStyle=j%4?`rgba(40,36,34,${ak})`:`rgba(255,140,60,${ak*(b.fx==='fash'?(.5+.5*Math.sin(T*4+j))*(1-prog(t,0,3)):.8)})`;ctx.fillRect(cx+ox,rim-2+oy,6,4);}}
+    basin(cx,fl,bwid,true);
+    if(b.fx==='fash'){const k=ez(prog(t,.8,2.2));ctx.strokeStyle=`rgba(243,234,216,${.6*k})`;ctx.lineWidth=3;ctx.setLineDash([10,8]);ctx.beginPath();ctx.ellipse(cx,rim,bwid*.48,bwid*.12,0,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);}}
+  ctx.restore();}
+// 迴向：閉眼祈禱時，光點往上飄向佛像
+function drawTG(){if(ST.scene!=='tg')return;const b=beat();if(!b||b.fx!=='gpray')return;const P=tp(),a=eo(prog(ST.bt,0,.8)),gb=goatBox('kneel1'),cx=gb.x+gb.w*.5,cy=gb.y+gb.h*.35;
+  soft(cx,cy,gb.w*.8,.3*a+.05*Math.sin(T*2),WARM);soft(P.budd.x,P.budd.y,TALL?240:280,.2*a,WARM);
+  for(let j=0;j<12;j++){const ph=(T*.22+j/12)%1,x=cx+(P.budd.x-cx)*ph+Math.sin(j*2.3+T)*30,y=cy+(P.budd.y-cy)*ph-Math.sin(Math.PI*ph)*80;fxSprite([2,5,6][j%3],x,y,.3,a*Math.min(1,ph*5)*(1-ph),0);}}
 function sceneTopicEnd(){const b=beat();if(!b||b.fx!=='tend')return;const a=eo(prog(ST.bt,typeDur(b)+.2,typeDur(b)+.7));if(a<=0)return;
   const D=LY.dlg,bw=TALL?440:400,y=D.y-(TALL?120:118),x=TALL?(W-2*bw-40)/2:D.x+(D.w-2*bw-40)/2;ctx.globalAlpha=a;button('temple','回小佛堂',x,y,bw,null,true);button('menu','回書庫',x+bw+40,y,bw);ctx.globalAlpha=1;}
 
@@ -700,14 +770,14 @@ function dialog(){if(ST.scene==='temple'&&IDLE.st==='sit')return;if(quipOn()){co
   const b=beat();if(!b||!b.say)return;if(ST.scene==='booking'&&b.fx==='panel')return;const D=LY.dlg;
   if(closeUp()&&ST.bi===0){const B=IDBOX();const n=Math.min(beatText(b).length,Math.floor(ST.bt*CPS+1e-4));wrap(beatText(b).slice(0,n).join(''),B.x+50,B.y+70,B.w-100,TALL?40:42,'#3a2616');return;}
   dlgBox(D);
-  const n=Math.min(beatText(b).length,Math.floor(ST.bt*CPS+1e-4));wrap(beatText(b).slice(0,n).join(''),D.x+60,D.y+(TALL?95:92),D.w-120,LY.fs,dlgCol());
+  const n=Math.min(beatText(b).length,Math.floor(ST.bt*cpsOf(b)+1e-4));wrap(beatText(b).slice(0,n).join(''),D.x+60,D.y+(TALL?95:92),D.w-120,LY.fs,dlgCol());
   if(ST.bt>=typeDur(b)&&!b.stay&&Math.floor(T*2.5)%2===0){ctx.fillStyle=C.gold;const ax=D.x+D.w-70,ay=D.y+D.h-56;for(let i=0;i<4;i++)ctx.fillRect(ax+i*U,ay+i*U,(8-2*i)*U,U);}}
 
 // ================= 繪製 =================
 function render(){regions=[];ctx.imageSmoothingEnabled=false;bg(T);const b=beat();
   const isBook=TITLE[ST.scene];
   if(!inTemple()&&!closeUp())drawShelfBooks();drawFlock();drawDoor();drawTempleBack();drawCircle();drawAirBook();drawCards();
-  let gb;if(closeUp()){duoScene(b);gb=null;}else{const kn=kneelInfo(b);if(kn){if(kn.k<1)drawGoat('present1',1-kn.k);drawKneel(kn.fr,kn.k);gb=null;}else gb=drawGoat(poseFrame(b),goatAlpha());}if(!inTemple())drawZzz();drawTempleFront();
+  let gb;if(closeUp()){duoScene(b);gb=null;}else{const kn=kneelInfo(b);if(kn){if(kn.k<1)drawGoat('present1',1-kn.k);drawKneel(kn.fr,kn.k);gb=null;}else gb=drawGoat(poseFrame(b),goatAlpha());}if(!inTemple())drawZzz();drawTempleFront();drawTF();drawTG();
   if(gb&&b&&b.stay&&!inTemple()&&ST.scene!=='intro'&&PZ.i<0&&IDLE.st==='none')regions.push({x:gb.x+gb.w*.15,y:gb.y,w:gb.w*.7,h:gb.h,id:'dazheng'});
   if(b&&b.fx==='dcast'&&!closeUp())drawDraw(0);
   drawDuo();duoHint();
@@ -734,7 +804,8 @@ function act(id){IDLE.last=T;if(ST.next||ST.leave)return;
   if(id==='redraw'){DRAW.again=true;go('draw');return;}
   if(id==='palback'){if(PZ.i>=0&&!PZ.back){PZ.back=T;S.palace[0]={say:'還想看哪一宮呢？',pose:'talk',stay:1};ST.bt=0;ST.typed=0;}return;}
   if(id.startsWith('pal:')){const i=+id.slice(4);if(PZ.i>=0)return;PZ.i=i;PZ.t0=T;PZ.back=0;PSEL=i;S.palace[0]={say:(i===0?'命宮':PAL[i]+'宮')+'：'+PDESC[i],pose:i%2?'present:1':'talk',stay:1};ST.bt=0;ST.typed=0;return;}
-  if(id==='tgo'||id==='temple'||id==='tc'||id==='td'||id==='te'){go(id);return;}
+  if(id==='tpage'){TPAGE=1-TPAGE;SEL=null;return;}
+  if(id==='tgo'||TSC[id]){go(id);return;}
   if(id==='menu'||id==='booking'||id==='shelf'||id==='draw'||id==='palace'||id==='duo'){if(TITLE[ST.scene]){const b=beat();if(!(b&&b.fx==='end'&&ST.bt>=1.4)){ST.leave={to:id,t0:T};return;}}go(id);return;}
   if(TITLE[id]){go(id);return;}}
 const pool=[];
@@ -748,7 +819,7 @@ stage.addEventListener('mousemove',e=>{if(IDLE.st==='sit'){userPoke();return;}ID
 stage.addEventListener('click',e=>{const woke=userPoke();if(!music&&!started){started=true;setMusic(true);}const r=hit(e);if(woke&&(!r||r.id==='dazheng'||r.id==='__adv'))return;if(r&&!r.href)act(r.id);});
 stage.addEventListener('keydown',e=>{if(userPoke()){e.preventDefault();return;}const ids=regions.filter(r=>r.id!=='__adv').map(r=>r.id);
   if(e.key==='Escape'&&ST.scene==='palace'&&PZ.i>=0){act('palback');return;}
-  if(e.key==='Escape'&&(ST.scene==='tc'||ST.scene==='td'||ST.scene==='te')){act('temple');return;}
+  if(e.key==='Escape'&&inTemple()&&ST.scene!=='temple'){act('temple');return;}
   if(e.key==='Escape'){act(ST.scene==='menu'?'__none':(TITLE[ST.scene]?'shelf':'menu'));return;}
   if((e.key==='Enter'||e.key===' ')&&regions.some(r=>r.id==='__adv')&&!SEL){advance();e.preventDefault();return;}
   if(!ids.length)return;let i=ids.indexOf(SEL);
