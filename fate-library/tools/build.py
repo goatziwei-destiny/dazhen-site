@@ -1,5 +1,5 @@
 """命運書庫 build：把 src/game-src.html + assets/ 打包成單一 HTML。
-用法：python3 tools/build.py            → dist/game.html（命運書庫）、dist/duo.html（抽牌小遊戲）
+用法：python3 tools/build.py            → dist/game.html（命運書庫）、dist/duo.html（抽牌小遊戲）、dist/web-duo.html（網站 /draw/ 用）
 需要：pip install fonttools brotli（字型子集化）"""
 import base64,json,os,subprocess,sys
 R=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -24,6 +24,10 @@ def build(which,out,title=None):
     open(P('dist',out),'w',encoding='utf-8').write(s)
     # 本機預覽版（含 doctype，可直接用瀏覽器開；截圖工具也用這個）
     open(P('dist','local-'+out),'w',encoding='utf-8').write('<!doctype html><html><head><meta charset="utf-8"></head><body style="margin:0">'+s+'</body></html>')
+    if which=='duo':
+        # 網站／LINE 用的完整網頁（手機版面＋分享預覽），複製到 dazhen-site/static/draw/index.html 就會在 /draw/ 上線
+        og='<meta property="og:title" content="大正的抽牌小遊戲"><meta property="og:description" content="大正幫你洗牌，憑直覺抽兩張星曜卡，看看今天的提示。">'
+        open(P('dist','web-'+out),'w',encoding='utf-8').write('<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'+og+'</head><body style="margin:0">'+s+'</body></html>')
     os.remove(ct);os.remove(fw);print(out,round(len(s)/1e6,2),'MB')
 if __name__=='__main__':
     which=sys.argv[1:] or ['main','duo']

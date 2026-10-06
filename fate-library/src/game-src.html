@@ -367,7 +367,7 @@ function enter(sc){ST.leave=null;ST.scene=sc;IDLE.st='none';IDLE.last=T;QUIP.t0=
   if(sc==='draw'){let p;do{p=Math.floor(Math.random()*12);}while(p===DRAW.last);DRAW.pick=DRAW.last=p;let q;do{q=Math.floor(Math.random()*BLESS.length);}while(q===DRAW.lastB&&BLESS.length>1);DRAW.lastB=q;S.draw[3].say=BLESS[q];}
   if(sc==='back'){const g=timeGreet();S.back[0].say=g==='early'?'這麼早來呀？歡迎回到命運書庫。':(g==='late'?'這麼晚還來翻書啊？':'歡迎回到命運書庫。');GREETED=true;}
   if(sc==='menu'){const g=timeGreet();S.menu[0].say=(!GREETED&&g==='early')?'這麼早來呀？想從哪裡開始看呢？':((!GREETED&&g==='late')?'這麼晚還來翻書啊？想從哪裡開始看呢？':'想從哪裡開始看呢？');GREETED=true;}
-  if(sc==='duo'){let p,q;p=Math.floor(Math.random()*12);do{q=Math.floor(Math.random()*12);}while(q===p);DRAW.pick=p;DRAW.pick2=q;
+  if(sc==='duo'){newFan2();DUOP.ids=[];DUOP.t=[];DUOP.done=0;DUOP.ws=-1;S.duo[1].dur=DUO_GAME?CT.end:8.1;let p,q;p=Math.floor(Math.random()*12);do{q=Math.floor(Math.random()*12);}while(q===p);DRAW.pick=p;DRAW.pick2=q;
     const n=DUOCARDS.length;DUOSEL=[Math.floor(Math.random()*n),Math.floor(Math.random()*n)];if(n>1)while(DUOSEL[1]===DUOSEL[0])DUOSEL[1]=Math.floor(Math.random()*n);
     const c0=DUOCARDS[DUOSEL[0]],c1=DUOCARDS[DUOSEL[1]];S.duo[4].say='第一張是'+c0.star+'，主題是「'+c0.theme+'」。';S.duo[5].say='第二張是'+c1.star+'：'+c1.act;}
   if(sc==='palace'){PSEL=-1;PZ.i=-1;PZ.back=0;PAL_T0=T;S.palace[0]={say:'這是十二宮圖鑑。點一張卡片，我告訴你那一宮在看什麼。',pose:'present:1',stay:1};}
@@ -382,7 +382,11 @@ function update(dt){T+=dt;
   updIdle();
   if(ST.leave&&T-ST.leave.t0>=1.5){go(ST.leave.to);return;}
   const pbt=ST.bt;ST.bt+=dt;const b=beat();if(!b)return;
-  if(b.fx==='dcast')for(const [th,k] of DSFX)if(pbt<th&&ST.bt>=th)SFXQ.push(k);
+  if(b.fx==='dcast'&&closeUp()&&ST.bt>CT.wait&&pbt<=CT.wait){
+    if(DUOP.ids.length<2||T-DUOP.done<.8){ST.bt=CT.wait;if(DUOP.ws<0)DUOP.ws=T;
+      if(capture&&DUOP.ids.length<2&&T-DUOP.ws>1+DUOP.ids.length*.6){let i;do{i=Math.floor(Math.random()*CT.N);}while(DUOP.ids.includes(i));DUOP.ids.push(i);DUOP.t.push(T);if(DUOP.ids.length===2)DUOP.done=T;}}
+    else ST.bt=CT.fly0;}
+  if(b.fx==='dcast')for(const [th,k] of (closeUp()?DSFX_CU:DSFX))if(pbt<th&&ST.bt>=th)SFXQ.push(k);
   if(b.fx==='walkin'){G.x=LY.gx+(W+300-LY.gx)*(1-prog(ST.bt,0,b.dur-.4));G.walking=ST.bt<b.dur-.4;}
   if(b.fx==='twalk'){const tx=WDOOR[TALL?'t':'w'].stand;G.x=LY.gx+(tx-LY.gx)*prog(ST.bt,0,b.dur-.3);G.walking=ST.bt<b.dur-.3;G.left=true;}
   if(b.fx==='topen'){G.x=WDOOR[TALL?'t':'w'].stand;G.walking=false;}
@@ -460,29 +464,47 @@ function drawFan2(a){const R=fanRect();ctx.save();ctx.globalAlpha=a;ctx.imageSmo
   else{for(const [y0,dir] of [[R.y,1],[R.y+R.h-fw,-1]]){for(let i=0;i<fw;i+=3){const t=dir>0?1-i/fw:i/fw;ctx.globalAlpha=a*t;ctx.drawImage(im,0,(y0+i)/H*im.height,im.width,3/H*im.height,0,y0+i,W,3);}}}
   ctx.restore();}
 // 洗牌 → 扇形：時間表與位置（34/35 空手施法圖）
-const CT={sl0:.7,sl1:2.6,sh0:2.7,sh1:3.9,fan0:3.9,fan1:4.9,lift0:5.3,lift1:6.0,fly0:6.3,fly1:7.5,out0:6.3,out1:7.3,N:13,pick:[4,8]};
-function castGeo(){return TALL?{x:490,yb:1240,cw:118,slv:{x:252,y:868},d:170,span:1.0}:{x:882,yb:662,cw:104,slv:{x:642,y:340},d:150,span:1.0};}
-function fanSlot(i,Q){const ph=-Q.span+2*Q.span*i/(CT.N-1),px=Q.x+10,py=Q.yb+55;return {x:px+Math.sin(ph)*Q.d,y:py-Math.cos(ph)*Q.d,rot:ph};}
+// 牌一開始就在大正手上：拿著 → 繞圈洗牌 → 展開扇形 → 停住等客人點兩張 → 兩張飛到上面
+const CT={sh0:.9,sh1:2.3,fan0:2.3,fan1:3.2,wait:3.6,fly0:3.7,fly1:4.9,out0:3.7,out1:4.7,end:5.5,N:13};
+// x,yb＝手上牌堆；fx,fy＝扇形的軸心（直式在頭上方、橫式在右邊書架前，不擋到大正的臉）
+function castGeo(){return TALL?{x:490,yb:1240,cw:118,fx:540,fy:780,d:400}:{x:882,yb:662,cw:104,fx:1530,fy:900,d:320};}
+// 扇形：每次抽牌換一種（不會和上一次一樣），牌的順序、傾斜、攤開方向也隨機
+const FAN2={kind:-1,span:1,d:1,tilt:0,ord:[...Array(13).keys()],sweep:0};
+function newFan2(){const r=(a,b)=>a+Math.random()*(b-a);let k;do{k=Math.floor(Math.random()*7);}while(k===FAN2.kind);FAN2.kind=k;
+  // 0 標準扇　1 寬扇　2 窄而高　3 半圓　4 內外兩層　5 斜扇　6 螺旋
+  FAN2.span=[1,1.35,.7,1.55,1.1,.9,1.2][k]+r(-.05,.05);FAN2.d=[1,.95,1.15,.9,1,1,1][k]*r(.94,1.02);
+  FAN2.tilt=k===5?(Math.random()<.5?-1:1)*r(.25,.38):r(-.08,.08);FAN2.sweep=Math.floor(Math.random()*4);
+  const o=[...Array(CT.N).keys()];for(let i=o.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[o[i],o[j]]=[o[j],o[i]];}FAN2.ord=o;}
+function fanSlot(i,Q){const j=FAN2.ord[i],u=j/(CT.N-1),ph=-FAN2.span+2*FAN2.span*u+FAN2.tilt,px=Q.fx,py=Q.fy;
+  let d=Q.d*FAN2.d;if(FAN2.kind===4)d*=j%2?.74:1;if(FAN2.kind===6)d*=.78+.34*u;
+  return {x:px+Math.sin(ph)*d,y:py-Math.cos(ph)*d,rot:ph*(FAN2.kind===3?.85:1),j};}
+// 攤開的順序：一起／左到右／右到左／從中間往兩邊
+function fanDelay(j){const u=j/(CT.N-1);return [0,u,1-u,Math.abs(u-.5)*2][FAN2.sweep]*.3;}
+const DUOP={ids:[],t:[],done:0,ws:-1};
+function duoWaiting(){const b=beat();return closeUp()&&b&&b.fx==='dcast'&&ST.bt>=CT.fan1&&DUOP.ids.length<2;}
+function duoPick(i){if(!duoWaiting()||DUOP.ids.includes(i))return;DUOP.ids.push(i);DUOP.t.push(T);if(DUOP.ids.length===2)DUOP.done=T;SEL=null;SFXQ.push('ding');}
 function deckBase(i,Q){const h=Q.cw*1.5;return {x:Q.x,y:Q.yb-h/2-i*1.2,rot:0};}
-// 每張牌在時間 t 的位置：袖口飛出 → 落到手上 → 繞圈洗牌 → 展開扇形
-function cardAt(i,Q,t){const D=deckBase(i,Q),h=Q.cw*1.5;
-  const te=CT.sl0+i*(CT.sl1-CT.sl0-.6)/(CT.N-1),k=prog(t,te,te+.6);if(t<te)return null;
-  if(k<1){const e=ez(k),S=Q.slv,cx=(S.x+D.x)/2,cy=Math.min(S.y,D.y)-h*1.3;
-    const x=(1-e)*(1-e)*S.x+2*(1-e)*e*cx+e*e*D.x,y=(1-e)*(1-e)*S.y+2*(1-e)*e*cy+e*e*D.y;return {x,y,rot:(1-e)*Math.PI*2.2,sc:.45+.55*e,fly:1};}
-  if(t>=CT.sh0&&t<CT.sh1){const u=prog(t,CT.sh0,CT.sh1),sw=Math.sin(Math.PI*u),an=i/CT.N*Math.PI*2+ez(u)*Math.PI*4;
+// 每張牌在時間 t 的位置：在手上 → 繞圈洗牌 → 展開扇形
+function cardAt(i,Q,t){const D=deckBase(i,Q);
+  if(t<CT.sh0)return {x:D.x,y:D.y,rot:0,sc:1,fly:0};
+  if(t<CT.sh1){const u=prog(t,CT.sh0,CT.sh1),sw=Math.sin(Math.PI*u),an=i/CT.N*Math.PI*2+ez(u)*Math.PI*4;
     return {x:D.x+Math.cos(an)*Q.cw*1.7*sw,y:D.y-Q.cw*.9*sw+Math.sin(an)*Q.cw*.55*sw,rot:Math.cos(an)*.5*sw,sc:1,fly:sw,z:Math.sin(an)};}
-  const F=fanSlot(i,Q),f=ez(prog(t,CT.fan0+i*.04,CT.fan0+.55+i*.04));return {x:D.x+(F.x-D.x)*f,y:D.y+(F.y-D.y)*f,rot:F.rot*f,sc:1,fly:0};}
+  const F=fanSlot(i,Q),dl=fanDelay(F.j),f=ez(prog(t,CT.fan0+dl,CT.fan0+.6+dl));return {x:D.x+(F.x-D.x)*f,y:D.y+(F.y-D.y)*f,rot:F.rot*f,sc:1,fly:0,z:F.j};}
 function glowCard(x,y,w,a,rot,g){ctx.save();ctx.shadowColor='rgba(255,214,120,.95)';ctx.shadowBlur=g;cardK(x,y,w,1,a,rot);ctx.restore();}
-function castCards(t,a,Q){const h=Q.cw*1.5;
-  // 袖口的光
-  const sg=eo(prog(t,CT.sl0-.3,CT.sl0))*(1-eo(prog(t,CT.sl1,CT.sl1+.4)))*a;if(sg>0){soft(Q.slv.x,Q.slv.y,110,.5*sg,WARM);for(let j=0;j<8;j++){const ph=(T*.9+j/8)%1;fxSprite([2,5,6][j%3],Q.slv.x+Math.sin(j*2.3)*40,Q.slv.y-ph*90,.28,sg*(1-ph),0);}}
-  const fanA=eo(prog(t,CT.fan0+.2,CT.fan1))*a;if(fanA>0){soft(Q.x,Q.yb-Q.d*.6,Q.d*1.9,.28*fanA,WARM);for(let j=0;j<12;j++){const ph=(T*.4+j/12)%1,an=-Math.PI/2+(j/11-.5)*2.2;fxSprite([2,5,6][j%3],Q.x+Math.cos(an)*(Q.d+h*.6+ph*40),Q.yb+40+Math.sin(an)*(Q.d+h*.6+ph*40),.3,fanA*(1-ph),0);}}
-  const L=[];for(let i=0;i<CT.N;i++){if(CT.pick.includes(i)&&t>=CT.lift0+CT.pick.indexOf(i)*.15)continue;const c=cardAt(i,Q,t);if(c)L.push([i,c]);}
-  if(t>=CT.sh0&&t<CT.sh1)L.sort((p,q)=>(p[1].z||0)-(q[1].z||0));
+function castCards(t,a,Q){const h=Q.cw*1.5,wait=duoWaiting();
+  const fanA=eo(prog(t,CT.fan0+.2,CT.fan1))*a;if(fanA>0){soft(Q.fx,Q.fy-Q.d*.55,Q.d*1.5,.22*fanA,WARM);for(let j=0;j<12;j++){const ph=(T*.4+j/12)%1,an=-Math.PI/2+(j/11-.5)*2.6;fxSprite([2,5,6][j%3],Q.fx+Math.cos(an)*(Q.d+h*.6+ph*40),Q.fy+Math.sin(an)*(Q.d+h*.6+ph*40),.3,fanA*(1-ph),0);}}
+  const L=[];for(let i=0;i<CT.N;i++){if(DUOP.ids.includes(i))continue;const c=cardAt(i,Q,t);if(c)L.push([i,c]);}
+  if(t>=CT.sh0)L.sort((p,q)=>(p[1].z||0)-(q[1].z||0));
+  // 等客人選牌：每張牌都可以點，滑過（或用方向鍵選到）的牌會浮起來
+  if(wait)for(const [i,c] of L){const on=SEL==='dk:'+i;c.y+=Math.sin(T*2.2+c.z*.7)*4-(on?34:0);if(on)c.sel=1;regions.push({x:c.x-Q.cw*.6,y:c.y-h*.55,w:Q.cw*1.2,h:h*1.1,id:'dk:'+i});}
   const deckOn=L.some(([i,c])=>!c.fly);if(deckOn)soft(Q.x,Q.yb-h*.5,h*.8,.25*a,WARM);
-  for(const [i,c] of L){const g=12+18*Math.max(c.fly,fanA)+6*Math.sin(T*5+i);glowCard(c.x,c.y,Q.cw*c.sc,a,c.rot,g);
+  for(const [i,c] of L){const g=12+18*Math.max(c.fly,fanA)+6*Math.sin(T*5+i)+(c.sel?26:0);if(c.sel)soft(c.x,c.y,Q.cw*1.3,.5,WARM);glowCard(c.x,c.y,Q.cw*c.sc,a,c.rot,g);
     if(c.fly>.3){fxSprite([2,5,6][i%3],c.x+Math.sin(T*9+i)*20,c.y+Q.cw*.6,.26,a*.8,0);}}
   const hk=TALL?'chandt':'chandw',hm=FM[hk];if(hm){ctx.save();ctx.globalAlpha=a;ctx.imageSmoothingEnabled=true;sprite(hk,hm.x,hm.y,hm.w,hm.h);ctx.restore();ctx.imageSmoothingEnabled=false;}}
+function duoHint(){if(!duoWaiting())return;const a=eo(prog(ST.bt,CT.fan1-.3,CT.fan1+.2)),n=2-DUOP.ids.length;ctx.globalAlpha=a;
+  const w=TALL?760:470,h=TALL?130:160,x=TALL?(W-w)/2:70,y=TALL?1640:860;tealBox(x,y,w,h);
+  if(TALL){text('憑直覺，點兩張有感覺的牌',W/2,y+58,40,C.cream,'center');text(n===2?'還要選 2 張':'再選 1 張',W/2,y+104,32,C.gold,'center');}
+  else{text('憑直覺，點兩張',x+w/2,y+62,40,C.cream,'center');text(n===2?'還要選 2 張':'再選 1 張',x+w/2,y+118,34,C.gold,'center');}ctx.globalAlpha=1;}
 function IDBOX(){return TALL?{x:94,y:1362,w:869,h:176}:{x:516,y:798,w:864,h:175};}
 function duoScene(b){const t=ST.bt;
   if(ST.bi===0){ctx.imageSmoothingEnabled=true;sprite(TALL?'cidt':'cidw',0,0,W,H);ctx.imageSmoothingEnabled=false;if(TALL){text('大正的抽牌小遊戲',W/2,330,72,C.gold,'center');text('抽兩張星曜卡，看看今天的提示',W/2,420,38,C.paper,'center');}return;}
@@ -493,7 +515,7 @@ function duoScene(b){const t=ST.bt;
     ctx.save();ctx.globalAlpha=aa;ctx.imageSmoothingEnabled=true;sprite(TALL?'castt':'castw',0,0,W,H);ctx.restore();ctx.imageSmoothingEnabled=false;
     if(aa>0)castCards(t,aa,Q);
     // 兩張卡從扇形升起並飛到桌面
-    for(let k=0;k<2;k++){const i=CT.pick[k],up=eo(prog(t,CT.lift0+k*.15,CT.lift1+k*.15));if(up<=0)continue;const fl=ez(prog(t,CT.fly0+k*.1,CT.fly1+k*.1)),P=duoPos(k),F=fanSlot(i,Q);
+    for(let k=0;k<DUOP.ids.length;k++){const i=DUOP.ids[k],up=eo(prog(T-DUOP.t[k],0,.6));const fl=ez(prog(t,CT.fly0+k*.1,CT.fly1+k*.1)),P=duoPos(k),F=fanSlot(i,Q);
       const sx=F.x,sy=F.y-up*Q.cw*1.1;const x=sx+(P.x-sx)*fl,y=sy+(P.y-sy)*fl-Math.sin(Math.PI*fl)*60,w=Q.cw+(P.w-Q.cw)*fl;
       soft(x,y,w*1.3,.5,WARM);glowCard(x,y,w,1,F.rot*(1-Math.max(up,fl))+Math.sin(T*20)*.04*(1-fl),34);}
     return;}
@@ -518,7 +540,7 @@ function drawDuo(){if(ST.scene!=='duo'||ST.bi<2)return;const bx0=ST.bi===4+0?eo(
 function sceneDuo(){const b0=beat();if(b0&&ST.bi===0&&ST.bt>typeDur(b0)){if(closeUp()){const bw=TALL?440:360,x=TALL?(W-bw)/2:1530,y=TALL?1700:868;button('duogo','開始抽牌',x,y,bw,null,true);}else{const D=LY.dlg,bw=440,y=D.y-(TALL?120:118),x=TALL?(W-bw)/2:D.x+(D.w-bw)/2;button('duogo','開始抽牌',x,y,bw,null,true);}}
   const b=beat();if(!b||b.fx!=='dend')return;const td=typeDur(b);const a=eo(prog(ST.bt,td+.5,td+1));if(a<=0)return;
   const D=LY.dlg,bw=TALL?440:400,y=D.y-(TALL?120:118),x=TALL?(W-2*bw-40)/2:D.x+(D.w-2*bw-40)/2;
-  ctx.globalAlpha=a;if(DUO_GAME){const xx=TALL?(W-bw)/2:D.x+(D.w-bw)/2;button('reduo','再抽一次',xx,y,bw,null,true);}else{button('reduo','再抽一次',x,y,bw,null,true);button('menu','回選單',x+bw+40,y,bw);}ctx.globalAlpha=1;}
+  ctx.globalAlpha=a;if(DUO_GAME){button('reduo','再抽一次',x,y,bw,null,true);button('book','預約諮詢',x+bw+40,y,bw,SITE+'/booking/');}else{button('reduo','再抽一次',x,y,bw,null,true);button('menu','回選單',x+bw+40,y,bw);}ctx.globalAlpha=1;}
 function cardHand(){const bb=goatBox('card1');return {x:bb.x+55*bb.s,y:bb.y+186*bb.s,w:80*bb.s};}
 function cardK(x,y,w,sx,a,rot){const h=w*1.5;ctx.save();ctx.globalAlpha=a;ctx.translate(x,y);if(rot)ctx.rotate(rot);ctx.scale(sx,1);ctx.imageSmoothingEnabled=true;sprite('cardk',-w/2,-h/2,w,h);ctx.restore();ctx.globalAlpha=1;}
 // 袖口位置（各姿勢圖內座標）
@@ -688,7 +710,7 @@ function render(){regions=[];ctx.imageSmoothingEnabled=false;bg(T);const b=beat(
   let gb;if(closeUp()){duoScene(b);gb=null;}else{const kn=kneelInfo(b);if(kn){if(kn.k<1)drawGoat('present1',1-kn.k);drawKneel(kn.fr,kn.k);gb=null;}else gb=drawGoat(poseFrame(b),goatAlpha());}if(!inTemple())drawZzz();drawTempleFront();
   if(gb&&b&&b.stay&&!inTemple()&&ST.scene!=='intro'&&PZ.i<0&&IDLE.st==='none')regions.push({x:gb.x+gb.w*.15,y:gb.y,w:gb.w*.7,h:gb.h,id:'dazheng'});
   if(b&&b.fx==='dcast'&&!closeUp())drawDraw(0);
-  drawDuo();
+  drawDuo();duoHint();
   if(isBook){sceneBook();bookDiagram();}
   drawAirBook(true);bookFly();
   if(FLASH&&T>=FLASH&&T-FLASH<.5){const k=1-(T-FLASH)/.5;const hp=handPos();glow(hp.x,hp.y,40,4,40*(1.5-k),.25*k,C.fire);ctx.globalAlpha=.35*k;ctx.fillStyle='#fff6d8';ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;}
@@ -706,6 +728,7 @@ function act(id){IDLE.last=T;if(ST.next||ST.leave)return;
   if(id==='dazheng'){let k;do{k=Math.floor(Math.random()*POKE.length);}while(k===pokeLast);pokeLast=k;quip(POKE[k][0],POKE[k][1]);if(!capture)sfx('pop');return;}
   if(id==='__adv'){advance();return;}
   if(id==='skip'){go('menu');return;}
+  if(id.startsWith('dk:')){duoPick(+id.slice(3));return;}
   if(id==='duogo'){if(ST.scene==='duo'&&ST.bi===0){ST.bi=1;startBeat();}return;}
   if(id==='reduo'){DRAW.again=true;go('duo');return;}
   if(id==='redraw'){DRAW.again=true;go('draw');return;}
@@ -737,6 +760,7 @@ stage.addEventListener('keydown',e=>{if(userPoke()){e.preventDefault();return;}c
 const au=new Audio('__AUDIO__');au.loop=true;au.volume=.6;let music=false,started=false;const sndB=document.getElementById('snd');
 function setMusic(v){music=v;sndB.textContent=music?'音樂：開':'音樂：關';sndB.setAttribute('aria-pressed',music);try{music?au.play().catch(()=>{}):au.pause();}catch(e){}}
 sndB.addEventListener('click',()=>{started=true;setMusic(!music);});
+const DSFX_CU=[[.9,'shuf'],[1.4,'shuf'],[1.9,'shuf'],[2.3,'whoosh'],[3.7,'whoosh'],[4.9,'pop']];
 const SFXQ=[],DSFX=[[.7,'whoosh'],[1.7,'shuf'],[2.2,'shuf'],[2.7,'shuf'],[3.2,'shuf'],[4.6,'ding'],[5.3,'whoosh'],[6.6,'pop']];
 function sfx(k){if(!music)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const n=AC.currentTime;
   if(k==='whoosh'||k==='shuf'){const d=k==='whoosh'?.5:.18,len=Math.floor(AC.sampleRate*d),buf=AC.createBuffer(1,len,AC.sampleRate),ch=buf.getChannelData(0);for(let i=0;i<len;i++)ch[i]=(Math.random()*2-1)*Math.sin(Math.PI*i/len);
@@ -753,7 +777,7 @@ const loads=Object.entries(SPR).map(([k,src])=>new Promise(r=>{const im=new Imag
 const fontReady=document.fonts?Promise.race([document.fonts.load(`44px "Cubic11"`,'命運書庫'),new Promise(r=>setTimeout(r,2500))]):Promise.resolve();
 if(capture)document.body.classList.add('capture');
 layout();window.addEventListener('resize',()=>{const was=TALL;layout();if(was!==TALL){G.x=LY.gx;}});
-Promise.all([fontReady,...loads]).then(()=>{{const hs=(location.hash||'').slice(1);enter(DUO_GAME?'duo':(TSC[hs]||hs==='tgo'?hs:(seen&&!capture?'back':'intro')));}if(DUO_GAME){const r=document.getElementById('replay');if(r)r.style.display='none';}
+Promise.all([fontReady,...loads]).then(()=>{{const hs=(location.hash||'').slice(1);enter(DUO_GAME?'duo':(TSC[hs]||hs==='tgo'?hs:(seen&&!capture?'back':'intro')));}if(DUO_GAME){const r=document.getElementById('replay');if(r)r.style.display='none';const hd=document.querySelector('header');if(hd)hd.style.display='none';}
   if(capture){window.__step=n=>{for(let i=0;i<n;i++)step(1/30);};window.__act=act;window.__sel=v=>{SEL=v;};window.__poke=()=>userPoke();window.__regions=()=>regions.map(r=>[r.id,Math.round(r.x),Math.round(r.y),Math.round(r.w),Math.round(r.h)]);window.__state=()=>({scene:ST.scene,bi:ST.bi});window.__ready=true;render();}
   else{last=performance.now();requestAnimationFrame(loop);}});
 })();
