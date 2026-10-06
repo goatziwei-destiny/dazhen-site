@@ -256,7 +256,7 @@ const S={
   {say:'嗯……讓我看看。',pose:'think:1>2@.6'},
   {say:'',pose:'point:0'},
   {fx:'dend',say:'',pose:'point:1',stay:1}],
- tgo:[{say:'書庫的後面有一間小佛堂，收著一些宗教的小知識。',pose:'present:1'},
+ tgo:[{say:'書庫的後面有一間「羊的小佛堂」，收著一些宗教的小知識。',pose:'present:1'},
   {fx:'twalk',dur:2.6},
   {fx:'topen',pose:'opn:0>1@.7',dur:1.8},
   {fx:'tenter',dur:1.4},
@@ -264,10 +264,10 @@ const S={
  temple:[{fx:'tin',pose:'kt:0',dur:1.4},
   {pose:'kt:0',stay:1}],
  tc:[{say:'經典的修行方式，能抄、能唸，也能恭敬地供養。',pose:'kwrite',dg:'dgC'},
-  {fx:'cclose',say:'供養在佛前的，是請購或結緣來的經典，不是自己抄的那本。',pose:'kh:0'},
-  {fx:'csutra',say:'把整本經典恭敬地安放在佛前，就是一種供養。'},
+  {fx:'cclose',say:'抄好的經典，闔起來恭敬地捧在手上。',pose:'kh:0'},
+  {fx:'cglow',say:'可以供奉任何購買、結緣來的經典，安放在清淨的地方，',pose:'ktalk'},
+  {fx:'cglow',say:'點上香、燈、花，每天禮拜，也是一種修持的方式。',pose:'kneel:0>1>2@.9'},
   {say:'每天換一杯清水，也是供養。',pose:'ktalk'},
-  {say:'恭敬禮拜，本身就是修持。',pose:'kneel:0>1>2@.9'},
   {fx:'tend',say:'還想知道什麼呢？',pose:'ktalk',stay:1}],
  td:[{say:'用計數器，方便記下遍數。',pose:'kc:0'},
   {fx:'dcount',say:'按一下，就記一遍。'},
@@ -419,7 +419,7 @@ function poseFrame(b){if(G.walking)return (G.left?'wl':'walk')+(Math.floor(T*7)%
   {const ip=idlePose();if(ip)return ip;const qp=quipPose();if(qp)return qp;}
   if(TITLE[ST.scene]){const rt=retT();if(rt>=0)return rt<1.35?'welcome1':'book0';if(ST.bi===0&&ST.bt<.9)return ST.bt<.1?'book0':'welcome1';}
   if(b&&b.fx==='csutra')return ST.bt<.7?'kh1':(ST.bt<typeDur(b)?(Math.floor(ST.bt/.13)%2?'kt1':'kt0'):'kt0');
-  if(b&&b.fx==='cclose')return 'kh0';
+  if(b&&b.fx==='cclose')return ST.bt<.6?'kw0':'kh0';
   if(b&&b.fx==='dcount')return 'kc'+(Math.floor(ST.bt/.25)%2);
   if(b&&b.fx==='dbeads')return 'kb'+(Math.floor(ST.bt/.45)%3);
   if(b&&b.pose==='kwrite')return 'kw'+(Math.floor(ST.bt/.3)%3);
@@ -433,7 +433,7 @@ function poseFrame(b){if(G.walking)return (G.left?'wl':'walk')+(Math.floor(T*7)%
 // ================= 場景介面 =================
 function sceneMenu(){const P=LY.panel,a=eo(prog(ST.bt,0,.5));const x=P.x-(1-a)*1100,h=TALL?700:P.h;
   frameBox(x,P.y,P.w,h);text('命運書庫',x+70,P.y+120,80,C.gold);text('大正・住在書庫裡的羊',x+74,P.y+185,36,C.muted);ctx.fillStyle=C.gold2;ctx.fillRect(x+70,P.y+220,P.w-140,3);
-  {const L=[['booking','預約諮詢'],['shelf','挑選一本書'],['draw','抽一張命運卡'],['palace','十二宮圖鑑'],['tgo','宗教小學堂']].concat(DUO_PREVIEW?[['duo','抽兩張牌（預覽）']]:[]);const c=L.length>4;L.forEach(([id,l],i)=>item(id,l,x+60,P.y+(c?(TALL?300:285):(TALL?325:305))+i*(c?(TALL?84:76):(TALL?100:92)),P.w-120,c?50:56));}
+  {const L=[['booking','預約諮詢'],['shelf','挑選一本書'],['draw','抽一張命運卡'],['palace','十二宮圖鑑'],['tgo','羊的小佛堂']].concat(DUO_PREVIEW?[['duo','抽兩張牌（預覽）']]:[]);const c=L.length>4;L.forEach(([id,l],i)=>item(id,l,x+60,P.y+(c?(TALL?300:285):(TALL?325:305))+i*(c?(TALL?84:76):(TALL?100:92)),P.w-120,c?50:56));}
   }
 function sceneBooking(){const b=beat();if(!b||b.fx!=='panel')return;const P=LY.panel,a=eo(prog(ST.bt,0,.5));const x=P.x-(1-a)*1100,h=TALL?700:P.h;
   frameBox(x,P.y,P.w,h);text('預約諮詢',x+70,P.y+110,72,C.gold);ctx.fillStyle=C.gold2;ctx.fillRect(x+70,P.y+148,P.w-140,3);
@@ -671,7 +671,7 @@ function drawDoor(){if(ST.scene!=='tgo')return;const b=beat();if(!b)return;let k
   ctx.imageSmoothingEnabled=true;ctx.drawImage(im,L.x0/W*im.width,L.y0/H*im.height,w/W*im.width,h/H*im.height,L.x0,L.y0,cw,h);ctx.imageSmoothingEnabled=false;
   ctx.fillStyle=`rgba(20,10,5,${.45*k})`;ctx.fillRect(L.x0,L.y0,cw,h);ctx.restore();}
 function goatAlpha(){const b=beat();if(ST.scene==='tgo'&&b&&b.fx==='tenter')return 1-prog(ST.bt,.2,1.0);if(ST.scene==='tgo'&&b&&b.fx==='go')return 0;if(ST.scene==='temple'&&b&&b.fx==='tin')return eo(prog(ST.bt,.5,1.2));return 1;}
-function tState(){const sc=ST.scene,bi=ST.bi,t=ST.bt;return {sutra:sc==='tc'&&(bi>2||(bi===2&&t>=1.6)),cup:sc==='tc'&&(bi>2||(bi===2&&t>=1.0))};}
+function tState(){const sc=ST.scene,bi=ST.bi,t=ST.bt;return {sutra:true,cup:sc==='tc'&&(bi>2||(bi===2&&t>=1.0))};}
 function lampList(){const P=tp(),A=P.altar,L=[];for(let i=0;i<8;i++)L.push({x:A.x0+(A.x1-A.x0)*i/7,y:A.y+(TALL?22:20),h:TALL?38:40});
   return L.sort((a,b)=>b.x-a.x);}
 function lampsLit(N){if(ST.scene!=='te')return 0;const bi=ST.bi,t=ST.bt;if(bi===0)return 0;if(bi===1)return t>=2.2?1:0;if(bi===2)return 1+Math.floor((N-1)*prog(t,.2,2.8));return N;}
@@ -680,7 +680,7 @@ function drawTempleBack(){if(!inTemple())return;const P=tp(),S2=tState(),b=beat(
   if(ST.scene==='tc'){
     const SH=TALL?200:170,pk=TALL?'tnst':'tnsw',pm=FM[pk];
     if(!S2.sutra&&pm){ctx.imageSmoothingEnabled=true;sprite(pk,pm.x,pm.y,pm.w,pm.h);ctx.imageSmoothingEnabled=false;}
-    else if(b&&b.fx==='csutra'){const g=1-prog(ST.bt,1.6,2.6);if(g>0)soft(P.sutra.x,P.sutra.y-SH*.5,SH*.9,.55*g,WARM);}
+    if(b&&b.fx==='cglow'){const g=eo(prog(ST.bt,0,.6))*(.8+.2*Math.sin(T*2.5));soft(P.sutra.x,P.sutra.y-SH*.5,SH*1.1,.45*g,WARM);for(let j=0;j<6;j++){const ph=(T*.35+j/6)%1;fxSprite([2,5,6][j%3],P.sutra.x+Math.sin(j*2.1)*SH*.5,P.sutra.y-SH*.4-ph*SH*.9,.26,g*(1-ph),0);}}
     if(b&&b.fx==='csutra'&&ST.bt>=.6&&ST.bt<1.6){const k=ez(prog(ST.bt,.6,1.6)),m=FM.kh1,h0=bPos('kh1',m.bx,m.by+.06);const x=h0.x+(P.sutra.x-h0.x)*k,y=h0.y+(P.sutra.y+4-h0.y)*k-Math.sin(Math.PI*k)*150;soft(x,y-SH*.5,SH*.7,.4,WARM);propImg('sutB',x,y,(TALL?190:175)*(.6+.4*k),1,0);
       for(let j=1;j<6;j++){const q=Math.max(0,k-j*.05);fxSprite([5,6,2][j%3],h0.x+(P.sutra.x-h0.x)*q,h0.y+(P.sutra.y-h0.y)*q-Math.sin(Math.PI*q)*150-SH*.4,.3,(1-j/6)*.8,0);}}
   }
@@ -705,7 +705,7 @@ function drawTempleFront(){if(!inTemple())return;const P=tp(),b=beat();
   if(b&&b.dg){const D=b.dgc?(TALL?{x:90,y:330,w:900,h:675}:{x:560,y:110,w:800,h:600}):P.dg,a=eo(prog(ST.bt,0,.5))*(1-prog(ST.bt,typeDur(b)+1.2,typeDur(b)+1.8));if(a>0){ctx.globalAlpha=a;parchBox(D.x-14,D.y-14,D.w+28,D.h+28);ctx.imageSmoothingEnabled=true;sprite(b.dg,D.x,D.y,D.w,D.h);ctx.imageSmoothingEnabled=false;ctx.globalAlpha=1;}}}
 function sceneTemple(){const b=beat();if(!b||!b.stay||ST.scene!=='temple'||quipOn()||IDLE.st!=='none')return;const D=LY.dlg,a=eo(prog(ST.bt,0,.4));ctx.globalAlpha=a;
   frameBox(D.x,D.y,D.w,D.h);frameBox(D.x+30,D.y-66,240,72,C.panel2);text('大正',D.x+150,D.y-16,44,C.gold,'center');
-  text('這裡是小佛堂。想知道什麼呢？',D.x+60,D.y+(TALL?72:66),TALL?40:42,C.paper);text((TPAGE+1)+'／2',D.x+D.w-60,D.y+(TALL?72:66),TALL?30:32,C.muted,'right');
+  text('這裡是羊的小佛堂。想知道什麼呢？',D.x+60,D.y+(TALL?72:66),TALL?40:42,C.paper);text((TPAGE+1)+'／2',D.x+D.w-60,D.y+(TALL?72:66),TALL?30:32,C.muted,'right');
   const cw=(D.w-120)/2,fs=TALL?32:38,r0=D.y+(TALL?152:140),rh=TALL?78:70;
   TMENU[TPAGE].forEach(([id,l],i)=>item(id,l,D.x+40+(i%2)*(cw+40),r0+Math.floor(i/2)*rh,cw,fs));ctx.globalAlpha=1;
   pill('menu','◀ 回到命運書庫',40,40);}
@@ -713,50 +713,71 @@ function sceneTemple(){const b=beat();if(!b||!b.stay||ST.scene!=='temple'||quipO
 let TPAGE=0;
 const TMENU=[[['tc','經典只能抄或念嗎？'],['td','持咒念佛，怎麼計數更好？'],['te','迴向，功德會變少嗎？'],['tpage','下一頁 ▶']],
   [['tf','抄好的經典，怎麼處理？'],['tg','迴向文，要怎麼說？'],['th','做善事，可以有目的嗎？'],['tpage','◀ 上一頁']]];
-// 圖解框：抄好的經典怎麼處理（用程式畫：包裝、垃圾桶、銅盆、火焰、煙、灰燼）
-const BURN={t0:0,cv:null};
-function burnCanvas(w,h){if(!BURN.cv)BURN.cv=document.createElement('canvas');if(BURN.cv.width!==w||BURN.cv.height!==h){BURN.cv.width=w;BURN.cv.height=h;}return BURN.cv;}
+// 圖解框：抄好的經典怎麼處理（全部用程式畫在 1/4 大小的小畫布上，再放大成像素風）
+const BURN={t0:0,cv:null,bk:null};
 function tfBox(){return TALL?{x:90,y:110,w:900,h:675}:{x:60,y:60,w:560,h:420};}
-function flame(x,y,w,h,a){if(h<=2||a<=0)return;ctx.save();ctx.globalAlpha=a;const g=ctx.createLinearGradient(0,y,0,y-h);g.addColorStop(0,'rgba(255,120,30,.95)');g.addColorStop(.45,'rgba(255,190,70,.9)');g.addColorStop(1,'rgba(255,240,180,0)');
-  ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(x-w/2,y);ctx.quadraticCurveTo(x-w*.55,y-h*.45,x,y-h);ctx.quadraticCurveTo(x+w*.55,y-h*.45,x+w/2,y);ctx.closePath();ctx.fill();
-  const c=ctx.createLinearGradient(0,y,0,y-h*.6);c.addColorStop(0,'rgba(255,250,220,.9)');c.addColorStop(1,'rgba(255,250,220,0)');ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(x-w*.22,y);ctx.quadraticCurveTo(x-w*.25,y-h*.3,x,y-h*.6);ctx.quadraticCurveTo(x+w*.25,y-h*.3,x+w*.22,y);ctx.closePath();ctx.fill();ctx.restore();}
-function basin(cx,by,w,front){const h=w*.32;ctx.save();if(!front){ctx.fillStyle='#3b2a1c';ctx.beginPath();ctx.ellipse(cx,by-h,w/2,h*.28,0,0,Math.PI*2);ctx.fill();}
-  else{ctx.fillStyle='#8a5a2b';ctx.beginPath();ctx.moveTo(cx-w/2,by-h);ctx.lineTo(cx+w/2,by-h);ctx.lineTo(cx+w*.36,by);ctx.lineTo(cx-w*.36,by);ctx.closePath();ctx.fill();
-    ctx.fillStyle='#b07a3c';ctx.fillRect(cx-w/2,by-h-4,w,8);ctx.fillStyle='rgba(255,230,170,.35)';ctx.fillRect(cx-w*.4,by-h+10,w*.8,4);}ctx.restore();}
-function drawTF(){if(ST.scene!=='tf')return;const b=beat();if(!b||ST.bi<1||b.fx==='tend')return;const D=tfBox(),a=ST.bi===1?eo(prog(ST.bt,0,.5)):1,t=ST.bt;
-  ctx.save();ctx.globalAlpha=a;parchBox(D.x-14,D.y-14,D.w+28,D.h+28);const g=ctx.createLinearGradient(0,D.y,0,D.y+D.h);g.addColorStop(0,'#2b1d14');g.addColorStop(1,'#140c08');ctx.fillStyle=g;ctx.fillRect(D.x,D.y,D.w,D.h);
-  ctx.beginPath();ctx.rect(D.x,D.y,D.w,D.h);ctx.clip();const fl=D.y+D.h*.86;ctx.fillStyle='#3a2617';ctx.fillRect(D.x,fl,D.w,D.y+D.h-fl);
-  const m=FM.p_sutraC,bh=D.h*.42,bw=bh*m.w/m.h;
-  if(b.fx==='fwrap'){// 包好 → 丟進垃圾桶
-    const bx=D.x+D.w*.36,k=ez(prog(t,.4,1.6)),mv=ez(prog(t,2.0,3.0)),bin={x:D.x+D.w*.76,y:fl,w:D.w*.2,h:D.h*.34};
-    const px=bx+(bin.x-bx)*mv,py=fl-bin.h*.4*mv-Math.sin(Math.PI*mv)*D.h*.25,sc=1-.35*mv;
-    // 垃圾桶（後半）
-    ctx.fillStyle='#55606a';ctx.beginPath();ctx.ellipse(bin.x,bin.y-bin.h,bin.w/2,bin.w*.12,0,0,Math.PI*2);ctx.fill();
-    if(mv<.98){const w2=bw*sc,h2=bh*sc,x2=px-w2/2,y2=py-h2;ctx.imageSmoothingEnabled=true;if(k<1)sprite('p_sutraC',x2,y2,w2,h2);ctx.imageSmoothingEnabled=false;
-      if(k>0){const cw=w2*1.12,ch=h2*1.04;ctx.fillStyle='#f4ecdc';ctx.fillRect(px-cw/2,y2-h2*.02,cw*Math.min(1,k*1.02)/2,ch);ctx.fillRect(px+cw/2-cw*k/2,y2-h2*.02,cw*k/2,ch);
-        if(k>=1){ctx.fillStyle='rgba(120,90,60,.35)';ctx.fillRect(px-1,y2,2,ch);ctx.fillStyle='#b8452f';ctx.fillRect(px-cw/2,y2+ch*.48,cw,6);ctx.fillRect(px-3,y2,6,ch);}}}
-    // 垃圾桶（前半）
-    ctx.fillStyle='#6f7b86';ctx.beginPath();ctx.moveTo(bin.x-bin.w/2,bin.y-bin.h);ctx.lineTo(bin.x+bin.w/2,bin.y-bin.h);ctx.lineTo(bin.x+bin.w*.4,bin.y);ctx.lineTo(bin.x-bin.w*.4,bin.y);ctx.closePath();ctx.fill();
-    ctx.fillStyle='rgba(255,255,255,.18)';for(let i=1;i<4;i++)ctx.fillRect(bin.x-bin.w/2+bin.w*i/4,bin.y-bin.h+6,4,bin.h-12);
-    if(k>=1&&mv<=0)for(let j=0;j<5;j++){const ph=(T*.6+j/5)%1;fxSprite([2,5,6][j%3],bx+Math.sin(j*2.1)*bw*.7,fl-bh-ph*60,.24,(1-ph)*.8,0);}}
-  else{// 焚燒：銅盆裡的經典慢慢燒完，邊燒邊念偈頌；最後只剩灰燼
-    const cx=D.x+D.w/2,bwid=D.w*.42,rim=fl-bwid*.32,burn=b.fx==='fash'?1:(b.fx==='fburn'?prog(T-BURN.t0,.4,9):0),ig=b.fx==='fburn0'?prog(t,1.0,1.8):1;
-    const glowA=b.fx==='fash'?.12*(1-prog(t,0,3)):(.25+.3*ig*(1-burn*.6))+.05*Math.sin(T*9);soft(cx,rim-bh*.3,D.w*.45,glowA,WARM);
-    basin(cx,fl,bwid,false);
-    if(burn<1){const hh=bh*(1-burn*.92),y0=rim+bh*.15-hh;
-      // 經典本身：只把書變暗（用小畫布），上緣燒焦，慢慢往下燒短
-      const oc=burnCanvas(Math.ceil(bw),Math.ceil(bh)),ox=oc.getContext('2d');ox.clearRect(0,0,oc.width,oc.height);ox.globalCompositeOperation='source-over';ox.imageSmoothingEnabled=true;const im=IM.p_sutraC;if(im)ox.drawImage(im,0,0,oc.width,oc.height);
-      ox.globalCompositeOperation='source-atop';ox.fillStyle=`rgba(25,12,6,${.15+.75*burn})`;ox.fillRect(0,0,oc.width,oc.height);const cy0=oc.height-hh;ox.fillStyle='rgba(15,8,4,.9)';ox.fillRect(0,cy0,oc.width,8);
-      ctx.drawImage(oc,0,cy0,oc.width,hh,cx-bw/2,y0,bw,hh);
-      const fA=(b.fx==='fburn0'?ig:1)*(1-prog(burn,.85,1)),top=y0;
-      for(let i=0;i<9;i++){const u=i/8-.5,fx=cx+u*bw*1.1,fh=(bh*.55+bh*.35*Math.sin(T*7+i*1.7)*Math.sin(T*3.1+i))*(1-Math.abs(u)*.8)*(.4+.6*fA);flame(fx,top+bh*.08,bw*.32,fh,fA*.9);}
-      for(let j=0;j<10;j++){const ph=(T*.5+j/10)%1;fxSprite([2,5,6][j%3],cx+Math.sin(j*2.7+T)*bw*.6,top-ph*D.h*.45,.22,fA*(1-ph),0);}
-      for(let j=0;j<6;j++){const ph=(T*.18+j/6)%1;ctx.fillStyle=`rgba(150,140,130,${.22*fA*(1-ph)})`;ctx.beginPath();ctx.arc(cx+Math.sin(j*1.9+T*.6)*30*(1+ph),top-bh*.4-ph*D.h*.5,18+40*ph,0,Math.PI*2);ctx.fill();}}
-    if(burn>.6){const ak=prog(burn,.6,1);ctx.fillStyle=`rgba(118,112,106,${ak})`;ctx.beginPath();ctx.ellipse(cx,rim+2,bwid*.34,bwid*.12,0,Math.PI,0);ctx.fill();ctx.fillStyle=`rgba(150,145,138,${ak})`;ctx.beginPath();ctx.ellipse(cx-bwid*.05,rim-bwid*.03,bwid*.18,bwid*.06,0,Math.PI,0);ctx.fill();
-      for(let j=0;j<14;j++){const ox=Math.sin(j*12.9)*bwid*.3,oy=Math.cos(j*7.3)*6;ctx.fillStyle=j%4?`rgba(40,36,34,${ak})`:`rgba(255,140,60,${ak*(b.fx==='fash'?(.5+.5*Math.sin(T*4+j))*(1-prog(t,0,3)):.8)})`;ctx.fillRect(cx+ox,rim-2+oy,6,4);}}
-    basin(cx,fl,bwid,true);
-    if(b.fx==='fash'){const k=ez(prog(t,.8,2.2));ctx.strokeStyle=`rgba(243,234,216,${.6*k})`;ctx.lineWidth=3;ctx.setLineDash([10,8]);ctx.beginPath();ctx.ellipse(cx,rim,bwid*.48,bwid*.12,0,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);}}
-  ctx.restore();}
+function tfCanvas(k,w,h){if(!BURN[k])BURN[k]=document.createElement('canvas');const c=BURN[k];if(c.width!==w||c.height!==h){c.width=w;c.height=h;}return c;}
+function pr(c,x,y,w,h,col){c.fillStyle=col;c.fillRect(Math.round(x),Math.round(y),Math.max(1,Math.round(w)),Math.max(1,Math.round(h)));}
+// 經典（可選擇燒焦程度、剩下的高度）
+function tfBook(c,cx,yb,bw,bh,char,left){const k=tfCanvas('bk',Math.ceil(bw),Math.ceil(bh)),x=k.getContext('2d');x.globalCompositeOperation='source-over';x.clearRect(0,0,k.width,k.height);x.imageSmoothingEnabled=true;if(IM.p_sutraC)x.drawImage(IM.p_sutraC,0,0,k.width,k.height);
+  if(char>0){x.globalCompositeOperation='source-atop';x.fillStyle=`rgba(30,14,6,${char})`;x.fillRect(0,0,k.width,k.height);}
+  const hh=Math.max(1,Math.round(k.height*left)),y0=k.height-hh;c.drawImage(k,0,y0,k.width,hh,Math.round(cx-bw/2),Math.round(yb-hh),k.width,hh);
+  if(left<1)for(let i=0;i<k.width;i+=2)pr(c,cx-bw/2+i,yb-hh-(i%4?0:1),2,1,(i+Math.floor(T*12))%6<3?'#ff8a3a':'#3a1a0c');}
+// 竹編紙簍
+function basket(c,cx,yb,w,h,front){const top=yb-h;if(!front){pr(c,cx-w/2+1,top-1,w-2,3,'#2a1a0f');return;}
+  for(let y=0;y<h;y++){const ww=w-(y/h)*w*.22,x0=cx-ww/2,row=Math.floor(y/3),ry=y%3;pr(c,x0,top+y,ww,1,ry===0?'#a87c4a':(ry===1?'#8f6538':'#6e4a28'));
+    for(let x=(row%2)*3;x<ww;x+=6)pr(c,x0+x,top+y,1,1,'#5a3a1e');pr(c,x0,top+y,1,1,'#4a2f18');pr(c,x0+ww-2,top+y,2,1,'#b58a55');}
+  pr(c,cx-w/2-1,top-1,w+2,2,'#5c3d22');pr(c,cx-w/2,top-1,w,1,'#c49a62');pr(c,cx-w*.39-1,yb-2,w*.78+2,2,'#5c3d22');}
+// 包好的經典：米色紙兩邊摺進來、麻繩十字綁好
+function parcel(c,cx,yb,bw,bh,k1,k2,tie){const pw=bw+4,ph=bh+2,x0=Math.round(cx-pw/2),y0=Math.round(yb-ph);
+  const L=Math.round((pw/2+1)*k1),R=Math.round((pw/2+1)*k2);
+  if(L>0){pr(c,x0,y0,L,ph,'#efe6d2');pr(c,x0,y0,1,ph,'#8c7a5c');pr(c,x0+L-1,y0,1,ph,'#cfc2a4');pr(c,x0,y0,L,1,'#fbf6ea');pr(c,x0,y0+ph-1,L,1,'#bfb08f');}
+  if(R>0){const xr=x0+pw-R;pr(c,xr,y0,R,ph,'#e8ddc5');pr(c,xr+R-1,y0,1,ph,'#8c7a5c');pr(c,xr,y0,1,ph,'#b8a98a');pr(c,xr,y0,R,1,'#f6efdf');pr(c,xr,y0+ph-1,R,1,'#bfb08f');}
+  if(tie>0){const a=c.globalAlpha;c.globalAlpha=tie;pr(c,cx-1,y0,2,ph,'#9b7444');pr(c,x0,y0+ph*.45,pw,2,'#9b7444');pr(c,cx-3,y0+ph*.45-2,2,2,'#9b7444');pr(c,cx+1,y0+ph*.45-2,2,2,'#9b7444');c.globalAlpha=a;}}
+// 三足香爐（back＝爐口內側，front＝爐身）
+function burner(c,cx,yb,w,front){const d=Math.round(w*.46),rim=yb-6-d;
+  if(!front){for(let y=-2;y<=2;y++){const hw=Math.round(w/2*Math.sqrt(1-(y/3)**2));pr(c,cx-hw,rim+y,hw*2,1,'#1c120b');}return rim;}
+  for(let y=0;y<d;y++){const hw=Math.round(w/2*Math.sqrt(1-(y/d)**2*.7));pr(c,cx-hw,rim+y,hw*2,1,y<3?'#4e3b2a':(y===Math.round(d*.55)?'#a8834c':'#3d2e21'));pr(c,cx-hw,rim+y,2,1,'#261b12');pr(c,cx+hw-4,rim+y,3,1,'#5e4732');pr(c,cx-hw*.5,rim+y,2,1,'#4a3828');}
+  pr(c,cx-w/2-2,rim-2,w+4,3,'#a8834c');pr(c,cx-w/2-1,rim-2,w+2,1,'#e2bd7c');pr(c,cx-w/2-2,rim+1,w+4,1,'#5a4330');
+  pr(c,cx-w/2-5,rim+2,4,5,'#3d2e21');pr(c,cx-w/2-5,rim+2,4,1,'#a8834c');pr(c,cx+w/2+1,rim+2,4,5,'#3d2e21');pr(c,cx+w/2+1,rim+2,4,1,'#a8834c');
+  [-.3,0,.3].forEach(u=>{pr(c,cx+u*w-2,yb-6,4,6,'#2e2218');pr(c,cx+u*w-3,yb-1,6,1,'#1e160f');pr(c,cx+u*w-2,yb-6,1,6,'#4e3b2a');});
+  for(let i=0;i<w*.5;i+=5)pr(c,cx-w*.25+i,rim+Math.round(d*.55),2,1,'#e2bd7c');return rim;}
+// 火焰：一欄一欄（2px）畫，四層顏色，會閃動
+function fire(c,cx,base,w,H,seed,alpha){if(H<1||alpha<=0)return;const a0=c.globalAlpha;c.globalAlpha=alpha;
+  for(let x=-w/2;x<w/2;x+=2){const u=x/(w/2),env=1-u*u*.65,n=.6+.25*Math.sin(x*.7+T*9+seed)+.15*Math.sin(x*.23-T*5.3+seed*2),h=H*env*n;
+    [[1,'#d9481c'],[.78,'#ff8a2a'],[.52,'#ffc64e'],[.26,'#fff1b0']].forEach(([f,col],li)=>{const hh=Math.round(h*f);if(hh>0&&(li<3||Math.abs(u)<.6))pr(c,cx+x,base-hh,2,hh,col);});
+    if((Math.floor(T*10+x)%7)===0)pr(c,cx+x,base-h-2-((T*20+x)%6),1,1,'#ffd27a');}
+  c.globalAlpha=a0;}
+function drawTF(){if(ST.scene!=='tf')return;const b=beat();if(!b||ST.bi<1||b.fx==='tend')return;const D=tfBox(),a=ST.bi===1?eo(prog(ST.bt,0,.5)):1,t=ST.bt,q=4;
+  const w=Math.round(D.w/q),h=Math.round(D.h/q),cv=tfCanvas('cv',w,h),c=cv.getContext('2d');c.globalAlpha=1;c.clearRect(0,0,w,h);
+  for(let y=0;y<h;y++){const k=y/h;pr(c,0,y,w,1,`rgb(${Math.round(43-20*k)},${Math.round(29-14*k)},${Math.round(20-10*k)})`);}
+  for(let x=10;x<w;x+=22)pr(c,x,0,1,h,'rgba(0,0,0,.18)');
+  const fy=Math.round(h*.84);pr(c,0,fy,w,h-fy,'#3a2617');pr(c,0,fy,w,1,'#6b4a2c');for(let x=4;x<w;x+=16)pr(c,x,fy+4,8,1,'#2e1e12');
+  const m=FM.p_sutraC,bh=Math.round(h*.42),bw=Math.round(bh*m.w/m.h);let light=null;
+  if(b.fx==='fwrap'){// 包好 → 放進紙簍
+    const bx=Math.round(w*.36),k1=ez(prog(t,.4,1.0)),k2=ez(prog(t,.9,1.5)),tie=prog(t,1.5,1.8),mv=ez(prog(t,2.1,3.1)),B={x:Math.round(w*.74),w:Math.round(bw*2),h:Math.round(bh*1.08)};
+    basket(c,B.x,fy,B.w,B.h,false);
+    const px=bx+(B.x-bx)*mv,py=fy-2*mv-Math.sin(Math.PI*mv)*h*.3;
+    if(k1<1||k2<1)tfBook(c,bx,fy,bw,bh,0,1);
+    if(mv<1)parcel(c,px,py,bw,bh,k1,k2,tie);
+    basket(c,B.x,fy,B.w,B.h,true);
+    if(tie>=1&&mv<=0)for(let j=0;j<4;j++){const ph=(T*.6+j/4)%1;pr(c,bx-bw/2+(j*7)%bw,fy-bh-4-ph*12,1,1,`rgba(255,230,150,${1-ph})`);}}
+  else{// 焚燒：香爐裡整本燒起來，邊燒邊念偈頌，最後剩灰燼
+    const cx=Math.round(w/2),bwid=Math.round(bw*2.1),burn=b.fx==='fash'?1:(b.fx==='fburn'?prog(T-BURN.t0,.4,9):0),ig=b.fx==='fburn0'?prog(t,1.0,1.8):1;
+    const rim=burner(c,cx,fy,bwid,false),yb=rim+8;
+    const H=(b.fx==='fburn0'?bh*.25*ig:bh*(.3+1.0*ez(prog(burn,0,.2))))*(1-prog(burn,.78,1)*.9);
+    fire(c,cx,yb,bw+10,H*1.1,1,.95);
+    if(burn<.92)tfBook(c,cx,yb,bw,bh,prog(burn,.03,.6)*.85,1-.9*prog(burn,.3,.88));
+    fire(c,cx,yb,bw+4,H*.7,4,.85);
+    if(burn>.55){const ak=prog(burn,.55,1),fade=b.fx==='fash'?1-prog(t,0,3):1;for(let i=0;i<bwid*.7;i++){const u=i/(bwid*.7)-.5,hh=Math.round((1-4*u*u)*6*ak);for(let y=0;y<hh;y++)pr(c,cx+u*bwid*.7,rim-y,1,1,(i*7+y*3)%5===0?'#5a5550':((i*3+y)%4===0?'#a29c95':'#837d77'));
+        if(i%6===2&&ak>.3)pr(c,cx+u*bwid*.7,rim-1,1,1,`rgba(255,${120+Math.round(60*Math.sin(T*5+i))},50,${.8*fade})`);}}
+    burner(c,cx,fy,bwid,true);
+    for(let j=0;j<8;j++){const ph=(T*.5+j/8)%1,sa=(1-ph)*Math.min(1,H/bh);pr(c,cx+Math.sin(j*2.7+T*1.3)*bw*.7,yb-H-ph*h*.3,1,1,`rgba(255,210,120,${sa})`);}
+    for(let j=0;j<5;j++){const ph=(T*.16+j/5)%1,sa=.22*(1-ph)*Math.min(1,H/bh*1.5),r=Math.round(2+5*ph),sx=cx+Math.sin(j*1.9+T*.6)*(4+8*ph),sy=yb-H-6-ph*h*.35;c.fillStyle=`rgba(140,130,122,${sa})`;c.fillRect(sx-r,sy-r,r*2,r*2);c.fillRect(sx-r-1,sy-r+1,r*2+2,r*2-2);}
+    if(b.fx==='fash'){const k=eo(prog(t,.8,1.6))*(1-prog(t,3,3.6));for(let j=0;j<6;j++){const an=j/6*Math.PI*2+T*.6;pr(c,cx+Math.cos(an)*bwid*.38,rim-3+Math.sin(an)*3,1,1,`rgba(255,236,170,${k})`);}}
+    light={x:D.x+cx*q,y:D.y+(yb-H*.5)*q,r:D.w*.5,a:Math.min(1,H/bh)*(.35+.05*Math.sin(T*9))};}
+  ctx.save();ctx.globalAlpha=a;parchBox(D.x-14,D.y-14,D.w+28,D.h+28);ctx.imageSmoothingEnabled=false;ctx.drawImage(cv,D.x,D.y,D.w,D.h);
+  if(light){ctx.beginPath();ctx.rect(D.x,D.y,D.w,D.h);ctx.clip();soft(light.x,light.y,light.r,light.a*a,WARM);}ctx.restore();}
 // 迴向：閉眼祈禱時，光點往上飄向佛像
 function drawTG(){if(ST.scene!=='tg')return;const b=beat();if(!b||b.fx!=='gpray')return;const P=tp(),a=eo(prog(ST.bt,0,.8)),gb=goatBox('kneel1'),cx=gb.x+gb.w*.5,cy=gb.y+gb.h*.35;
   soft(cx,cy,gb.w*.8,.3*a+.05*Math.sin(T*2),WARM);soft(P.budd.x,P.budd.y,TALL?240:280,.2*a,WARM);
