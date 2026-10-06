@@ -466,18 +466,18 @@ function drawFan2(a){const R=fanRect();ctx.save();ctx.globalAlpha=a;ctx.imageSmo
 // 洗牌 → 扇形：時間表與位置（34/35 空手施法圖）
 // 牌一開始就在大正手上：拿著 → 繞圈洗牌 → 展開扇形 → 停住等客人點兩張 → 兩張飛到上面
 const CT={sh0:.9,sh1:2.3,fan0:2.3,fan1:3.2,wait:3.6,fly0:3.7,fly1:4.9,out0:3.7,out1:4.7,end:5.5,N:13};
-// x,yb＝手上牌堆；fx,fy＝扇形的軸心（直式在頭上方、橫式在右邊書架前，不擋到大正的臉）
-function castGeo(){return TALL?{x:490,yb:1240,cw:118,fx:540,fy:780,d:400}:{x:882,yb:662,cw:104,fx:1530,fy:900,d:320};}
+// x,yb＝手上牌堆；fx,fy＝扇形的軸心（就在手上）；d＝扇形半徑（最大不碰到下巴）
+function castGeo(){return TALL?{x:490,yb:1240,cw:118,fx:500,fy:1295,d:215}:{x:882,yb:662,cw:104,fx:892,fy:717,d:190};}
 // 扇形：每次抽牌換一種（不會和上一次一樣），牌的順序、傾斜、攤開方向也隨機
 const FAN2={kind:-1,span:1,d:1,tilt:0,ord:[...Array(13).keys()],sweep:0};
 function newFan2(){const r=(a,b)=>a+Math.random()*(b-a);let k;do{k=Math.floor(Math.random()*7);}while(k===FAN2.kind);FAN2.kind=k;
-  // 0 標準扇　1 寬扇　2 窄而高　3 半圓　4 內外兩層　5 斜扇　6 螺旋
-  FAN2.span=[1,1.35,.7,1.55,1.1,.9,1.2][k]+r(-.05,.05);FAN2.d=[1,.95,1.15,.9,1,1,1][k]*r(.94,1.02);
-  FAN2.tilt=k===5?(Math.random()<.5?-1:1)*r(.25,.38):r(-.08,.08);FAN2.sweep=Math.floor(Math.random()*4);
+  // 都從手上展開：0 標準扇　1 寬扇　2 半圓　3 內外兩層　4 往左斜　5 往右斜　6 螺旋
+  FAN2.span=[1.1,1.4,1.6,1.3,1,1,1.25][k]+r(-.05,.05);FAN2.d=[1,.95,.9,1.05,1.05,1.05,1][k]*r(.95,1.03);
+  FAN2.tilt=k===4?-r(.4,.5):k===5?r(.4,.5):r(-.08,.08);FAN2.sweep=Math.floor(Math.random()*4);
   const o=[...Array(CT.N).keys()];for(let i=o.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[o[i],o[j]]=[o[j],o[i]];}FAN2.ord=o;}
 function fanSlot(i,Q){const j=FAN2.ord[i],u=j/(CT.N-1),ph=-FAN2.span+2*FAN2.span*u+FAN2.tilt,px=Q.fx,py=Q.fy;
-  let d=Q.d*FAN2.d;if(FAN2.kind===4)d*=j%2?.74:1;if(FAN2.kind===6)d*=.78+.34*u;
-  return {x:px+Math.sin(ph)*d,y:py-Math.cos(ph)*d,rot:ph*(FAN2.kind===3?.85:1),j};}
+  let d=Q.d*FAN2.d;if(FAN2.kind===3)d*=j%2?.72:1;if(FAN2.kind===6)d*=.7+.42*u;
+  return {x:px+Math.sin(ph)*d,y:py-Math.cos(ph)*d,rot:ph,j};}
 // 攤開的順序：一起／左到右／右到左／從中間往兩邊
 function fanDelay(j){const u=j/(CT.N-1);return [0,u,1-u,Math.abs(u-.5)*2][FAN2.sweep]*.3;}
 const DUOP={ids:[],t:[],done:0,ws:-1};
