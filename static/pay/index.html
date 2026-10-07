@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>回報匯款｜大正命理諮詢</title>
+<style>
+@font-face{font-family:"DazhenWenkai";src:url("/fonts/dazhen-wenkai-400.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"DazhenWenkai";src:url("/fonts/dazhen-wenkai-700.woff2") format("woff2");font-weight:700;font-display:swap}
+:root{--ink:#1b2845;--warm:#cc8854;--line:#e7e0d4;--muted:#857c70;--paper:#fbf8f3;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:"DazhenWenkai",-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;background:var(--paper);color:#2b2b2b;line-height:1.8;padding:18px 14px 48px}
+.wrap{max-width:460px;margin:0 auto}
+.brand{text-align:center;color:var(--ink);font-weight:700;font-size:15px;letter-spacing:.08em;margin:2px 0 14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 18px;margin-bottom:14px}
+h1{font-size:21px;color:var(--ink);margin:0 0 4px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 14px}
+.sum{background:#f3f5f9;border-radius:12px;padding:12px 14px;font-size:14.5px;margin:0 0 14px}
+.sum div{display:flex;justify-content:space-between;gap:12px;padding:3px 0}
+.sum span{color:var(--muted)}.sum b{color:var(--ink);text-align:right}
+details{margin:0 0 14px;font-size:14px}
+summary{cursor:pointer;color:var(--warm);text-decoration:underline}
+.bank{background:#fffbeb;border-radius:10px;padding:10px 12px;margin-top:8px;white-space:pre-line}
+label{display:block;font-weight:700;color:var(--ink);font-size:14.5px;margin:2px 0 6px}
+input{width:100%;font:inherit;font-size:24px;letter-spacing:8px;text-align:center;border:1.5px solid var(--line);border-radius:12px;padding:10px;background:#fff}
+input:focus{outline:none;border-color:var(--ink)}
+input.bad{border-color:#dc2626}
+.err{color:#b91c1c;font-size:13.5px;margin:6px 0 0;min-height:20px}
+button,.btn{display:block;width:100%;border:0;border-radius:12px;font:inherit;font-weight:700;font-size:16px;padding:13px 14px;margin-top:10px;cursor:pointer;text-align:center;text-decoration:none}
+.go{background:var(--ink);color:#fff}
+.line{background:#06c755;color:#fff}
+button:disabled{opacity:.55;cursor:default}
+.note{font-size:12.5px;color:var(--muted);margin:12px 0 0}
+.ok h1{color:#15803d}
+.invite{background:var(--ink);color:#fff;border-radius:14px;padding:16px;text-align:center;margin-top:14px}
+.invite p{margin:0 0 10px;font-size:14px}.invite b{font-size:15.5px}
+.warn{background:#fef2f2;color:#b91c1c;border-radius:12px;padding:12px 14px;font-size:14px}
+.info{background:#fffbeb;color:#92400e;border-radius:12px;padding:12px 14px;font-size:14px;margin:0 0 14px}
+.loading{text-align:center;color:var(--muted);padding:26px 0}
+.loading small{display:block;font-size:12.5px}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">大正・命理諮詢</div>
+
+  <div class="card loading" id="loading"><b>正在讀取你的訂單…</b><small>第一次打開大約需要 10 秒，請稍候</small></div>
+  <div class="card warn hide" id="fatal"></div>
+
+  <div class="card hide" id="main">
+    <h1>回報匯款</h1>
+    <p class="sub">匯款完成後，在這裡填帳號末五碼，大正就會收到通知並確認。</p>
+    <div class="sum" id="sum"></div>
+    <div class="info hide" id="stateNote"></div>
+    <details id="bankBox"><summary>看匯款資訊</summary><div class="bank" id="bank"></div></details>
+    <div id="formBox">
+      <label for="last5">匯款帳號末五碼</label>
+      <input id="last5" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="12345">
+      <div class="err" id="err"></div>
+      <button class="go" id="btnGo" type="button">送出回報</button>
+      <p class="note" id="note">不用加 LINE，預約成功通知與提醒會寄到你的 Email。</p>
+    </div>
+  </div>
+
+  <div class="card ok hide" id="done">
+    <h1>✓ 已收到你的匯款回報</h1>
+    <p id="doneText"></p>
+    <div id="doneExtra"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var API = 'https://script.google.com/macros/s/AKfycbx3aDlFDBayTKgvGtQMrWrpDMx3WuU5Yd3Uh4c6BJK5kmKpZnBsXH7fK97yrkQkgx9fkQ/exec';
+  var qs = new URLSearchParams(location.search), O = (qs.get('o') || '').toUpperCase(), T = qs.get('t') || '';
+  var $ = function (id) { return document.getElementById(id); };
+  var info = null, busy = false;
+
+  function show(id, on) { $(id).classList.toggle('hide', !on); }
+  function money(n) { return 'NT$' + Number(n || 0).toLocaleString(); }
+  function fatal(msg) { show('loading', false); show('main', false); $('fatal').textContent = msg; show('fatal', true); }
+
+  // JSONP：頁面在別的網域，用 script 標籤呼叫預約系統
+  function jsonp(params) {
+    return new Promise(function (resolve, reject) {
+      var cb = '__pay' + Date.now() + Math.floor(Math.random() * 100000), s = document.createElement('script');
+      var timer = setTimeout(function () { clean(); reject(new Error('timeout')); }, 60000);
+      function clean() { clearTimeout(timer); try { delete window[cb]; } catch (e) { window[cb] = undefined; } if (s.parentNode) s.parentNode.removeChild(s); }
+      window[cb] = function (d) { clean(); resolve(d); };
+      s.onerror = function () { clean(); reject(new Error('network')); };
+      var q = Object.keys(params).map(function (k) { return k + '=' + encodeURIComponent(params[k]); }).join('&');
+      s.src = API + '?page=payApi&callback=' + cb + '&' + q;
+      document.body.appendChild(s);
+    });
+  }
+
+  function basicId() { return '@' + String((info && info.lineBasicId) || '159cibme').replace(/^@/, ''); }
+  function sendOrderUrl() { return 'https://line.me/R/oaMessage/' + encodeURIComponent(basicId()) + '/?' + encodeURIComponent('大正，我的訂單編號是「' + O + '」'); }
+
+  function render() {
+    show('loading', false); show('main', true);
+    var rows = [['訂單編號', O], ['金額', money(info.amount)]];
+    if (!info.isText && info.slot) rows.push(['諮詢時段', info.slot]);
+    rows.push(['服務', info.isText ? '文字版諮詢' : (info.isLineVoice ? '一對一（LINE 語音）' : '一對一（Google Meet）')]);
+    if (info.deadline && !info.paid) rows.push(['付款期限', info.deadline]);
+    $('sum').innerHTML = rows.map(function () { return '<div><span></span><b></b></div>'; }).join('');
+    var divs = $('sum').querySelectorAll('div');
+    rows.forEach(function (r, i) { divs[i].querySelector('span').textContent = r[0]; divs[i].querySelector('b').textContent = r[1]; });
+    $('bank').textContent = info.bank || ''; show('bankBox', !!info.bank);
+    var note = '';
+    if (info.cancelled) note = '這筆訂單已經取消，如果你已經匯款，請直接聯絡大正。';
+    else if (info.paid) note = '這筆訂單已經確認收款，不需要再回報。';
+    else if (info.reported) note = '你已經回報過了，大正確認後會通知你。如果末五碼填錯了，可以重新填寫送出。';
+    else if (info.isLineVoice) note = '你選的是 LINE 語音通話，時間到了大正會用官方 LINE 撥給你，請記得加入官方 LINE 並傳送訂單編號。';
+    $('stateNote').textContent = note; show('stateNote', !!note);
+    show('formBox', !(info.cancelled || info.paid));
+  }
+
+  function readLast5() {
+    var v = $('last5').value.replace(/\D/g, '');
+    if (!/^\d{5}$/.test(v)) { $('last5').classList.add('bad'); $('err').textContent = '請輸入 5 個數字（匯款帳號的最後五碼）'; $('last5').focus(); return null; }
+    $('last5').classList.remove('bad'); $('err').textContent = ''; return v;
+  }
+
+  async function submit(last5) {
+    busy = true; $('btnGo').disabled = true; $('err').textContent = '送出中…';
+    try {
+      var r = await jsonp({ action: 'report', o: O, t: T, last5: last5 });
+      busy = false; $('btnGo').disabled = false; $('err').textContent = '';
+      if (!r || !r.ok) { $('err').textContent = (r && r.message) || '回報失敗，請稍後再試一次。'; return; }
+      done(r);
+    } catch (e) { busy = false; $('btnGo').disabled = false; $('err').textContent = '連線失敗，請檢查網路後再試一次。'; }
+  }
+
+  function done(r) {
+    show('main', false); show('done', true);
+    $('doneText').textContent = '大正確認款項到帳後，會寄「預約成功」通知到你的 Email' + (r.lineBound ? '，LINE 也會同步通知' : '') + '。通常在當天內，請留意信箱。';
+    var ex = $('doneExtra'); ex.innerHTML = '';
+    if (!r.lineBound) {  // 選用的邀請：加好友並傳訂單編號，會走原本的 LINE 綁定
+      var box = document.createElement('div'); box.className = 'invite';
+      box.innerHTML = '<p><b>要不要也加入官方 LINE？（選用）</b></p><p>之後的提醒、改約會更方便；不加也完全沒問題。</p>';
+      var a = document.createElement('a'); a.className = 'btn line'; a.href = sendOrderUrl(); a.target = '_blank'; a.rel = 'noopener'; a.textContent = '加入 LINE 並傳送訂單編號 →';
+      box.appendChild(a); ex.appendChild(box);
+    }
+    window.scrollTo(0, 0);
+  }
+
+  $('btnGo').addEventListener('click', function () { if (busy) return; var v = readLast5(); if (v) submit(v); });
+  $('last5').addEventListener('input', function () { this.value = this.value.replace(/\D/g, '').slice(0, 5); this.classList.remove('bad'); $('err').textContent = ''; });
+  $('last5').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('btnGo').click(); });
+
+  (async function init() {
+    if (!/^GRW?\d{8}-\d{2}$/.test(O) || !T) { fatal('這個連結不完整，請回到預約確認信，重新點一次「在網頁回報匯款」按鈕。'); return; }
+    try {
+      info = await jsonp({ action: 'info', o: O, t: T });
+      if (!info || !info.ok) { fatal((info && info.message) || '讀取訂單失敗，請稍後再試。'); return; }
+      render();
+    } catch (e) { fatal('連線失敗，請檢查網路後重新整理頁面。'); }
+  })();
+})();
+</script>
+</body>
+</html>
