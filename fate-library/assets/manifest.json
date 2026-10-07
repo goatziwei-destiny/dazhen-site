@@ -206,7 +206,14 @@
   "p_smoke0": "p_smoke0.webp",
   "p_smoke1": "p_smoke1.webp",
   "p_smoke2": "p_smoke2.webp",
-  "p_basket": "p_basket.webp"
+  "p_basket": "p_basket.webp",
+  "p_parcel": "p_parcel.webp",
+  "p_burner": "p_burner.webp",
+  "p_bookHalf": "p_bookHalf.webp",
+  "p_ash": "p_ash.webp",
+  "p_ash0": "p_ash0.webp",
+  "p_ash1": "p_ash1.webp",
+  "p_ash2": "p_ash2.webp"
  },
  "duo": {
   "cardk": "cardk.webp",

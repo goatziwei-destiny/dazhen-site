@@ -522,9 +522,9 @@ function duoHint(){if(!duoWaiting())return;const a=eo(prog(ST.bt,CT.fan1-.3,CT.f
   const w=TALL?760:470,h=TALL?130:160,x=TALL?(W-w)/2:70,y=TALL?1640:860;tealBox(x,y,w,h);
   if(TALL){text('憑直覺，點兩張有感覺的牌',W/2,y+58,40,C.cream,'center');text(n===2?'還要選 2 張':'再選 1 張',W/2,y+104,32,C.gold,'center');}
   else{text('憑直覺，點兩張',x+w/2,y+62,40,C.cream,'center');text(n===2?'還要選 2 張':'再選 1 張',x+w/2,y+118,34,C.gold,'center');}ctx.globalAlpha=1;}
-function IDBOX(){return TALL?{x:94,y:1362,w:869,h:176}:{x:516,y:798,w:864,h:175};}
+function IDBOX(){return TALL?{x:109,y:1155,w:861,h:185}:{x:430,y:785,w:851,h:186};}
 function duoScene(b){const t=ST.bt;
-  if(ST.bi===0){ctx.imageSmoothingEnabled=true;sprite(TALL?'cidt':'cidw',0,0,W,H);ctx.imageSmoothingEnabled=false;if(TALL){text('大正的抽牌小遊戲',W/2,330,72,C.gold,'center');text('抽兩張星曜卡，看看今天的提示',W/2,420,38,C.paper,'center');}return;}
+  if(ST.bi===0){ctx.imageSmoothingEnabled=true;sprite(TALL?'cidt':'cidw',0,0,W,H);ctx.imageSmoothingEnabled=false;if(TALL){{const g=ctx.createLinearGradient(0,200,0,490);g.addColorStop(0,'rgba(18,15,30,0)');g.addColorStop(.25,'rgba(18,15,30,.78)');g.addColorStop(.75,'rgba(18,15,30,.78)');g.addColorStop(1,'rgba(18,15,30,0)');ctx.fillStyle=g;ctx.fillRect(0,200,W,290);}text('大正的抽牌小遊戲',W/2,330,72,C.gold,'center');text('抽兩張星曜卡，看看今天的提示',W/2,420,38,C.paper,'center');}return;}
   if(b&&b.fx==='dcast'){
     const fin=eo(prog(t,0,.7)),fout=1-eo(prog(t,CT.out0,CT.out1)),aa=Math.min(fin,fout),Q=castGeo();
     if(fin<1){ctx.imageSmoothingEnabled=true;sprite(TALL?'cidt':'cidw',0,0,W,H);ctx.imageSmoothingEnabled=false;}
@@ -713,71 +713,56 @@ function sceneTemple(){const b=beat();if(!b||!b.stay||ST.scene!=='temple'||quipO
 let TPAGE=0;
 const TMENU=[[['tc','經典只能抄或念嗎？'],['td','持咒念佛，怎麼計數更好？'],['te','迴向，功德會變少嗎？'],['tpage','下一頁 ▶']],
   [['tf','抄好的經典，怎麼處理？'],['tg','迴向文，要怎麼說？'],['th','做善事，可以有目的嗎？'],['tpage','◀ 上一頁']]];
-// 圖解框：抄好的經典怎麼處理（全部用程式畫在 1/4 大小的小畫布上，再放大成像素風）
-const BURN={t0:0,cv:null,bk:null};
+// 圖解框：抄好的經典怎麼處理（素材：p_parcel 包好的經典、p_basket 紙簍、p_burner 香爐、p_bookHalf 燒到一半、p_ash* 灰燼、p_fire{S,L,E}0–3 火焰、p_smoke0–2 煙）
+const BURN={t0:0};
+// 口緣前緣在圖裡的高度比例：經書、包裹放進去時，低於這條線的部分被爐身／簍身擋住
+const RIM={p_burner:.36,p_basket:.25};
 function tfBox(){return TALL?{x:90,y:110,w:900,h:675}:{x:60,y:60,w:560,h:420};}
-function tfCanvas(k,w,h){if(!BURN[k])BURN[k]=document.createElement('canvas');const c=BURN[k];if(c.width!==w||c.height!==h){c.width=w;c.height=h;}return c;}
-function pr(c,x,y,w,h,col){c.fillStyle=col;c.fillRect(Math.round(x),Math.round(y),Math.max(1,Math.round(w)),Math.max(1,Math.round(h)));}
-// 經典（可選擇燒焦程度、剩下的高度）
-function tfBook(c,cx,yb,bw,bh,char,left){const k=tfCanvas('bk',Math.ceil(bw),Math.ceil(bh)),x=k.getContext('2d');x.globalCompositeOperation='source-over';x.clearRect(0,0,k.width,k.height);x.imageSmoothingEnabled=true;if(IM.p_sutraC)x.drawImage(IM.p_sutraC,0,0,k.width,k.height);
-  if(char>0){x.globalCompositeOperation='source-atop';x.fillStyle=`rgba(30,14,6,${char})`;x.fillRect(0,0,k.width,k.height);}
-  const hh=Math.max(1,Math.round(k.height*left)),y0=k.height-hh;c.drawImage(k,0,y0,k.width,hh,Math.round(cx-bw/2),Math.round(yb-hh),k.width,hh);
-  if(left<1)for(let i=0;i<k.width;i+=2)pr(c,cx-bw/2+i,yb-hh-(i%4?0:1),2,1,(i+Math.floor(T*12))%6<3?'#ff8a3a':'#3a1a0c');}
-// 竹編紙簍
-function basket(c,cx,yb,w,h,front){const top=yb-h;if(!front){pr(c,cx-w/2+1,top-1,w-2,3,'#2a1a0f');return;}
-  for(let y=0;y<h;y++){const ww=w-(y/h)*w*.22,x0=cx-ww/2,row=Math.floor(y/3),ry=y%3;pr(c,x0,top+y,ww,1,ry===0?'#a87c4a':(ry===1?'#8f6538':'#6e4a28'));
-    for(let x=(row%2)*3;x<ww;x+=6)pr(c,x0+x,top+y,1,1,'#5a3a1e');pr(c,x0,top+y,1,1,'#4a2f18');pr(c,x0+ww-2,top+y,2,1,'#b58a55');}
-  pr(c,cx-w/2-1,top-1,w+2,2,'#5c3d22');pr(c,cx-w/2,top-1,w,1,'#c49a62');pr(c,cx-w*.39-1,yb-2,w*.78+2,2,'#5c3d22');}
-// 包好的經典：米色紙兩邊摺進來、麻繩十字綁好
-function parcel(c,cx,yb,bw,bh,k1,k2,tie){const pw=bw+4,ph=bh+2,x0=Math.round(cx-pw/2),y0=Math.round(yb-ph);
-  const L=Math.round((pw/2+1)*k1),R=Math.round((pw/2+1)*k2);
-  if(L>0){pr(c,x0,y0,L,ph,'#efe6d2');pr(c,x0,y0,1,ph,'#8c7a5c');pr(c,x0+L-1,y0,1,ph,'#cfc2a4');pr(c,x0,y0,L,1,'#fbf6ea');pr(c,x0,y0+ph-1,L,1,'#bfb08f');}
-  if(R>0){const xr=x0+pw-R;pr(c,xr,y0,R,ph,'#e8ddc5');pr(c,xr+R-1,y0,1,ph,'#8c7a5c');pr(c,xr,y0,1,ph,'#b8a98a');pr(c,xr,y0,R,1,'#f6efdf');pr(c,xr,y0+ph-1,R,1,'#bfb08f');}
-  if(tie>0){const a=c.globalAlpha;c.globalAlpha=tie;pr(c,cx-1,y0,2,ph,'#9b7444');pr(c,x0,y0+ph*.45,pw,2,'#9b7444');pr(c,cx-3,y0+ph*.45-2,2,2,'#9b7444');pr(c,cx+1,y0+ph*.45-2,2,2,'#9b7444');c.globalAlpha=a;}}
-// 三足香爐（back＝爐口內側，front＝爐身）
-function burner(c,cx,yb,w,front){const d=Math.round(w*.46),rim=yb-6-d;
-  if(!front){for(let y=-2;y<=2;y++){const hw=Math.round(w/2*Math.sqrt(1-(y/3)**2));pr(c,cx-hw,rim+y,hw*2,1,'#1c120b');}return rim;}
-  for(let y=0;y<d;y++){const hw=Math.round(w/2*Math.sqrt(1-(y/d)**2*.7));pr(c,cx-hw,rim+y,hw*2,1,y<3?'#4e3b2a':(y===Math.round(d*.55)?'#a8834c':'#3d2e21'));pr(c,cx-hw,rim+y,2,1,'#261b12');pr(c,cx+hw-4,rim+y,3,1,'#5e4732');pr(c,cx-hw*.5,rim+y,2,1,'#4a3828');}
-  pr(c,cx-w/2-2,rim-2,w+4,3,'#a8834c');pr(c,cx-w/2-1,rim-2,w+2,1,'#e2bd7c');pr(c,cx-w/2-2,rim+1,w+4,1,'#5a4330');
-  pr(c,cx-w/2-5,rim+2,4,5,'#3d2e21');pr(c,cx-w/2-5,rim+2,4,1,'#a8834c');pr(c,cx+w/2+1,rim+2,4,5,'#3d2e21');pr(c,cx+w/2+1,rim+2,4,1,'#a8834c');
-  [-.3,0,.3].forEach(u=>{pr(c,cx+u*w-2,yb-6,4,6,'#2e2218');pr(c,cx+u*w-3,yb-1,6,1,'#1e160f');pr(c,cx+u*w-2,yb-6,1,6,'#4e3b2a');});
-  for(let i=0;i<w*.5;i+=5)pr(c,cx-w*.25+i,rim+Math.round(d*.55),2,1,'#e2bd7c');return rim;}
-// 火焰：一欄一欄（2px）畫，四層顏色，會閃動
-function fire(c,cx,base,w,H,seed,alpha){if(H<1||alpha<=0)return;const a0=c.globalAlpha;c.globalAlpha=alpha;
-  for(let x=-w/2;x<w/2;x+=2){const u=x/(w/2),env=1-u*u*.65,n=.6+.25*Math.sin(x*.7+T*9+seed)+.15*Math.sin(x*.23-T*5.3+seed*2),h=H*env*n;
-    [[1,'#d9481c'],[.78,'#ff8a2a'],[.52,'#ffc64e'],[.26,'#fff1b0']].forEach(([f,col],li)=>{const hh=Math.round(h*f);if(hh>0&&(li<3||Math.abs(u)<.6))pr(c,cx+x,base-hh,2,hh,col);});
-    if((Math.floor(T*10+x)%7)===0)pr(c,cx+x,base-h-2-((T*20+x)%6),1,1,'#ffd27a');}
-  c.globalAlpha=a0;}
-function drawTF(){if(ST.scene!=='tf')return;const b=beat();if(!b||ST.bi<1||b.fx==='tend')return;const D=tfBox(),a=ST.bi===1?eo(prog(ST.bt,0,.5)):1,t=ST.bt,q=4;
-  const w=Math.round(D.w/q),h=Math.round(D.h/q),cv=tfCanvas('cv',w,h),c=cv.getContext('2d');c.globalAlpha=1;c.clearRect(0,0,w,h);
-  for(let y=0;y<h;y++){const k=y/h;pr(c,0,y,w,1,`rgb(${Math.round(43-20*k)},${Math.round(29-14*k)},${Math.round(20-10*k)})`);}
-  for(let x=10;x<w;x+=22)pr(c,x,0,1,h,'rgba(0,0,0,.18)');
-  const fy=Math.round(h*.84);pr(c,0,fy,w,h-fy,'#3a2617');pr(c,0,fy,w,1,'#6b4a2c');for(let x=4;x<w;x+=16)pr(c,x,fy+4,8,1,'#2e1e12');
-  const m=FM.p_sutraC,bh=Math.round(h*.42),bw=Math.round(bh*m.w/m.h);let light=null;
-  if(b.fx==='fwrap'){// 包好 → 放進紙簍
-    const bx=Math.round(w*.36),k1=ez(prog(t,.4,1.0)),k2=ez(prog(t,.9,1.5)),tie=prog(t,1.5,1.8),mv=ez(prog(t,2.1,3.1)),B={x:Math.round(w*.74),w:Math.round(bw*2),h:Math.round(bh*1.08)};
-    basket(c,B.x,fy,B.w,B.h,false);
-    const px=bx+(B.x-bx)*mv,py=fy-2*mv-Math.sin(Math.PI*mv)*h*.3;
-    if(k1<1||k2<1)tfBook(c,bx,fy,bw,bh,0,1);
-    if(mv<1)parcel(c,px,py,bw,bh,k1,k2,tie);
-    basket(c,B.x,fy,B.w,B.h,true);
-    if(tie>=1&&mv<=0)for(let j=0;j<4;j++){const ph=(T*.6+j/4)%1;pr(c,bx-bw/2+(j*7)%bw,fy-bh-4-ph*12,1,1,`rgba(255,230,150,${1-ph})`);}}
+function spW(k,h){const m=FM[k];return m?h*m.w/m.h:0;}
+// 以底部中心為準畫素材
+function spB(k,cx,yb,h,a,rot){const m=FM[k];if(!m||a<=0||h<=0)return;const w=h*m.w/m.h;ctx.save();ctx.globalAlpha*=Math.min(1,a);ctx.translate(cx,yb);if(rot)ctx.rotate(rot);ctx.imageSmoothingEnabled=true;sprite(k,-w/2,-h,w,h);ctx.restore();}
+function drawTF(){if(ST.scene!=='tf')return;const b=beat();if(!b||ST.bi<1||b.fx==='tend')return;const D=tfBox(),a=ST.bi===1?eo(prog(ST.bt,0,.5)):1,t=ST.bt;
+  ctx.save();ctx.globalAlpha=a;parchBox(D.x-14,D.y-14,D.w+28,D.h+28);
+  ctx.beginPath();ctx.rect(D.x,D.y,D.w,D.h);ctx.clip();
+  const g=ctx.createLinearGradient(0,D.y,0,D.y+D.h);g.addColorStop(0,'#2b1d14');g.addColorStop(1,'#140c08');ctx.fillStyle=g;ctx.fillRect(D.x,D.y,D.w,D.h);
+  const fy=D.y+D.h*.86;ctx.fillStyle='#3a2617';ctx.fillRect(D.x,fy,D.w,D.y+D.h-fy);ctx.fillStyle='#5a3c22';ctx.fillRect(D.x,fy,D.w,3);
+  const fr=n=>Math.floor(T*9+n)%4;
+  if(b.fx==='fwrap'){// 經典 → 包好 → 放進紙簍
+    const bh=D.h*.42,bx=D.x+D.w*.3,k=ez(prog(t,.4,1.2)),mv=ez(prog(t,2.0,3.0));
+    const hb=D.h*.52,kx=D.x+D.w*.73,top=fy-hb,wb=spW('p_basket',hb),clipY=top+hb*RIM.p_basket;
+    spB('p_basket',kx,fy,hb,1,0);
+    if(k<1)spB('p_sutraC',bx,fy,bh,1-k,0);
+    if(k>0){const sc=1+.08*Math.sin(Math.PI*k),px=bx+(kx-bx)*mv,py=fy+(top+hb*.95-fy)*mv-Math.sin(Math.PI*mv)*D.h*.3;
+      ctx.save();if(mv>0){ctx.beginPath();ctx.rect(D.x,D.y,D.w,D.h);ctx.rect(kx-wb/2,clipY,wb,D.h);ctx.clip('evenodd');}spB('p_parcel',px,py,bh*sc,k,0);ctx.restore();}
+    if(k>0&&k<1)soft(bx,fy-bh*.5,bh*.8,.45*Math.sin(Math.PI*k),WARM);
+    const sp=(k>=1&&mv<=0)?1:(mv>=1?1-prog(t,3.0,3.8):0);if(sp>0){const cx=mv>=1?kx:bx,cy=mv>=1?top:fy-bh;for(let j=0;j<6;j++){const ph=(T*.6+j/6)%1;fxSprite([2,5,6][j%3],cx+Math.sin(j*2.1)*bh*.35,cy-ph*bh*.5,.26,sp*(1-ph),0);}}}
   else{// 焚燒：香爐裡整本燒起來，邊燒邊念偈頌，最後剩灰燼
-    const cx=Math.round(w/2),bwid=Math.round(bw*2.1),burn=b.fx==='fash'?1:(b.fx==='fburn'?prog(T-BURN.t0,.4,9):0),ig=b.fx==='fburn0'?prog(t,1.0,1.8):1;
-    const rim=burner(c,cx,fy,bwid,false),yb=rim+8;
-    const H=(b.fx==='fburn0'?bh*.25*ig:bh*(.3+1.0*ez(prog(burn,0,.2))))*(1-prog(burn,.78,1)*.9);
-    fire(c,cx,yb,bw+10,H*1.1,1,.95);
-    if(burn<.92)tfBook(c,cx,yb,bw,bh,prog(burn,.03,.6)*.85,1-.9*prog(burn,.3,.88));
-    fire(c,cx,yb,bw+4,H*.7,4,.85);
-    if(burn>.55){const ak=prog(burn,.55,1),fade=b.fx==='fash'?1-prog(t,0,3):1;for(let i=0;i<bwid*.7;i++){const u=i/(bwid*.7)-.5,hh=Math.round((1-4*u*u)*6*ak);for(let y=0;y<hh;y++)pr(c,cx+u*bwid*.7,rim-y,1,1,(i*7+y*3)%5===0?'#5a5550':((i*3+y)%4===0?'#a29c95':'#837d77'));
-        if(i%6===2&&ak>.3)pr(c,cx+u*bwid*.7,rim-1,1,1,`rgba(255,${120+Math.round(60*Math.sin(T*5+i))},50,${.8*fade})`);}}
-    burner(c,cx,fy,bwid,true);
-    for(let j=0;j<8;j++){const ph=(T*.5+j/8)%1,sa=(1-ph)*Math.min(1,H/bh);pr(c,cx+Math.sin(j*2.7+T*1.3)*bw*.7,yb-H-ph*h*.3,1,1,`rgba(255,210,120,${sa})`);}
-    for(let j=0;j<5;j++){const ph=(T*.16+j/5)%1,sa=.22*(1-ph)*Math.min(1,H/bh*1.5),r=Math.round(2+5*ph),sx=cx+Math.sin(j*1.9+T*.6)*(4+8*ph),sy=yb-H-6-ph*h*.35;c.fillStyle=`rgba(140,130,122,${sa})`;c.fillRect(sx-r,sy-r,r*2,r*2);c.fillRect(sx-r-1,sy-r+1,r*2+2,r*2-2);}
-    if(b.fx==='fash'){const k=eo(prog(t,.8,1.6))*(1-prog(t,3,3.6));for(let j=0;j<6;j++){const an=j/6*Math.PI*2+T*.6;pr(c,cx+Math.cos(an)*bwid*.38,rim-3+Math.sin(an)*3,1,1,`rgba(255,236,170,${k})`);}}
-    light={x:D.x+cx*q,y:D.y+(yb-H*.5)*q,r:D.w*.5,a:Math.min(1,H/bh)*(.35+.05*Math.sin(T*9))};}
-  ctx.save();ctx.globalAlpha=a;parchBox(D.x-14,D.y-14,D.w+28,D.h+28);ctx.imageSmoothingEnabled=false;ctx.drawImage(cv,D.x,D.y,D.w,D.h);
-  if(light){ctx.beginPath();ctx.rect(D.x,D.y,D.w,D.h);ctx.clip();soft(light.x,light.y,light.r,light.a*a,WARM);}ctx.restore();}
+    const cx=D.x+D.w/2,bw=D.w*.5,hb=bw*FM.p_burner.h/FM.p_burner.w,top=fy-hb,clipY=top+hb*RIM.p_burner,mouth=bw*.62;
+    const burn=b.fx==='fash'?1:(b.fx==='fburn'?prog(T-BURN.t0,.4,9):0),ig=b.fx==='fburn0'?prog(t,1.0,1.8):1;
+    const big=b.fx==='fburn'?ez(prog(burn,0,.15))*(1-prog(burn,.75,.9)):0,small=b.fx==='fburn0'?ig:(b.fx==='fburn'?Math.max(1-ez(prog(burn,0,.15)),prog(burn,.75,.9)*(1-prog(burn,.9,1))):0);
+    const ember=b.fx==='fash'?1-prog(t,0,2.5):(b.fx==='fburn'?prog(burn,.88,1):0),fireAmt=Math.max(big,small*.5,ember*.25);
+    soft(cx,clipY-hb*.4,D.w*.5,(.12+.35*fireAmt)+.04*Math.sin(T*9),WARM);
+    spB('p_burner',cx,fy,hb,1,0);
+    const fb=clipY+hb*.02;
+    // 大火在經書後面：中間一團、兩側各一團（不同步）
+    if(big>0){const fh=hb*1.05*(.55+.45*big);spB('p_fireL'+fr(1),cx-mouth*.22,fb,fh*.8,big,-.1);spB('p_fireL'+fr(3),cx+mouth*.22,fb,fh*.84,big,.1);spB('p_fireL'+fr(0),cx,fb,fh,big,0);}
+    // 爐口裡的經書和灰燼（只露出口緣以上）
+    ctx.save();ctx.beginPath();ctx.rect(D.x,D.y,D.w,clipY-D.y);ctx.clip();
+    const bk=hb*1.05,sink=prog(burn,.3,.92)*bk*.85,yb=clipY+bk*.22+sink,half=prog(burn,.28,.42);
+    if(burn<.95){if(half<1)spB('p_sutraC',cx,yb,bk,1-half,0);if(half>0)spB('p_bookHalf',cx,yb,bk,half,0);}
+    const ashA=b.fx==='fash'?1:prog(burn,.7,.95);if(ashA>0){const ah=mouth*.85*FM.p_ash0.h/FM.p_ash0.w;spB(b.fx==='fash'?'p_ash'+(Math.floor(T*2.5)%3):'p_ash',cx,clipY+ah*.35,ah,ashA,0);}
+    ctx.restore();
+    // 經書前面的火：點火時的小火苗；大火時在書腳燒的一排火
+    const sH=mouth*.75*FM.p_fireS0.h/FM.p_fireS0.w;
+    if(small>0)spB('p_fireS'+fr(0),cx,fb,sH*(.7+.3*small),small,0);
+    if(big>0)spB('p_fireS'+fr(2),cx,fb,sH*(.8+.25*big),big*.95,0);
+    if(ember>0){const fh=mouth*.8*FM.p_fireE0.h/FM.p_fireE0.w;spB('p_fireE'+fr(2),cx,fb,fh,ember,0);}
+    // 火星和煙
+    const fTop=fb-hb*1.0*Math.max(big,small*.45);
+    for(let j=0;j<8;j++){const ph=(T*.5+j/8)%1;fxSprite([2,5,6][j%3],cx+Math.sin(j*2.7+T*1.3)*mouth*.4,fTop-ph*D.h*.25,.24,fireAmt*(1-ph),0);}
+    for(let j=0;j<3;j++){const ph=(T*.22+j/3)%1,k2=Math.min(2,Math.floor(ph*3)),sh=D.h*(.16+.18*ph);spB('p_smoke'+k2,cx+Math.sin(j*2.1+T*.5)*mouth*.25,fTop-ph*D.h*.35+sh*.4,sh,.5*fireAmt*Math.min(1,ph*4)*(1-ph),0);}
+}
+  ctx.restore();}
 // 迴向：閉眼祈禱時，光點往上飄向佛像
 function drawTG(){if(ST.scene!=='tg')return;const b=beat();if(!b||b.fx!=='gpray')return;const P=tp(),a=eo(prog(ST.bt,0,.8)),gb=goatBox('kneel1'),cx=gb.x+gb.w*.5,cy=gb.y+gb.h*.35;
   soft(cx,cy,gb.w*.8,.3*a+.05*Math.sin(T*2),WARM);soft(P.budd.x,P.budd.y,TALL?240:280,.2*a,WARM);
