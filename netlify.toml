@@ -22,3 +22,9 @@
   from = "/testimonials/*"
   to = "/"
   status = 302
+
+# 原本的 LINE 轉導頁已刪除；以前寄出的確認信裡還有這個網址，導到 LINE 官方帳號的加好友頁，客人不會看到 404
+[[redirects]]
+  from = "/line-redirect/*"
+  to = "https://line.me/R/ti/p/%40159cibme"
+  status = 302

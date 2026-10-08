@@ -41,16 +41,13 @@
     if (origin.protocol !== 'https:' || !/^(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(origin.hostname)) return;
     if (!/^GR\d{8}-\d{2}$/.test(data.batchId) || !/^@[a-zA-Z0-9._-]+$/.test(data.basicId)) return;
     redirected = true;
-    var text = '大正，我的訂單編號是「' + data.batchId + '」';
-    var go;
+    var text = '大正，我的訂單編號是' + data.batchId;
     var mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    if (mobile) {
-      go = 'https://line.me/R/oaMessage/' + encodeURIComponent(data.basicId) + '/?' + encodeURIComponent(text);
-    } else {
-      go = '/line-redirect/?batch=' + encodeURIComponent(data.batchId);
-    }
-    // 先把「送出成功」送到 GA（最多等 1.3 秒），再跳轉；沒有 GA 就立刻跳
-    track('booking_submit', { page: location.pathname, device: mobile ? 'mobile' : 'desktop' }, function () { window.location.assign(go); });
+    // 選 Google Meet／文字版（flow=email）：客人留在預約成功頁，在網頁回報匯款，不用加 LINE。
+    // 選 LINE 語音：手機直接開啟 LINE 並帶入訂單編號；電腦不跳轉，成功頁上就有 QR Code。
+    var go = (data.flow !== 'email' && mobile) ? 'https://line.me/R/oaMessage/' + encodeURIComponent(data.basicId) + '/?' + encodeURIComponent(text) : '';
+    // 先把「送出成功」送到 GA（最多等 1.3 秒）；需要跳轉才跳轉，沒有 GA 就立刻跳
+    track('booking_submit', { page: location.pathname, device: mobile ? 'mobile' : 'desktop', flow: data.flow === 'email' ? 'email' : 'line' }, function () { if (go) window.location.assign(go); });
   });
 })();

@@ -23,6 +23,7 @@ h1{font-size:21px;color:var(--ink);margin:0 0 4px}
 details{margin:0 0 14px;font-size:14px}
 summary{cursor:pointer;color:var(--warm);text-decoration:underline}
 .bank{background:#fffbeb;border-radius:10px;padding:10px 12px;margin-top:8px;white-space:pre-line}
+.copyacct{display:inline-block;width:auto;margin:8px 0 0;padding:8px 16px;font-size:14px;background:#fff;color:var(--ink);border:1.5px solid var(--ink)}
 label{display:block;font-weight:700;color:var(--ink);font-size:14.5px;margin:2px 0 6px}
 input{width:100%;font:inherit;font-size:24px;letter-spacing:8px;text-align:center;border:1.5px solid var(--line);border-radius:12px;padding:10px;background:#fff}
 input:focus{outline:none;border-color:var(--ink)}
@@ -30,12 +31,17 @@ input.bad{border-color:#dc2626}
 .err{color:#b91c1c;font-size:13.5px;margin:6px 0 0;min-height:20px}
 button,.btn{display:block;width:100%;border:0;border-radius:12px;font:inherit;font-weight:700;font-size:16px;padding:13px 14px;margin-top:10px;cursor:pointer;text-align:center;text-decoration:none}
 .go{background:var(--ink);color:#fff}
-.line{background:#06c755;color:#fff}
+.line{background:var(--warm);color:#fff}
 button:disabled{opacity:.55;cursor:default}
 .note{font-size:12.5px;color:var(--muted);margin:12px 0 0}
-.ok h1{color:#15803d}
+.ok h1{color:#15803d}#done>h1,#doneText{text-align:center}#doneText{white-space:pre-line}.btn.line{white-space:nowrap;font-size:clamp(13px,3.7vw,16px);padding-left:8px;padding-right:8px}@media (max-width:420px){#doneText{font-size:13px}}
 .invite{background:var(--ink);color:#fff;border-radius:14px;padding:16px;text-align:center;margin-top:14px}
-.invite p{margin:0 0 10px;font-size:14px}.invite b{font-size:15.5px}
+.invite p{margin:0 0 10px;font-size:14px;white-space:pre-line}
+.invite{display:flex;flex-direction:column}.invite>*{order:2}.invite>.orderbox{order:0;margin:0 0 12px}.invite>p:first-child{order:1}.invite>.qrwrap{order:3}.invite>.qrnote{order:4}.invite>.line{order:5}.invite b{font-size:15.5px}
+.send-ic{width:1em;height:1em;vertical-align:-.15em;margin-left:.3em}.send-w{margin:0 .35em;white-space:nowrap}
+.qrwrap{display:flex;justify-content:center;margin:8px 0}#qrBox{background:#fff;padding:8px;border-radius:12px;display:inline-block;line-height:0}#qrBox img,#qrBox canvas{display:block}
+.qrnote{font-size:13px;color:#d6d3d1;margin:8px 0 0}.orderbox{background:rgba(255,255,255,.1);border-radius:10px;padding:8px;margin-top:10px;font-size:12px}.orderbox b{display:block;font-size:17px;letter-spacing:1px}
+.copy{background:var(--warm);color:#fff;margin-top:10px}   /* 與「手機版 LINE 綁定」按鈕同色同尺寸（品牌橘） */
 .warn{background:#fef2f2;color:#b91c1c;border-radius:12px;padding:12px 14px;font-size:14px}
 .info{background:#fffbeb;color:#92400e;border-radius:12px;padding:12px 14px;font-size:14px;margin:0 0 14px}
 .loading{text-align:center;color:var(--muted);padding:26px 0}
@@ -47,7 +53,7 @@ button:disabled{opacity:.55;cursor:default}
 <div class="wrap">
   <div class="brand">大正・命理諮詢</div>
 
-  <div class="card loading" id="loading"><b>正在讀取你的訂單…</b><small>第一次打開大約需要 10 秒，請稍候</small></div>
+  <div class="card loading" id="loading"><b>正在讀取您的訂單…</b><small>第一次打開大約需要 10 秒，請稍候</small></div>
   <div class="card warn hide" id="fatal"></div>
 
   <div class="card hide" id="main">
@@ -55,23 +61,24 @@ button:disabled{opacity:.55;cursor:default}
     <p class="sub">匯款完成後，在這裡填帳號末五碼，大正就會收到通知並確認。</p>
     <div class="sum" id="sum"></div>
     <div class="info hide" id="stateNote"></div>
-    <details id="bankBox"><summary>看匯款資訊</summary><div class="bank" id="bank"></div></details>
+    <details id="bankBox" open><summary>看匯款資訊</summary><div class="bank" id="bank"></div><button type="button" class="copyacct hide" id="copyAcct">複製帳號</button></details>
     <div id="formBox">
       <label for="last5">匯款帳號末五碼</label>
       <input id="last5" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="12345">
       <div class="err" id="err"></div>
       <button class="go" id="btnGo" type="button">送出回報</button>
-      <p class="note" id="note">不用加 LINE，預約成功通知與提醒會寄到你的 Email。</p>
+      <p class="note" id="note">不用加 LINE，預約成功通知與提醒會寄到您的 Email。</p>
     </div>
   </div>
 
   <div class="card ok hide" id="done">
-    <h1>✓ 已收到你的匯款回報</h1>
+    <h1>✓ 已收到您的匯款回報</h1>
     <p id="doneText"></p>
     <div id="doneExtra"></div>
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 <script>
 (function () {
   var API = 'https://script.google.com/macros/s/AKfycbx3aDlFDBayTKgvGtQMrWrpDMx3WuU5Yd3Uh4c6BJK5kmKpZnBsXH7fK97yrkQkgx9fkQ/exec';
@@ -80,6 +87,19 @@ button:disabled{opacity:.55;cursor:default}
   var info = null, busy = false;
 
   function show(id, on) { $(id).classList.toggle('hide', !on); }
+  // 複製：先用 clipboard，失敗就改用 execCommand（在被嵌入或權限受限的環境也能用），兩個都不行才請客人手動複製
+  function copyText(text, btn, orig, doneLabel) {
+    function ok() { btn.textContent = doneLabel; setTimeout(function () { btn.textContent = orig; }, 2500); }
+    function fallback() {
+      var ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+      document.body.appendChild(ta); ta.focus(); ta.select(); ta.setSelectionRange(0, text.length);
+      var done = false; try { done = document.execCommand('copy'); } catch (e) { done = false; }
+      document.body.removeChild(ta);
+      if (done) ok(); else btn.textContent = '請手動複製：' + text;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(ok).catch(fallback); } else { fallback(); }
+  }
+  function accountDigits(info) { var m = String(info || '').match(/帳號\s*[:：]?\s*([0-9][0-9\-\s]{4,})/); return m ? m[1].replace(/[^0-9]/g, '') : ''; }
   function money(n) { return 'NT$' + Number(n || 0).toLocaleString(); }
   function fatal(msg) { show('loading', false); show('main', false); $('fatal').textContent = msg; show('fatal', true); }
 
@@ -97,9 +117,6 @@ button:disabled{opacity:.55;cursor:default}
     });
   }
 
-  function basicId() { return '@' + String((info && info.lineBasicId) || '159cibme').replace(/^@/, ''); }
-  function sendOrderUrl() { return 'https://line.me/R/oaMessage/' + encodeURIComponent(basicId()) + '/?' + encodeURIComponent('大正，我的訂單編號是「' + O + '」'); }
-
   function render() {
     show('loading', false); show('main', true);
     var rows = [['訂單編號', O], ['金額', money(info.amount)]];
@@ -110,11 +127,12 @@ button:disabled{opacity:.55;cursor:default}
     var divs = $('sum').querySelectorAll('div');
     rows.forEach(function (r, i) { divs[i].querySelector('span').textContent = r[0]; divs[i].querySelector('b').textContent = r[1]; });
     $('bank').textContent = info.bank || ''; show('bankBox', !!info.bank);
+    var acct = accountDigits(info.bank); show('copyAcct', !!acct); $('copyAcct').onclick = function () { copyText(acct, this, '複製帳號', '✅ 已複製帳號'); };
     var note = '';
-    if (info.cancelled) note = '這筆訂單已經取消，如果你已經匯款，請直接聯絡大正。';
+    if (info.cancelled) note = '這筆訂單已經取消，如果您已經匯款，請直接聯絡大正。';
     else if (info.paid) note = '這筆訂單已經確認收款，不需要再回報。';
-    else if (info.reported) note = '你已經回報過了，大正確認後會通知你。如果末五碼填錯了，可以重新填寫送出。';
-    else if (info.isLineVoice) note = '你選的是 LINE 語音通話，時間到了大正會用官方 LINE 撥給你，請記得加入官方 LINE 並傳送訂單編號。';
+    else if (info.reported) note = '您已經回報過了，大正確認後會通知您。如果末五碼填錯了，可以重新填寫送出。';
+    else if (info.isLineVoice) note = '您選的是 LINE 語音通話，時間到了大正會用官方 LINE 撥給您，請記得加入官方 LINE 並傳送訂單編號。';
     $('stateNote').textContent = note; show('stateNote', !!note);
     show('formBox', !(info.cancelled || info.paid));
   }
@@ -137,15 +155,29 @@ button:disabled{opacity:.55;cursor:default}
 
   function done(r) {
     show('main', false); show('done', true);
-    $('doneText').textContent = '大正確認款項到帳後，會寄「預約成功」通知到你的 Email' + (r.lineBound ? '，LINE 也會同步通知' : '') + '。通常在當天內，請留意信箱。';
+    $('doneText').textContent = info && info.isText
+      ? '請靜待 7-10 工作天，文字版回覆會使用 Email 通知，綁定 LINE@ 帳號會同步使用 LINE 訊息通知。'
+      : '匯款後 24 小時內，您會收到「預約成功」的通知信\n請留意 Email 信箱。';
     var ex = $('doneExtra'); ex.innerHTML = '';
-    if (!r.lineBound) {  // 選用的邀請：加好友並傳訂單編號，會走原本的 LINE 綁定
-      var box = document.createElement('div'); box.className = 'invite';
-      box.innerHTML = '<p><b>要不要也加入官方 LINE？（選用）</b></p><p>之後的提醒、改約會更方便；不加也完全沒問題。</p>';
-      var a = document.createElement('a'); a.className = 'btn line'; a.href = sendOrderUrl(); a.target = '_blank'; a.rel = 'noopener'; a.textContent = '加入 LINE 並傳送訂單編號 →';
-      box.appendChild(a); ex.appendChild(box);
-    }
+    ex.appendChild(lineScreen());
     window.scrollTo(0, 0);
+  }
+
+  // 加 LINE 畫面（跟預約系統、原本的轉導頁同一套文字）：手機＝開啟 LINE 按鈕；電腦＝QR Code ＋ 複製訂單編號訊息
+  function lineScreen() {
+    // 不依裝置判斷：綠色「開啟 LINE」按鈕、QR Code、複製訂單編號鈕，一律同時顯示（手機點按鈕，電腦掃 QR Code 或複製）
+    var box = document.createElement('div'); box.className = 'invite';
+    var h = document.createElement('p'); h.innerHTML = '<b></b>'; h.querySelector('b').textContent = '加入 LINE@ 綁定訂單編號\n透過 LINE 修改訂單資訊更便利'; box.appendChild(h);
+    var copy = '大正，我的訂單編號是' + O;
+    var wrap = document.createElement('div'); wrap.className = 'qrwrap';
+    var qr = document.createElement('div'); qr.id = 'qrBox'; wrap.appendChild(qr); box.appendChild(wrap);
+    var url = (info && info.lineUrl) || '';
+    if (url && window.QRCode) { try { new QRCode(qr, { text: url, width: 180, height: 180, correctLevel: QRCode.CorrectLevel.L }); } catch (e) {} }
+    if (url && !qr.firstChild) { var img = document.createElement('img'); img.width = 180; img.height = 180; img.alt = 'LINE QR Code'; img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(url); qr.appendChild(img); }
+    var t = document.createElement('p'); t.className = 'qrnote'; t.innerHTML = '在電腦上預約？\n拿手機掃一下，按<span class="send-w">傳送<svg class="send-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.6 19.4 21 12 3.6 4.6 3.6 10.3 14.5 12 3.6 13.7Z" fill="#06c755" stroke="#06c755" stroke-width="2.4" stroke-linejoin="round"/></svg></span>就完成'; box.appendChild(t);
+    var a = document.createElement('a'); a.className = 'btn line'; a.href = (info && info.lineUrl) || '#'; a.target = '_blank'; a.rel = 'noopener'; a.id = 'lineBtn'; a.textContent = '在手機上預約？點這裡，一鍵綁定 LINE'; box.appendChild(a);
+    var ob = document.createElement('div'); ob.className = 'orderbox'; ob.innerHTML = '<span>您的訂單編號</span><b></b>'; ob.querySelector('b').textContent = O; box.appendChild(ob);
+    return box;
   }
 
   $('btnGo').addEventListener('click', function () { if (busy) return; var v = readLast5(); if (v) submit(v); });
@@ -153,7 +185,7 @@ button:disabled{opacity:.55;cursor:default}
   $('last5').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('btnGo').click(); });
 
   (async function init() {
-    if (!/^GRW?\d{8}-\d{2}$/.test(O) || !T) { fatal('這個連結不完整，請回到預約確認信，重新點一次「在網頁回報匯款」按鈕。'); return; }
+    if (!/^GRW?\d{8}-\d{2}$/.test(O) || !T) { fatal('這個連結不完整，請回到預約確認信，重新點一次「點擊回報」按鈕。'); return; }
     try {
       info = await jsonp({ action: 'info', o: O, t: T });
       if (!info || !info.ok) { fatal((info && info.message) || '讀取訂單失敗，請稍後再試。'); return; }
