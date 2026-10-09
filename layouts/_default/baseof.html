@@ -41,6 +41,10 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}img
 .social-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .15s,opacity .15s}
 .social-icon:hover{transform:translateY(-3px);opacity:.85;text-decoration:none}
 .social-icon svg{width:17px;height:17px;display:block}
+/* 文字排版規則：避頭尾、中文詞語不拆開、中英數字自動留間距、標題平均斷行、段落避免句尾孤字 */
+html{line-break:strict;word-break:auto-phrase;text-autospace:normal;overflow-wrap:break-word}
+h1,h2,h3,h4{text-wrap:balance}
+p,li,figcaption,blockquote{text-wrap:pretty}
 </style>
 {{ block "head" . }}{{ end }}
 {{ partial "analytics.html" . }}

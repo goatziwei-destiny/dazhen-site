@@ -47,6 +47,11 @@ button:disabled{opacity:.55;cursor:default}
 .loading{text-align:center;color:var(--muted);padding:26px 0}
 .loading small{display:block;font-size:12.5px}
 .hide{display:none!important}
+/* 文字排版規則：避頭尾（標點不在行首）、中文詞語不拆開、中英數字自動留間距、標題與短說明平均斷行、段落避免句尾孤字 */
+html{line-break:strict;word-break:auto-phrase;text-autospace:normal;overflow-wrap:break-word}
+h1,h2,h3,h4,.title,.section-title .title,.svc-pick-title,.m-name,.qr-text,.sp-status>b,.sub,.section-desc,.m-desc,.sp-hint,.bk-after-title,#tSuccessBody,#tHeading,#tSubheading{text-wrap:balance}
+p,li,small,.note,.pay-bank,.method-note,.notice-box{text-wrap:pretty}
+.svc-card{justify-content:center}
 </style>
 </head>
 <body>
