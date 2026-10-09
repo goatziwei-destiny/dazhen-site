@@ -32,6 +32,14 @@
     started = true;
     track('booking_form_start', { page: location.pathname });
   });
+  // 客人回報完匯款：把網頁捲回成功頁頂端，才看得到「已收到您的匯款回報」
+  window.addEventListener('message', function (event) {
+    var d = event.data;
+    if (!d || d.type !== 'dazhen-booking-reported' || !nonce || d.nonce !== nonce) return;
+    var o; try { o = new URL(event.origin); } catch (_) { return; }
+    if (o.protocol !== 'https:' || !/^(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(o.hostname)) return;
+    try { var fr = document.querySelector('iframe[data-booking-frame]'); if (fr && fr.scrollIntoView) fr.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (_) {}
+  });
   window.addEventListener('message', function (event) {
     var data = event.data;
     if (redirected || !nonce || !data || data.type !== 'dazhen-booking-success' || data.nonce !== nonce) return;
