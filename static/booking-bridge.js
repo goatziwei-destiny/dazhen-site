@@ -4,6 +4,18 @@
   function track(name, params, done) {
     if (window.dzTrack) window.dzTrack(name, params, done); else if (done) done();
   }
+  // 把網頁捲到表單頂端（扣掉固定在上方的導覽列）。立即捲、之後再補捲兩次：表單高度變動會讓第一次捲動被「吃掉」，客人就得自己再滑一下
+  function scrollFrame_() {
+    var go = function () {
+      try {
+        var fr = document.querySelector('iframe[data-booking-frame]'); if (!fr) return;
+        var hd = document.querySelector('.site-nav, header, nav'), off = 0;
+        if (hd) { var cs = getComputedStyle(hd); if (cs.position === 'fixed' || cs.position === 'sticky') off = hd.offsetHeight || 0; }
+        window.scrollTo(0, Math.max(0, fr.getBoundingClientRect().top + (window.pageYOffset || 0) - off - 8));
+      } catch (_) {}
+    };
+    go(); setTimeout(go, 300); setTimeout(go, 900);
+  }
   window.dazhenBookingUrl = function (raw) {
     var url = new URL(raw);
     var bytes = new Uint8Array(16);
@@ -39,7 +51,7 @@
     if (!d || d.type !== 'dazhen-booking-scroll' || !nonce || d.nonce !== nonce) return;
     var o; try { o = new URL(event.origin); } catch (_) { return; }
     if (o.protocol !== 'https:' || !/^(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(o.hostname)) return;
-    try { var fr = document.querySelector('iframe[data-booking-frame]'); if (fr && fr.scrollIntoView) fr.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (_) {}
+    scrollFrame_();
   });
   // 客人回報完匯款：把網頁捲回成功頁頂端，才看得到「已收到您的匯款回報」
   window.addEventListener('message', function (event) {
@@ -47,7 +59,7 @@
     if (!d || d.type !== 'dazhen-booking-reported' || !nonce || d.nonce !== nonce) return;
     var o; try { o = new URL(event.origin); } catch (_) { return; }
     if (o.protocol !== 'https:' || !/^(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(o.hostname)) return;
-    try { var fr = document.querySelector('iframe[data-booking-frame]'); if (fr && fr.scrollIntoView) fr.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (_) {}
+    scrollFrame_();
     // 頁首那句「填好出生資料…」已經不適用 → 換成可以關閉的提示
     try { var ld = document.querySelector('.bk-lead'); if (ld) { ld.textContent = '✅ 已完成所有步驟，您現在可以關閉此頁面。'; ld.style.color = '#166534'; ld.style.fontWeight = '700'; } } catch (_) {}
   });
@@ -61,7 +73,7 @@
     if (!/^GR\d{8}-\d{2}$/.test(data.batchId) || !/^@[a-zA-Z0-9._-]+$/.test(data.basicId)) return;
     redirected = true;
     // 送出後表單會縮短、成功頁出現在最上面；把網頁捲回表單頂端，避免手機畫面還停在原本很下面的位置而看不到成功頁
-    try { var fr = document.querySelector('iframe[data-booking-frame]'); if (fr && fr.scrollIntoView) fr.scrollIntoView({ block: 'start' }); } catch (_) {}
+    scrollFrame_();
     var text = '大正，我的訂單編號是' + data.batchId;
     var mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
