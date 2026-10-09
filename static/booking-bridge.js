@@ -39,6 +39,8 @@
     var o; try { o = new URL(event.origin); } catch (_) { return; }
     if (o.protocol !== 'https:' || !/^(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(o.hostname)) return;
     try { var fr = document.querySelector('iframe[data-booking-frame]'); if (fr && fr.scrollIntoView) fr.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (_) {}
+    // 頁首那句「填好出生資料…」已經不適用 → 換成可以關閉的提示
+    try { var ld = document.querySelector('.bk-lead'); if (ld) { ld.textContent = '✅ 已完成所有步驟，您現在可以關閉此頁面。'; ld.style.color = '#166534'; ld.style.fontWeight = '700'; } } catch (_) {}
   });
   window.addEventListener('message', function (event) {
     var data = event.data;
