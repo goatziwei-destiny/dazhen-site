@@ -20,6 +20,7 @@
     if (!d || d.type !== 'dazhen-booking-height' || !nonce || d.nonce !== nonce) return;
     var o; try { o = new URL(event.origin); } catch (_) { return; }
     if (o.protocol !== 'https:' || !/^(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(o.hostname)) return;
+    var ld = document.getElementById('bkLoading'); if (ld) ld.remove();
     var h = Math.max(600, Math.min(20000, Number(d.height) || 0));
     document.querySelectorAll('iframe[data-booking-frame], .booking-iframe-wrap iframe').forEach(function (f) { f.style.height = (h + 24) + 'px'; });
   });

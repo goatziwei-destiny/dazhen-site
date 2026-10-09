@@ -4,19 +4,23 @@
 .bk-page .container{max-width:640px}
 .bk-page h1{text-align:center;font-size:clamp(26px,5vw,32px);color:var(--navy);margin-bottom:10px}
 .bk-page .bk-lead{text-align:center;color:#78716c;font-size:15px;line-height:1.8;margin-bottom:28px}
+.bk-load{text-align:center;padding:48px 16px 24px;color:#78716c;font-size:15px;line-height:1.8}.bk-load i{display:block;width:40px;height:40px;margin:0 auto 14px;border:4px solid #e7e5e4;border-top-color:#b8864b;border-radius:50%;animation:bkspin .9s linear infinite}@keyframes bkspin{to{transform:rotate(360deg)}}
 .bk-frame{width:100%;height:1600px;border:0;display:block;background:transparent;transition:height .2s}
 @media (max-width:640px){.bk-page{padding:28px 0 48px}.bk-page .container{padding:0 8px}}
 </style>
+<link rel="preconnect" href="https://script.google.com"><link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
 {{ end }}
 {{ define "main" }}
 <div class="bk-page">
   <div class="container">
     <h1>{{ .Title }}</h1>
     {{ with .Params.lead }}<p class="bk-lead">{{ . }}</p>{{ end }}
+    <div class="bk-load" id="bkLoading" role="status"><i></i>預約表單載入中，請稍候約 10 秒…<br><small>第一次開啟會比較久，請不要離開頁面</small></div>
     <iframe class="bk-frame" id="bookingFrame" data-booking-frame title="線上預約表單"></iframe>
   </div>
 </div>
 <script src="/booking-bridge.js"></script>
+<script>setTimeout(function () { var l = document.getElementById('bkLoading'); if (l) l.remove(); }, 40000);</script>
 <script>
   // 在 LINE 裡開啟（LIFF）：先向 LINE 取得客人的身分憑證，帶給預約表單，送出後訂單自動綁定 LINE。
   // 不在 LINE 裡、或任何一步失敗，都直接載入一般表單（維持原本流程）。
