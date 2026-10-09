@@ -46,8 +46,8 @@
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     // 選 Google Meet／文字版（flow=email）：客人留在預約成功頁，在網頁回報匯款，不用加 LINE。
     // 選 LINE 語音：手機直接開啟 LINE 並帶入訂單編號；電腦不跳轉，成功頁上就有 QR Code。
-    var go = (data.flow !== 'email' && mobile) ? 'https://line.me/R/oaMessage/' + encodeURIComponent(data.basicId) + '/?' + encodeURIComponent(text) : '';
+    var go = (data.flow === 'line' && mobile) ? 'https://line.me/R/oaMessage/' + encodeURIComponent(data.basicId) + '/?' + encodeURIComponent(text) : '';
     // 先把「送出成功」送到 GA（最多等 1.3 秒）；需要跳轉才跳轉，沒有 GA 就立刻跳
-    track('booking_submit', { page: location.pathname, device: mobile ? 'mobile' : 'desktop', flow: data.flow === 'email' ? 'email' : 'line' }, function () { if (go) window.location.assign(go); });
+    track('booking_submit', { page: location.pathname, device: mobile ? 'mobile' : 'desktop', flow: data.flow === 'email' ? 'email' : (data.flow === 'bound' ? 'bound' : 'line') }, function () { if (go) window.location.assign(go); });
   });
 })();

@@ -18,6 +18,25 @@
 </div>
 <script src="/booking-bridge.js"></script>
 <script>
-  document.getElementById('bookingFrame').src = window.dazhenBookingUrl({{ .Site.Params.bookingFormUrl }});
+  // 在 LINE 裡開啟（LIFF）：先向 LINE 取得客人的身分憑證，帶給預約表單，送出後訂單自動綁定 LINE。
+  // 不在 LINE 裡、或任何一步失敗，都直接載入一般表單（維持原本流程）。
+  (function () {
+    var frame = document.getElementById('bookingFrame'), base = window.dazhenBookingUrl({{ .Site.Params.bookingFormUrl }}), done = false;
+    var liffId = {{ .Site.Params.liffBookingId | default "" }};
+    function load(token) { if (done) return; done = true; frame.src = token ? base + '&lt=' + encodeURIComponent(token) : base; }
+    var inLine = /Line\//i.test(navigator.userAgent) || /[?&]liff\.state=/.test(location.search);
+    if (!inLine || !liffId) { load(''); return; }
+    var timer = setTimeout(function () { load(''); }, 6000);
+    var s = document.createElement('script');
+    s.src = 'https://static.line-scdn.net/liff/edge/2/sdk.js';
+    s.onload = function () {
+      liff.init({ liffId: liffId }).then(function () {
+        if (!liff.isLoggedIn()) { liff.login(); return; }
+        clearTimeout(timer); load(liff.getIDToken() || '');
+      }).catch(function () { clearTimeout(timer); load(''); });
+    };
+    s.onerror = function () { clearTimeout(timer); load(''); };
+    document.head.appendChild(s);
+  })();
 </script>
 {{ end }}
