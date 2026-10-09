@@ -41,6 +41,8 @@
     if (origin.protocol !== 'https:' || !/^(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(origin.hostname)) return;
     if (!/^GR\d{8}-\d{2}$/.test(data.batchId) || !/^@[a-zA-Z0-9._-]+$/.test(data.basicId)) return;
     redirected = true;
+    // 送出後表單會縮短、成功頁出現在最上面；把網頁捲回表單頂端，避免手機畫面還停在原本很下面的位置而看不到成功頁
+    try { var fr = document.querySelector('iframe[data-booking-frame]'); if (fr && fr.scrollIntoView) fr.scrollIntoView({ block: 'start' }); } catch (_) {}
     var text = '大正，我的訂單編號是' + data.batchId;
     var mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
