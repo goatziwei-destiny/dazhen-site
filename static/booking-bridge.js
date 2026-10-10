@@ -46,6 +46,31 @@
     started = true;
     track('booking_form_start', { page: location.pathname });
   });
+  // 「處理中」畫面：由網站顯示，固定在螢幕正中間（表單在框框裡，自己顯示會跑到畫面外，客人要滑才看得到）
+  function busyOv_(on, title, text) {
+    var o = document.getElementById('dzBusyOv');
+    if (!on) { if (o) o.style.display = 'none'; return; }
+    if (!o) {
+      o = document.createElement('div'); o.id = 'dzBusyOv';
+      o.setAttribute('role', 'status'); o.setAttribute('aria-live', 'polite');
+      o.style.cssText = 'position:fixed;inset:0;z-index:2147483000;background:rgba(255,255,255,.94);display:flex;align-items:center;justify-content:center;padding:24px;text-align:center';
+      o.innerHTML = '<div style="max-width:320px"><div class="dz-sp" style="width:44px;height:44px;margin:0 auto 16px;border:4px solid #e5e7eb;border-top-color:#8b5e3c;border-radius:50%;animation:dzspin .9s linear infinite"></div><b style="display:block;font-size:17px;margin-bottom:8px;color:#1f2937"></b><span style="font-size:13.5px;color:#6b7280;line-height:1.7"></span></div>';
+      var st = document.createElement('style'); st.textContent = '@keyframes dzspin{to{transform:rotate(360deg)}}'; document.head.appendChild(st);
+      document.body.appendChild(o);
+    }
+    o.querySelector('b').textContent = String(title || '處理中，請稍候…').slice(0, 40);
+    // 只接受表單送來的固定文字，換行用 <br>；其他一律當純文字
+    var sp = o.querySelector('span'); sp.textContent = '';
+    String(text || '').split(/<br\s*\/?>/i).slice(0, 4).forEach(function (line, i) { if (i) sp.appendChild(document.createElement('br')); sp.appendChild(document.createTextNode(line.slice(0, 120))); });
+    o.style.display = 'flex';
+  }
+  window.addEventListener('message', function (event) {
+    var d = event.data;
+    if (!d || d.type !== 'dazhen-booking-busy' || !nonce || d.nonce !== nonce) return;
+    var o; try { o = new URL(event.origin); } catch (_) { return; }
+    if (o.protocol !== 'https:' || !/^(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(o.hostname)) return;
+    busyOv_(!!d.on, d.title, d.text);
+  });
   // 客人按下送出：把網頁捲到表單頂端，才看得到「預約處理中」
   window.addEventListener('message', function (event) {
     var d = event.data;
@@ -60,6 +85,7 @@
     if (!d || d.type !== 'dazhen-booking-reported' || !nonce || d.nonce !== nonce) return;
     var o; try { o = new URL(event.origin); } catch (_) { return; }
     if (o.protocol !== 'https:' || !/^(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(o.hostname)) return;
+    busyOv_(false);
     scrollFrame_();
     // 頁首那句「填好出生資料…」已經不適用 → 換成可以關閉的提示
     try { var ld = document.querySelector('.bk-lead'); if (ld) { ld.textContent = '✅ 已完成所有步驟，您現在可以關閉此頁面。'; ld.style.color = '#166534'; ld.style.fontWeight = '700'; } } catch (_) {}
@@ -73,6 +99,7 @@
     if (origin.protocol !== 'https:' || !/^(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(origin.hostname)) return;
     if (!/^GR\d{8}-\d{2}$/.test(data.batchId) || !/^@[a-zA-Z0-9._-]+$/.test(data.basicId)) return;
     redirected = true;
+    busyOv_(false);
     // 送出後表單會縮短、成功頁出現在最上面；把網頁捲回表單頂端，避免手機畫面還停在原本很下面的位置而看不到成功頁
     scrollFrame_();
     var text = '大正，我的訂單編號是' + data.batchId;
