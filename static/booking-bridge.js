@@ -24,6 +24,7 @@
     redirected = false;
     track('booking_view', { page: location.pathname });
     url.searchParams.set('bridge', nonce);
+    var tf = new URLSearchParams(location.search).get('testfill'); if (tf) url.searchParams.set('testfill', tf);
     return url.href;
   };
   // 表單回報自己的高度 → 把外框撐到剛好，整頁只剩一條捲軸
