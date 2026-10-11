@@ -3,6 +3,7 @@ title: "關於大正"
 type: "about"
 description: "大正，紫微斗數命理諮詢師。命理諮詢 3 年、看過 500 多張命盤。不批評、好好聊，陪你把處境和選項看清楚。"
 lead: "命理負責把燈打開，走路的人還是你。"
+photo: "/images/avatar-goat.webp"
 ---
 
 ## 我怎麼走進命理

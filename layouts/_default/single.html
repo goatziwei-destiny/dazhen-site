@@ -114,7 +114,7 @@
 <div class="article-header">
   <div class="container">
     {{ with .Params.categories }}<div>{{ range . }}<a class="article-cat" href="{{ (path.Join "/categories" . | urlize) | relLangURL }}/">{{ . }}</a>{{ end }}</div>{{ end }}
-    <div class="article-date">{{ .Date.Format "2006 年 1 月 2 日" }} · <span id="view-count" class="article-views">－ 次瀏覽</span></div>
+    <div class="article-date">{{ .Date.Format "2006 年 1 月 2 日" }}{{ if .Site.Params.showViewCounts }} · <span id="view-count" class="article-views">－ 次瀏覽</span>{{ end }}</div>
     <h1 class="article-title">{{ .Title }}</h1>
     {{ with .Params.tags }}
     <div class="article-tags">

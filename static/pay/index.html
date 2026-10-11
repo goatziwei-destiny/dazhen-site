@@ -58,7 +58,7 @@ p,li,small,.note,.pay-bank,.method-note,.notice-box{text-wrap:pretty}
 <div class="wrap">
   <div class="brand">大正・命理諮詢</div>
 
-  <div class="card loading" id="loading"><b>正在讀取您的訂單…</b><small>第一次打開大約需要 10 秒，請稍候</small></div>
+  <div class="card loading" id="loading"><b>正在讀取你的訂單…</b><small>第一次打開大約需要 10 秒，請稍候</small></div>
   <div class="card warn hide" id="fatal"></div>
 
   <div class="card hide" id="main">
@@ -72,12 +72,12 @@ p,li,small,.note,.pay-bank,.method-note,.notice-box{text-wrap:pretty}
       <input id="last5" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="12345">
       <div class="err" id="err"></div>
       <button class="go" id="btnGo" type="button">送出回報</button>
-      <p class="note" id="note">不用加 LINE，預約成功通知與提醒會寄到您的 Email。</p>
+      <p class="note" id="note">不用加 LINE，預約成功通知與提醒會寄到你的 Email。</p>
     </div>
   </div>
 
   <div class="card ok hide" id="done">
-    <h1>✓ 已收到您的匯款回報</h1>
+    <h1>✓ 已收到你的匯款回報</h1>
     <p id="doneText"></p>
     <div id="doneExtra"></div>
   </div>
@@ -134,10 +134,10 @@ p,li,small,.note,.pay-bank,.method-note,.notice-box{text-wrap:pretty}
     $('bank').textContent = info.bank || ''; show('bankBox', !!info.bank);
     var acct = accountDigits(info.bank); show('copyAcct', !!acct); $('copyAcct').onclick = function () { copyText(acct, this, '複製帳號', '✅ 已複製帳號'); };
     var note = '';
-    if (info.cancelled) note = '這筆訂單已經取消，如果您已經匯款，請直接聯絡大正。';
+    if (info.cancelled) note = '這筆訂單已經取消，如果你已經匯款，請直接聯絡大正。';
     else if (info.paid) note = '這筆訂單已經確認收款，不需要再回報。';
-    else if (info.reported) note = '您已經回報過了，大正確認後會通知您。如果末五碼填錯了，可以重新填寫送出。';
-    else if (info.isLineVoice) note = '您選的是 LINE 語音通話，時間到了大正會用官方 LINE 撥給您，請記得加入官方 LINE 並傳送訂單編號。';
+    else if (info.reported) note = '你已經回報過了，大正確認後會通知你。如果末五碼填錯了，可以重新填寫送出。';
+    else if (info.isLineVoice) note = '你選的是 LINE 語音通話，時間到了大正會用官方 LINE 撥給你，請記得加入官方 LINE 並傳送訂單編號。';
     $('stateNote').textContent = note; show('stateNote', !!note);
     show('formBox', !(info.cancelled || info.paid));
   }
@@ -162,7 +162,7 @@ p,li,small,.note,.pay-bank,.method-note,.notice-box{text-wrap:pretty}
     show('main', false); show('done', true);
     $('doneText').textContent = info && info.isText
       ? '請靜待 7-10 工作天，文字版回覆會使用 Email 通知，綁定 LINE@ 帳號會同步使用 LINE 訊息通知。'
-      : '匯款後 24 小時內，您會收到「預約成功」的通知信\n請留意 Email 信箱。';
+      : '匯款後 24 小時內，你會收到「預約成功」的通知信\n請留意 Email 信箱。';
     var ex = $('doneExtra'); ex.innerHTML = '';
     ex.appendChild(lineScreen());
     window.scrollTo(0, 0);
@@ -181,7 +181,7 @@ p,li,small,.note,.pay-bank,.method-note,.notice-box{text-wrap:pretty}
     if (url && !qr.firstChild) { var img = document.createElement('img'); img.width = 180; img.height = 180; img.alt = 'LINE QR Code'; img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(url); qr.appendChild(img); }
     var t = document.createElement('p'); t.className = 'qrnote'; t.innerHTML = '在電腦上預約？\n拿手機掃一下，按<span class="send-w">傳送<svg class="send-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.6 19.4 21 12 3.6 4.6 3.6 10.3 14.5 12 3.6 13.7Z" fill="#06c755" stroke="#06c755" stroke-width="2.4" stroke-linejoin="round"/></svg></span>就完成'; box.appendChild(t);
     var a = document.createElement('a'); a.className = 'btn line'; a.href = (info && info.lineUrl) || '#'; a.target = '_blank'; a.rel = 'noopener'; a.id = 'lineBtn'; a.textContent = '在手機上預約？點這裡，一鍵綁定 LINE'; box.appendChild(a);
-    var ob = document.createElement('div'); ob.className = 'orderbox'; ob.innerHTML = '<span>您的訂單編號</span><b></b>'; ob.querySelector('b').textContent = O; box.appendChild(ob);
+    var ob = document.createElement('div'); ob.className = 'orderbox'; ob.innerHTML = '<span>你的訂單編號</span><b></b>'; ob.querySelector('b').textContent = O; box.appendChild(ob);
     return box;
   }
 

@@ -62,7 +62,7 @@
 </div>
 {{ $cats := .Site.Taxonomies.categories }}
 {{ if and $cats (or (eq .Kind "section") (eq .Data.Plural "categories")) }}
-{{ $order := slice "感情" "家庭與親子" "職涯與人生選擇" "命理與星曜" "宗教與民間信仰" "生活觀察" }}
+{{ $order := slice "星辰典籍" "羊的手札" "感情" "家庭與親子" "職涯與人生選擇" "命理與星曜" "宗教與民間信仰" "生活觀察" }}
 <div class="cat-tabs">
   <div class="container">
     <div class="cat-tabs-list">
@@ -127,7 +127,7 @@
   </div>
 </div>
 
-{{ with .Site.Params.webAppUrl }}
+{{ if .Site.Params.showViewCounts }}{{ with .Site.Params.webAppUrl }}
 <script>
 // 讀取全站瀏覽次數統計（不會 +1，純顯示）：填入每篇文章卡片的瀏覽數、顯示全站累計次數，
 // 並把瀏覽數最高的前三篇標上「熱門」，方便一眼看出哪些文章比較受歡迎。
@@ -159,5 +159,5 @@
   document.body.appendChild(s);
 })();
 </script>
-{{ end }}
+{{ end }}{{ end }}
 {{ end }}

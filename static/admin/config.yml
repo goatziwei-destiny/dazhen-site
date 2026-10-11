@@ -15,7 +15,7 @@ collections:
     fields:
       - { label: "標題", name: "title", widget: "string" }
       - { label: "自訂網址（選填，英文，用 - 連接，例如 holiday-home-family-boundaries）", name: "slug", widget: "string", required: false, pattern: ["^[a-z0-9]+(-[a-z0-9]+)*$", "只能用小寫英文、數字和 -，不要加 /blog/ 或空白、符號"], hint: "只填英文代稱就好，不要加 /blog/。不填的話會自動用標題產生。" }
-      - { label: "文章分類", name: "categories", widget: "select", multiple: true, min: 1, max: 2, options: ["感情", "家庭與親子", "職涯與人生選擇", "命理與星曜", "宗教與民間信仰", "生活觀察"], hint: "選 1～2 個。文章列表會依分類整理，也會用來推薦「延伸閱讀」。" }
+      - { label: "文章分類", name: "categories", widget: "select", multiple: true, min: 1, max: 3, options: ["星辰典籍", "羊的手札", "感情", "家庭與親子", "職涯與人生選擇", "命理與星曜", "宗教與民間信仰", "生活觀察"], hint: "第一個請選「星辰典籍」（命理學理）或「羊的手札」（個人觀察），再選 1～2 個主題。文章列表會依分類整理，也會用來推薦「延伸閱讀」。" }
       - { label: "發布日期", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
       - { label: "摘要（會顯示在列表頁跟 Google 搜尋結果）", name: "description", widget: "text", required: false }
       - { label: "封面圖片", name: "image", widget: "image", required: false }
