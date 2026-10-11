@@ -3,16 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title></title>
-<meta name="description" content="">
+<title>{{ site.Title }}</title>
+<meta name="description" content="{{ site.Params.description }}">
 <meta name="keywords" content="">
-<link rel="canonical" href="">
+<link rel="canonical" href="{{ .Permalink }}">
 {{ with .Site.Params.googleSiteVerification }}<meta name="google-site-verification" content="{{ . }}">{{ end }}
-<meta property="og:title" content="">
-<meta property="og:description" content="">
+<meta property="og:title" content="{{ site.Title }}">
+<meta property="og:description" content="{{ site.Params.description }}">
 <meta property="og:type" content="website">
-<meta property="og:url" content="">
-<meta property="og:image" content="">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:image" content="{{ "/images/og-default.png" | absURL }}">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:locale" content="zh_TW">
 <script type="application/ld+json" id="schema-ld"></script>
 <link rel="preload" href="/fonts/dazhen-wenkai-400.woff2" as="font" type="font/woff2" crossorigin>
@@ -348,7 +349,7 @@ var LINE_ATTR = ' target="_blank" rel="noopener" data-line';
 function renderSite(S) {
   document.title = S.siteTitle || '';
   try { document.querySelector('meta[name="description"]').content = S.siteDescription || ''; } catch(e){}
-  try { document.querySelector('link[rel="canonical"]').href = S.siteUrl || ''; } catch(e){}
+  if (S.siteUrl) { try { document.querySelector('link[rel="canonical"]').href = S.siteUrl; } catch(e){} }
   var heroDesc = (S.heroDesc || '').replace(/\\n/g, '\n').replace(/<br\s*\/?>/gi, '\n').split('\n').map(esc).join('<br>');
   var aboutDo = S.aboutDo || [], aboutDont = S.aboutDont || [];
   var fitYes = lines_(S.fitYes), fitNo = lines_(S.fitNo), agenda = lines_(S.firstAgenda), agendaStep = Number(S.firstAgendaStep) || 3;
@@ -472,8 +473,8 @@ function setupStickyCta_() {
   upd();
 }
 
-// 先用 SITE 預設值立即渲染（SEO + 快速顯示）
-renderSite(SITE);
+// 先用 SITE 預設值立即渲染（SEO + 快速顯示）；建置時已預先寫好內容的話（scripts/prerender-home.js），就先沿用，只接上互動功能
+if (document.getElementById('app').children && document.getElementById('app').children.length) setupStickyCta_(); else renderSite(SITE);
 
 // 背景載入試算表最新資料，有更新就重新渲染（不用重新部署 Netlify）
 (function() {

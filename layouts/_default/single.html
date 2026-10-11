@@ -1,30 +1,33 @@
 {{ define "head" }}
+{{ $desc := .Description }}{{ with .Params.seo }}{{ with .metaDescription }}{{ $desc = . }}{{ end }}{{ end }}
+{{ $topic := "" }}{{ with .Params.topics }}{{ range first 1 . }}{{ $topic = site.GetPage (printf "/topics/%s" .) }}{{ end }}{{ end }}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Article",
+  "@type": "BlogPosting",
   "headline": {{ .Title }},
-  "datePublished": "{{ .Date.Format "2006-01-02" }}",
-  "author": { "@type": "Person", "name": "大正" },
-  "description": {{ with .Params.seo }}{{ with .metaDescription }}{{ . }}{{ else }}{{ with $.Description }}{{ . }}{{ else }}""{{ end }}{{ end }}{{ else }}{{ with .Description }}{{ . }}{{ else }}""{{ end }}{{ end }}{{ with .Params.seo }}{{ with .keyword }},
-  "keywords": {{ . }}{{ end }}{{ else }}{{ with .Params.tags }},
-  "keywords": {{ delimit . ", " }}{{ end }}{{ end }}
+  "description": {{ $desc }},
+  "inLanguage": "zh-Hant",
+  "datePublished": {{ .Date.Format "2006-01-02T15:04:05-07:00" }},
+  "dateModified": {{ .Lastmod.Format "2006-01-02T15:04:05-07:00" }},
+  "mainEntityOfPage": {{ .Permalink }},
+  {{ with .Params.image }}"image": {{ . | absURL }},{{ end }}
+  "author": { "@type": "Person", "name": "大正", "url": {{ "/about/" | absURL }} },
+  "publisher": { "@type": "Organization", "name": "大正命理諮詢", "url": {{ "/" | absURL }}, "logo": { "@type": "ImageObject", "url": {{ "/images/avatar-goat.webp" | absURL }} } }{{ with .Params.seo }}{{ with .keyword }},
+  "keywords": {{ . }}{{ end }}{{ end }}
 }
 </script>
-{{ with .Params.seo }}{{ with .geoAnswer }}
-<meta name="geo-answer" content="{{ . }}">
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [{
-    "@type": "Question",
-    "name": {{ $.Title }},
-    "acceptedAnswer": { "@type": "Answer", "text": {{ . }} }
-  }]
-}
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+ {"@type":"ListItem","position":1,"name":"命理文章","item":{{ "/blog/" | absURL }}},
+ {{ with $topic }}{"@type":"ListItem","position":2,"name":{{ .Title }},"item":{{ .Permalink }}},
+ {"@type":"ListItem","position":3,"name":{{ $.Title }}}{{ else }}{"@type":"ListItem","position":2,"name":{{ .Title }}}{{ end }}]}
 </script>
-{{ end }}{{ end }}
+{{ with .Params.faq }}
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{{ range $i, $f := . }}{{ if $i }},{{ end }}{"@type":"Question","name":{{ $f.q }},"acceptedAnswer":{"@type":"Answer","text":{{ $f.a }}}}{{ end }}]}
+</script>
+{{ end }}
 <style>
 .article-header{background:var(--navy);padding:80px 0 40px;color:#fff}
 .article-header .container{max-width:800px}
@@ -100,6 +103,20 @@
 .article-toc nav a{color:var(--navy);text-decoration:none;border-bottom:1px dashed rgba(27,40,69,.25)}
 .article-toc nav a:hover{color:var(--warm);border-bottom-color:var(--warm)}
 .article-body h2,.article-body h3,.article-body h4{scroll-margin-top:90px}
+.crumbs{font-size:13px;color:var(--text-muted);margin-bottom:12px}.crumbs a{color:var(--text-light)}.crumbs span{margin:0 6px}
+.article-meta{font-size:13px;color:var(--text-muted);display:flex;gap:6px 12px;flex-wrap:wrap;margin-bottom:12px}
+.article-faq{margin:40px 0 0}
+.article-faq h2{margin-top:0}
+.faq-item{background:#fff;border-radius:12px;padding:14px 18px;margin:0 0 10px;box-shadow:0 1px 6px rgba(0,0,0,.04)}
+.faq-item summary{cursor:pointer;font-weight:700;color:var(--navy);font-size:16px;list-style:none}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::before{content:"Q ";color:var(--warm)}
+.article-body .faq-item p{margin:10px 0 0;text-indent:0;font-size:16px}
+.author-card{display:flex;gap:16px;align-items:center;background:#fff;border-radius:14px;padding:18px 20px;margin:40px 0 0;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.author-card img{width:72px;height:72px;border-radius:50%;flex:0 0 72px}
+.article-body .author-card p{margin:2px 0 0;text-indent:0;font-size:14px;line-height:1.75;color:#57534e}
+.author-card b{font-size:16px;color:var(--navy)}
+.topic-more{margin-top:14px;font-size:15px}
 .article-body .container > p{text-indent:2em}
 .article-body .container > p:has(> figure),.article-body .container > p:has(> img){text-indent:0}
 .article-cta{background:var(--navy);padding:48px 0;text-align:center}
@@ -111,11 +128,18 @@
 {{ end }}
 
 {{ define "main" }}
+{{ $topic := "" }}{{ with .Params.topics }}{{ range first 1 . }}{{ $topic = site.GetPage (printf "/topics/%s" .) }}{{ end }}{{ end }}
 <div class="article-header">
   <div class="container">
-    {{ with .Params.categories }}<div>{{ range . }}<a class="article-cat" href="{{ (path.Join "/categories" . | urlize) | relLangURL }}/">{{ . }}</a>{{ end }}</div>{{ end }}
-    <div class="article-date">{{ .Date.Format "2006 年 1 月 2 日" }}{{ if .Site.Params.showViewCounts }} · <span id="view-count" class="article-views">－ 次瀏覽</span>{{ end }}</div>
+    <nav class="crumbs" aria-label="麵包屑"><a href="/blog/">命理文章</a>{{ with $topic }}<span>›</span><a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}</nav>
+    {{ with .Params.topics }}<div>{{ range . }}{{ with site.GetPage (printf "/topics/%s" .) }}<a class="article-cat" href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}{{ end }}</div>{{ end }}
     <h1 class="article-title">{{ .Title }}</h1>
+    <div class="article-meta">
+      <span>{{ .Date.Format "2006 年 1 月 2 日" }} 發布</span>
+      {{ if gt (.Lastmod.Sub .Date).Hours 24 }}<span>{{ .Lastmod.Format "2006 年 1 月 2 日" }} 更新</span>{{ end }}
+      <span>閱讀約 {{ .ReadingTime }} 分鐘</span>
+      {{ if .Site.Params.showViewCounts }}<span id="view-count" class="article-views">－ 次瀏覽</span>{{ end }}
+    </div>
     {{ with .Params.tags }}
     <div class="article-tags">
       {{ range . }}<a href="{{ (path.Join "/tags" . | urlize) | relLangURL }}/" class="article-tag">{{ . }}</a>{{ end }}
@@ -132,13 +156,14 @@
 
 <div class="article-body">
   <div class="container">
-    {{/* 重點摘要：文章「摘要」→ SEO 的 GEO 核心回答 → 文章開頭自動擷取 */}}
-    {{ $summary := .Description }}
+    {{/* 快速解答：後台「快速解答」→ 文章「摘要」→ GEO 核心回答 → 文章開頭自動擷取 */}}
+    {{ $summary := .Params.quickAnswer }}
+    {{ if not $summary }}{{ $summary = .Description }}{{ end }}
     {{ if not $summary }}{{ with .Params.seo }}{{ $summary = .geoAnswer }}{{ end }}{{ end }}
     {{ if not $summary }}{{ $summary = .Summary | plainify | truncate 120 }}{{ end }}
     {{ with $summary }}
     <div class="article-summary">
-      <div class="article-summary-title">重點摘要</div>
+      <div class="article-summary-title">快速解答</div>
       <p>{{ . }}</p>
     </div>
     {{ end }}
@@ -152,13 +177,23 @@
     {{ end }}
 
     {{ .Content }}
+    {{ with .Params.faq }}
+    <section class="article-faq">
+      <h2 id="faq">常見問題</h2>
+      {{ range . }}<details class="faq-item"><summary>{{ .q }}</summary><p>{{ .a }}</p></details>{{ end }}
+    </section>
+    {{ end }}
+    <aside class="author-card">
+      <img src="/images/avatar-goat.webp" alt="大正" width="72" height="72" loading="lazy">
+      <div><b>大正</b><p>紫微斗數命理師，諮詢 3 年、看過 500+ 張命盤。不批評，好好聊，陪你把處境和選項看清楚。<a href="/about/">關於大正 →</a></p></div>
+    </aside>
     <div class="article-back">
-      <a href="/blog/">← 回到文章列表</a>
+      {{ with $topic }}<a href="{{ .RelPermalink }}">← 看更多「{{ .Title }}」的文章</a>{{ else }}<a href="/blog/">← 回到文章列表</a>{{ end }}
     </div>
   </div>
 </div>
 
-{{ $blog := (where .Site.RegularPages "Section" "blog").ByDate }}
+{{ $blog := (where (where .Site.RegularPages "Section" "blog") "Params.noindex" "ne" true).ByDate }}
 {{ $cur := . }}
 
 {{/* ① 延伸閱讀：作者在後台手動挑選 */}}
@@ -196,8 +231,8 @@
 {{ end }}
 
 {{/* ③ 你可能喜歡：依分類、標籤自動推薦，不足用最新文章補，排除已在延伸閱讀的 */}}
-{{ $related := where (.Site.RegularPages.Related .) "Section" "blog" }}
-{{ $others := where (where .Site.RegularPages "Section" "blog") "Permalink" "ne" .Permalink }}
+{{ $related := where (where (.Site.RegularPages.Related .) "Section" "blog") "Params.noindex" "ne" true }}
+{{ $others := where (where (where .Site.RegularPages "Section" "blog") "Params.noindex" "ne" true) "Permalink" "ne" .Permalink }}
 {{ $pool := union $related $others.ByDate.Reverse }}
 {{ range $manual }}{{ $pool = where $pool "Permalink" "ne" .Permalink }}{{ end }}
 {{ $picks := first 3 $pool }}
@@ -210,7 +245,7 @@
       <a class="related-card" href="{{ .RelPermalink }}">
         {{ with .Params.image }}<img src="{{ . }}" alt="" loading="lazy">{{ end }}
         <div class="related-card-body">
-          {{ with .Params.categories }}<div class="related-card-cat">{{ index . 0 }}</div>{{ end }}
+          {{ with .Params.topics }}{{ range first 1 . }}{{ with site.GetPage (printf "/topics/%s" .) }}<div class="related-card-cat">{{ .Title }}</div>{{ end }}{{ end }}{{ end }}
           <div class="related-card-title">{{ .Title }}</div>
         </div>
       </a>
@@ -224,7 +259,7 @@
   <h3 style="color:#fff;font-size:22px;margin-bottom:10px">想知道你的命盤怎麼說？</h3>
   <p>一對一線上諮詢 60 分鐘，不限題數。不批評，好好聊。</p>
   <a href="/booking/">預約一對一諮詢</a>
-  <a href="{{ .Site.Params.lineUrl }}" target="_blank" rel="noopener" style="background:transparent;border:1px solid rgba(255,255,255,.5);margin-left:8px">先加入 LINE 聊聊</a>
+  <a href="{{ .Site.Params.lineUrl }}" target="_blank" rel="noopener" data-line style="background:transparent;border:1px solid rgba(255,255,255,.5);margin-left:8px">先加入 LINE 聊聊</a>
 </div>
 
 {{ with .Site.Params.webAppUrl }}

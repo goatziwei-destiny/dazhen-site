@@ -1,6 +1,6 @@
 [build]
   publish = "public"
-  command = "hugo"
+  command = "hugo && node scripts/prerender-home.js"
 
 [build.environment]
   HUGO_VERSION = "0.147.6"
@@ -28,3 +28,9 @@
   from = "/line-redirect/*"
   to = "https://line.me/R/ti/p/%40159cibme"
   status = 302
+
+# 2026-10-11 文章分類改成「主題」（/topics/），舊的分類網址導到文章列表
+[[redirects]]
+  from = "/categories/*"
+  to = "/topics/"
+  status = 301

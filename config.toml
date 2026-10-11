@@ -1,5 +1,7 @@
 baseURL = "https://dazhen-site.netlify.app/"
 languageCode = "zh-Hant"
+# 中文字數與閱讀時間要用這個才算得對
+hasCJKLanguage = true
 # 以台灣時間判讀文章日期，避免凌晨發文被當成未來文章。
 timeZone = "Asia/Taipei"
 title = "大正命理諮詢｜紫微斗數線上諮詢"
@@ -38,22 +40,22 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
   [[params.social]]
     key = "facebook"
     label = "Facebook"
-    url = ""
+    url = "https://www.facebook.com/profile.php?id=61583191583142"
     color = "#1877F2"
   [[params.social]]
     key = "instagram"
     label = "Instagram"
-    url = ""
+    url = "https://www.instagram.com/ray011512155/"
     color = "#E4405F"
   [[params.social]]
     key = "threads"
     label = "Threads"
-    url = ""
+    url = "https://www.threads.com/@ray01151215"
     color = "#000000"
   [[params.social]]
     key = "line"
     label = "LINE"
-    url = ""
+    url = "https://lin.ee/vlvPoMa"
     color = "#06C755"
   [[params.social]]
     key = "youtube"
@@ -86,12 +88,17 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
     url = ""
     color = "#57534e"
 
+# 文章分兩種：主題（topics，5 個，讀者用來找文章）＋標籤（tags，細節關鍵字，不進搜尋引擎）
+[taxonomies]
+  topic = "topics"
+  tag = "tags"
+
 [related]
   includeNewer = true
   threshold = 0
   toLower = false
   [[related.indices]]
-    name = "categories"
+    name = "topics"
     weight = 100
   [[related.indices]]
     name = "tags"
@@ -99,6 +106,7 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
 
 [permalinks]
   blog = "/blog/:slug/"
+  topics = "/topics/:slug/"
 
 [markup]
   [markup.tableOfContents]
@@ -108,3 +116,7 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
+
+# 文章「更新日期」只看文章裡的 lastmod 欄位（沒填就等於發布日期），不用 git 修改時間，避免改版型時所有文章都變成「今天更新」
+[frontmatter]
+  lastmod = ["lastmod", "date"]
