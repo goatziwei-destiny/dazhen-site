@@ -1,5 +1,7 @@
 baseURL = "https://dazhen-site.netlify.app/"
 languageCode = "zh-Hant"
+# 以台灣時間判讀文章日期，避免凌晨發文被當成未來文章。
+timeZone = "Asia/Taipei"
 title = "大正命理諮詢｜紫微斗數線上諮詢"
 
 [params]
