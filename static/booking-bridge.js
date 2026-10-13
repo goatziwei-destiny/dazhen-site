@@ -25,6 +25,7 @@
     track('booking_view', { page: location.pathname });
     url.searchParams.set('bridge', nonce);
     var tf = new URLSearchParams(location.search).get('testfill'); if (tf) url.searchParams.set('testfill', tf);
+    var rb = new URLSearchParams(location.search).get('rb'); if (rb && /^[A-Za-z0-9.\-]{8,80}$/.test(rb)) url.searchParams.set('rb', rb);   // 信裡「下次預約點這裡」：沿用上次的命盤資料
     return url.href;
   };
   // 表單回報自己的高度 → 把外框撐到剛好，整頁只剩一條捲軸
