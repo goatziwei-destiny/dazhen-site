@@ -4,9 +4,9 @@ slug: "relationship-expectations-and-boundaries"
 date: "2026-10-11T16:37:11+08:00"
 description: "正緣不代表無條件懂你、愛你、配合你。從命理與相處談伴侶的需要、界線與呼吸空間，分清雙向調整與單方面退讓，也不以包容合理化傷害。"
 image: "/images/uploads/relationship-expectations-and-boundaries-watercolor-v2.png"
-categories:
-  - 羊的手札
-  - 感情
+topics:
+  - notes
+  - love
 tags:
   - 正緣
   - 感情相處
