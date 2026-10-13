@@ -30,18 +30,22 @@
     <p>{{ .Description }}</p>
   </div>
 </div>
-<div class="container blog-wrap">
-  {{ with .Content }}<div class="topic-intro">{{ . }}</div>{{ end }}
+<div class="container blog-wrap blog-layout">
+  {{ partial "blog-sidebar.html" . }}
+  <div class="blog-main">
+  {{ with .Content }}<div class="topic-intro" style="margin-top:0">{{ . }}</div>{{ end }}
+  {{ $tslug := .Params.slug }}{{ $list := (where .Pages "Params.draft" "ne" true).ByDate.Reverse }}
+  {{ $chips := slice }}
+  {{ range where (site.GetPage "/subtopics").Pages.ByWeight "Params.topic" $tslug }}{{ $m := len (where $list "Params.subtopics" "intersect" (slice .Params.slug)) }}{{ if $m }}{{ $chips = $chips | append (dict "p" . "n" $m) }}{{ end }}{{ end }}
+  {{ with $chips }}<nav class="sub-chips" aria-label="小類">{{ range . }}<a href="{{ .p.RelPermalink }}">{{ .p.Title }}<span>{{ .n }}</span></a>{{ end }}</nav>{{ end }}
   {{ with $pillar }}
   <a class="pillar" href="{{ .RelPermalink }}"><small>總綱｜從這篇開始</small><b>{{ .Title }}</b>{{ with .Description }}<span>{{ . }}</span>{{ end }}</a>
   {{ end }}
   <section class="blog-sec blog-list">
     <h2 class="sec-h">{{ .Title }}的文章</h2>
-    {{ $list := (where .Pages "Params.draft" "ne" true).ByDate.Reverse }}
     {{ with $pillar }}{{ $list = where $list "Permalink" "ne" .Permalink }}{{ end }}
     {{ range $list }}{{ partial "post-card.html" . }}{{ else }}<div class="blog-empty"><p>這個主題的文章準備中。</p></div>{{ end }}
   </section>
-  <h2 class="sec-h">其他主題</h2>
-  <div class="other-topics">{{ $cur := . }}{{ range (site.GetPage "/topics").Pages.ByWeight }}{{ if ne .Permalink $cur.Permalink }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}{{ end }}</div>
+  </div>
 </div>
 {{ end }}

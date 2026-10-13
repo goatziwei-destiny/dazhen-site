@@ -15,19 +15,42 @@ collections:
     fields:
       - { label: "標題", name: "title", widget: "string" }
       - { label: "網址代稱（必填，小寫英文，用 - 連接，例如 how-to-read-wealth-in-chart）", name: "slug", widget: "string", required: true, pattern: ["^[a-z0-9]+(-[a-z0-9]+)*$", "只能用小寫英文、數字和 -，不要加 /blog/ 或空白、符號"], hint: "3～6 個英文單字，說清楚文章在講什麼。發布後不要再改，改了舊連結會失效。" }
-      - label: "主題（讀者用來找文章，選 1～2 個，第一個是主要主題）"
+      - label: "主題（選 1 個）"
         name: "topics"
         widget: "select"
         multiple: true
         min: 1
-        max: 2
+        max: 1
         options:
           - { label: "感情與婚姻", value: "love" }
           - { label: "家庭與親子", value: "family" }
           - { label: "工作與財運", value: "career" }
           - { label: "紫微斗數入門", value: "basics" }
           - { label: "羊的手札（大正的觀點與生活觀察）", value: "notes" }
-        hint: "第一個選的會出現在麵包屑和文章卡上。學理、看盤方法放「紫微斗數入門」；個人觀點、時事、節日感想放「羊的手札」。"
+        hint: "學理、看盤方法放「紫微斗數入門」；個人觀點、時事、節日感想放「羊的手札」。"
+      - label: "小類（選 1 個，要跟上面的主題對應）"
+        name: "subtopics"
+        widget: "select"
+        multiple: true
+        min: 1
+        max: 1
+        options:
+          - { label: "感情與婚姻 › 正緣與桃花", value: "love-romance" }
+          - { label: "感情與婚姻 › 相處與界線", value: "love-boundaries" }
+          - { label: "感情與婚姻 › 婚姻選擇", value: "love-marriage" }
+          - { label: "家庭與親子 › 父母與原生家庭", value: "family-parents" }
+          - { label: "家庭與親子 › 子女與教養", value: "family-children" }
+          - { label: "家庭與親子 › 手足", value: "family-siblings" }
+          - { label: "工作與財運 › 工作方向與轉職", value: "career-direction" }
+          - { label: "工作與財運 › 財運與金錢觀", value: "career-wealth" }
+          - { label: "紫微斗數入門 › 十二宮", value: "basics-palaces" }
+          - { label: "紫微斗數入門 › 星曜", value: "basics-stars" }
+          - { label: "紫微斗數入門 › 四化", value: "basics-sihua" }
+          - { label: "紫微斗數入門 › 大限與流年", value: "basics-timing" }
+          - { label: "紫微斗數入門 › 看盤觀念", value: "basics-reading" }
+          - { label: "羊的手札 › 諮詢裡的觀察", value: "notes-consulting" }
+          - { label: "羊的手札 › 節日與時事", value: "notes-seasonal" }
+        hint: "小類前面的主題要跟上面選的主題一樣。"
       - { label: "發布日期", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
       - { label: "更新日期（選填，大幅修改內容時才填）", name: "lastmod", widget: "datetime", format: "YYYY-MM-DD", required: false, hint: "有填的話文章上會顯示「○月○日 更新」，也會告訴搜尋引擎內容有更新。" }
       - { label: "摘要（80～120 字，會顯示在列表頁、Google 搜尋結果，也會當作文章開頭的「快速解答」）", name: "description", widget: "text", required: true }

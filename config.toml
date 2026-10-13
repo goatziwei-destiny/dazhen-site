@@ -88,15 +88,19 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
     url = ""
     color = "#57534e"
 
-# 文章分兩種：主題（topics，5 個，讀者用來找文章）＋標籤（tags，細節關鍵字，不進搜尋引擎）
+# 文章分類：主題（topics，每篇只選 1 個）→ 小類（subtopics，每篇 1 個，content/subtopics/ 定義）；標籤（tags）只是文末關鍵字
 [taxonomies]
   topic = "topics"
+  subtopic = "subtopics"
   tag = "tags"
 
 [related]
   includeNewer = true
   threshold = 0
   toLower = false
+  [[related.indices]]
+    name = "subtopics"
+    weight = 150
   [[related.indices]]
     name = "topics"
     weight = 100
@@ -107,6 +111,7 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
 [permalinks]
   blog = "/blog/:slug/"
   topics = "/topics/:slug/"
+  subtopics = "/topics/sub/:slug/"
 
 [markup]
   [markup.tableOfContents]

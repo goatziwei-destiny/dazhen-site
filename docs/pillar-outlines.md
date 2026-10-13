@@ -21,6 +21,8 @@ slug: "how-to-read-personality-in-chart"
 date: 2026-10-20          # 實際發布日
 topics:
   - basics
+subtopics:
+  - basics-reading
 description: "想從紫微斗數看自己是怎樣的人，只看命宮主星很容易貼錯標籤。這篇用命宮、遷移宮、福德宮與四化，說明怎麼把性格看成「傾向」，並放回真實生活裡理解。"
 image: "/images/uploads/how-to-read-personality-cover.png"
 tags:
@@ -136,7 +138,8 @@ slug: "how-to-read-wealth-in-chart"
 date: 2026-10-27          # 實際發布日
 topics:
   - career
-  - basics
+subtopics:
+  - career-wealth
 description: "財運不是一個數字，而是你怎麼賺錢、怎麼用錢、能不能存下來。從財帛宮、福德宮、田宅宮、官祿宮與大限流年，看懂自己和錢相處的方式，也說清楚命理不能替你做的財務決定。"
 image: "/images/uploads/how-to-read-wealth-cover.png"
 tags:

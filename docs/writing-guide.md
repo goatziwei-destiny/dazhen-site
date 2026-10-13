@@ -2,25 +2,28 @@
 
 給大正，也給幫忙寫稿的 AI（例如 ChatGPT）。照這份寫，文章就會自動放進網站的主題、麵包屑、目錄、快速解答、常見問題與搜尋引擎資料裡。版型已經做好，寫的人只要把內容和欄位填對。
 
-最後更新：2026-10-11
+最後更新：2026-10-14
 
 ---
 
 ## 一、網站的文章架構
 
-讀者用「主題」找文章，每個主題有一個總覽頁，裡面先放一篇「總綱」，再列其他文章。
+讀者用「主題 → 小類」找文章。**每篇文章只選 1 個主題、1 個小類**，左邊目錄的篇數才會對得上。沒有文章的主題或小類不會顯示。
 
-| 主題 | 網址 | 放什麼 | 總綱文章 |
-| --- | --- | --- | --- |
-| 感情與婚姻 | /topics/love/ | 夫妻宮、福德宮、感情模式、相處、婚姻選擇 | （待寫） |
-| 家庭與親子 | /topics/family/ | 父母、子女、手足、家人界線 | （待寫） |
-| 工作與財運 | /topics/career/ | 工作方向、轉職時機、財運怎麼看 | 財運怎麼看（how-to-read-wealth-in-chart） |
-| 紫微斗數入門 | /topics/basics/ | 十二宮、星曜、四化、本命大限流年、看盤方法 | 如何從命盤看一個人的性格（how-to-read-personality-in-chart） |
-| 羊的手札 | /topics/notes/ | 大正自己的觀點：諮詢裡看到的事、節日與時事感想 | 不需要總綱 |
+| 主題（topics） | 小類（subtopics） | 總綱文章 |
+| --- | --- | --- |
+| 感情與婚姻 love | 正緣與桃花 love-romance／相處與界線 love-boundaries／婚姻選擇 love-marriage | （待寫） |
+| 家庭與親子 family | 父母與原生家庭 family-parents／子女與教養 family-children／手足 family-siblings | （待寫） |
+| 工作與財運 career | 工作方向與轉職 career-direction／財運與金錢觀 career-wealth | 財運怎麼看（how-to-read-wealth-in-chart） |
+| 紫微斗數入門 basics | 十二宮 basics-palaces／星曜 basics-stars／四化 basics-sihua／大限與流年 basics-timing／看盤觀念 basics-reading | 如何從命盤看一個人的性格（how-to-read-personality-in-chart） |
+| 羊的手札 notes | 諮詢裡的觀察 notes-consulting／節日與時事 notes-seasonal | 不需要總綱 |
 
-- 一篇文章選 1～2 個主題，第一個是主要主題（會出現在麵包屑：命理文章 › 主題 › 文章）。
-- 標籤（tags）只是細節關鍵字，例如「夫妻宮」「化忌」。每篇 3～6 個，不要每篇都發明新標籤；標籤頁不會被搜尋引擎收錄。
+- 判斷方法：讀者會因為什麼問題找到這篇？那個問題屬於哪個主題，就放哪裡。例：〈金錢壓力如何影響感情〉重點在相處 → 感情與婚姻 › 相處與界線。
+- 主要在講某顆星或某個宮位的學理 → 紫微斗數入門；主要是大正的觀點、節日感想 → 羊的手札。
+- 文章網址是 /topics/主題/、/topics/sub/小類/，麵包屑會自動變成：命理文章 › 主題 › 小類 › 文章。
+- 標籤（tags）只是文末的關鍵字，每篇 3～6 個，不會出現在目錄裡。
 - 新的總綱寫好後，到後台「文章主題頁」把它設成該主題的總綱。
+- 要新增小類：在 content/subtopics/ 加一個資料夾（照現有的格式），並在後台設定 static/admin/config.yml 的小類選項加一行。
 
 ---
 
@@ -35,7 +38,8 @@ slug: "how-to-read-wealth-in-chart"
 date: 2026-10-20
 topics:
   - career
-  - basics
+subtopics:
+  - career-wealth
 description: "財運不是一個數字，而是你怎麼賺錢、怎麼用錢、能不能存下來。從財帛宮、福德宮、田宅宮與大限流年，看懂自己和錢相處的方式。"
 quickAnswer: ""        # 選填，不填就用 description
 image: "/images/uploads/how-to-read-wealth-cover.png"
@@ -62,7 +66,8 @@ seo:
 | slug 網址代稱 | 必填。小寫英文、數字、- 連接，3～6 個單字。發布後不要改 |
 | date 發布日期 | YYYY-MM-DD |
 | lastmod 更新日期 | 選填，大幅修改內容時才填 |
-| topics 主題 | love／family／career／basics／notes，選 1～2 個 |
+| topics 主題 | love／family／career／basics／notes，只選 1 個 |
+| subtopics 小類 | 從第一節的表選 1 個，要跟主題對應 |
 | description 摘要 | 必填，80～120 字。會出現在 Google 搜尋結果、文章列表，也是文章開頭的「快速解答」 |
 | quickAnswer 快速解答 | 選填。想讓文章開頭的回答和摘要不一樣時才填，2～3 句直接回答標題的問題 |
 | image 封面 | 建議 1200×800 以上，橫式。分享到 LINE、FB 會用這張 |
@@ -121,14 +126,14 @@ seo:
 你要幫「大正命理諮詢」寫一篇部落格文章，請完全依照這份寫作規範：【貼上本文件第一～五節，或附上檔案】
 
 題目：【例：財運怎麼看？】
-主要主題：【love／family／career／basics／notes】
+主題與小類：【例：career › career-wealth】
 主要關鍵字：【例：紫微斗數 財運】
 要提到的宮位或觀念：【例：財帛宮、福德宮、田宅宮、大限流年、化祿化忌】
 要連結的文章：【貼上 1～2 篇同主題文章的網址】
 大正想強調的觀點：【一兩句話】
 
 請輸出：
-1. 完整的檔案開頭欄位（title、slug、date、topics、description、tags、faq、seo.keyword），格式照規範第二節。
+1. 完整的檔案開頭欄位（title、slug、date、topics、subtopics、description、tags、faq、seo.keyword），格式照規範第二節。
 2. Markdown 內文，結構照規範第三節，不要寫目錄、作者介紹和預約按鈕（網站會自動產生）。
 3. 字數 2,000～3,500 字。
 ```
@@ -139,5 +144,5 @@ seo:
 
 完整大綱（含檔案開頭欄位、每一節重點、常見問題、內部連結、封面建議）在 `docs/pillar-outlines.md`：
 
-1. 如何從命盤看一個人的性格（slug: how-to-read-personality-in-chart，主題：basics）
-2. 財運怎麼看（slug: how-to-read-wealth-in-chart，主題：career、basics）
+1. 如何從命盤看一個人的性格（slug: how-to-read-personality-in-chart，主題：basics › basics-reading）
+2. 財運怎麼看（slug: how-to-read-wealth-in-chart，主題：career › career-wealth）

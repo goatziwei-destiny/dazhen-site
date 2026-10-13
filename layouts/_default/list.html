@@ -6,7 +6,6 @@
 {{ if eq .Kind "section" }}
 {{/* ── 文章列表首頁：從這裡開始 → 主題 → 最新文章 ── */}}
 {{ $posts := where (where .Pages "Params.draft" "ne" true) "Params.noindex" "ne" true }}
-{{ $topics := (site.GetPage "/topics").Pages.ByWeight }}
 <div class="blog-header">
   <div class="container">
     <h1>命理文章</h1>
@@ -14,30 +13,12 @@
   </div>
 </div>
 <div class="container blog-wrap blog-layout">
-  {{ $starts := slice }}
-  {{ range $topics }}{{ with .Params.pillar }}{{ with site.GetPage (printf "/blog/%s" .) }}{{ $starts = $starts | append . }}{{ end }}{{ end }}{{ end }}
-  {{ range where $posts "Params.featured" true }}{{ $starts = $starts | append . }}{{ end }}
-  <aside class="blog-side">
-    <details class="side-box" id="topicToc" open>
-      <summary>依主題閱讀</summary>
-      <ul class="side-list">
-        <li><a href="/blog/" class="on">全部文章 <span>{{ len $posts }}</span></a></li>
-        {{ range $topics }}<li><a href="{{ .RelPermalink }}">{{ .Title }} <span>{{ len .Pages }}</span></a></li>{{ end }}
-      </ul>
-    </details>
-    {{ with $starts }}
-    <details class="side-box" open>
-      <summary>第一次來？從這幾篇開始</summary>
-      <ol class="side-start">{{ range first 5 (. | uniq) }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>{{ end }}</ol>
-    </details>
-    {{ end }}
-  </aside>
+  {{ partial "blog-sidebar.html" . }}
   <section class="blog-main blog-list">
     <h2 class="sec-h">最新文章</h2>
     {{ range $posts.ByDate.Reverse }}{{ partial "post-card.html" . }}{{ else }}<div class="blog-empty"><p>還沒有文章，敬請期待。</p></div>{{ end }}
   </section>
 </div>
-<script>(function(){ if (window.matchMedia('(max-width:860px)').matches) document.querySelectorAll('.blog-side details').forEach(function(d){ d.removeAttribute('open'); }); })();</script>
 {{ else }}
 {{/* ── 標籤頁（不進搜尋引擎，只給讀者點標籤用）── */}}
 <div class="blog-header">

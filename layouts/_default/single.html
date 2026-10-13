@@ -130,8 +130,8 @@
 {{ $topic := "" }}{{ with .Params.topics }}{{ range first 1 . }}{{ $topic = site.GetPage (printf "/topics/%s" .) }}{{ end }}{{ end }}
 <div class="article-header">
   <div class="container">
-    <nav class="crumbs" aria-label="麵包屑"><a href="/blog/">命理文章</a>{{ with $topic }}<span>›</span><a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}</nav>
-    {{ with .Params.topics }}<div>{{ range . }}{{ with site.GetPage (printf "/topics/%s" .) }}<a class="article-cat" href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}{{ end }}</div>{{ end }}
+    {{ $sub := "" }}{{ with .Params.subtopics }}{{ range first 1 . }}{{ $sub = site.GetPage (printf "/subtopics/%s" .) }}{{ end }}{{ end }}
+    <nav class="crumbs" aria-label="麵包屑"><a href="/blog/">命理文章</a>{{ with $topic }}<span>›</span><a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}{{ with $sub }}<span>›</span><a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}</nav>
     <h1 class="article-title">{{ .Title }}</h1>
     <div class="article-meta">
       <span>{{ .Date.Format "2006 年 1 月 2 日" }} 發布</span>

@@ -14,6 +14,8 @@ seo:
   metaDescription: AI陪伴、AI聊天、命理師、紫微斗數、化祿、人際關係、家庭關係、情感支持、關係界線
 topics:
   - notes
+subtopics:
+  - notes-seasonal
 aliases:
   - "/blog/ai-能陪伴人嗎從命理看-ai命理師與真實關係裡的支持/"
 ---

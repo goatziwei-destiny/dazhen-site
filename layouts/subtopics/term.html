@@ -1,0 +1,28 @@
+{{ define "head" }}
+{{ partial "blog-css.html" . }}
+{{ $topic := site.GetPage (printf "/topics/%s" .Params.topic) }}
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+ {"@type":"ListItem","position":1,"name":"命理文章","item":{{ "/blog/" | absURL }}},
+ {{ with $topic }}{"@type":"ListItem","position":2,"name":{{ .Title }},"item":{{ .Permalink }}},{{ end }}
+ {"@type":"ListItem","position":{{ if $topic }}3{{ else }}2{{ end }},"name":{{ .Title }},"item":{{ .Permalink }}}]}
+</script>
+{{ end }}
+
+{{ define "main" }}
+{{ $topic := site.GetPage (printf "/topics/%s" .Params.topic) }}
+<div class="blog-header">
+  <div class="container">
+    <nav class="crumbs" aria-label="麵包屑"><a href="/blog/">命理文章</a><span>›</span>{{ with $topic }}<a href="{{ .RelPermalink }}">{{ .Title }}</a><span>›</span>{{ end }}{{ .Title }}</nav>
+    <h1>{{ .Title }}</h1>
+    <p>{{ .Description }}</p>
+  </div>
+</div>
+<div class="container blog-wrap blog-layout">
+  {{ partial "blog-sidebar.html" . }}
+  <section class="blog-main blog-list">
+    <h2 class="sec-h">{{ .Title }}的文章</h2>
+    {{ range (where .Pages "Params.draft" "ne" true).ByDate.Reverse }}{{ partial "post-card.html" . }}{{ else }}<div class="blog-empty"><p>這個小類的文章準備中。</p></div>{{ end }}
+  </section>
+</div>
+{{ end }}

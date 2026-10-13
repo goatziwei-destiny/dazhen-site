@@ -13,7 +13,7 @@
 <meta property="og:url" content="{{ .Permalink }}">
 <meta property="og:site_name" content="大正命理諮詢">
 <meta name="twitter:card" content="summary_large_image">
-{{ if or .Params.noindex (eq .Data.Plural "tags") }}<meta name="robots" content="noindex,follow">{{ end }}
+{{ if or .Params.noindex (eq .Data.Plural "tags") (eq .Data.Plural "subtopics" | and (eq .Kind "taxonomy")) (and (eq .Kind "term") (in (slice "topics" "subtopics") .Data.Plural) (not .Pages)) }}<meta name="robots" content="noindex,follow">{{ end }}
 {{ with .Params.seo }}{{ with .keyword }}<meta name="keywords" content="{{ . }}">{{ end }}{{ end }}
 {{ with .Params.tags }}<meta name="keywords" content="{{ delimit . ", " }}">{{ end }}
 <link rel="canonical" href="{{ .Permalink }}">
