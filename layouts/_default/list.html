@@ -13,30 +13,31 @@
     <p>紫微斗數的學理、看盤方法，和大正的生活觀察。依主題找，或從最新的開始讀。</p>
   </div>
 </div>
-<div class="container blog-wrap">
+<div class="container blog-wrap blog-layout">
   {{ $starts := slice }}
   {{ range $topics }}{{ with .Params.pillar }}{{ with site.GetPage (printf "/blog/%s" .) }}{{ $starts = $starts | append . }}{{ end }}{{ end }}{{ end }}
   {{ range where $posts "Params.featured" true }}{{ $starts = $starts | append . }}{{ end }}
-  {{ with $starts }}
-  <section class="blog-sec">
-    <h2 class="sec-h">第一次來？從這幾篇開始</h2>
-    <div class="start-box"><ol>{{ range first 5 (. | uniq) }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>{{ end }}</ol></div>
-  </section>
-  {{ end }}
-  <section class="blog-sec">
-    <h2 class="sec-h">依主題閱讀</h2>
-    <p class="sec-sub">每個主題都有總覽頁，相關文章整理在一起。</p>
-    <div class="topic-grid">
-      {{ range $topics }}
-      <a class="topic-card" href="{{ .RelPermalink }}"><b>{{ .Title }}</b><span>{{ .Description }}</span><small>{{ len .Pages }} 篇文章 →</small></a>
-      {{ end }}
-    </div>
-  </section>
-  <section class="blog-sec blog-list" style="padding-bottom:40px">
+  <aside class="blog-side">
+    <details class="side-box" id="topicToc" open>
+      <summary>依主題閱讀</summary>
+      <ul class="side-list">
+        <li><a href="/blog/" class="on">全部文章 <span>{{ len $posts }}</span></a></li>
+        {{ range $topics }}<li><a href="{{ .RelPermalink }}">{{ .Title }} <span>{{ len .Pages }}</span></a></li>{{ end }}
+      </ul>
+    </details>
+    {{ with $starts }}
+    <details class="side-box" open>
+      <summary>第一次來？從這幾篇開始</summary>
+      <ol class="side-start">{{ range first 5 (. | uniq) }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>{{ end }}</ol>
+    </details>
+    {{ end }}
+  </aside>
+  <section class="blog-main blog-list">
     <h2 class="sec-h">最新文章</h2>
     {{ range $posts.ByDate.Reverse }}{{ partial "post-card.html" . }}{{ else }}<div class="blog-empty"><p>還沒有文章，敬請期待。</p></div>{{ end }}
   </section>
 </div>
+<script>(function(){ if (window.matchMedia('(max-width:860px)').matches) document.querySelectorAll('.blog-side details').forEach(function(d){ d.removeAttribute('open'); }); })();</script>
 {{ else }}
 {{/* ── 標籤頁（不進搜尋引擎，只給讀者點標籤用）── */}}
 <div class="blog-header">
