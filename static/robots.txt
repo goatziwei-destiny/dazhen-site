@@ -1,0 +1,6 @@
+# 大正命理諮詢：歡迎搜尋引擎與 AI 工具讀取公開內容
+User-agent: *
+Disallow: /admin/
+Disallow: /pay/
+
+Sitemap: https://dazhen-site.netlify.app/sitemap.xml

@@ -1,0 +1,41 @@
+{{/* 文章側欄（文章列表、主題頁、小類頁共用）：依主題閱讀（主題 → 小類，只顯示有文章的）＋第一次來 */}}
+{{ $cur := . }}
+{{ $all := where (where (where site.RegularPages "Section" "blog") "Params.draft" "ne" true) "Params.noindex" "ne" true }}
+{{ $curTopic := "" }}{{ $curSub := "" }}
+{{ if eq .Data.Plural "topics" }}{{ $curTopic = .Params.slug }}{{ end }}
+{{ if eq .Data.Plural "subtopics" }}{{ $curSub = .Params.slug }}{{ $curTopic = .Params.topic }}{{ end }}
+{{ $subs := (site.GetPage "/subtopics").Pages.ByWeight }}
+<aside class="blog-side">
+  <details class="side-box" id="topicToc" open>
+    <summary>依主題閱讀</summary>
+    <ul class="side-list">
+      <li><a href="/blog/" class="side-all{{ if and (eq $cur.Section "blog") (eq $cur.Kind "section") }} on{{ end }}">全部文章 <span>{{ len $all }}</span></a></li>
+      {{ range (site.GetPage "/topics").Pages.ByWeight }}
+        {{ $t := . }}{{ $tslug := .Params.slug }}
+        {{ $n := len (where $all "Params.topics" "intersect" (slice $tslug)) }}
+        {{ if $n }}
+        <li><details class="side-topic"{{ if eq $curTopic $tslug }} open{{ end }}>
+          <summary class="{{ if and (eq $curTopic $tslug) (not $curSub) }}on{{ end }}">{{ $t.Title }} <span>{{ $n }}</span></summary>
+          <ul class="side-sub">
+            <li><a href="{{ $t.RelPermalink }}" class="{{ if and (eq $curTopic $tslug) (not $curSub) }}on{{ end }}">全部 <span>{{ $n }}</span></a></li>
+            {{ range where $subs "Params.topic" $tslug }}
+              {{ $m := len (where $all "Params.subtopics" "intersect" (slice .Params.slug)) }}
+              {{ if $m }}<li><a href="{{ .RelPermalink }}" class="{{ if eq $curSub .Params.slug }}on{{ end }}">{{ .Title }} <span>{{ $m }}</span></a></li>{{ end }}
+            {{ end }}
+          </ul>
+        </details></li>
+        {{ end }}
+      {{ end }}
+    </ul>
+  </details>
+  {{ $starts := slice }}
+  {{ range (site.GetPage "/topics").Pages.ByWeight }}{{ with .Params.pillar }}{{ with site.GetPage (printf "/blog/%s" .) }}{{ $starts = $starts | append . }}{{ end }}{{ end }}{{ end }}
+  {{ range where $all "Params.featured" true }}{{ $starts = $starts | append . }}{{ end }}
+  {{ with $starts }}
+  <details class="side-box" open>
+    <summary>第一次來？從這幾篇開始</summary>
+    <ol class="side-start">{{ range first 5 (. | uniq) }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>{{ end }}</ol>
+  </details>
+  {{ end }}
+</aside>
+<script>(function(){ if (window.matchMedia('(max-width:860px)').matches) { var d = document.querySelectorAll('.blog-side > details'); for (var i = 0; i < d.length; i++) d[i].removeAttribute('open'); } })();</script>

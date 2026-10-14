@@ -3,16 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title></title>
-<meta name="description" content="">
+<title>{{ site.Title }}</title>
+<meta name="description" content="{{ site.Params.description }}">
 <meta name="keywords" content="">
-<link rel="canonical" href="">
+<link rel="canonical" href="{{ .Permalink }}">
 {{ with .Site.Params.googleSiteVerification }}<meta name="google-site-verification" content="{{ . }}">{{ end }}
-<meta property="og:title" content="">
-<meta property="og:description" content="">
+<meta property="og:title" content="{{ site.Title }}">
+<meta property="og:description" content="{{ site.Params.description }}">
 <meta property="og:type" content="website">
-<meta property="og:url" content="">
-<meta property="og:image" content="">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:image" content="{{ "/images/og-default.png" | absURL }}">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:locale" content="zh_TW">
 <script type="application/ld+json" id="schema-ld"></script>
 <link rel="preload" href="/fonts/dazhen-wenkai-400.woff2" as="font" type="font/woff2" crossorigin>
@@ -94,15 +95,18 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 .first-body{background:#fff;border-radius:14px;padding:16px 20px;box-shadow:0 2px 10px rgba(0,0,0,.04);min-width:0}
 .first-when{font-size:12px;font-weight:700;color:var(--warm);letter-spacing:1px}
 .first-title{font-size:17px;font-weight:700;margin:2px 0 4px}.first-desc{font-size:15px;color:var(--body);line-height:1.85}
-.agenda{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;list-style:none}
-.agenda li{font-size:13px;background:var(--cream);border-radius:999px;padding:2px 10px}.agenda b{color:var(--warm);margin-right:4px}
+.agenda{display:inline;list-style:none;padding:0;margin:0}
+.agenda li{display:inline-block;font-size:13px;line-height:1.6;background:var(--cream);border-radius:999px;padding:1px 10px;margin:2px 6px 2px 0;white-space:nowrap}.agenda b{color:var(--warm);margin-right:4px}
 .process-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:20px;margin-top:28px}
 .process-grid.n4{grid-template-columns:repeat(4,1fr)}.process-grid.n6{grid-template-columns:repeat(3,1fr)}
 .step-label{font-size:11px;letter-spacing:1px;color:var(--text-muted)}
 .step-title{font-size:16px;font-weight:700;margin:4px 0 6px}.step-desc{font-size:13.5px;color:#78716c;line-height:1.75}
-.step-dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--accent);margin-bottom:10px}.step-dot.done{background:var(--accent)}
-@media(max-width:900px){.process-grid,.process-grid.n4,.process-grid.n6{grid-template-columns:1fr 1fr}}
-@media(max-width:480px){.process-grid,.process-grid.n4,.process-grid.n6{grid-template-columns:1fr}}
+.step{position:relative}
+.step-dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--accent);margin-bottom:10px;background:#fff;position:relative;z-index:1}.step-dot.done{background:var(--accent)}
+.step:not(:last-child)::after{content:"";position:absolute;top:5px;left:16px;right:-16px;height:2px;background:rgba(98,146,171,.35)}
+@media(min-width:901px){.process-grid.n6 .step:nth-child(3n)::after{display:none}}
+@media(max-width:900px){.process-grid,.process-grid.n4,.process-grid.n6{grid-template-columns:1fr 1fr}.process-grid .step:nth-child(2n)::after{display:none}}
+@media(max-width:480px){.process-grid,.process-grid.n4,.process-grid.n6{grid-template-columns:1fr}.process-grid .step:not(:last-child)::after{display:block;top:16px;bottom:-26px;left:5px;right:auto;width:2px;height:auto}.step{padding-left:24px}.step-dot{position:absolute;left:0;top:0;margin:0}}
 .rules{max-width:860px;margin-top:24px;border-top:2px solid var(--navy)}
 .rule{display:grid;grid-template-columns:150px 1fr;gap:20px;padding:16px 0;border-bottom:1px solid var(--line)}
 .rule dt{font-weight:700;font-size:15px}.rule dd{color:var(--body);font-size:15px;line-height:1.85;min-width:0}
@@ -348,7 +352,7 @@ var LINE_ATTR = ' target="_blank" rel="noopener" data-line';
 function renderSite(S) {
   document.title = S.siteTitle || '';
   try { document.querySelector('meta[name="description"]').content = S.siteDescription || ''; } catch(e){}
-  try { document.querySelector('link[rel="canonical"]').href = S.siteUrl || ''; } catch(e){}
+  if (S.siteUrl) { try { document.querySelector('link[rel="canonical"]').href = S.siteUrl; } catch(e){} }
   var heroDesc = (S.heroDesc || '').replace(/\\n/g, '\n').replace(/<br\s*\/?>/gi, '\n').split('\n').map(esc).join('<br>');
   var aboutDo = S.aboutDo || [], aboutDont = S.aboutDont || [];
   var fitYes = lines_(S.fitYes), fitNo = lines_(S.fitNo), agenda = lines_(S.firstAgenda), agendaStep = Number(S.firstAgendaStep) || 3;
@@ -411,8 +415,8 @@ function renderSite(S) {
   (S.firstIntro ? '<p class="first-intro">' + esc(S.firstIntro) + '</p>' : '') +
   '<ol class="first-list">' + S.firstSteps.map(function (f, i) {
     return '<li class="first-item"><div class="first-num">' + (i + 1) + '</div><div class="first-body">' + (f.when ? '<div class="first-when">' + esc(f.when) + '</div>' : '') +
-      '<div class="first-title">' + esc(f.title) + '</div><div class="first-desc">' + esc(f.desc || '') + '</div>' +
-      (agenda.length && i + 1 === agendaStep ? '<ol class="agenda">' + agenda.map(function (a, j) { return '<li><b>' + (j + 1) + '</b>' + esc(a) + '</li>'; }).join('') + '</ol>' : '') +
+      '<div class="first-title">' + esc(f.title) + '</div><div class="first-desc">' + esc(f.desc || '') +
+      (agenda.length && i + 1 === agendaStep ? ' <ol class="agenda">' + agenda.map(function (a, j) { return '<li><b>' + (j + 1) + '</b>' + esc(a) + '</li>'; }).join('') + '</ol>' : '') + '</div>' +
       '</div></li>';
   }).join('') + '</ol>' +
 '</div></section>' : '') +
@@ -420,7 +424,7 @@ function renderSite(S) {
 '<section id="process" class="sec section-white"><div class="container">' +
   '<div class="eyebrow">PROCESS</div><h2 class="section-title">預約流程</h2>' +
   '<div class="process-grid n' + steps.length + '">' + steps.map(function (s, i) {
-    return '<div class="step"><div class="step-dot' + (s.done ? ' done' : '') + '"></div><div class="step-label">STEP ' + String(i + 1).padStart(2, '0') + '</div><div class="step-title">' + esc(s.title) + '</div><div class="step-desc">' + esc(s.desc) + '</div></div>';
+    return '<div class="step"><div class="step-dot' + (i % 2 === 0 ? ' done' : '') + '"></div><div class="step-label">STEP ' + String(i + 1).padStart(2, '0') + '</div><div class="step-title">' + esc(s.title) + '</div><div class="step-desc">' + esc(s.desc) + '</div></div>';
   }).join('') + '</div>' +
 '</div></section>' +
 
@@ -472,8 +476,8 @@ function setupStickyCta_() {
   upd();
 }
 
-// 先用 SITE 預設值立即渲染（SEO + 快速顯示）
-renderSite(SITE);
+// 先用 SITE 預設值立即渲染（SEO + 快速顯示）；建置時已預先寫好內容的話（scripts/prerender-home.js），就先沿用，只接上互動功能
+if (document.getElementById('app').children && document.getElementById('app').children.length) setupStickyCta_(); else renderSite(SITE);
 
 // 背景載入試算表最新資料，有更新就重新渲染（不用重新部署 Netlify）
 (function() {

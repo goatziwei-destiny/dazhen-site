@@ -1,0 +1,20 @@
+# 大正命理諮詢
+
+> 大正是紫微斗數命理師，提供一對一線上命理諮詢。諮詢經驗 3 年、看過 500 多張命盤。風格是「不批評，好好聊」：把命盤裡的傾向和時機講成白話，放回生活裡一起看選項，最後的決定留給當事人。
+
+## 服務
+- 一對一線上諮詢：NT$3,600，60 分鐘，時間內不限題數。透過 Google Meet 視訊或 LINE 語音通話進行。
+- 預約方式：在官網預約表單選時段、填出生資料，訂單成立後 24 小時內匯款並回報帳號末五碼。只開放兩天以後的時段。
+- 改約：諮詢開始 24 小時前可改約 1 次。取消：24 小時前取消全額退款，24 小時內取消或未出席不退款。遲到超過 15 分鐘不再等候。
+- 不提供：開運或改運商品、壽命與重大疾病判斷、投資建議。
+
+## 主要頁面
+- [首頁](https://dazhen-site.netlify.app/)：服務、價格、第一次諮詢怎麼進行、預約規則、常見問題
+- [關於大正](https://dazhen-site.netlify.app/about/)
+- [線上預約](https://dazhen-site.netlify.app/booking/)
+- [命理文章](https://dazhen-site.netlify.app/blog/)：依主題整理的紫微斗數文章
+- [文章主題](https://dazhen-site.netlify.app/topics/)：感情與婚姻、家庭與親子、工作與財運、紫微斗數入門、羊的手札
+- [隱私權政策](https://dazhen-site.netlify.app/privacy-policy/)
+
+## 聯絡
+- LINE 官方帳號：https://lin.ee/vlvPoMa

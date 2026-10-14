@@ -1,0 +1,7 @@
+{{ define "head" }}{{ partial "blog-css.html" . }}{{ end }}
+{{ define "main" }}
+<div class="blog-header"><div class="container"><nav class="crumbs" aria-label="麵包屑"><a href="/blog/">命理文章</a><span>›</span>文章主題</nav><h1>文章主題</h1><p>{{ .Description }}</p></div></div>
+<div class="container blog-wrap blog-sec" style="padding-bottom:40px">
+  <div class="topic-grid">{{ range .Pages.ByWeight }}<a class="topic-card" href="{{ .RelPermalink }}"><b>{{ .Title }}</b><span>{{ .Description }}</span><small>{{ len .Pages }} 篇文章 →</small></a>{{ end }}</div>
+</div>
+{{ end }}

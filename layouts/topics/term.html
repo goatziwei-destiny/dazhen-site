@@ -1,0 +1,51 @@
+{{ define "head" }}
+{{ partial "blog-css.html" . }}
+<style>
+.topic-intro{background:#fff;border-radius:14px;padding:20px 24px;margin:28px 0 0;line-height:1.95;color:#44403c;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.pillar{display:block;background:var(--navy);color:#fff;border-radius:14px;padding:20px 24px;margin:20px 0 0;text-decoration:none}
+.pillar:hover{text-decoration:none;opacity:.95}
+.pillar small{color:var(--warm);font-weight:700;letter-spacing:1px}
+.pillar b{display:block;font-size:20px;margin:4px 0}
+.pillar span{color:var(--text-light);font-size:14px;line-height:1.8}
+.other-topics{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 40px}
+.other-topics a{font-size:14px;padding:7px 15px;border-radius:20px;background:#fff;border:1px solid #e7e5e4;color:var(--navy);font-weight:700}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+ {"@type":"ListItem","position":1,"name":"命理文章","item":{{ "/blog/" | absURL }}},
+ {"@type":"ListItem","position":2,"name":{{ .Title }},"item":{{ .Permalink }}}]}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"CollectionPage","name":{{ .Title }},"description":{{ .Description }},"url":{{ .Permalink }},
+ "mainEntity":{"@type":"ItemList","itemListElement":[{{ range $i, $p := (where .Pages "Params.draft" "ne" true).ByDate.Reverse }}{{ if $i }},{{ end }}{"@type":"ListItem","position":{{ add $i 1 }},"url":{{ $p.Permalink }},"name":{{ $p.Title }}}{{ end }}]}}
+</script>
+{{ end }}
+
+{{ define "main" }}
+{{ $pillar := "" }}{{ with .Params.pillar }}{{ $pillar = site.GetPage (printf "/blog/%s" .) }}{{ end }}
+<div class="blog-header">
+  <div class="container">
+    <nav class="crumbs" aria-label="麵包屑"><a href="/blog/">命理文章</a><span>›</span>{{ .Title }}</nav>
+    <h1>{{ .Title }}</h1>
+    <p>{{ .Description }}</p>
+  </div>
+</div>
+<div class="container blog-wrap blog-layout">
+  {{ partial "blog-sidebar.html" . }}
+  <div class="blog-main">
+  {{ with .Content }}<div class="topic-intro" style="margin-top:0">{{ . }}</div>{{ end }}
+  {{ $tslug := .Params.slug }}{{ $list := (where .Pages "Params.draft" "ne" true).ByDate.Reverse }}
+  {{ $chips := slice }}
+  {{ range where (site.GetPage "/subtopics").Pages.ByWeight "Params.topic" $tslug }}{{ $m := len (where $list "Params.subtopics" "intersect" (slice .Params.slug)) }}{{ if $m }}{{ $chips = $chips | append (dict "p" . "n" $m) }}{{ end }}{{ end }}
+  {{ with $chips }}<nav class="sub-chips" aria-label="小類">{{ range . }}<a href="{{ .p.RelPermalink }}">{{ .p.Title }}<span>{{ .n }}</span></a>{{ end }}</nav>{{ end }}
+  {{ with $pillar }}
+  <a class="pillar" href="{{ .RelPermalink }}"><small>總綱｜從這篇開始</small><b>{{ .Title }}</b>{{ with .Description }}<span>{{ . }}</span>{{ end }}</a>
+  {{ end }}
+  <section class="blog-sec blog-list">
+    <h2 class="sec-h">{{ .Title }}的文章</h2>
+    {{ with $pillar }}{{ $list = where $list "Permalink" "ne" .Permalink }}{{ end }}
+    {{ range $list }}{{ partial "post-card.html" . }}{{ else }}<div class="blog-empty"><p>這個主題的文章準備中。</p></div>{{ end }}
+  </section>
+  </div>
+</div>
+{{ end }}
