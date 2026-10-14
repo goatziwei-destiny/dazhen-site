@@ -1,0 +1,22 @@
+{{ define "head" }}
+<style>
+.fp{padding-block:32px 64px}.fp .container{max-width:640px}
+.fp h1{text-align:center;font-size:clamp(24px,5vw,30px);color:var(--navy);margin-bottom:16px}
+.fp iframe{width:100%;height:1500px;border:0;display:block;background:transparent}
+.fp .fp-miss{text-align:center;color:#78716c;line-height:1.8}
+</style>
+{{ end }}
+{{ define "main" }}
+{{/* 問卷／改期：連結只會出現在寄給客人的信裡，網站上沒有入口，也不會被搜尋到。表單本身還是預約系統的同一份 */}}
+<div class="fp"><div class="container">
+  <h1>{{ .Title }}</h1>
+  <iframe id="fpFrame" title="{{ .Title }}"></iframe>
+  <p class="fp-miss" id="fpMiss" hidden>這個連結不完整，請直接點信裡的按鈕再試一次。</p>
+</div></div>
+<script>
+(function(){var q=new URLSearchParams(location.search),page={{ .Params.page }},need=page==='feedback'?['batch','token']:['batch','t'];
+  if(!need.every(function(k){return q.get(k);})){document.getElementById('fpFrame').hidden=true;document.getElementById('fpMiss').hidden=false;return;}
+  var u=new URL({{ .Site.Params.bookingFormUrl }});u.searchParams.set('page',page);need.forEach(function(k){u.searchParams.set(k,q.get(k));});
+  document.getElementById('fpFrame').src=u.toString();})();
+</script>
+{{ end }}
