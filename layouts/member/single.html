@@ -140,6 +140,7 @@ input[readonly]{background:var(--soft);color:var(--muted)}
       <div class="bk-load" id="bkLoading" role="status"><i></i>預約表單載入中，請稍候約 10 秒…</div>
       <iframe class="bk-frame" id="bookingFrame" data-booking-frame title="線上預約表單"></iframe>
     </section>
+    <div id="appBottom" style="margin-top:16px"></div>
   </div>
 </div>
 <div id="layer"></div>
@@ -196,6 +197,7 @@ function render(){
 }
 
 function renderLogin(){
+  $("#appBottom").innerHTML="";
   $("#app").innerHTML=`
   <div class="stack">
     <div><h1 style="font-size:24px">會員中心</h1>
@@ -234,7 +236,7 @@ function stOf(o){return o.upcoming?S.pay:o.status}
 
 function renderHome(){
   const m=S.member, up=ORDERS.find(o=>o.upcoming), st=stOf(up), paid=st==="paid";
-  $("#app").innerHTML=`
+  const html=`
   <div class="stack">
     ${S.justJoined?`<div class="notice ok">歡迎加入會員！我們用你的 ${m.via==="line"?"LINE 帳號":"Gmail"} 找到 ${BASE_ORDERS.length} 筆以前的訂單，已經放進你的購買紀錄。</div>`:""}
     <div><h1 style="font-size:24px">${esc(m.name)}，你好</h1></div>
@@ -258,6 +260,7 @@ function renderHome(){
 
     <button class="btn btn-main" data-act="rebook">再預約一次（自動帶入上次資料）</button>
 
+    </div>@@SPLIT@@<div class="stack">
     <section class="card" aria-labelledby="oh">
       <div class="sec-h"><h2 id="oh">購買紀錄</h2><span class="muted">${ORDERS.length} 筆</span></div>
       ${ORDERS.map(o=>{const s=stOf(o);return `
@@ -279,6 +282,8 @@ function renderHome(){
       ${S.where==="web"?'<button class="btn btn-ghost" data-act="logout">登出</button>':""}
     </section>
   </div>`;
+  const parts=html.split("@@SPLIT@@");
+  $("#app").innerHTML=parts[0];$("#appBottom").innerHTML=parts[1]||"";
   bindCommon();
 }
 function bindCommon(){
