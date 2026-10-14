@@ -1,0 +1,48 @@
+{{ define "head" }}
+<style>
+.lh{--night:#120f1e;--panel:#1b1830;--panel2:#262142;--gold:#d4ad5f;--paper:#f3ead8;--muted:#a59fb6;background:var(--night);color:var(--paper);padding-block:20px 64px}
+.lh .container{max-width:760px}
+.lh h2{color:var(--gold);font-size:20px;margin:0 0 12px;letter-spacing:.05em}
+.lh .note{background:var(--panel2);border:1px dashed var(--gold);border-radius:10px;padding:10px 14px;font-size:13px;line-height:1.7;color:var(--muted);margin-bottom:16px}
+.lh-game{width:100%;aspect-ratio:9/18.5;border:0;display:block;background:var(--night);border-radius:6px}
+@media (min-width:700px){.lh-game{aspect-ratio:16/10.4}}
+.lh-quick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0 28px}
+.lh-quick a{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--panel);border:2px solid var(--gold);border-radius:8px;padding:14px 6px;color:var(--paper);text-decoration:none;font-weight:700;text-align:center;font-size:15px}
+.lh-quick a small{color:var(--muted);font-weight:400;font-size:12px}
+.lh-quick a.main{background:var(--gold);color:#1a1408}.lh-quick a.main small{color:#3a2e14}
+.lh-vids{display:grid;gap:10px}
+.lh-vid{display:flex;gap:14px;align-items:center;background:var(--panel);border:1px solid #3a335a;border-radius:10px;padding:12px 14px;color:var(--paper);cursor:pointer;text-align:left;font:inherit;width:100%}
+.lh-vid:hover,.lh-vid:focus-visible{border-color:var(--gold);outline:none}
+.lh-vid .play{flex:none;width:44px;height:44px;border-radius:50%;background:var(--gold);color:#1a1408;display:grid;place-items:center;font-size:18px}
+.lh-vid b{display:block;font-size:16px}.lh-vid span{color:var(--muted);font-size:13px}
+.lh-modal{position:fixed;inset:0;background:rgba(7,5,12,.92);z-index:1000;display:flex;flex-direction:column;justify-content:center;padding:max(16px,env(safe-area-inset-top)) 12px max(16px,env(safe-area-inset-bottom))}
+.lh-modal iframe{width:100%;max-width:1000px;margin:0 auto;aspect-ratio:16/12;border:0;background:#0e2226;border-radius:8px}
+.lh-modal button{align-self:center;margin-top:12px;background:none;border:2px solid var(--gold);color:var(--gold);border-radius:999px;padding:8px 22px;font:inherit;cursor:pointer}
+</style>
+{{ end }}
+{{ define "main" }}
+<div class="lh">
+  <div class="container">
+    <div class="note">預覽版：這一頁是 LINE 圖文選單要打開的入口（/liff/）。影片目前直接放在網站裡播放，正式版會改放 YouTube；會員資料是假的。</div>
+    <iframe class="lh-game" src="/liff/library.html" title="命運書庫：大正羊的互動入口" loading="eager"></iframe>
+    <nav class="lh-quick" aria-label="快速入口">
+      <a class="main" href="/booking/">預約諮詢<small>一對一／文字版</small></a>
+      <a href="/member/">我的預約<small>紀錄・再預約</small></a>
+      <a href="/blog/">命理文章<small>依主題閱讀</small></a>
+    </nav>
+    <h2>介紹影片</h2>
+    <div class="lh-vids">
+      <button class="lh-vid" type="button" data-v="/liff/v1.html"><span class="play" aria-hidden="true">▶</span><div><b>命運是什麼？</b><span>基礎篇・約 100 秒</span></div></button>
+      <button class="lh-vid" type="button" data-v="/liff/v2.html"><span class="play" aria-hidden="true">▶</span><div><b>同一張命盤，命會一樣嗎？</b><span>第二篇・約 100 秒</span></div></button>
+      <button class="lh-vid" type="button" data-v="/liff/v3.html"><span class="play" aria-hidden="true">▶</span><div><b>第一次論命，怎麼進行？</b><span>第三篇・約 90 秒</span></div></button>
+    </div>
+  </div>
+</div>
+<div class="lh-modal" id="lhModal" hidden role="dialog" aria-label="播放影片"><iframe id="lhFrame" title="介紹影片" allow="autoplay"></iframe><button type="button" id="lhClose">關閉</button></div>
+<script>
+(function(){var m=document.getElementById('lhModal'),f=document.getElementById('lhFrame');
+document.querySelectorAll('.lh-vid').forEach(function(b){b.onclick=function(){f.src=b.dataset.v;m.hidden=false;};});
+function close(){m.hidden=true;f.src='about:blank';}
+document.getElementById('lhClose').onclick=close;document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!m.hidden)close();});})();
+</script>
+{{ end }}
