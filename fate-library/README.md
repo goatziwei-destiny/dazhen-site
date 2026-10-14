@@ -43,3 +43,12 @@ python3 tools/shots.py tall '[{"act":"duogo","t":5,"shot":"b"}]' local-duo.html
 2. 在 `manifest.json` 的 `main`（和需要的話 `duo`）加上 `"<key>": "<檔名>"`
 3. 在 `frames-*.json` 加上 `"<key>": {"w":…, "h":…, "hx":…, "sh":…}`
 4. 程式裡用 `sprite('<key>', x, y, w, h)` 畫出來
+
+## 網站版（LINE 用，2026-10-15）
+
+`python3 tools/build.py web` → `dist/web/library/`（index.html＋img/＋音樂）。整個資料夾複製到 `dazhen-site/static/library/`，上線後網址是 `/library/`，LIFF 的 Endpoint URL 填這個網址。
+
+- 圖片拆成獨立檔，開場只載入 `assets/groups.json` 的 `core`（約 1.8 MB），進場景前才載入該場景的 group，畫面右下角會短暫出現「載入中」。
+- 新增圖片：放進 manifest 後，也要加進 groups.json 對應的 group（例如佛堂的圖放 `temple`）。忘了加也不會壞，第一次畫到時會自動補載，只是會晚一點出現。
+- 圖片在網站版會重新壓成 webp quality 80（肉眼看不出差別），原檔不動。檔名含內容雜湊，搭配 netlify.toml 的長期快取設定，客人第二次打開幾乎不用重新下載。
+- 網站版的連結用本站網址、在同一個視窗開（LINE 裡不會跳出去）。

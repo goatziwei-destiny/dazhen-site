@@ -36,7 +36,7 @@ body.capture .stage{border:0;max-width:none}
 </div>
 <script>
 (function(){
-const SPR=__SPR__, FM=__FM__;
+const SPR=__SPR__, FM=__FM__, GRP=__GRP__;
 const SITE='https://dazhen-site.netlify.app';
 const C={bg:'#120f1e',wood:'#4a3220',wood2:'#2a1c12',gold:'#d4ad5f',gold2:'#8a6a2a',paper:'#f3ead8',muted:'#a59fb6',panel:'#1b1830',panel2:'#262142',fire:'#f2c46b',teal:'#173d45',cream:'#f1e4c4',ink:'#2a2140'};
 const FONT='"Cubic11","Noto Sans TC",monospace';
@@ -65,7 +65,13 @@ function layout(){
 
 // ================= 素材 =================
 const IM={};
-function sprite(n,x,y,w,h){const im=IM[n];if(im)ctx.drawImage(im,x,y,w,h);}
+// 網站版分段載入：GRP 不是 null 時，SPR 是圖片網址；開場只載入 core，進場景前才載入該場景的圖（見 tools/build.py web）
+const LAZY=!!GRP,PEND={};let LOADN=0,WAIT=null;
+function oriSkip(k){const o=GRP&&GRP.ori[k];return !!o&&o!==(TALL?'t':'w');}
+function loadImg(k){if(IM[k]||!SPR[k])return Promise.resolve();if(PEND[k])return PEND[k];LOADN++;return PEND[k]=new Promise(r=>{const im=new Image();im.onload=()=>{IM[k]=im;LOADN--;r();};im.onerror=()=>{LOADN--;delete PEND[k];r();};im.src=SPR[k];});}
+function need(keys){return Promise.all(keys.filter(k=>!oriSkip(k)).map(loadImg));}
+function groupKeys(sc){if(!LAZY)return [];const g=GRP.scene[sc];return g?GRP.group[g]:[];}
+function sprite(n,x,y,w,h){const im=IM[n];if(im)ctx.drawImage(im,x,y,w,h);else if(LAZY&&SPR[n])loadImg(n);}
 
 // ================= 書庫背景 =================
 function glow(cx,cy,r0,steps,step,alpha,col){if(!(alpha>0))return;ctx.fillStyle=col;for(let k=steps;k>=1;k--){const R=(r0+k*step)/U;ctx.globalAlpha=alpha;for(let j=-Math.ceil(R);j<=Math.ceil(R);j++){const hw=Math.floor(Math.sqrt(Math.max(0,R*R-j*j)));ctx.fillRect(Math.round(cx/U)*U-hw*U,Math.round(cy/U)*U+j*U,hw*2*U+U,U);}}ctx.globalAlpha=1;}
@@ -380,7 +386,7 @@ function startBeat(){ST.bt=0;ST.typed=0;const b=beat();if(!b)return;if(b.fx==='f
   if(b.fx==='go'){go(b.to);}
   if(b.fx==='end'&&ST.scene!=='booking'){}
 }
-function enter(sc){ST.leave=null;ST.scene=sc;IDLE.st='none';IDLE.last=T;QUIP.t0=-99;QUIP.text='';PZ.i=-1;PZ.back=0;
+function enter(sc){if(LAZY){const ks=groupKeys(sc).filter(k=>!IM[k]&&!oriSkip(k));if(ks.length){WAIT={sc,t0:T};need(ks).then(()=>{if(WAIT&&WAIT.sc===sc){WAIT=null;enter(sc);}});return;}}WAIT=null;ST.leave=null;ST.scene=sc;IDLE.st='none';IDLE.last=T;QUIP.t0=-99;QUIP.text='';PZ.i=-1;PZ.back=0;
   if(sc==='draw'){let p;do{p=Math.floor(Math.random()*12);}while(p===DRAW.last);DRAW.pick=DRAW.last=p;let q;do{q=Math.floor(Math.random()*BLESS.length);}while(q===DRAW.lastB&&BLESS.length>1);DRAW.lastB=q;S.draw[3].say=BLESS[q];}
   if(sc==='back'){const g=timeGreet();S.back[0].say=g==='early'?'這麼早來呀？歡迎回到命運書庫。':(g==='late'?'這麼晚還來翻書啊？':'歡迎回到命運書庫。');GREETED=true;}
   if(sc==='menu'){const g=timeGreet();S.menu[0].say=(!GREETED&&g==='early')?'這麼早來呀？想從哪裡開始看呢？':((!GREETED&&g==='late')?'這麼晚還來翻書啊？想從哪裡開始看呢？':'想從哪裡開始看呢？');GREETED=true;}
@@ -834,7 +840,7 @@ stage.addEventListener('keydown',e=>{if(userPoke()){e.preventDefault();return;}c
   if(e.key==='Enter'&&SEL){const r=regions.find(r=>r.id===SEL);if(r&&r.href){const a=pool.find(a=>a.dataset.id===r.id);a&&a.click();}else if(r)act(r.id);e.preventDefault();}});
 
 // ================= 聲音 =================
-const au=new Audio('__AUDIO__');au.loop=true;au.volume=.6;let music=false,started=false;const sndB=document.getElementById('snd');
+const au=new Audio();au.preload='none';au.src='__AUDIO__';au.loop=true;au.volume=.6;let music=false,started=false;const sndB=document.getElementById('snd');
 function setMusic(v){music=v;sndB.textContent=music?'音樂：開':'音樂：關';sndB.setAttribute('aria-pressed',music);try{music?au.play().catch(()=>{}):au.pause();}catch(e){}}
 sndB.addEventListener('click',()=>{started=true;setMusic(!music);});
 const DSFX_CU=[[.9,'shuf'],[1.4,'shuf'],[1.9,'shuf'],[2.3,'whoosh'],[3.7,'whoosh'],[4.9,'pop']];
@@ -847,13 +853,14 @@ let AC=null,lastB=0;function blip(){if(!music)return;try{AC=AC||new (window.Audi
 document.getElementById('replay').addEventListener('click',()=>{INTRO_T0=T;FLASH=0;ST.next=null;ST.fade=0;enter('intro');stage.focus();});
 
 // ================= 啟動 =================
-function step(dt){update(dt);while(SFXQ.length){const k=SFXQ.shift();if(!capture)sfx(k);}if(blips.length>lastB){lastB=blips.length;if(!capture)blip();}render();}
+function step(dt){update(dt);while(SFXQ.length){const k=SFXQ.shift();if(!capture)sfx(k);}if(blips.length>lastB){lastB=blips.length;if(!capture)blip();}render();if(WAIT&&T-WAIT.t0>.2)loadingMark();}
+function loadingMark(){const w=TALL?300:280,h=72,x=W-w-30,y=H-h-30;ctx.globalAlpha=.92;frameBox(x,y,w,h);const n=Math.floor(T*3)%4;text('載入中'+'．'.repeat(n),x+w/2,y+h/2+14,TALL?36:34,C.paper,'center');ctx.globalAlpha=1;}
 let last=0;function loop(now){step(Math.min(.1,(now-last)/1000));last=now;requestAnimationFrame(loop);}
 let seen=false;try{seen=localStorage.getItem('dz_seen')==='1';localStorage.setItem('dz_seen','1');}catch(e){}
-const loads=Object.entries(SPR).map(([k,src])=>new Promise(r=>{const im=new Image();im.onload=()=>{IM[k]=im;r();};im.onerror=r;im.src=src;}));
+const loads=LAZY?(layout(),[need(GRP.core)]):Object.entries(SPR).map(([k,src])=>new Promise(r=>{const im=new Image();im.onload=()=>{IM[k]=im;r();};im.onerror=r;im.src=src;}));
 const fontReady=document.fonts?Promise.race([document.fonts.load(`44px "Cubic11"`,'命運書庫'),new Promise(r=>setTimeout(r,2500))]):Promise.resolve();
 if(capture)document.body.classList.add('capture');
-layout();window.addEventListener('resize',()=>{const was=TALL;layout();if(was!==TALL){G.x=LY.gx;}});
+layout();window.addEventListener('resize',()=>{const was=TALL;layout();if(was!==TALL){G.x=LY.gx;if(LAZY){need(GRP.core);need(groupKeys(ST.scene));}}});
 Promise.all([fontReady,...loads]).then(()=>{{const hs=(location.hash||'').slice(1);enter(DUO_GAME?'duo':(TSC[hs]||hs==='tgo'?hs:(seen&&!capture?'back':'intro')));}if(DUO_GAME){const r=document.getElementById('replay');if(r)r.style.display='none';const hd=document.querySelector('header');if(hd)hd.style.display='none';}
   if(capture){window.__step=n=>{for(let i=0;i<n;i++)step(1/30);};window.__act=act;window.__sel=v=>{SEL=v;};window.__poke=()=>userPoke();window.__regions=()=>regions.map(r=>[r.id,Math.round(r.x),Math.round(r.y),Math.round(r.w),Math.round(r.h)]);window.__state=()=>({scene:ST.scene,bi:ST.bi});window.__ready=true;render();}
   else{last=performance.now();requestAnimationFrame(loop);}});

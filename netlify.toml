@@ -22,3 +22,13 @@
   from = "/testimonials/*"
   to = "/"
   status = 302
+
+# 命運書庫網站版（/library/）：圖片檔名含內容雜湊，內容變了檔名就會變，所以可以讓手機長期快取（再次打開幾乎不用重新下載）
+[[headers]]
+  for = "/library/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+[[headers]]
+  for = "/library/*.mp3"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
