@@ -12,7 +12,7 @@
     </div>
   </div>
   <a href="{{ .RelPermalink }}" class="blog-card-more">
-    <span class="blog-card-excerpt">{{ .Plain | replaceRE "\\s+" " " | truncate 110 }}</span>
+    <span class="blog-card-excerpt">{{ .RawContent | replaceRE "!\\[[^\\]]*\\]\\([^)]*\\)" "" | replaceRE "(?m)^#+ .*$" "" | markdownify | plainify | replaceRE "\\s+" " " | strings.TrimSpace | truncate 110 }}</span>
     <span class="blog-card-go">閱讀更多 →</span>
   </a>
 </article>
