@@ -14,13 +14,59 @@ collections:
     slug: "{{slug}}"
     fields:
       - { label: "標題", name: "title", widget: "string" }
-      - { label: "自訂網址（選填，英文，用 - 連接，例如 holiday-home-family-boundaries）", name: "slug", widget: "string", required: false, pattern: ["^[a-z0-9]+(-[a-z0-9]+)*$", "只能用小寫英文、數字和 -，不要加 /blog/ 或空白、符號"], hint: "只填英文代稱就好，不要加 /blog/。不填的話會自動用標題產生。" }
-      - { label: "文章分類", name: "categories", widget: "select", multiple: true, min: 1, max: 2, options: ["感情", "家庭與親子", "職涯與人生選擇", "命理與星曜", "宗教與民間信仰", "生活觀察"], hint: "選 1～2 個。文章列表會依分類整理，也會用來推薦「延伸閱讀」。" }
+      - { label: "網址代稱（必填，小寫英文，用 - 連接，例如 how-to-read-wealth-in-chart）", name: "slug", widget: "string", required: true, pattern: ["^[a-z0-9]+(-[a-z0-9]+)*$", "只能用小寫英文、數字和 -，不要加 /blog/ 或空白、符號"], hint: "3～6 個英文單字，說清楚文章在講什麼。發布後不要再改，改了舊連結會失效。" }
+      - label: "主題（選 1 個）"
+        name: "topics"
+        widget: "select"
+        multiple: true
+        min: 1
+        max: 1
+        options:
+          - { label: "感情與婚姻", value: "love" }
+          - { label: "家庭與親子", value: "family" }
+          - { label: "工作與財運", value: "career" }
+          - { label: "紫微斗數入門", value: "basics" }
+          - { label: "羊的手札（大正的觀點與生活觀察）", value: "notes" }
+        hint: "學理、看盤方法放「紫微斗數入門」；個人觀點、時事、節日感想放「羊的手札」。"
+      - label: "小類（選 1 個，要跟上面的主題對應）"
+        name: "subtopics"
+        widget: "select"
+        multiple: true
+        min: 1
+        max: 1
+        options:
+          - { label: "感情與婚姻 › 正緣與桃花", value: "love-romance" }
+          - { label: "感情與婚姻 › 相處與界線", value: "love-boundaries" }
+          - { label: "感情與婚姻 › 婚姻選擇", value: "love-marriage" }
+          - { label: "家庭與親子 › 父母與原生家庭", value: "family-parents" }
+          - { label: "家庭與親子 › 子女與教養", value: "family-children" }
+          - { label: "家庭與親子 › 手足", value: "family-siblings" }
+          - { label: "工作與財運 › 工作方向與轉職", value: "career-direction" }
+          - { label: "工作與財運 › 財運與金錢觀", value: "career-wealth" }
+          - { label: "紫微斗數入門 › 十二宮", value: "basics-palaces" }
+          - { label: "紫微斗數入門 › 星曜", value: "basics-stars" }
+          - { label: "紫微斗數入門 › 四化", value: "basics-sihua" }
+          - { label: "紫微斗數入門 › 大限與流年", value: "basics-timing" }
+          - { label: "紫微斗數入門 › 看盤觀念", value: "basics-reading" }
+          - { label: "羊的手札 › 諮詢裡的觀察", value: "notes-consulting" }
+          - { label: "羊的手札 › 節日與時事", value: "notes-seasonal" }
+        hint: "小類前面的主題要跟上面選的主題一樣。"
       - { label: "發布日期", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
-      - { label: "摘要（會顯示在列表頁跟 Google 搜尋結果）", name: "description", widget: "text", required: false }
+      - { label: "更新日期（選填，大幅修改內容時才填）", name: "lastmod", widget: "datetime", format: "YYYY-MM-DD", required: false, hint: "有填的話文章上會顯示「○月○日 更新」，也會告訴搜尋引擎內容有更新。" }
+      - { label: "摘要（80～120 字，會顯示在列表頁、Google 搜尋結果，也會當作文章開頭的「快速解答」）", name: "description", widget: "text", required: true }
+      - { label: "快速解答（選填，不填就用上面的摘要）", name: "quickAnswer", widget: "text", required: false, hint: "2～3 句話直接回答文章標題的問題，放在文章最上面。" }
       - { label: "封面圖片", name: "image", widget: "image", required: false }
       - { label: "標籤", name: "tags", widget: "list", required: false }
       - { label: "延伸閱讀（選填，挑幾篇相關文章）", name: "furtherReading", widget: "relation", collection: "blog", search_fields: ["title"], value_field: "{{slug}}", display_fields: ["title"], multiple: true, max: 5, required: false, hint: "會顯示在文章最後面。不選就不顯示，下方仍會有系統自動推薦的「你可能喜歡」。" }
+      - label: "常見問題（選填，2～5 題，會出現在文章最後，也會給搜尋引擎看）"
+        name: "faq"
+        widget: "list"
+        required: false
+        summary: "{{fields.q}}"
+        fields:
+          - { label: "問題", name: "q", widget: "string" }
+          - { label: "回答（2～4 句）", name: "a", widget: "text" }
+      - { label: "放進「第一次來？從這幾篇開始」", name: "featured", widget: "boolean", default: false, required: false }
       - { label: "草稿", name: "draft", widget: "boolean", default: false }
       - label: "SEO 設定（選填，不填也能發布）"
         name: "seo"
@@ -38,6 +84,60 @@ collections:
         buttons: ["bold", "italic", "link", "heading-two", "heading-three", "heading-four", "quote", "bulleted-list", "numbered-list"]
         editor_components: ["image"]
         hint: "【標題】工具列的 Headings：Heading 2＝大標題、Heading 3＝中標題、Heading 4＝小標題。【圖片】點工具列「＋」→「Image」，可以插入很多張，放在想出現的段落之間，Alt 會變成圖片說明。【貼上 AI 寫好的文章】點這個欄位右上角切換成「Markdown」，整篇貼上，再切回「Rich Text」檢查。"
+
+  - name: "topics"
+    label: "文章主題頁"
+    files:
+      - label: "感情與婚姻"
+        name: "love"
+        file: "content/topics/love/_index.md"
+        fields:
+          - { label: "網址代稱（請勿修改）", name: "slug", widget: "hidden" }
+          - { label: "主題名稱", name: "title", widget: "string" }
+          - { label: "一句話說明（主題卡片與搜尋結果）", name: "description", widget: "string" }
+          - { label: "排序（數字小的在前）", name: "weight", widget: "number" }
+          - { label: "總綱文章（從這篇開始讀）", name: "pillar", widget: "relation", collection: "blog", search_fields: ["title"], value_field: "slug", display_fields: ["title"], required: false }
+          - { label: "主題介紹（100～200 字）", name: "body", widget: "markdown" }
+      - label: "家庭與親子"
+        name: "family"
+        file: "content/topics/family/_index.md"
+        fields:
+          - { label: "網址代稱（請勿修改）", name: "slug", widget: "hidden" }
+          - { label: "主題名稱", name: "title", widget: "string" }
+          - { label: "一句話說明（主題卡片與搜尋結果）", name: "description", widget: "string" }
+          - { label: "排序（數字小的在前）", name: "weight", widget: "number" }
+          - { label: "總綱文章（從這篇開始讀）", name: "pillar", widget: "relation", collection: "blog", search_fields: ["title"], value_field: "slug", display_fields: ["title"], required: false }
+          - { label: "主題介紹（100～200 字）", name: "body", widget: "markdown" }
+      - label: "工作與財運"
+        name: "career"
+        file: "content/topics/career/_index.md"
+        fields:
+          - { label: "網址代稱（請勿修改）", name: "slug", widget: "hidden" }
+          - { label: "主題名稱", name: "title", widget: "string" }
+          - { label: "一句話說明（主題卡片與搜尋結果）", name: "description", widget: "string" }
+          - { label: "排序（數字小的在前）", name: "weight", widget: "number" }
+          - { label: "總綱文章（從這篇開始讀）", name: "pillar", widget: "relation", collection: "blog", search_fields: ["title"], value_field: "slug", display_fields: ["title"], required: false }
+          - { label: "主題介紹（100～200 字）", name: "body", widget: "markdown" }
+      - label: "紫微斗數入門"
+        name: "basics"
+        file: "content/topics/basics/_index.md"
+        fields:
+          - { label: "網址代稱（請勿修改）", name: "slug", widget: "hidden" }
+          - { label: "主題名稱", name: "title", widget: "string" }
+          - { label: "一句話說明（主題卡片與搜尋結果）", name: "description", widget: "string" }
+          - { label: "排序（數字小的在前）", name: "weight", widget: "number" }
+          - { label: "總綱文章（從這篇開始讀）", name: "pillar", widget: "relation", collection: "blog", search_fields: ["title"], value_field: "slug", display_fields: ["title"], required: false }
+          - { label: "主題介紹（100～200 字）", name: "body", widget: "markdown" }
+      - label: "羊的手札"
+        name: "notes"
+        file: "content/topics/notes/_index.md"
+        fields:
+          - { label: "網址代稱（請勿修改）", name: "slug", widget: "hidden" }
+          - { label: "主題名稱", name: "title", widget: "string" }
+          - { label: "一句話說明（主題卡片與搜尋結果）", name: "description", widget: "string" }
+          - { label: "排序（數字小的在前）", name: "weight", widget: "number" }
+          - { label: "總綱文章（從這篇開始讀）", name: "pillar", widget: "relation", collection: "blog", search_fields: ["title"], value_field: "slug", display_fields: ["title"], required: false }
+          - { label: "主題介紹（100～200 字）", name: "body", widget: "markdown" }
 
   - name: "pages"
     label: "網站頁面"

@@ -1,10 +1,15 @@
 baseURL = "https://dazhen-site.netlify.app/"
 languageCode = "zh-Hant"
+# 中文字數與閱讀時間要用這個才算得對
+hasCJKLanguage = true
+# 以台灣時間判讀文章日期，避免凌晨發文被當成未來文章。
+timeZone = "Asia/Taipei"
 title = "大正命理諮詢｜紫微斗數線上諮詢"
 
 [params]
   description = "大正紫微斗數命理諮詢。不批評、好好聊，用命盤讀懂你的命運脈絡。"
   lineUrl = "https://lin.ee/vlvPoMa"
+  liffBookingId = "2007939639-l2APYkwk"   # 預約表單的 LIFF ID（LINE Developers 建立；Endpoint URL 要設成官網的 /booking/）
   bookingFormUrl = "https://script.google.com/macros/s/AKfycbx3aDlFDBayTKgvGtQMrWrpDMx3WuU5Yd3Uh4c6BJK5kmKpZnBsXH7fK97yrkQkgx9fkQ/exec"
   # LINE 官方帳號的 Basic ID（在 LINE Official Account Manager → 設定 → 帳號設定 → 基本檔案設定 可以找到），
   # 開頭要有 @ 符號。給「加入LINE好友」智慧轉導頁用，不是敏感資訊（本來就公開顯示在你的LINE官方帳號檔案上）。
@@ -24,6 +29,10 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
   # 內容已做好但先不顯示；要上線時改成 true，首頁「諮詢服務」會變成兩張卡片。
   showTextService = false
 
+  # ── 文章瀏覽次數 ──
+  # 瀏覽次數照常記錄，但先不在網站上公開顯示；要公開時改成 true。
+  showViewCounts = true
+
   # ── 社群連結（給文章頁/首頁以外頁面的頁尾用）──
   # ⚠️ 這裡跟 layouts/index.html 裡的 SITE.socialLinks 是兩份分開的設定（因為首頁是自己刻的 JS 渲染，
   #    其他頁面走 Hugo 樣板），兩邊的 url 要分別填，跟 lineUrl 目前的做法一樣。
@@ -31,22 +40,22 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
   [[params.social]]
     key = "facebook"
     label = "Facebook"
-    url = ""
+    url = "https://www.facebook.com/profile.php?id=61583191583142"
     color = "#1877F2"
   [[params.social]]
     key = "instagram"
     label = "Instagram"
-    url = ""
+    url = "https://www.instagram.com/ray011512155/"
     color = "#E4405F"
   [[params.social]]
     key = "threads"
     label = "Threads"
-    url = ""
+    url = "https://www.threads.com/@ray01151215"
     color = "#000000"
   [[params.social]]
     key = "line"
     label = "LINE"
-    url = ""
+    url = "https://lin.ee/vlvPoMa"
     color = "#06C755"
   [[params.social]]
     key = "youtube"
@@ -79,12 +88,21 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
     url = ""
     color = "#57534e"
 
+# 文章分類：主題（topics，每篇只選 1 個）→ 小類（subtopics，每篇 1 個，content/subtopics/ 定義）；標籤（tags）只是文末關鍵字
+[taxonomies]
+  topic = "topics"
+  subtopic = "subtopics"
+  tag = "tags"
+
 [related]
   includeNewer = true
   threshold = 0
   toLower = false
   [[related.indices]]
-    name = "categories"
+    name = "subtopics"
+    weight = 150
+  [[related.indices]]
+    name = "topics"
     weight = 100
   [[related.indices]]
     name = "tags"
@@ -92,6 +110,8 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
 
 [permalinks]
   blog = "/blog/:slug/"
+  topics = "/topics/:slug/"
+  subtopics = "/topics/sub/:slug/"
 
 [markup]
   [markup.tableOfContents]
@@ -101,3 +121,7 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
+
+# 文章「更新日期」只看文章裡的 lastmod 欄位（沒填就等於發布日期），不用 git 修改時間，避免改版型時所有文章都變成「今天更新」
+[frontmatter]
+  lastmod = ["lastmod", "date"]

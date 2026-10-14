@@ -1,9 +1,15 @@
 ---
 title: "歡迎來到大正命理諮詢的部落格"
+slug: "welcome"
 date: 2026-09-01
 description: "這裡會分享紫微斗數的觀點、命理知識、以及生活中的觀察。"
 tags: ["公告"]
 draft: false
+noindex: true
+sitemap:
+  disable: true
+aliases:
+  - "/blog/歡迎來到大正命理諮詢的部落格/"
 ---
 
 你好，我是大正。
