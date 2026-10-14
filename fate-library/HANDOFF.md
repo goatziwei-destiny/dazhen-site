@@ -56,4 +56,5 @@
 - 星曜卡面：卡面框 A（極簡金線）和定稿 01–13 已完成，破軍還是草稿。要等 14 張到齊一起換，還是先換。
 - 直式佛堂：大正的手剛好在桌巾蓮花前面，看起來像拿著蓮花，待確認。
 - 上線方式：抽牌小遊戲已放在 `static/draw/`（待合併上線）；命運書庫完整版要不要也放進 `static/`。
-- 完整版（game.html）裡的「抽兩張」：main 的 manifest 沒有 face0–face13，翻開會是白色方塊；要用的話要把 14 張星曜卡加進 main（約多 1.3 MB）。
+- 完整版（game.html）裡的「抽兩張」只有 `DUO_PREVIEW=true` 才會出現在選單，一般訪客進不去，所以 main 不打包 face0–face13。若要在完整版開放，記得把 14 張星曜卡加進 manifest 的 main（base64 後約多 1.8 MB）。
+- 2026-10-14 完整版減肥：game.html 15.9 MB → 12.2 MB（Artifact 上限 16 MB）。做法是從 manifest 的 main 拿掉沒用到的 39 張圖：舊版站姿佛堂動作 count/lamp/pray/sutra/beads1-2、舊門 door/wdoor/cdl、walkbook、cardback、sp、舊經書道具 p_cup/p_stand/p_sutF/p_sutO/p_sutraO，以及只有抽牌近景才用的 cbgw/cbgt/h1_0–h5_1。圖檔仍留在 assets/sprites/，要用再加回 manifest 就好。確認方式：逐一跑完每個場景，用程式記下實際畫出的圖，確定沒有缺圖。
