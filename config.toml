@@ -31,7 +31,7 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
 
   # ── 文章瀏覽次數 ──
   # 瀏覽次數照常記錄，但先不在網站上公開顯示；要公開時改成 true。
-  showViewCounts = false
+  showViewCounts = true
 
   # ── 社群連結（給文章頁/首頁以外頁面的頁尾用）──
   # ⚠️ 這裡跟 layouts/index.html 裡的 SITE.socialLinks 是兩份分開的設定（因為首頁是自己刻的 JS 渲染，

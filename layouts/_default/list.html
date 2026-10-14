@@ -10,6 +10,7 @@
   <div class="container">
     <h1>命理文章</h1>
     <p>紫微斗數的學理、看盤方法，和大正的生活觀察。依主題找，或從最新的開始讀。</p>
+    <div class="blog-header-total" id="site-total-views"></div>
   </div>
 </div>
 <div class="container blog-wrap blog-layout">
@@ -36,4 +37,5 @@
   {{ end }}
 </div>
 {{ end }}
+{{ partial "blog-viewstats.html" . }}
 {{ end }}

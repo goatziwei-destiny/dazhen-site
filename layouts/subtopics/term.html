@@ -25,4 +25,5 @@
     {{ range (where .Pages "Params.draft" "ne" true).ByDate.Reverse }}{{ partial "post-card.html" . }}{{ else }}<div class="blog-empty"><p>這個小類的文章準備中。</p></div>{{ end }}
   </section>
 </div>
+{{ partial "blog-viewstats.html" . }}
 {{ end }}
