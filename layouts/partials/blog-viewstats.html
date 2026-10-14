@@ -1,0 +1,20 @@
+{{/* 文章列表、主題頁、小類頁：顯示每篇的瀏覽次數（只讀不加 1）、全站累計，瀏覽數前三名標「熱門」 */}}
+{{ if site.Params.showViewCounts }}{{ with site.Params.webAppUrl }}
+<script>
+(function () {
+  var cb = '_viewStatsCb' + Math.floor(Math.random() * 1e9);
+  window[cb] = function (data) {
+    delete window[cb]; if (!data) return;
+    var total = document.getElementById('site-total-views');
+    if (total && typeof data.totalViews === 'number') total.textContent = '本站累計 ' + data.totalViews.toLocaleString('zh-Hant') + ' 次瀏覽';
+    var views = data.views || {};
+    document.querySelectorAll('[data-vslug]').forEach(function (el) { var v = views[el.getAttribute('data-vslug')]; if (typeof v === 'number') el.textContent = '· 👁 ' + v.toLocaleString('zh-Hant'); });
+    Object.keys(views).sort(function (a, b) { return (views[b] || 0) - (views[a] || 0); }).slice(0, 3).forEach(function (slug) {
+      if (!views[slug]) return;
+      var slot = document.querySelector('.blog-card[data-slug="' + slug + '"] .hot-badge-slot'); if (slot) slot.innerHTML = '<span class="hot-badge">🔥 熱門</span>';
+    });
+  };
+  var s = document.createElement('script'); s.src = {{ . }} + '?page=viewStats&callback=' + cb; document.body.appendChild(s);
+})();
+</script>
+{{ end }}{{ end }}

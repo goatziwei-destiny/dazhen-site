@@ -1,18 +1,19 @@
 {{/* 文章卡片（文章列表、主題頁共用）：上半＝主題、日期、標題、摘要（＋封面）；下半淡色＝文章開頭幾行＋閱讀更多，整張是一個框 */}}
-<article class="blog-card">
+{{ $pid := "" }}{{ with .File }}{{ $pid = .ContentBaseName }}{{ end }}
+<article class="blog-card" data-slug="{{ $pid }}">
   <div class="blog-card-top">
     {{ with .Params.image }}<a href="{{ $.RelPermalink }}" class="blog-card-thumb-link" tabindex="-1" aria-hidden="true"><img class="blog-card-thumb" src="{{ . }}" alt="" loading="lazy"></a>{{ end }}
     <div class="blog-card-body">
       <div class="blog-card-meta">
         {{ with .Params.topics }}{{ range first 1 . }}{{ with site.GetPage (printf "/topics/%s" .) }}<a class="blog-card-cat" href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}{{ end }}{{ end }}{{ with .Params.subtopics }}{{ range first 1 . }}{{ with site.GetPage (printf "/subtopics/%s" .) }}<span>›</span><a class="blog-card-cat" href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}{{ end }}{{ end }}
-        <span>{{ .Date.Format "2006-01-02" }}</span><span>·</span><span>約 {{ .ReadingTime }} 分鐘</span>
+        <span>{{ .Date.Format "2006-01-02" }}</span><span>·</span><span>約 {{ .ReadingTime }} 分鐘</span>{{ if site.Params.showViewCounts }}<span class="blog-card-views" data-vslug="{{ $pid }}"></span><span class="hot-badge-slot"></span>{{ end }}
       </div>
       <a href="{{ .RelPermalink }}" class="blog-card-link"><h2 class="blog-card-title">{{ .Title }}</h2></a>
       {{ with .Description }}<p class="blog-card-desc">{{ . }}</p>{{ end }}
     </div>
   </div>
   <a href="{{ .RelPermalink }}" class="blog-card-more">
-    <span class="blog-card-excerpt">{{ .Plain | replaceRE "\\s+" " " | truncate 110 }}</span>
+    <span class="blog-card-excerpt">{{ .RawContent | replaceRE "!\\[[^\\]]*\\]\\([^)]*\\)" "" | replaceRE "(?m)^#+ .*$" "" | markdownify | plainify | replaceRE "\\s+" " " | strings.TrimSpace | truncate 110 }}</span>
     <span class="blog-card-go">閱讀更多 →</span>
   </a>
 </article>
