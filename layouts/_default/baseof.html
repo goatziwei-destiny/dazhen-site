@@ -9,7 +9,7 @@
 <meta property="og:description" content="{{ with .Params.seo }}{{ with .metaDescription }}{{ . }}{{ else }}{{ with $.Description }}{{ . }}{{ else }}{{ $.Site.Params.description }}{{ end }}{{ end }}{{ else }}{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}{{ end }}">
 <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
 <meta property="og:locale" content="zh_TW">
-<meta property="og:image" content="{{ with .Params.image }}{{ . | absURL }}{{ else }}{{ "/images/og-default.png" | absURL }}{{ end }}">
+<meta property="og:image" content="{{ with .Params.image }}{{ partial "img.html" (dict "src" . "w" 1200 "fmt" "jpg") | absURL }}{{ else }}{{ "/images/og-default.png" | absURL }}{{ end }}">
 <meta property="og:url" content="{{ .Permalink }}">
 <meta property="og:site_name" content="大正命理諮詢">
 <meta name="twitter:card" content="summary_large_image">

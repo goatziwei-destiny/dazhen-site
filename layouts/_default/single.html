@@ -11,7 +11,7 @@
   "datePublished": {{ .Date.Format "2006-01-02T15:04:05-07:00" }},
   "dateModified": {{ .Lastmod.Format "2006-01-02T15:04:05-07:00" }},
   "mainEntityOfPage": {{ .Permalink }},
-  {{ with .Params.image }}"image": {{ . | absURL }},{{ end }}
+  {{ with .Params.image }}"image": {{ partial "img.html" (dict "src" . "w" 1200 "fmt" "jpg") | absURL }},{{ end }}
   "author": { "@type": "Person", "name": "大正", "url": {{ "/about/" | absURL }} },
   "publisher": { "@type": "Organization", "name": "大正命理諮詢", "url": {{ "/" | absURL }}, "logo": { "@type": "ImageObject", "url": {{ "/images/avatar-goat.webp" | absURL }} } }{{ with .Params.seo }}{{ with .keyword }},
   "keywords": {{ . }}{{ end }}{{ end }}
@@ -144,7 +144,7 @@
 
 {{ with .Params.image }}
 <div style="max-width:800px;margin:0 auto;padding:40px 24px 0;">
-  <img src="{{ . }}" alt="{{ with $.Params.imageAlt }}{{ . }}{{ else }}{{ $.Title }}{{ end }}" style="border-radius:12px;width:100%;display:block;">
+  <img src="{{ partial "img.html" (dict "src" . "w" 1200) }}" alt="{{ with $.Params.imageAlt }}{{ . }}{{ else }}{{ $.Title }}{{ end }}" fetchpriority="high" style="border-radius:12px;width:100%;display:block;">
 </div>
 {{ end }}
 
@@ -238,7 +238,7 @@
     <div class="related-grid">
       {{ range . }}
       <a class="related-card" href="{{ .RelPermalink }}">
-        {{ with .Params.image }}<img src="{{ . }}" alt="" loading="lazy">{{ end }}
+        {{ with .Params.image }}<img src="{{ partial "img.html" (dict "src" . "w" 600) }}" alt="" loading="lazy">{{ end }}
         <div class="related-card-body">
           {{ with .Params.topics }}{{ range first 1 . }}{{ with site.GetPage (printf "/topics/%s" .) }}<div class="related-card-cat">{{ .Title }}</div>{{ end }}{{ end }}{{ end }}
           <div class="related-card-title">{{ .Title }}</div>
