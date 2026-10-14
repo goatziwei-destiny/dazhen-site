@@ -1,0 +1,332 @@
+{{ define "head" }}
+<style>
+
+/* 版面：手機寬度為主的單欄會員頁，上方一條預覽控制列（正式版不會有） */
+.mb{
+  --navy:#1b2845; --accent:#6292ab; --accent-d:#4f7d94; --warm:#cc8854; --warm-d:#b07545;
+  --bg:#f5f3ef; --card:#ffffff; --soft:#eef2f5; --fg:#1b2845; --body:#57534e; --muted:#8a95a5; --line:#e5e8ec;
+  --ok:#3f8a5c; --ok-bg:#e7f3eb; --wait:#b07545; --wait-bg:#f8eee4; --gray-bg:#eef0f2;
+  --line-green:#06c755; --demo-bg:#1b2845; --demo-fg:#e8edf3;
+  --font:"LXGW WenKai TC","PingFang TC","Microsoft JhengHei",sans-serif;
+}
+.mb *{box-sizing:border-box}
+.mb{color:var(--body);font-size:15px;line-height:1.7}
+.mb h1,.mb h2,.mb h3{color:var(--fg);margin:0;text-wrap:balance;font-weight:700}
+.mb button{font-family:inherit;font-size:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.demo{background:var(--demo-bg);color:var(--demo-fg);padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));font-size:13px}
+.demo-in{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.demo b{letter-spacing:.06em}
+.demo-row{display:flex;flex-wrap:wrap;gap:6px}
+.demo button{background:transparent;color:var(--demo-fg);border:1px solid #4a5a78;border-radius:999px;padding:4px 12px}
+.demo button[aria-pressed="true"]{background:var(--warm);border-color:var(--warm);color:#fff}
+
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+.stack{display:flex;flex-direction:column;gap:16px}
+.muted{color:var(--muted);font-size:13px}
+.lead{margin:6px 0 0}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border-radius:10px;padding:12px 16px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-weight:700}
+.btn-line{background:var(--line-green);border-color:var(--line-green);color:#fff}
+.btn-google{background:var(--card);color:var(--fg)}
+.btn-main{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn-ghost{background:transparent}
+.btn-sm{width:auto;padding:7px 14px;font-size:14px;border-radius:8px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.ico{width:20px;height:20px;flex:none}
+
+.divider{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+
+.mb label{display:block;color:var(--fg);font-weight:700;font-size:14px;margin-bottom:4px}
+label .opt{color:var(--muted);font-weight:400}
+.mb input,.mb select{width:100%;font-family:inherit;font-size:15px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg)}
+input[readonly]{background:var(--soft);color:var(--muted)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:420px){.row2{grid-template-columns:1fr}}
+.check{display:flex;gap:8px;align-items:flex-start;font-weight:400;color:var(--body)}
+.check input{width:auto;margin-top:5px}
+.hint{font-size:13px;color:var(--muted);margin-top:4px}
+.err{color:#c0533a;font-size:13px}
+
+.notice{background:var(--soft);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--fg)}
+.notice.ok{background:var(--ok-bg);color:var(--ok)}
+
+.pill{display:inline-block;border-radius:999px;padding:1px 10px;font-size:12.5px;font-weight:700;white-space:nowrap}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.pill.wait{background:var(--wait-bg);color:var(--wait)}
+.pill.gray{background:var(--gray-bg);color:var(--muted)}
+
+.next{border-color:var(--accent)}
+.next-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.eyebrow{font-size:12.5px;letter-spacing:.12em;color:var(--accent-d);font-weight:700}
+.when{font-size:22px;color:var(--fg);font-weight:700;margin:2px 0}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:14px;margin:12px 0}
+.kv dt{color:var(--muted)} .kv dd{margin:0;color:var(--fg);min-width:0;overflow-wrap:anywhere}
+.mono{font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+
+.order{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding-block:14px;border-top:1px solid var(--line)}
+.order:first-of-type{border-top:0}
+.order .id{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.order .id button{border:0;background:none;color:var(--accent-d);font-size:12.5px;padding:0}
+.order .title{color:var(--fg);font-weight:700}
+.order .amt{text-align:right;color:var(--fg);font-variant-numeric:tabular-nums}
+.order .sub{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+
+.sheet-bg{position:fixed;inset:0;background:rgba(10,15,28,.55);display:flex;align-items:flex-end;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0px)}
+.sheet{background:var(--card);width:100%;max-width:440px;border-radius:16px 16px 0 0;padding:24px max(20px,env(safe-area-inset-left,0px)) 24px max(20px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:12px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--navy);color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;max-width:calc(100% - 32px);box-shadow:0 6px 24px rgba(0,0,0,.2)}
+.spinner{width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spinner{animation:none}}
+.choice{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:420px){.choice{grid-template-columns:1fr}}
+.opt-card{text-align:left;border:1px solid var(--line);border-radius:12px;background:var(--card);padding:14px;color:var(--body);display:flex;flex-direction:column;gap:4px}
+.opt-card b{color:var(--fg);font-size:16px}
+.opt-card[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.opt-card:disabled{opacity:.55;cursor:not-allowed}
+.days{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.day{flex:none;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:10px;padding:6px 10px;text-align:center;font-size:13px;min-width:58px}
+.day[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.day:disabled{background:var(--gray-bg);color:var(--muted);cursor:not-allowed}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.slot{border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;padding:8px 4px;font-variant-numeric:tabular-nums}
+.slot[aria-pressed="true"]{background:var(--accent-d);border-color:var(--accent-d);color:#fff}
+.slot:disabled{background:var(--gray-bg);color:var(--muted);text-decoration:line-through;cursor:not-allowed}
+.mb textarea{width:100%;font-family:inherit;font-size:15px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);min-height:110px;resize:vertical}
+.sec-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.sec-h h2{font-size:18px}
+.mb-page{padding-block:32px 72px}
+.mb-page .container{max-width:600px}
+.mb-book{margin-top:20px}
+.mb-book .bk-frame{width:100%;height:1600px;border:0;display:block;background:transparent;transition:height .2s}
+.mb-book .bk-load{text-align:center;padding:40px 16px 24px;color:#78716c;font-size:15px;line-height:1.8}.mb-book .bk-load i{display:block;width:40px;height:40px;margin:0 auto 14px;border:4px solid #e7e5e4;border-top-color:#b8864b;border-radius:50%;animation:bkspin .9s linear infinite}@keyframes bkspin{to{transform:rotate(360deg)}}
+.mb .demo{border-radius:12px;margin-bottom:20px}
+</style>
+<link rel="preconnect" href="https://script.google.com"><link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+{{ end }}
+{{ define "main" }}
+<div class="mb-page mb">
+  <div class="container">
+<div class="demo" aria-label="預覽控制">
+  <div class="demo-in">
+    <div><b>預覽控制</b>　正式版不會有這一列。會員資料是假的，但下方「再預約」打開的是真的預約表單，送出會建立真的訂單，請不要送出</div>
+    <div class="demo-row" id="demoWho">
+      <button data-who="new" aria-pressed="true">第一次來（還不是會員）</button>
+      <button data-who="member" aria-pressed="false">已經是會員</button>
+    </div>
+    <div class="demo-row" id="demoWhere">
+      <button data-where="web" aria-pressed="true">在一般瀏覽器打開</button>
+      <button data-where="line" aria-pressed="false">在 LINE 裡打開</button>
+    </div>
+    <div class="demo-row" id="demoText">
+      <button data-text="off" aria-pressed="true">文字版：還沒開放</button>
+      <button data-text="on" aria-pressed="false">文字版：已開放</button>
+    </div>
+    <div class="demo-row" id="demoPay">
+      <button data-pay="paid" aria-pressed="true">下次諮詢：已收款</button>
+      <button data-pay="unpaid" aria-pressed="false">下次諮詢：還沒付款</button>
+    </div>
+  </div>
+</div>
+
+    <main id="app"></main>
+    <section class="mb-book card" id="mbBooking" hidden aria-label="再預約">
+      <div class="sec-h"><h2>再預約</h2><button class="btn btn-sm btn-ghost" type="button" onclick="closeBooking()">收起</button></div>
+      <p class="muted" style="margin:0 0 8px">跟網站「線上預約」是同一份表單。會員登入後，上次的資料會自動帶入。</p>
+      <div class="bk-load" id="bkLoading" role="status"><i></i>預約表單載入中，請稍候約 10 秒…</div>
+      <iframe class="bk-frame" id="bookingFrame" data-booking-frame title="線上預約表單"></iframe>
+    </section>
+  </div>
+</div>
+<div id="layer"></div>
+<script src="/booking-bridge.js?v=20261013"></script>
+<script>
+// 跟 /booking/ 頁同一套載入方式：在 LINE 裡先取得 LINE 身分憑證帶給表單（回頭客自動帶入），否則載入一般表單
+function loadBookingFrame_(){
+  var frame=document.getElementById('bookingFrame'),base=window.dazhenBookingUrl({{ .Site.Params.bookingFormUrl }}),done=false;
+  var liffId={{ .Site.Params.liffBookingId | default "" }};
+  function load(token){if(done)return;done=true;frame.src=token?base+'&lt='+encodeURIComponent(token):base;setTimeout(function(){var l=document.getElementById('bkLoading');if(l)l.remove()},40000);}
+  var inLine=/Line\//i.test(navigator.userAgent)||/[?&]liff\.state=/.test(location.search);
+  if(!inLine||!liffId){load('');return}
+  var timer=setTimeout(function(){load('')},6000);
+  var s=document.createElement('script');s.src='https://static.line-scdn.net/liff/edge/2/sdk.js';
+  s.onload=function(){liff.init({liffId:liffId}).then(function(){if(!liff.isLoggedIn()){liff.login();return}clearTimeout(timer);load(liff.getIDToken()||'')}).catch(function(){clearTimeout(timer);load('')})};
+  s.onerror=function(){clearTimeout(timer);load('')};document.head.appendChild(s);
+}
+
+const S={who:"new",where:"web",pay:"paid",text:"off",screen:"login",via:null,member:null,justJoined:false,rb:null};
+const BASE_ORDERS=[
+  {id:"GR26102320-01",title:"一對一論命（Google Meet）",date:"2026/10/23（五）20:00",amount:3600,status:"paid",upcoming:true,meet:"meet.google.com/abc-defg-hij"},
+  {id:"GR26061519-02",title:"一對一論命（Google Meet）",date:"2026/6/15（一）19:00",amount:3600,status:"done",survey:true},
+  {id:"GRW2603081-01",title:"文字版諮詢",date:"2026/3/8 送出",amount:990,status:"done"},
+  {id:"GR25112114-01",title:"一對一論命（LINE 語音）",date:"2025/11/21（五）14:00",amount:3600,status:"refunded"}
+];
+let ORDERS=BASE_ORDERS.slice();
+const LAST={name:"王小明",mail:"wang.xm@gmail.com",birth:"1990/5/12",time:"14:30",gender:"女",cal:"國曆"};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const LINEICO='<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M12 3C6.5 3 2 6.6 2 11c0 3.9 3.5 7.2 8.3 7.9.3.1.8.2.9.5.1.3.1.7 0 1l-.1.8c0 .3-.2 1 .9.5s5.9-3.5 8-6C21.4 14.2 22 12.7 22 11c0-4.4-4.5-8-10-8z"/></svg>';
+const GICO='<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.6 12.2c0-.8-.1-1.5-.2-2.2H12v4.2h5.9a5 5 0 0 1-2.2 3.3v2.7h3.6c2.1-1.9 3.3-4.8 3.3-8z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.8c-1 .7-2.2 1.1-3.7 1.1-2.9 0-5.3-1.9-6.2-4.5H2.1v2.8A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.8 14.1a6.6 6.6 0 0 1 0-4.2V7.1H2.1a11 11 0 0 0 0 9.8l3.7-2.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2.1 7.1l3.7 2.8C6.7 7.3 9.1 5.4 12 5.4z"/></svg>';
+const WK="日一二三四五六";
+// 可預約日：兩天後開始，從今天（10/14）往後滾動 14 天
+const DAYS=[];for(let i=2;i<=14;i++){const d=new Date(2026,9,14+i);DAYS.push({k:(d.getMonth()+1)+"/"+d.getDate(),w:WK[d.getDay()],full:d.getFullYear()+"/"+(d.getMonth()+1)+"/"+d.getDate()+"（"+WK[d.getDay()]+"）"})}
+const TIMES=["10:00","14:00","16:00","19:00","20:00"];
+// 行事曆上已經有事的時段（假資料）：別人的預約、大正自己的行程、這位會員自己 10/23 20:00 的預約
+const BUSY={"10/16":["19:00","20:00"],"10/17":["10:00","14:00","16:00"],"10/20":["20:00"],"10/23":["19:00","20:00"],"10/24":["14:00"],"10/27":["10:00","19:00"]};
+const MINE={"10/23":"20:00"};
+
+function toast(t){const d=document.createElement("div");d.className="toast";d.setAttribute("role","status");d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),3400)}
+function setPressed(group,attr,val){document.querySelectorAll(group+" button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset[attr]===val)))}
+
+function start(){
+  S.member=null;S.justJoined=false;S.rb=null;ORDERS=BASE_ORDERS.slice();$("#layer").innerHTML="";closeBooking();
+  if(S.where==="line"){
+    $("#app").innerHTML='<div class="card stack" style="text-align:center"><div class="spinner"></div><div>正在用你的 LINE 帳號登入…</div></div>';
+    setTimeout(()=>loginOk("line"),1100);return;
+  }
+  S.screen="login";render();
+}
+function render(){
+    ({login:renderLogin,home:renderHome,rebook:renderRebook})[S.screen]();
+  
+}
+
+function renderLogin(){
+  $("#app").innerHTML=`
+  <div class="stack">
+    <div><h1 style="font-size:24px">會員中心</h1>
+    <p class="lead">登入後可以看到你的購買紀錄、訂單編號和下一次諮詢的時間，再預約也不用重填出生資料。</p></div>
+    <div class="card stack">
+      <button class="btn btn-line" id="bLine">${LINEICO}用 LINE 登入</button>
+      <button class="btn btn-google" id="bGoogle">${GICO}用 Google 登入</button>
+      <p class="muted" style="margin:0">第一次登入就會自動成為會員，不用另外填資料。登入即表示你同意<a href="#" style="color:var(--accent-d)" onclick="event.preventDefault();toast('預覽：這裡會打開隱私權政策')">隱私權政策</a>。</p>
+    </div>
+    <div class="notice">不登入也可以預約。<a href="#" id="toBook" style="color:var(--accent-d)">直接前往預約</a></div>
+  </div>`;
+  $("#bLine").onclick=()=>consent("line");
+  $("#bGoogle").onclick=()=>consent("google");
+  $("#toBook").onclick=e=>{e.preventDefault();toast("預覽：這裡會開啟原本的預約頁")};
+}
+function consent(via){
+  const isLine=via==="line";
+  $("#layer").innerHTML=`<div class="sheet-bg"><div class="sheet" role="dialog" aria-label="${isLine?"LINE":"Google"} 授權">
+    <div class="muted">（模擬 ${isLine?"LINE":"Google"} 的確認畫面，第一次登入才會出現）</div>
+    <h3>${isLine?"大正命理諮詢想取得你的 LINE 個人資料":"使用 Google 帳號登入「大正命理諮詢」"}</h3>
+    <p style="margin:0">${isLine?"會取得：LINE 名稱、大頭貼、用來辨識你的編號。不會看到你的聊天內容和好友。":"會取得：你的名字和 Gmail 地址 wang.xm@gmail.com。"}</p>
+    <div class="actions"><button class="btn btn-ghost btn-sm" id="cNo">取消</button><button class="btn ${isLine?"btn-line":"btn-main"} btn-sm" id="cYes">${isLine?"許可":"繼續"}</button></div>
+  </div></div>`;
+  $("#cNo").onclick=()=>{$("#layer").innerHTML=""};
+  $("#cYes").onclick=()=>{$("#layer").innerHTML="";loginOk(via)};
+}
+function loginOk(via){
+  S.justJoined=S.who==="new";
+  S.member={name:via==="line"?"小明":"王小明",mail:via==="google"?"wang.xm@gmail.com":"",via,linked:{line:via==="line",google:via==="google"}};
+  S.screen="home";render();
+  if(!S.justJoined)toast(via==="line"&&S.where==="line"?"已自動用 LINE 登入":"登入成功");
+}
+
+const STATUS={paid:['ok','已收款'],unpaid:['wait','待付款'],done:['gray','已完成'],refunded:['gray','已退款']};
+function stOf(o){return o.upcoming?S.pay:o.status}
+
+function renderHome(){
+  const m=S.member, up=ORDERS.find(o=>o.upcoming), st=stOf(up), paid=st==="paid";
+  $("#app").innerHTML=`
+  <div class="stack">
+    ${S.justJoined?`<div class="notice ok">歡迎加入會員！我們用你的 ${m.via==="line"?"LINE 帳號":"Gmail"} 找到 ${BASE_ORDERS.length} 筆以前的訂單，已經放進你的購買紀錄。</div>`:""}
+    <div><h1 style="font-size:24px">${esc(m.name)}，你好</h1></div>
+
+    <section class="card next" aria-labelledby="nh">
+      <div class="next-top"><div><div class="eyebrow" id="nh">下一次諮詢</div><div class="when mono">${up.date}</div></div>
+      <span class="pill ${STATUS[st][0]}">${STATUS[st][1]}</span></div>
+      <dl class="kv">
+        <dt>訂單編號</dt><dd class="mono">${up.id}</dd>
+        <dt>方案</dt><dd>${up.title}</dd>
+        <dt>金額</dt><dd class="mono">NT$${up.amount.toLocaleString()}</dd>
+        <dt>Google Meet</dt><dd>${paid?`<span class="mono">${up.meet}</span>`:'<span class="muted">確認收到匯款後會出現在這裡</span>'}</dd>
+      </dl>
+      ${paid?"":`<div class="notice" style="margin-bottom:12px">請在訂單成立後 24 小時內完成匯款，匯款後按下面的按鈕回報末五碼。</div>`}
+      <div class="actions">
+        ${paid?'<button class="btn btn-main btn-sm" data-act="meet">進入 Google Meet</button><button class="btn btn-sm" data-act="cal">加到行事曆</button>':'<button class="btn btn-main btn-sm" data-act="pay">回報匯款</button>'}
+        <button class="btn btn-sm" data-act="resched">改期</button>
+      </div>
+      <p class="muted" style="margin:10px 0 0">改期要在諮詢開始 24 小時前提出。</p>
+    </section>
+
+    <button class="btn btn-main" data-act="rebook">再預約一次（自動帶入上次資料）</button>
+
+    <section class="card" aria-labelledby="oh">
+      <div class="sec-h"><h2 id="oh">購買紀錄</h2><span class="muted">${ORDERS.length} 筆</span></div>
+      ${ORDERS.map(o=>{const s=stOf(o);return `
+      <div class="order">
+        <div style="min-width:0"><div class="id"><span class="mono">${o.id}</span><button data-copy="${o.id}">複製</button>${o.fresh?'<span class="pill wait">剛剛送出</span>':""}</div>
+        <div class="title">${o.title}</div><div class="muted mono">${o.date}</div></div>
+        <div><div class="amt">NT$${o.amount.toLocaleString()}</div><div style="text-align:right"><span class="pill ${STATUS[s][0]}">${STATUS[s][1]}</span></div></div>
+        ${o.survey?'<div class="sub"><button class="btn btn-sm" data-act="survey">填寫諮詢回饋問卷</button></div>':""}
+        ${o.fresh&&s==="unpaid"?'<div class="sub"><button class="btn btn-sm btn-main" data-act="pay">回報匯款</button></div>':""}
+      </div>`}).join("")}
+    </section>
+
+    <section class="card stack" aria-labelledby="ph">
+      <div class="sec-h"><h2 id="ph">登入方式</h2></div>
+      <div>${m.linked.line?'<span class="pill ok">LINE ✓</span> ':""}${m.linked.google?'<span class="pill ok">Google ✓</span>':""}</div>
+      ${!m.linked.google&&S.where==="web"?`<button class="btn btn-google" data-act="addg">${GICO}也綁定 Google 登入</button>`:""}
+      ${!m.linked.line?`<button class="btn btn-line" data-act="addl">${LINEICO}也綁定 LINE 登入</button>`:""}
+      <p class="muted" style="margin:0">綁定兩種方式後，用哪一個登入都會看到同一份紀錄。</p>
+      ${S.where==="web"?'<button class="btn btn-ghost" data-act="logout">登出</button>':""}
+    </section>
+  </div>`;
+  bindCommon();
+}
+function bindCommon(){
+  document.querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>{
+    const t=b.dataset.copy;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast("已複製訂單編號 "+t),()=>toast("訂單編號："+t))});
+  const ACT={meet:"預覽：這裡會打開 Google Meet",cal:"預覽：這裡會把諮詢加到你的行事曆",pay:"預覽：這裡會打開回報匯款頁",
+    resched:"預覽：這裡會打開改期頁（選新時段）",survey:"預覽：這裡會打開回饋問卷"};
+  document.querySelectorAll("[data-act]").forEach(b=>b.onclick=()=>{const a=b.dataset.act,m=S.member;
+    if(a==="logout"){toast("已登出");start();return}
+    if(a==="rebook"){openBooking();return}
+    if(a==="addg"){m.linked.google=true;S.justJoined=false;render();toast("已綁定 Google 登入");return}
+    if(a==="addl"){m.linked.line=true;S.justJoined=false;render();toast("已綁定 LINE 登入");return}
+    toast(ACT[a])});
+}
+
+function renderRebook(){
+  const textOpen=S.text==="on";
+  $("#app").innerHTML=`
+  <div class="stack">
+    <button class="btn btn-ghost btn-sm" id="back" style="align-self:flex-start">← 回會員中心</button>
+    <div><div class="eyebrow">再預約</div><h1 style="font-size:22px">會打開你網站上原本的預約表單</h1>
+    <p class="lead">跟一般預約用的是同一份表單，不是另外做的。差別只在會員登入後，上次的姓名、Email、出生資料會先帶好，客人可以勾選要沿用哪幾位的命盤。</p></div>
+    <div class="card stack">
+      <h3 style="font-size:16px">表單裡會有</h3>
+      <dl class="kv" style="margin:0">
+        <dt>一對一論命</dt><dd>選 Google Meet／LINE 語音、選時段。時段直接讀你的 Google 行事曆，已經有人約或你有行程的時段不會出現；送出時伺服器會再檢查一次，不會重複預約。</dd>
+        <dt>文字版諮詢</dt><dd>${textOpen?"出現在表單裡：問題一、問題二，每題最多 500 字，跟現在的設定一樣。":"目前在後台是關閉的，所以表單裡看不到。你在後台打開「文字版」後，一般預約和會員再預約會同時出現，不用另外改。"}</dd>
+      </dl>
+    </div>
+    <a class="btn btn-main" href="https://dazhen-site.netlify.app/booking/" target="_blank" rel="noopener">打開現在的預約表單看看</a>
+    <p class="muted" style="margin:0">預覽沒有接上真的會員，所以打開的表單不會帶入資料；正式版登入後點這個按鈕才會自動帶入。</p>
+  </div>`;
+  $("#back").onclick=()=>{S.screen="home";render()};
+}
+
+document.querySelectorAll("#demoWho button").forEach(b=>b.onclick=()=>{S.who=b.dataset.who;setPressed("#demoWho","who",S.who);start()});
+document.querySelectorAll("#demoWhere button").forEach(b=>b.onclick=()=>{S.where=b.dataset.where;setPressed("#demoWhere","where",S.where);start()});
+document.querySelectorAll("#demoText button").forEach(b=>b.onclick=()=>{S.text=b.dataset.text;setPressed("#demoText","text",S.text);if(S.screen==="rebook")render()});
+document.querySelectorAll("#demoPay button").forEach(b=>b.onclick=()=>{S.pay=b.dataset.pay;setPressed("#demoPay","pay",S.pay);if(S.screen==="home")render()});
+start();
+
+// 再預約：在會員中心裡直接展開「同一份」預約表單（跟 /booking/ 頁用同一個預約系統表單、同一支 bridge）
+var bkLoaded=false;
+function closeBooking(){var w=document.getElementById("mbBooking");if(w)w.hidden=true}
+function openBooking(){
+  var w=document.getElementById("mbBooking");w.hidden=false;
+  if(!bkLoaded){bkLoaded=true;loadBookingFrame_()}
+  setTimeout(function(){w.scrollIntoView({behavior:"smooth",block:"start"})},50);
+}
+</script>
+{{ end }}
