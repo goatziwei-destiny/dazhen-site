@@ -1,0 +1,209 @@
+{{ define "head" }}
+<style>
+
+/* 版面：手機寬度為主的單欄會員頁，上方一條預覽控制列（正式版不會有） */
+.mb{
+  --navy:#1b2845; --accent:#6292ab; --accent-d:#4f7d94; --warm:#cc8854; --warm-d:#b07545;
+  --bg:#f5f3ef; --card:#ffffff; --soft:#eef2f5; --fg:#1b2845; --body:#57534e; --muted:#8a95a5; --line:#e5e8ec;
+  --ok:#3f8a5c; --ok-bg:#e7f3eb; --wait:#b07545; --wait-bg:#f8eee4; --gray-bg:#eef0f2;
+  --line-green:#06c755; --demo-bg:#1b2845; --demo-fg:#e8edf3;
+  --font:"LXGW WenKai TC","PingFang TC","Microsoft JhengHei",sans-serif;
+}
+.mb *{box-sizing:border-box}
+.mb{color:var(--body);font-size:15px;line-height:1.7}
+.mb h1,.mb h2,.mb h3{color:var(--fg);margin:0;text-wrap:balance;font-weight:700}
+.mb button{font-family:inherit;font-size:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.demo{background:var(--demo-bg);color:var(--demo-fg);padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));font-size:13px}
+.demo-in{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.demo b{letter-spacing:.06em}
+.demo-row{display:flex;flex-wrap:wrap;gap:6px}
+.demo button{background:transparent;color:var(--demo-fg);border:1px solid #4a5a78;border-radius:999px;padding:4px 12px}
+.demo button[aria-pressed="true"]{background:var(--warm);border-color:var(--warm);color:#fff}
+
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+.stack{display:flex;flex-direction:column;gap:16px}
+.muted{color:var(--muted);font-size:13px}
+.lead{margin:6px 0 0}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border-radius:10px;padding:12px 16px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-weight:700}
+.btn-line{background:var(--line-green);border-color:var(--line-green);color:#fff}
+.btn-google{background:var(--card);color:var(--fg)}
+.btn-main{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn-ghost{background:transparent}
+.btn-sm{width:auto;padding:7px 14px;font-size:14px;border-radius:8px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.ico{width:20px;height:20px;flex:none}
+
+.divider{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+
+.mb label{display:block;color:var(--fg);font-weight:700;font-size:14px;margin-bottom:4px}
+label .opt{color:var(--muted);font-weight:400}
+.mb input,.mb select{width:100%;font-family:inherit;font-size:15px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg)}
+input[readonly]{background:var(--soft);color:var(--muted)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:420px){.row2{grid-template-columns:1fr}}
+.check{display:flex;gap:8px;align-items:flex-start;font-weight:400;color:var(--body)}
+.check input{width:auto;margin-top:5px}
+.hint{font-size:13px;color:var(--muted);margin-top:4px}
+.err{color:#c0533a;font-size:13px}
+
+.notice{background:var(--soft);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--fg)}
+.notice.ok{background:var(--ok-bg);color:var(--ok)}
+
+.pill{display:inline-block;border-radius:999px;padding:1px 10px;font-size:12.5px;font-weight:700;white-space:nowrap}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.pill.wait{background:var(--wait-bg);color:var(--wait)}
+.pill.gray{background:var(--gray-bg);color:var(--muted)}
+
+.next{border-color:var(--accent)}
+.next-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.eyebrow{font-size:12.5px;letter-spacing:.12em;color:var(--accent-d);font-weight:700}
+.when{font-size:22px;color:var(--fg);font-weight:700;margin:2px 0}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:14px;margin:12px 0}
+.kv dt{color:var(--muted)} .kv dd{margin:0;color:var(--fg);min-width:0;overflow-wrap:anywhere}
+.mono{font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+
+.order{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding-block:14px;border-top:1px solid var(--line)}
+.order:first-of-type{border-top:0}
+.order .id{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.order .id button{border:0;background:none;color:var(--accent-d);font-size:12.5px;padding:0}
+.order .title{color:var(--fg);font-weight:700}
+.order .amt{text-align:right;color:var(--fg);font-variant-numeric:tabular-nums}
+.order .sub{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+
+.sheet-bg{position:fixed;inset:0;background:rgba(10,15,28,.55);display:flex;align-items:flex-end;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0px)}
+.sheet{background:var(--card);width:100%;max-width:440px;border-radius:16px 16px 0 0;padding:24px max(20px,env(safe-area-inset-left,0px)) 24px max(20px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:12px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--navy);color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;max-width:calc(100% - 32px);box-shadow:0 6px 24px rgba(0,0,0,.2)}
+.spinner{width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spinner{animation:none}}
+.choice{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:420px){.choice{grid-template-columns:1fr}}
+.opt-card{text-align:left;border:1px solid var(--line);border-radius:12px;background:var(--card);padding:14px;color:var(--body);display:flex;flex-direction:column;gap:4px}
+.opt-card b{color:var(--fg);font-size:16px}
+.opt-card[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.opt-card:disabled{opacity:.55;cursor:not-allowed}
+.days{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.day{flex:none;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:10px;padding:6px 10px;text-align:center;font-size:13px;min-width:58px}
+.day[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.day:disabled{background:var(--gray-bg);color:var(--muted);cursor:not-allowed}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.slot{border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;padding:8px 4px;font-variant-numeric:tabular-nums}
+.slot[aria-pressed="true"]{background:var(--accent-d);border-color:var(--accent-d);color:#fff}
+.slot:disabled{background:var(--gray-bg);color:var(--muted);text-decoration:line-through;cursor:not-allowed}
+.mb textarea{width:100%;font-family:inherit;font-size:15px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);min-height:110px;resize:vertical}
+.sec-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.sec-h h2{font-size:18px}
+.mb-page{padding-block:32px 72px}
+.mb-page .container{max-width:600px}
+.mb-book{margin-top:20px}
+.mb-book .bk-frame{width:100%;height:1600px;border:0;display:block;background:transparent;transition:height .2s}
+.mb-book .bk-load{text-align:center;padding:40px 16px 24px;color:#78716c;font-size:15px;line-height:1.8}.mb-book .bk-load i{display:block;width:40px;height:40px;margin:0 auto 14px;border:4px solid #e7e5e4;border-top-color:#b8864b;border-radius:50%;animation:bkspin .9s linear infinite}@keyframes bkspin{to{transform:rotate(360deg)}}
+.mb .loading{text-align:center;padding:48px 0;color:var(--muted)}
+.mb #gBtn{display:flex;justify-content:center;min-height:44px}
+.mb a.btn{text-decoration:none}
+</style>
+<link rel="preconnect" href="https://script.google.com"><link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+{{ end }}
+{{ define "main" }}
+<div class="mb-page mb">
+  <div class="container">
+    <main id="app"><div class="loading"><div class="spinner"></div><p>會員中心載入中…</p></div></main>
+    <section class="mb-book card" id="mbBooking" hidden aria-label="再預約">
+      <div class="sec-h"><h2>再預約</h2><button class="btn btn-sm btn-ghost" type="button" id="bkClose">收起</button></div>
+      <p class="muted" style="margin:0 0 8px">跟網站「線上預約」是同一份表單，上次的資料會自動帶入。</p>
+      <div class="bk-load" id="bkLoading" role="status"><i></i>預約表單載入中，請稍候約 10 秒…</div>
+      <iframe class="bk-frame" id="bookingFrame" data-booking-frame title="線上預約表單"></iframe>
+    </section>
+    <div id="appBottom" style="margin-top:16px"></div>
+  </div>
+</div>
+<div id="layer"></div>
+<script src="/booking-bridge.js?v=20261013"></script>
+<script>
+(function(){
+var API={{ .Site.Params.bookingFormUrl }}, LIFF_ID={{ .Site.Params.liffMemberId | default "" }}, GCID={{ .Site.Params.googleLoginClientId | default "" }};
+var inLine=/Line\//i.test(navigator.userAgent)||/[?&]liff\.state=/.test(location.search);
+var S={kind:"",token:"",data:null};
+var $=function(s){return document.querySelector(s)};
+var esc=function(x){return String(x==null?"":x).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+var LINEICO='<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M12 3C6.5 3 2 6.6 2 11c0 3.9 3.5 7.2 8.3 7.9.3.1.8.2.9.5.1.3.1.7 0 1l-.1.8c0 .3-.2 1 .9.5s5.9-3.5 8-6C21.4 14.2 22 12.7 22 11c0-4.4-4.5-8-10-8z"/></svg>';
+function toast(t){var d=document.createElement("div");d.className="toast";d.setAttribute("role","status");d.textContent=t;document.body.appendChild(d);setTimeout(function(){d.remove()},3200)}
+function jsonp(params){return new Promise(function(res,rej){var cb="mbcb"+Date.now()+Math.floor(Math.random()*1e4),sc=document.createElement("script"),t=setTimeout(function(){done();rej(new Error("timeout"))},40000);
+  function done(){clearTimeout(t);try{delete window[cb]}catch(e){window[cb]=undefined}sc.remove()}
+  window[cb]=function(d){done();res(d)};var u=new URL(API);u.searchParams.set("page","member");Object.keys(params).forEach(function(k){u.searchParams.set(k,params[k])});u.searchParams.set("callback",cb);
+  sc.src=u.toString();sc.onerror=function(){done();rej(new Error("load"))};document.head.appendChild(sc);});}
+function loadScript(src){return new Promise(function(res,rej){var s=document.createElement("script");s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
+function loading(msg){$("#appBottom").innerHTML="";$("#app").innerHTML='<div class="loading"><div class="spinner"></div><p>'+esc(msg)+'</p></div>'}
+
+// ---------- 登入 ----------
+var liffReady=null;
+function initLiff(){if(!LIFF_ID)return Promise.resolve(false);if(!liffReady)liffReady=loadScript("https://static.line-scdn.net/liff/edge/2/sdk.js").then(function(){return liff.init({liffId:LIFF_ID})}).then(function(){return true}).catch(function(){return false});return liffReady}
+function loginLine(){initLiff().then(function(ok){if(!ok){toast("LINE 登入暫時無法使用，請稍後再試");return}liff.login({redirectUri:location.origin+location.pathname})})}
+function useToken(kind,token){S.kind=kind;S.token=token;loading("正在讀取你的資料…");
+  jsonp(kind==="line"?{lt:token}:{gt:token}).then(function(d){
+    if(!d||!d.ok){if(kind==="line"&&window.liff){try{liff.logout()}catch(e){}}try{sessionStorage.removeItem("mb_gt")}catch(e){}renderLogin("登入逾時，請再登入一次。");return}
+    S.data=d;renderHome();}).catch(function(){renderError()});}
+function renderError(){$("#appBottom").innerHTML="";$("#app").innerHTML='<div class="card stack"><h2>暫時讀不到資料</h2><p class="muted" style="margin:0">網路不穩或系統忙碌，請稍後再試。</p><button class="btn btn-main" id="retry">重新整理</button></div>';$("#retry").onclick=function(){location.reload()}}
+function renderLogin(note){$("#appBottom").innerHTML="";closeBooking();
+  $("#app").innerHTML='<div class="stack"><div><h1 style="font-size:24px">會員中心</h1><p class="lead">登入後可以看到你的購買紀錄、訂單編號和下一次諮詢的時間，再預約也不用重填出生資料。</p></div>'+
+  (note?'<div class="notice">'+esc(note)+'</div>':'')+
+  '<div class="card stack"><button class="btn btn-line" id="bLine">'+LINEICO+'用 LINE 登入</button>'+(inLine||!GCID?'':'<div id="gBtn"></div>')+
+  '<p class="muted" style="margin:0">第一次登入就會自動成為會員，不用另外填資料。登入即表示你同意<a href="/privacy-policy/" style="color:var(--accent-d)">隱私權政策</a>。</p></div>'+
+  '<div class="notice">不登入也可以預約。<a href="/booking/" style="color:var(--accent-d)">直接前往預約</a></div></div>';
+  $("#bLine").onclick=loginLine;
+  if(!inLine&&GCID)loadScript("https://accounts.google.com/gsi/client").then(function(){
+    google.accounts.id.initialize({client_id:GCID,callback:function(r){try{sessionStorage.setItem("mb_gt",r.credential)}catch(e){}useToken("google",r.credential)}});
+    google.accounts.id.renderButton($("#gBtn"),{theme:"outline",size:"large",text:"signin_with",shape:"rectangular",width:300,locale:"zh-TW"});}).catch(function(){});}
+function logout(){if(S.kind==="line"&&window.liff){try{liff.logout()}catch(e){}}try{sessionStorage.removeItem("mb_gt")}catch(e){}
+  if(window.google&&google.accounts&&google.accounts.id)google.accounts.id.disableAutoSelect();S={kind:"",token:"",data:null};toast("已登出");renderLogin()}
+
+// ---------- 會員中心 ----------
+function pillOf(st){return /已收款|已完成/.test(st)?"ok":/退款|取消/.test(st)?"gray":"wait"}
+function money(n){return "NT$"+Number(n||0).toLocaleString()}
+function renderHome(){var d=S.data,m=d.member,up=d.upcoming,name=m.name||"會員";
+  var top='<div class="stack">'+(m.joined?'<div class="notice ok">歡迎加入會員！'+(d.orders.length?'我們找到 '+d.orders.length+' 筆你以前的訂單，已經放進購買紀錄。':'之後的預約都會出現在這裡。')+'</div>':'')+
+   '<div><h1 style="font-size:24px">'+esc(name)+'，你好</h1></div>';
+  if(up){var paid=up.status==="已收款";
+    top+='<section class="card next" aria-labelledby="nh"><div class="next-top"><div><div class="eyebrow" id="nh">下一次諮詢</div><div class="when mono">'+esc(up.when)+'</div></div><span class="pill '+pillOf(up.status)+'">'+esc(up.status)+'</span></div>'+
+     '<dl class="kv"><dt>訂單編號</dt><dd class="mono">'+esc(up.id)+'</dd><dt>方案</dt><dd>'+esc(up.title)+'</dd><dt>金額</dt><dd class="mono">'+money(up.amount)+'</dd>'+
+     (up.isLine?'<dt>進行方式</dt><dd>時間到了，大正會用 LINE 撥給你</dd>':'<dt>Google Meet</dt><dd>'+(up.meet?'<span class="mono">'+esc(up.meet)+'</span>':'<span class="muted">確認收到匯款後會出現在這裡</span>')+'</dd>')+'</dl>'+
+     (paid?'':'<div class="notice" style="margin-bottom:12px">請在訂單成立後 24 小時內完成匯款，匯款後按下面的按鈕回報末五碼。</div>')+
+     '<div class="actions">'+(up.meet?'<a class="btn btn-main btn-sm" href="'+esc(up.meet)+'" target="_blank" rel="noopener">進入 Google Meet</a>':'')+(up.cal?'<a class="btn btn-sm" href="'+esc(up.cal)+'" target="_blank" rel="noopener">加到行事曆</a>':'')+
+     (up.pay?'<a class="btn btn-main btn-sm" href="'+esc(up.pay)+'">回報匯款</a>':'')+(up.resched?'<a class="btn btn-sm" href="'+esc(up.resched)+'">改期</a>':'')+'</div>'+
+     '<p class="muted" style="margin:10px 0 0">改期要在諮詢開始 24 小時前提出。</p></section>';}
+  top+='<button class="btn btn-main" id="rebook">'+(d.orders.length?'再預約一次（自動帶入上次資料）':'預約諮詢')+'</button></div>';
+  var bottom='<div class="stack"><section class="card" aria-labelledby="oh"><div class="sec-h"><h2 id="oh">購買紀錄</h2><span class="muted">'+d.orders.length+' 筆</span></div>'+
+   (d.orders.length?d.orders.map(function(o){return '<div class="order"><div style="min-width:0"><div class="id"><span class="mono">'+esc(o.id)+'</span><button type="button" data-copy="'+esc(o.id)+'">複製</button></div><div class="title">'+esc(o.title)+'</div><div class="muted mono">'+esc(o.when)+'</div></div>'+
+     '<div><div class="amt">'+money(o.amount)+'</div><div style="text-align:right"><span class="pill '+pillOf(o.status)+'">'+esc(o.status)+'</span></div></div>'+
+     (o.survey?'<div class="sub"><a class="btn btn-sm" href="'+esc(o.survey)+'">填寫諮詢回饋問卷</a></div>':'')+'</div>'}).join(""):'<p class="muted">還沒有購買紀錄。如果你以前用別的 Email 或沒有用 LINE 預約過，那幾筆訂單不會出現在這裡。</p>')+
+   '</section><section class="card stack"><div class="sec-h"><h2>登入方式</h2></div><div><span class="pill ok">'+(m.kind==="line"?"LINE":"Google（"+esc(m.email)+"）")+'</span></div>'+
+   (inLine?'':'<button class="btn btn-ghost" id="logout">登出</button>')+'</section></div>';
+  $("#app").innerHTML=top;$("#appBottom").innerHTML=bottom;
+  $("#rebook").onclick=openBooking;var lo=$("#logout");if(lo)lo.onclick=logout;
+  document.querySelectorAll("[data-copy]").forEach(function(b){b.onclick=function(){var t=b.dataset.copy;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){toast("已複製訂單編號 "+t)},function(){toast("訂單編號："+t)})}});}
+
+// ---------- 再預約：同一份預約表單 ----------
+var bkLoaded=false;
+function closeBooking(){var w=$("#mbBooking");if(w)w.hidden=true}
+function openBooking(){var w=$("#mbBooking");w.hidden=false;
+  if(!bkLoaded){bkLoaded=true;var u=window.dazhenBookingUrl(API);if(S.data&&S.data.rb)u+="&rb="+encodeURIComponent(S.data.rb);if(S.kind==="line"&&S.token)u+="&lt="+encodeURIComponent(S.token);
+    $("#bookingFrame").src=u;setTimeout(function(){var l=$("#bkLoading");if(l)l.remove()},40000);}
+  setTimeout(function(){w.scrollIntoView({behavior:"smooth",block:"start"})},50);}
+$("#bkClose").onclick=closeBooking;
+
+// ---------- 開始 ----------
+var gt="";try{gt=sessionStorage.getItem("mb_gt")||""}catch(e){}
+if(gt&&!inLine){try{var p=JSON.parse(atob(gt.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")));if(p.exp*1000>Date.now()+60000){useToken("google",gt);return}}catch(e){}}
+initLiff().then(function(ok){
+  if(ok&&liff.isLoggedIn()){var t=liff.getIDToken();if(t){useToken("line",t);return}}
+  if(ok&&inLine){liff.login();return}
+  renderLogin();});
+})();
+</script>
+{{ end }}

@@ -10,6 +10,8 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
   description = "大正紫微斗數命理諮詢。不批評、好好聊，用命盤讀懂你的命運脈絡。"
   lineUrl = "https://lin.ee/vlvPoMa"
   liffBookingId = "2007939639-l2APYkwk"   # 預約表單的 LIFF ID（LINE Developers 建立；Endpoint URL 要設成官網的 /booking/）
+  liffMemberId = "2007939639-SJWD7dDI"   # 會員中心的 LIFF ID（Endpoint URL：官網的 /member/）
+  googleLoginClientId = "819997452242-gkffokdh6glk7cqdgitnn550lblnb4fo.apps.googleusercontent.com"   # 會員中心 Google 登入（不是密碼）
   bookingFormUrl = "https://script.google.com/macros/s/AKfycbx3aDlFDBayTKgvGtQMrWrpDMx3WuU5Yd3Uh4c6BJK5kmKpZnBsXH7fK97yrkQkgx9fkQ/exec"
   # LINE 官方帳號的 Basic ID（在 LINE Official Account Manager → 設定 → 帳號設定 → 基本檔案設定 可以找到），
   # 開頭要有 @ 符號。給「加入LINE好友」智慧轉導頁用，不是敏感資訊（本來就公開顯示在你的LINE官方帳號檔案上）。
