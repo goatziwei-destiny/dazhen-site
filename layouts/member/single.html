@@ -99,7 +99,7 @@ input[readonly]{background:var(--soft);color:var(--muted)}
 .mb textarea{width:100%;font-family:inherit;font-size:15px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);min-height:110px;resize:vertical}
 .sec-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
 .sec-h h2{font-size:18px}
-.mb-page{padding-block:32px 72px}
+.mb-page{padding-block:32px 72px;min-height:calc(100vh - 230px)}
 .mb-page .container{max-width:600px}
 .mb-book{margin-top:20px}
 .mb-book .bk-frame{width:100%;height:1600px;border:0;display:block;background:transparent;transition:height .2s}
@@ -145,10 +145,15 @@ function loading(msg){$("#appBottom").innerHTML="";$("#app").innerHTML='<div cla
 var liffReady=null;
 function initLiff(){if(!LIFF_ID)return Promise.resolve(false);if(!liffReady)liffReady=loadScript("https://static.line-scdn.net/liff/edge/2/sdk.js").then(function(){return liff.init({liffId:LIFF_ID})}).then(function(){return true}).catch(function(){return false});return liffReady}
 function loginLine(){initLiff().then(function(ok){if(!ok){toast("LINE 登入暫時無法使用，請稍後再試");return}liff.login({redirectUri:location.origin+location.pathname})})}
-function useToken(kind,token){S.kind=kind;S.token=token;loading("正在讀取你的資料…");
+// 上次讀到的資料先放在這個分頁裡（關掉分頁就沒了）：回到會員中心時馬上顯示，背景再更新
+function cacheGet(kind){try{var c=JSON.parse(sessionStorage.getItem("mb_data")||"null");return c&&c.kind===kind?c.d:null}catch(e){return null}}
+function cacheSet(kind,d){try{sessionStorage.setItem("mb_data",JSON.stringify({kind:kind,d:d}))}catch(e){}}
+function cacheClear(){try{sessionStorage.removeItem("mb_data");sessionStorage.removeItem("mb_gt")}catch(e){}}
+function useToken(kind,token){S.kind=kind;S.token=token;var c=cacheGet(kind);
+  if(c){c.member.joined=false;S.data=c;renderHome(true)}else loading("正在讀取你的資料…");
   jsonp(kind==="line"?{lt:token}:{gt:token}).then(function(d){
-    if(!d||!d.ok){if(kind==="line"&&window.liff){try{liff.logout()}catch(e){}}try{sessionStorage.removeItem("mb_gt")}catch(e){}renderLogin("登入逾時，請再登入一次。");return}
-    S.data=d;renderHome();}).catch(function(){renderError()});}
+    if(!d||!d.ok){if(kind==="line"&&window.liff){try{liff.logout()}catch(e){}}cacheClear();renderLogin("登入逾時，請再登入一次。");return}
+    cacheSet(kind,d);S.data=d;renderHome();}).catch(function(){if(c){var u=$("#mbSync");if(u)u.textContent="目前顯示的是剛才讀到的資料，網路不穩，暫時無法更新。"}else renderError()});}
 function renderError(){$("#appBottom").innerHTML="";$("#app").innerHTML='<div class="card stack"><h2>暫時讀不到資料</h2><p class="muted" style="margin:0">網路不穩或系統忙碌，請稍後再試。</p><button class="btn btn-main" id="retry">重新整理</button></div>';$("#retry").onclick=function(){location.reload()}}
 function renderLogin(note){$("#appBottom").innerHTML="";closeBooking();
   $("#app").innerHTML='<div class="stack"><div><h1 style="font-size:24px">會員中心</h1><p class="lead">登入後可以看到你的購買紀錄、訂單編號和下一次諮詢的時間，再預約也不用重填出生資料。</p></div>'+
@@ -160,15 +165,15 @@ function renderLogin(note){$("#appBottom").innerHTML="";closeBooking();
   if(!inLine&&GCID)loadScript("https://accounts.google.com/gsi/client").then(function(){
     google.accounts.id.initialize({client_id:GCID,callback:function(r){try{sessionStorage.setItem("mb_gt",r.credential)}catch(e){}useToken("google",r.credential)}});
     google.accounts.id.renderButton($("#gBtn"),{theme:"outline",size:"large",text:"signin_with",shape:"rectangular",width:300,locale:"zh-TW"});}).catch(function(){});}
-function logout(){if(S.kind==="line"&&window.liff){try{liff.logout()}catch(e){}}try{sessionStorage.removeItem("mb_gt")}catch(e){}
+function logout(){if(S.kind==="line"&&window.liff){try{liff.logout()}catch(e){}}cacheClear();
   if(window.google&&google.accounts&&google.accounts.id)google.accounts.id.disableAutoSelect();S={kind:"",token:"",data:null};toast("已登出");renderLogin()}
 
 // ---------- 會員中心 ----------
 function pillOf(st){return /已收款|已完成/.test(st)?"ok":/退款|取消/.test(st)?"gray":"wait"}
 function money(n){return "NT$"+Number(n||0).toLocaleString()}
-function renderHome(){var d=S.data,m=d.member,up=d.upcoming,name=m.name||"會員";
+function renderHome(stale){var d=S.data,m=d.member,up=d.upcoming,name=m.name||"會員";
   var top='<div class="stack">'+(m.joined?'<div class="notice ok">歡迎加入會員！'+(d.orders.length?'我們找到 '+d.orders.length+' 筆你以前的訂單，已經放進購買紀錄。':'之後的預約都會出現在這裡。')+'</div>':'')+
-   '<div><h1 style="font-size:24px">'+esc(name)+'，你好</h1></div>';
+   '<div><h1 style="font-size:24px">'+esc(name)+'，你好</h1>'+(stale?'<p class="muted" id="mbSync" style="margin:4px 0 0;font-size:13px">正在更新最新資料…</p>':'')+'</div>';
   if(up){var paid=up.status==="已收款";
     top+='<section class="card next" aria-labelledby="nh"><div class="next-top"><div><div class="eyebrow" id="nh">下一次諮詢</div><div class="when mono">'+esc(up.when)+'</div></div><span class="pill '+pillOf(up.status)+'">'+esc(up.status)+'</span></div>'+
      '<dl class="kv"><dt>訂單編號</dt><dd class="mono">'+esc(up.id)+'</dd><dt>方案</dt><dd>'+esc(up.title)+'</dd><dt>金額</dt><dd class="mono">'+money(up.amount)+'</dd>'+
