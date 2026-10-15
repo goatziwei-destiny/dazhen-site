@@ -56,6 +56,8 @@ def build_web(q=80):
     fm=json.load(open(P('assets','frames-main.json'),encoding='utf-8'))
     s=s.replace('__SPR__',json.dumps(spr)).replace('__FM__',json.dumps(fm)).replace('__GRP__',json.dumps(grp,ensure_ascii=False))
     # 放在自己網站：連結用本站網址、在同一個視窗開（LINE 裡不會跳出去）
+    # 網站版不顯示上方的標題與說明文字（遊戲畫面裡已經有書庫名稱）
+    s=s.replace('<header>','<header style="display:none">',1)
     s=s.replace("const SITE='https://dazhen-site.netlify.app';","const SITE='';").replace("a.target='_blank';a.rel='noopener';","a.target='_top';")
     og='<meta property="og:title" content="命運書庫｜大正命理諮詢"><meta property="og:description" content="住在書庫裡的羊——大正，帶你翻翻命理小知識。">'
     page='<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'+og+'</head><body style="margin:0">'+s+'</body></html>'
