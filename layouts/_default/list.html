@@ -18,15 +18,9 @@
   <div class="container blog-wrap">
     <div class="bsb-head"><h2 id="startH">第一次來？從這幾篇開始</h2><p>還不熟紫微斗數的話，先讀這幾篇，之後再依主題找。</p></div>
     <ol class="bsb-list">
-      <li class="bsb-lib"><a href="/library/"><span class="bsb-img"><img src="{{ partial "img.html" (dict "src" "/images/library-entry.jpg" "w" 600) }}" alt="" loading="lazy"><span class="bsb-play" aria-hidden="true">▶</span></span><span class="bsb-t" id="libT">先看動畫：走進大正的命運書庫</span><span class="bsb-d" id="libD">住在書庫裡的羊，帶你翻翻命理小知識。點一點就能看。</span></a></li>
       {{ range $i, $p := . }}<li><a href="{{ $p.RelPermalink }}"><span class="bsb-n">{{ add $i 1 }}</span><span class="bsb-t">{{ $p.Title }}</span>{{ with $p.Description }}<span class="bsb-d">{{ . }}</span>{{ end }}</a></li>{{ end }}</ol>
   </div>
 </section>
-<script>(function(){ /* 看過命運書庫（或在 LINE 裡打開）就換成「回到命運書庫」；預覽用 ?seen=1／?seen=0 */
-  var q=/[?&]seen=([01])/.exec(location.search),seen=false;
-  if(q)seen=q[1]==='1';else if(/Line\//i.test(navigator.userAgent))seen=true;else{try{seen=localStorage.getItem('dz_seen')==='1'}catch(e){}}
-  if(!seen)return;var t=document.getElementById('libT'),d=document.getElementById('libD');
-  if(t)t.textContent='回到命運書庫';if(d)d.textContent='上次沒看完、想再翻翻別本書，都可以從這裡回去。';})();</script>
 {{ end }}
 <div class="container blog-wrap blog-layout">
   {{ partial "blog-sidebar.html" . }}

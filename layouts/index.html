@@ -60,15 +60,15 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 .stats{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:26px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12);font-size:14px;color:var(--text-light)}
 .stats span b{color:#fff;font-size:17px;margin-right:4px}
 .lib-entry{padding:0 0 56px}
-.lib-mini{padding:0 0 40px}.lib-link{display:inline-flex;align-items:center;gap:8px;color:var(--text-light);font-size:14px;border:1px solid rgba(204,136,84,.4);border-radius:999px;padding:8px 18px}.lib-link:hover{color:#fff;border-color:var(--warm)}
-.lib-card{display:grid;grid-template-columns:1.1fr 1fr;gap:0;background:var(--navy-2);border:1px solid rgba(204,136,84,.35);border-radius:16px;overflow:hidden;color:#fff;text-decoration:none;transition:border-color .15s,transform .15s}
+.lib-card{display:block;max-width:760px;margin:0 auto;background:var(--navy-2);border:1px solid rgba(204,136,84,.35);border-radius:16px;overflow:hidden;color:#fff;text-decoration:none;text-align:center;transition:border-color .15s,transform .15s}
 .lib-card:hover{border-color:var(--warm);transform:translateY(-2px)}
 .lib-img{position:relative;display:block;aspect-ratio:16/9}.lib-img img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated}
 .lib-play{position:absolute;right:16px;bottom:16px;width:58px;height:58px;border-radius:50%;background:rgba(204,136,84,.92);display:flex;align-items:center;justify-content:center;font-size:22px;padding-left:4px;box-shadow:0 6px 20px rgba(0,0,0,.35)}
-.lib-txt{display:flex;flex-direction:column;justify-content:center;gap:10px;padding:28px 32px}
-.lib-h{font-size:24px;font-weight:700;line-height:1.4}.lib-p{color:var(--text-light);font-size:15px;line-height:1.8}
-.lib-btn{align-self:flex-start;margin-top:6px;background:var(--warm);color:#fff;padding:9px 20px;border-radius:8px;font-weight:700;font-size:14px}
-@media(max-width:768px){.lib-entry{padding:0 0 44px}.lib-card{grid-template-columns:1fr}.lib-txt{padding:20px 22px 24px}.lib-h{font-size:20px}}
+.lib-txt{display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px 28px 28px}
+.lib-h{font-size:24px;font-weight:700;line-height:1.4}.lib-p{color:var(--text-light);font-size:15px;line-height:1.8;max-width:30em}
+.lib-btn{margin-top:6px;background:var(--warm);color:#fff;padding:9px 22px;border-radius:8px;font-weight:700;font-size:14px}
+.stat-lib{display:inline-flex;align-items:center;gap:7px;color:#fff;font-size:14px;border-bottom:1px dashed rgba(204,136,84,.7);padding-bottom:1px}.stat-lib:hover{color:var(--warm)}.stat-lib img{width:18px;height:auto;image-rendering:pixelated}
+@media(max-width:768px){.lib-entry{padding:0 0 44px}.lib-txt{padding:18px 20px 22px}.lib-h{font-size:20px}}
 .hero-goat img{width:min(280px,100%);aspect-ratio:1;border-radius:50%;object-fit:cover;margin:0 auto}
 @media(max-width:768px){.hero{padding:40px 0 44px}.hero-inner{grid-template-columns:1fr}.hero-goat{display:none}}
 .svc-wrap{padding:8px 0 72px}
@@ -394,12 +394,12 @@ function renderSite(S) {
   (S.brandTagline ? '<div class="tagline">' + esc(S.brandTagline) + '</div>' : '') +
   '<p class="hero-desc">' + heroDesc + '</p>' +
   '<div class="btns"><a href="/booking/" class="btn btn-primary">預約一對一諮詢</a><a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-ghost">先加入 LINE 聊聊</a></div>' +
-  (stats ? '<div class="stats">' + stats + '</div>' : '') +
+  ((stats || LIB_SEEN) ? '<div class="stats">' + stats + (LIB_SEEN ? '<a class="stat-lib" href="/library/"><img src="/images/library-book-icon.png" alt="" width="18" height="25">回命運書庫逛逛</a>' : '') + '</div>' : '') +
   '</div>' + (photo ? '<div class="hero-goat"><img src="' + esc(photo) + '" alt="' + esc(S.aboutName||'大正') + '的頭像" width="280" height="280"></div>' : '') +
 '</div></section>' +
 
-/* 命運書庫入口（互動動畫，/library/）：沒看過＝大卡片；看過（書庫留下的 dz_seen）或在 LINE 裡打開＝一行小連結 */
-(LIB_SEEN ? '<section class="lib-entry lib-mini section-dark"><div class="container"><a class="lib-link" href="/library/"><span aria-hidden="true">📚</span> 回命運書庫逛逛 →</a></div></section>' :
+/* 命運書庫入口（互動動畫，/library/）：沒看過＝置中的大卡片；看過（書庫留下的 dz_seen）或在 LINE 裡打開＝不放卡片，數字列最後放「回命運書庫逛逛」 */
+(LIB_SEEN ? '' :
 '<section class="lib-entry section-dark"><div class="container"><a class="lib-card" href="/library/">' +
   '<span class="lib-img"><img src="{{ partial "img.html" (dict "src" "/images/library-entry.jpg" "w" 720) }}" alt="住在書庫裡的羊——大正" width="720" height="405" loading="lazy"><span class="lib-play" aria-hidden="true">▶</span></span>' +
   '<span class="lib-txt"><span class="eyebrow" style="color:var(--warm)">互動動畫</span><span class="lib-h">走進大正的命運書庫</span>' +
