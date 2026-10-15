@@ -60,6 +60,7 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 .stats{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:26px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12);font-size:14px;color:var(--text-light)}
 .stats span b{color:#fff;font-size:17px;margin-right:4px}
 .lib-entry{padding:0 0 56px}
+.lib-mini{padding:0 0 40px}.lib-link{display:inline-flex;align-items:center;gap:8px;color:var(--text-light);font-size:14px;border:1px solid rgba(204,136,84,.4);border-radius:999px;padding:8px 18px}.lib-link:hover{color:#fff;border-color:var(--warm)}
 .lib-card{display:grid;grid-template-columns:1.1fr 1fr;gap:0;background:var(--navy-2);border:1px solid rgba(204,136,84,.35);border-radius:16px;overflow:hidden;color:#fff;text-decoration:none;transition:border-color .15s,transform .15s}
 .lib-card:hover{border-color:var(--warm);transform:translateY(-2px)}
 .lib-img{position:relative;display:block;aspect-ratio:16/9}.lib-img img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated}
@@ -309,6 +310,13 @@ const SITE = {
 // ╔═══════════════════════════════════════════════════════════════════════════╗
 // ║  以下是自動渲染程式碼，不用動                                              ║
 // ╚═══════════════════════════════════════════════════════════════════════════╝
+// 看過命運書庫了嗎：書庫會在同一個網站留下 dz_seen；在 LINE 裡打開網站一律當作看過（多半剛在 LINE 看完）
+// 預覽用：網址加 ?seen=1／?seen=0 可以直接看兩種畫面
+function libSeen_() {
+  var q = /[?&]seen=([01])/.exec(location.search); if (q) return q[1] === '1';
+  if (/Line\//i.test(navigator.userAgent)) return true;
+  try { return localStorage.getItem('dz_seen') === '1'; } catch (e) { return false; }
+}
 function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
 // 10 個社群平台的簡化圖示（單色線條/色塊，配合各平台官方色當底色）
@@ -370,6 +378,7 @@ function renderSite(S) {
   var stats = (S.heroInfoCard || []).map(function (r) { return '<span><b>' + esc(r.value) + '</b>' + esc(r.label) + '</span>'; }).join('');
   var steps = S.processSteps || [];
 
+  var LIB_SEEN = libSeen_();
   document.getElementById('app').innerHTML =
 '<nav class="nav"><div class="container nav-inner">' +
   '<a class="nav-brand" href="/">' + esc(S.brandName||'') + '<i>·</i>命理諮詢</a>' +
@@ -389,12 +398,13 @@ function renderSite(S) {
   '</div>' + (photo ? '<div class="hero-goat"><img src="' + esc(photo) + '" alt="' + esc(S.aboutName||'大正') + '的頭像" width="280" height="280"></div>' : '') +
 '</div></section>' +
 
-/* 命運書庫入口（互動動畫，/library/） */
+/* 命運書庫入口（互動動畫，/library/）：沒看過＝大卡片；看過（書庫留下的 dz_seen）或在 LINE 裡打開＝一行小連結 */
+(LIB_SEEN ? '<section class="lib-entry lib-mini section-dark"><div class="container"><a class="lib-link" href="/library/"><span aria-hidden="true">📚</span> 回命運書庫逛逛 →</a></div></section>' :
 '<section class="lib-entry section-dark"><div class="container"><a class="lib-card" href="/library/">' +
   '<span class="lib-img"><img src="{{ partial "img.html" (dict "src" "/images/library-entry.jpg" "w" 720) }}" alt="住在書庫裡的羊——大正" width="720" height="405" loading="lazy"><span class="lib-play" aria-hidden="true">▶</span></span>' +
   '<span class="lib-txt"><span class="eyebrow" style="color:var(--warm)">互動動畫</span><span class="lib-h">走進大正的命運書庫</span>' +
   '<span class="lib-p">住在書庫裡的羊，帶你翻翻命理小知識。點一點畫面就能往下看，手機也能玩。</span><span class="lib-btn">進入命運書庫 →</span></span>' +
-'</a></div></section>' +
+'</a></div></section>') +
 
 '<section id="service" class="section-dark svc-wrap"><div class="container">' +
   '<div class="eyebrow">SERVICE</div><h2 class="section-title">諮詢服務</h2>' +
