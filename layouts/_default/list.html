@@ -13,6 +13,14 @@
     <div class="blog-header-total" id="site-total-views"></div>
   </div>
 </div>
+{{ with partial "blog-start.html" . }}
+<section class="blog-start-band" aria-labelledby="startH">
+  <div class="container blog-wrap">
+    <div class="bsb-head"><h2 id="startH">第一次來？從這幾篇開始</h2><p>還不熟紫微斗數的話，先讀這幾篇，之後再依主題找。</p></div>
+    <ol class="bsb-list">{{ range $i, $p := . }}<li><a href="{{ $p.RelPermalink }}"><span class="bsb-n">{{ add $i 1 }}</span><span class="bsb-t">{{ $p.Title }}</span>{{ with $p.Description }}<span class="bsb-d">{{ . }}</span>{{ end }}</a></li>{{ end }}</ol>
+  </div>
+</section>
+{{ end }}
 <div class="container blog-wrap blog-layout">
   {{ partial "blog-sidebar.html" . }}
   <section class="blog-main blog-list">

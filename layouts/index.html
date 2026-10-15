@@ -50,7 +50,7 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 .nav-brand{font-weight:700;color:#fff;letter-spacing:1px}.nav-brand i{font-style:normal;color:var(--warm)}
 .nav-links{display:flex;gap:22px}.nav-links a{font-size:13px;color:var(--text-light)}.nav-links a:hover{color:#fff}
 .nav-cta{background:var(--accent);color:#fff;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:700;white-space:nowrap}
-@media(max-width:900px){.nav-links{display:none}}
+@media(max-width:900px){.nav-inner{flex-wrap:wrap;height:auto;padding-top:10px;row-gap:6px}.nav-links{order:3;width:100%;display:flex;gap:18px;overflow-x:auto;white-space:nowrap;padding:2px 0 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.nav-links::-webkit-scrollbar{display:none}[id]{scroll-margin-top:104px}}/* 手機：選單放第二行，可以左右滑（以前直接隱藏，手機看不到「關於大正」等項目） */
 .hero{padding:64px 0 56px}
 .hero-inner{display:grid;grid-template-columns:1.25fr .75fr;gap:48px;align-items:center}
 .hero h1{font-size:clamp(36px,6vw,56px);line-height:1.2;color:#fff;margin-bottom:12px}.hero h1 i{font-style:normal;color:var(--warm)}
