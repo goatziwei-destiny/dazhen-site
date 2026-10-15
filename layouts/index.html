@@ -154,7 +154,7 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 // ║  🔧 網站內容設定區：所有你想改的文字、圖片、連結都在這裡                    ║
 // ║  改完存檔、重新部署到 Netlify 就會生效，不用動下面的 HTML 結構              ║
 // ╚═══════════════════════════════════════════════════════════════════════════╝
-const LATEST_POSTS = [{{ range $i, $p := first 3 (where .Site.RegularPages "Section" "blog").ByDate.Reverse }}{{ if $i }},{{ end }}{ "title": {{ $p.Title }}, "url": {{ $p.RelPermalink }}, "image": {{ with $p.Params.image }}{{ . }}{{ else }}""{{ end }}, "cat": {{ with $p.Params.categories }}{{ index . 0 }}{{ else }}""{{ end }}, "desc": {{ with $p.Description }}{{ . }}{{ else }}{{ $p.Summary | plainify | truncate 60 }}{{ end }} }{{ end }}];
+const LATEST_POSTS = [{{ range $i, $p := first 3 (where .Site.RegularPages "Section" "blog").ByDate.Reverse }}{{ if $i }},{{ end }}{ "title": {{ $p.Title }}, "url": {{ $p.RelPermalink }}, "image": {{ with $p.Params.image }}{{ partial "img.html" (dict "src" . "w" 720) }}{{ else }}""{{ end }}, "cat": {{ with $p.Params.categories }}{{ index . 0 }}{{ else }}""{{ end }}, "desc": {{ with $p.Description }}{{ . }}{{ else }}{{ $p.Summary | plainify | truncate 60 }}{{ end }} }{{ end }}];
 const TESTIMONIALS_URL = {{ with site.GetPage "/testimonials" }}{{ .RelPermalink }}{{ else }}""{{ end }};
 const SHOW_TEXT_SERVICE = {{ if site.Params.showTextService }}true{{ else }}false{{ end }};
 const SITE = {

@@ -1,0 +1,19 @@
+{{- /*
+  圖片自動壓縮。用法：partial "img.html" (dict "src" "/images/uploads/x.png" "w" 1200 "fmt" "webp")
+  找得到圖（/images/ 底下）就回傳縮小＋轉檔後的網址；找不到（外部連結等）就原樣回傳。
+  fmt：webp（網頁用，預設）／jpg（分享預覽圖用，LINE、Facebook 對 WebP 支援不一）
+*/ -}}
+{{- $src := .src | default "" -}}
+{{- $w := .w | default 1200 -}}
+{{- $fmt := .fmt | default "webp" -}}
+{{- $out := $src -}}
+{{- if and $src (hasPrefix $src "/images/") -}}
+  {{- with resources.Get (strings.TrimPrefix "/" $src) -}}
+    {{- if in (slice "image/png" "image/jpeg" "image/webp") .MediaType.Type -}}
+      {{- $size := cond (gt .Width $w) (printf "%dx" $w) (printf "%dx" .Width) -}}
+      {{- $img := .Resize (printf "%s %s q80" $size $fmt) -}}
+      {{- $out = $img.RelPermalink -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $out -}}

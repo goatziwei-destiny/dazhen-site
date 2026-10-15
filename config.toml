@@ -125,3 +125,22 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
 # 文章「更新日期」只看文章裡的 lastmod 欄位（沒填就等於發布日期），不用 git 修改時間，避免改版型時所有文章都變成「今天更新」
 [frontmatter]
   lastmod = ["lastmod", "date"]
+
+# 2026-10-14 圖片自動壓縮：把 static/images 也掛成 assets，模板就能把上傳的大圖自動轉成 WebP、縮成適合的寬度
+# （原圖留著不動；之後在後台上傳的新圖也會自動處理）
+[[module.mounts]]
+  source = "content"
+  target = "content"
+[[module.mounts]]
+  source = "layouts"
+  target = "layouts"
+[[module.mounts]]
+  source = "static"
+  target = "static"
+[[module.mounts]]
+  source = "static/images"
+  target = "assets/images"
+
+[imaging]
+  quality = 80
+  resampleFilter = "Lanczos"
