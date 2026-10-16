@@ -489,9 +489,14 @@ function renderSite(S) {
 
 '<div class="sticky-cta" id="stickyCta"><a href="/booking/" class="btn btn-primary">預約一對一</a><a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-warm">加 LINE 聊聊</a><button type="button" class="x" id="stickyClose" aria-label="關閉預約列">×</button></div>';
   setupStickyCta_();
-  // 電子報訂閱框：內容由 Hugo 產生在 #nlTpl，畫面重畫後放進 footer
+  placeNewsletter_();
+}
+// 電子報訂閱框：內容由 Hugo 產生在 #nlTpl（在頁面最後面），畫面重畫後放進 footer；模板還沒載入就等整頁載完再放
+function placeNewsletter_() {
   var nlT = document.getElementById('nlTpl'), nlS = document.getElementById('nlSlot');
-  if (nlT && nlS) nlS.appendChild(nlT.content.cloneNode(true));
+  if (!nlS) return;
+  if (!nlT) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', placeNewsletter_, { once: true }); return; }
+  if (!nlS.firstChild) nlS.appendChild(nlT.content.cloneNode(true));
 }
 
 // 手機底部固定預約列：捲過開場才出現，按 × 關掉後這次瀏覽不再出現
