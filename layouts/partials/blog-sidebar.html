@@ -35,6 +35,8 @@
       {{ end }}
     </ul>
   </details>
+  {{ partial "newsletter.html" (dict "variant" "side") }}
 </aside>
+{{ partial "newsletter-js.html" . }}
 {{/* 手機（含橫放）：「依主題閱讀」先收起來；「第一次來」不收 */}}
 <script>(function(){ if (window.matchMedia('(max-width:960px)').matches) { var d = document.getElementById('topicToc'); if (d) d.removeAttribute('open'); } })();</script>

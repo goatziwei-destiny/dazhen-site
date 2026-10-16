@@ -10,6 +10,9 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
   description = "大正紫微斗數命理諮詢。不批評、好好聊，用命盤讀懂你的命運脈絡。"
   lineUrl = "https://lin.ee/vlvPoMa"
   liffBookingId = "2007939639-l2APYkwk"   # 預約表單的 LIFF ID（LINE Developers 建立；Endpoint URL 要設成官網的 /booking/）
+  # 電子報（Kit）：註冊後把表單編號填在 newsletterFormId；newsletterPreview 只在還沒填時顯示樣子用
+  newsletterFormId = ""
+  newsletterPreview = true
   liffMemberId = "2007939639-SJWD7dDI"   # 會員中心的 LIFF ID（Endpoint URL：官網的 /member/）
   googleLoginClientId = "819997452242-gkffokdh6glk7cqdgitnn550lblnb4fo.apps.googleusercontent.com"   # 會員中心 Google 登入（不是密碼）
   bookingFormUrl = "https://script.google.com/macros/s/AKfycbx3aDlFDBayTKgvGtQMrWrpDMx3WuU5Yd3Uh4c6BJK5kmKpZnBsXH7fK97yrkQkgx9fkQ/exec"
