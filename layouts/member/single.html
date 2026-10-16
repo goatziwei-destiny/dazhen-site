@@ -130,6 +130,10 @@ input[readonly]{background:var(--soft);color:var(--muted)}
 var API={{ .Site.Params.bookingFormUrl }}, LIFF_ID={{ .Site.Params.liffMemberId | default "" }}, GCID={{ .Site.Params.googleLoginClientId | default "" }};
 var inLine=/Line\//i.test(navigator.userAgent)||/[?&]liff\.state=/.test(location.search);
 var S={kind:"",token:"",data:null};
+// 預約成功頁／確認信的「LINE 綁定」連結會帶 bind（訂單編號）＋bt（簽章）。LIFF 開啟時參數可能放在 liff.state 裡
+var BIND=(function(){var q=new URLSearchParams(location.search),st=q.get("liff.state");if(st){try{var q2=new URLSearchParams(decodeURIComponent(st).replace(/^[^?]*\?/,""));if(q2.get("bind"))q=q2}catch(e){}}
+  var b=q.get("bind"),t=q.get("bt");return b&&t?{bind:b,bt:t}:null})();
+var LINE_ADD={{ .Site.Params.lineUrl | default "https://lin.ee/vlvPoMa" }};
 var $=function(s){return document.querySelector(s)};
 var esc=function(x){return String(x==null?"":x).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
 var LINEICO='<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M12 3C6.5 3 2 6.6 2 11c0 3.9 3.5 7.2 8.3 7.9.3.1.8.2.9.5.1.3.1.7 0 1l-.1.8c0 .3-.2 1 .9.5s5.9-3.5 8-6C21.4 14.2 22 12.7 22 11c0-4.4-4.5-8-10-8z"/></svg>';
@@ -144,16 +148,17 @@ function loading(msg){$("#appBottom").innerHTML="";$("#app").innerHTML='<div cla
 // ---------- 登入 ----------
 var liffReady=null;
 function initLiff(){if(!LIFF_ID)return Promise.resolve(false);if(!liffReady)liffReady=loadScript("https://static.line-scdn.net/liff/edge/2/sdk.js").then(function(){return liff.init({liffId:LIFF_ID})}).then(function(){return true}).catch(function(){return false});return liffReady}
-function loginLine(){initLiff().then(function(ok){if(!ok){toast("LINE 登入暫時無法使用，請稍後再試");return}liff.login({redirectUri:location.origin+location.pathname})})}
+function loginLine(){initLiff().then(function(ok){if(!ok){toast("LINE 登入暫時無法使用，請稍後再試");return}liff.login({redirectUri:location.origin+location.pathname+(BIND?"?bind="+encodeURIComponent(BIND.bind)+"&bt="+encodeURIComponent(BIND.bt):"")})})}
 // 上次讀到的資料先放在這個分頁裡（關掉分頁就沒了）：回到會員中心時馬上顯示，背景再更新
 function cacheGet(kind){try{var c=JSON.parse(sessionStorage.getItem("mb_data")||"null");return c&&c.kind===kind?c.d:null}catch(e){return null}}
 function cacheSet(kind,d){try{sessionStorage.setItem("mb_data",JSON.stringify({kind:kind,d:d}))}catch(e){}}
 function cacheClear(){try{sessionStorage.removeItem("mb_data");sessionStorage.removeItem("mb_gt")}catch(e){}}
 function useToken(kind,token){S.kind=kind;S.token=token;var c=cacheGet(kind);
   if(c){c.member.joined=false;S.data=c;renderHome(true)}else loading("正在讀取你的資料…");
-  jsonp(kind==="line"?{lt:token}:{gt:token}).then(function(d){
+  var q=kind==="line"?{lt:token}:{gt:token};if(kind==="line"&&BIND){q.bind=BIND.bind;q.bt=BIND.bt}
+  jsonp(q).then(function(d){
     if(!d||!d.ok){if(kind==="line"&&window.liff){try{liff.logout()}catch(e){}}cacheClear();renderLogin("登入逾時，請再登入一次。");return}
-    cacheSet(kind,d);S.data=d;renderHome();}).catch(function(){if(c){var u=$("#mbSync");if(u)u.textContent="目前顯示的是剛才讀到的資料，網路不穩，暫時無法更新。"}else renderError()});}
+    cacheSet(kind,d);S.data=d;renderHome();if(d.bound)showBound(d.bound);}).catch(function(){if(c){var u=$("#mbSync");if(u)u.textContent="目前顯示的是剛才讀到的資料，網路不穩，暫時無法更新。"}else renderError()});}
 function renderError(){$("#appBottom").innerHTML="";$("#app").innerHTML='<div class="card stack"><h2>暫時讀不到資料</h2><p class="muted" style="margin:0">網路不穩或系統忙碌，請稍後再試。</p><button class="btn btn-main" id="retry">重新整理</button></div>';$("#retry").onclick=function(){location.reload()}}
 function renderLogin(note){$("#appBottom").innerHTML="";closeBooking();
   $("#app").innerHTML='<div class="stack"><div><h1 style="font-size:24px">會員中心</h1><p class="lead">登入後可以看到你的購買紀錄、訂單編號和下一次諮詢的時間，再預約也不用重填出生資料。</p></div>'+
@@ -202,13 +207,29 @@ function openBooking(){var w=$("#mbBooking");w.hidden=false;
   setTimeout(function(){w.scrollIntoView({behavior:"smooth",block:"start"})},50);}
 $("#bkClose").onclick=closeBooking;
 
+// ---------- LINE 綁定訂單的結果 ----------
+function showBound(b){BIND=null;try{history.replaceState(null,"",location.pathname)}catch(e){}   // 綁過就把參數拿掉，重新整理不會再綁一次
+  var msg={bound:"✅ 訂單 "+b.id+" 已經綁定你的 LINE，訂單確認也傳到 LINE 了。之後的付款確認、提醒都會從 LINE 通知你。",
+    already:"✅ 訂單 "+b.id+" 之前就綁定你的 LINE 了，不用再做什麼。",
+    other:"這筆訂單（"+b.id+"）已經綁定另一個 LINE 帳號。如果要改綁，請直接在 LINE 告訴大正。",
+    cancelled:"這筆訂單（"+b.id+"）已經取消，所以沒有綁定。",
+    bad:"綁定連結不完整或已失效。請直接在大正的 LINE 傳訂單編號，也可以完成綁定。",
+    notline:"要綁定 LINE，請用 LINE 登入。"}[b.status]||"";
+  if(!msg)return;var ok=b.status==="bound"||b.status==="already";
+  var box=document.createElement("div");box.className="notice"+(ok?" ok":"");box.id="bindNote";box.textContent=msg;
+  var app=$("#app");app.insertBefore(box,app.firstChild);
+  // 綁定了但還沒加好友：LINE 推不了訊息，提醒加好友
+  if(ok&&window.liff&&liff.getFriendship){liff.getFriendship().then(function(f){if(f&&f.friendFlag)return;
+    var a=document.createElement("a");a.className="btn btn-line";a.href=LINE_ADD;a.style.marginTop="10px";a.innerHTML=LINEICO+"加入大正的 LINE 好友（才收得到通知）";box.appendChild(document.createElement("br"));box.appendChild(a);}).catch(function(){})}
+  box.scrollIntoView({block:"start"});}
+
 // ---------- 開始 ----------
 var gt="";try{gt=sessionStorage.getItem("mb_gt")||""}catch(e){}
-if(gt&&!inLine){try{var p=JSON.parse(atob(gt.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")));if(p.exp*1000>Date.now()+60000){useToken("google",gt);return}}catch(e){}}
+if(gt&&!inLine&&!BIND){try{var p=JSON.parse(atob(gt.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")));if(p.exp*1000>Date.now()+60000){useToken("google",gt);return}}catch(e){}}
 initLiff().then(function(ok){
   if(ok&&liff.isLoggedIn()){var t=liff.getIDToken();if(t){useToken("line",t);return}}
   if(ok&&inLine){liff.login();return}
-  renderLogin();});
+  renderLogin(BIND?"請用 LINE 登入，訂單 "+BIND.bind+" 就會自動綁定你的 LINE。":"");});
 })();
 </script>
 {{ end }}
