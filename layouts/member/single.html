@@ -109,6 +109,7 @@ input[readonly]{background:var(--soft);color:var(--muted)}
 .mb a.btn{text-decoration:none}
 </style>
 <link rel="preconnect" href="https://script.google.com"><link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+<link rel="preconnect" href="https://static.line-scdn.net"><link rel="preconnect" href="https://api.line.me"><link rel="preload" as="script" href="https://static.line-scdn.net/liff/edge/2/sdk.js">
 {{ end }}
 {{ define "main" }}
 <div class="mb-page mb">
@@ -223,11 +224,34 @@ function showBound(b){BIND=null;try{history.replaceState(null,"",location.pathna
     var a=document.createElement("a");a.className="btn btn-line";a.href=LINE_ADD;a.style.marginTop="10px";a.innerHTML=LINEICO+"加入大正的 LINE 好友（才收得到通知）";box.appendChild(document.createElement("br"));box.appendChild(a);}).catch(function(){})}
   box.scrollIntoView({block:"start"});}
 
+// ---------- 只綁定訂單（從預約成功頁／確認信的 LINE 連結進來）：不讀整個會員中心，綁好就顯示，客人不用等 ----------
+function bindOnly(token){S.kind="line";S.token=token;loading("正在綁定訂單 "+BIND.bind+"…");
+  jsonp({page:"lineBind",lt:token,bind:BIND.bind,bt:BIND.bt}).then(function(d){
+    if(!d||!d.ok){BIND=null;useToken("line",token);return}
+    var b=d.bound||{},ok=b.status==="bound"||b.status==="already";try{history.replaceState(null,"",location.pathname)}catch(e){}BIND=null;
+    var msg={bound:"訂單確認大約 1 分鐘內會傳到你的 LINE。之後的付款確認、諮詢提醒，也都會從 LINE 通知你。",
+      already:"這筆訂單之前就綁定你的 LINE 了，不用再做什麼。",
+      other:"這筆訂單已經綁定另一個 LINE 帳號。如果要改綁，請直接在 LINE 告訴大正。",
+      cancelled:"這筆訂單已經取消，所以沒有綁定。",
+      bad:"綁定連結不完整或已失效。請直接在大正的 LINE 傳訂單編號，也可以完成綁定。"}[b.status]||"";
+    $("#appBottom").innerHTML="";
+    $("#app").innerHTML='<div class="card stack" style="text-align:center"><div style="font-size:44px;line-height:1">'+(ok?"✅":"⚠️")+'</div>'+
+      '<h1 style="font-size:22px;margin:0">'+(ok?'訂單 <span style="white-space:nowrap">'+esc(b.id)+'</span> 已綁定你的 LINE':"沒有完成綁定")+'</h1><p class="muted" style="margin:0">'+esc(msg)+'</p>'+
+      '<div id="bindFriend"></div>'+
+      (window.liff&&liff.isInClient&&liff.isInClient()?'<button class="btn btn-line" id="bClose">'+LINEICO+'回到 LINE</button>':'')+
+      '<button class="btn btn-ghost" id="bMine">查看我的預約</button>'+
+      '<p class="muted" style="margin:0;font-size:13px">之後也可以在大正 LINE 的選單點「我的訂單」查看。</p></div>';
+    var c=$("#bClose");if(c)c.onclick=function(){try{liff.closeWindow()}catch(e){}};
+    $("#bMine").onclick=function(){useToken("line",token)};
+    if(ok&&liff.getFriendship)liff.getFriendship().then(function(f){if(f&&f.friendFlag)return;
+      $("#bindFriend").innerHTML='<a class="btn btn-line" href="'+esc(LINE_ADD)+'">'+LINEICO+'加入大正的 LINE 好友（才收得到通知）</a>'}).catch(function(){});
+  }).catch(function(){renderError()});}
+
 // ---------- 開始 ----------
 var gt="";try{gt=sessionStorage.getItem("mb_gt")||""}catch(e){}
 if(gt&&!inLine&&!BIND){try{var p=JSON.parse(atob(gt.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")));if(p.exp*1000>Date.now()+60000){useToken("google",gt);return}}catch(e){}}
 initLiff().then(function(ok){
-  if(ok&&liff.isLoggedIn()){var t=liff.getIDToken();if(t){useToken("line",t);return}}
+  if(ok&&liff.isLoggedIn()){var t=liff.getIDToken();if(t){if(BIND)bindOnly(t);else useToken("line",t);return}}
   if(ok&&inLine){liff.login();return}
   renderLogin(BIND?"請用 LINE 登入，訂單 "+BIND.bind+" 就會自動綁定你的 LINE。":"");});
 })();
