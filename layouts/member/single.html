@@ -238,14 +238,23 @@ function bindOnly(token){S.kind="line";S.token=token;loading("正在綁定訂單
     $("#app").innerHTML='<div class="card stack" style="text-align:center"><div style="font-size:44px;line-height:1">'+(ok?"✅":"⚠️")+'</div>'+
       '<h1 style="font-size:22px;margin:0">'+(ok?'訂單 <span style="white-space:nowrap">'+esc(b.id)+'</span> 已綁定你的 LINE':"沒有完成綁定")+'</h1><p class="muted" style="margin:0">'+esc(msg)+'</p>'+
       '<div id="bindFriend"></div>'+
-      (window.liff&&liff.isInClient&&liff.isInClient()?'<button class="btn btn-line" id="bClose">'+LINEICO+'回到 LINE</button>':'')+
+      '<button class="btn btn-line" id="bClose">'+LINEICO+'回到 LINE</button>'+
+      (ok?'<p class="muted" id="bBack" style="margin:0;font-size:13px">完成了！可以直接關閉這個畫面，回到 LINE 聊天室。</p>':'')+
       '<button class="btn btn-ghost" id="bMine">查看我的預約</button>'+
       '<p class="muted" style="margin:0;font-size:13px">之後也可以在大正 LINE 的選單點「我的訂單」查看。</p></div>';
-    var c=$("#bClose");if(c)c.onclick=function(){try{liff.closeWindow()}catch(e){}};
+    $("#bClose").onclick=backToLine;
+    // 綁定成功：倒數 3 秒自動回到 LINE（在 LINE 裡打開才關得掉；關不掉就改開大正的 LINE）
+    if(ok){var n=3,bb=$("#bBack"),tm=setInterval(function(){n--;if(bb)bb.textContent="完成了！"+(n>0?n+" 秒後自動回到 LINE…":"正在回到 LINE…");if(n<=0){clearInterval(tm);backToLine()}},1000);
+      $("#bMine").addEventListener("click",function(){clearInterval(tm)});}
     $("#bMine").onclick=function(){useToken("line",token)};
     if(ok&&liff.getFriendship)liff.getFriendship().then(function(f){if(f&&f.friendFlag)return;
       $("#bindFriend").innerHTML='<a class="btn btn-line" href="'+esc(LINE_ADD)+'">'+LINEICO+'加入大正的 LINE 好友（才收得到通知）</a>'}).catch(function(){});
   }).catch(function(){renderError()});}
+
+function backToLine(){var inClient=false;try{inClient=!!(window.liff&&liff.isInClient&&liff.isInClient())}catch(e){}
+  if(inClient){try{liff.closeWindow()}catch(e){}}
+  // 1 秒後還在這一頁＝沒關掉（例如用相機掃 QR、在一般瀏覽器打開）：直接開大正的 LINE 官方帳號
+  setTimeout(function(){if(document.visibilityState==="visible"){var bb=$("#bBack");if(bb)bb.textContent="如果沒有自動跳回去，請直接打開 LINE，訂單確認會出現在大正的聊天室。";location.href=LINE_ADD}},1000);}
 
 // ---------- 開始 ----------
 var gt="";try{gt=sessionStorage.getItem("mb_gt")||""}catch(e){}
