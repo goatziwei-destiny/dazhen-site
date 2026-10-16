@@ -1,0 +1,18 @@
+{{/* 電子報訂閱框（Kit，原 ConvertKit）。config.toml 的 newsletterFormId 填 Kit 表單編號才會真的訂閱；
+   還沒填、但 newsletterPreview = true 時只顯示樣子（預覽用），兩個都沒有就整個不顯示。
+   用法：partial "newsletter.html" (dict "variant" "article|side|dark") */}}
+{{ $id := site.Params.newsletterFormId | default "" }}
+{{ if or $id site.Params.newsletterPreview }}
+{{ $v := .variant | default "article" }}
+<div class="nl nl-{{ $v }}">
+  <div class="nl-txt">
+    <div class="nl-h">{{ if eq $v "dark" }}訂閱大正的命理小信{{ else }}喜歡這樣的內容？訂閱大正的命理小信{{ end }}</div>
+    <p class="nl-p">不定期寄給你命理小知識、新文章，和大正的生活觀察。隨時可以取消。</p>
+  </div>
+  <form class="nl-form" {{ with $id }}action="https://app.kit.com/forms/{{ . }}/subscriptions" method="post" target="nlFrame"{{ end }} data-preview="{{ if $id }}0{{ else }}1{{ end }}">
+    <input type="email" name="email_address" placeholder="你的 Email" required aria-label="Email">
+    <button type="submit">訂閱</button>
+  </form>
+  <p class="nl-msg" role="status" hidden></p>
+</div>
+{{ end }}

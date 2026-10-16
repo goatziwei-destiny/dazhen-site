@@ -225,6 +225,10 @@
 </div>
 {{ end }}
 
+{{/* 電子報訂閱（文章讀完的位置） */}}
+<div class="container" style="padding:8px 16px 0">{{ partial "newsletter.html" (dict "variant" "article") }}</div>
+{{ partial "newsletter-js.html" . }}
+
 {{/* ③ 你可能喜歡：依分類、標籤自動推薦，不足用最新文章補，排除已在延伸閱讀的 */}}
 {{ $related := where (where (.Site.RegularPages.Related .) "Section" "blog") "Params.noindex" "ne" true }}
 {{ $others := where (where (where .Site.RegularPages "Section" "blog") "Params.noindex" "ne" true) "Permalink" "ne" .Permalink }}

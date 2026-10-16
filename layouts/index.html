@@ -483,12 +483,15 @@ function renderSite(S) {
 '</div></section>' +
 '</main>' +
 
-'<footer class="footer"><div class="container">' + renderSocialLinks(S.socialLinks) +
+'<footer class="footer"><div class="container"><div id="nlSlot"></div>' + renderSocialLinks(S.socialLinks) +
   '<p>' + (S.footerText||'') + '　·　<a href="/privacy-policy/" style="color:inherit">隱私權政策</a></p>' +
 '</div></footer>' +
 
 '<div class="sticky-cta" id="stickyCta"><a href="/booking/" class="btn btn-primary">預約一對一</a><a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-warm">加 LINE 聊聊</a><button type="button" class="x" id="stickyClose" aria-label="關閉預約列">×</button></div>';
   setupStickyCta_();
+  // 電子報訂閱框：內容由 Hugo 產生在 #nlTpl，畫面重畫後放進 footer
+  var nlT = document.getElementById('nlTpl'), nlS = document.getElementById('nlSlot');
+  if (nlT && nlS) nlS.appendChild(nlT.content.cloneNode(true));
 }
 
 // 手機底部固定預約列：捲過開場才出現，按 × 關掉後這次瀏覽不再出現
@@ -587,5 +590,7 @@ if (document.getElementById('app').children && document.getElementById('app').ch
   document.body.appendChild(s);
 })();
 </script>
+<template id="nlTpl">{{ partial "newsletter.html" (dict "variant" "dark") }}</template>
+{{ partial "newsletter-js.html" . }}
 </body>
 </html>

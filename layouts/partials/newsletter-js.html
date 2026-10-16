@@ -1,0 +1,23 @@
+{{ if or site.Params.newsletterFormId site.Params.newsletterPreview }}
+<iframe name="nlFrame" title="訂閱" style="display:none"></iframe>
+<style>
+.nl{border-radius:14px;padding:22px 24px;display:grid;gap:14px;align-items:center}
+.nl-article{background:#fbf3ea;border:1px solid #eedcc6;max-width:760px;margin:0 auto}
+.nl-side{background:#fff;border:1px solid #e7e2d8;padding:16px}.nl-side .nl-h{font-size:14px}.nl-side .nl-p{font-size:12.5px}
+.nl-dark{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);max-width:640px;margin:0 auto 18px;text-align:left}
+.nl-h{font-weight:700;font-size:17px;color:var(--navy);line-height:1.5}.nl-dark .nl-h{color:#fff}
+.nl-p{margin:4px 0 0;font-size:13.5px;line-height:1.7;color:#78716c}.nl-dark .nl-p{color:var(--text-light,#c8cdd4)}
+.nl-form{display:flex;gap:8px;flex-wrap:wrap}
+.nl-form input{flex:1 1 180px;min-width:0;padding:10px 12px;border:1px solid #d6d3d1;border-radius:8px;font:inherit;font-size:14px;background:#fff}
+.nl-form button{padding:10px 20px;border:0;border-radius:8px;background:#cc8854;color:#fff;font:inherit;font-weight:700;font-size:14px;cursor:pointer}
+.nl-msg{margin:0;font-size:13px;color:#4f7d94}.nl-dark .nl-msg{color:#fff}
+@media (min-width:720px){.nl-article,.nl-dark{grid-template-columns:1.2fr 1fr}.nl-article .nl-msg,.nl-dark .nl-msg{grid-column:1/-1}}
+</style>
+<script>
+document.addEventListener('submit',function(e){var f=e.target;if(!f.classList||!f.classList.contains('nl-form'))return;
+  var box=f.closest('.nl'),m=box.querySelector('.nl-msg');m.hidden=false;
+  if(f.dataset.preview==='1'){e.preventDefault();m.textContent='（預覽）電子報還沒開放，正式上線後這裡就會收到訂閱。';return;}
+  setTimeout(function(){f.hidden=true;m.textContent='謝謝訂閱！請到信箱收一封確認信，按下確認才算完成。';},400);
+});
+</script>
+{{ end }}
