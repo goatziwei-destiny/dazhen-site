@@ -6,6 +6,13 @@
 {{ if eq .Data.Plural "subtopics" }}{{ $curSub = .Params.slug }}{{ $curTopic = .Params.topic }}{{ end }}
 {{ $subs := (site.GetPage "/subtopics").Pages.ByWeight }}
 <aside class="blog-side">
+  {{/* 文章列表首頁的「第一次來」放在頁面上方整排（blog-start-band），側欄就不重複 */}}
+  {{ if not (and (eq $cur.Section "blog") (eq $cur.Kind "section")) }}{{ with partial "blog-start.html" . }}
+  <section class="side-box side-start-box" aria-label="第一次來？從這幾篇開始">
+    <h2 class="side-start-h">第一次來？從這幾篇開始</h2>
+    <ol class="side-start">{{ range . }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>{{ end }}</ol>
+  </section>
+  {{ end }}{{ end }}
   <details class="side-box" id="topicToc" open>
     <summary>依主題閱讀</summary>
     <ul class="side-list">
@@ -28,14 +35,6 @@
       {{ end }}
     </ul>
   </details>
-  {{ $starts := slice }}
-  {{ range (site.GetPage "/topics").Pages.ByWeight }}{{ with .Params.pillar }}{{ with site.GetPage (printf "/blog/%s" .) }}{{ $starts = $starts | append . }}{{ end }}{{ end }}{{ end }}
-  {{ range where $all "Params.featured" true }}{{ $starts = $starts | append . }}{{ end }}
-  {{ with $starts }}
-  <details class="side-box" open>
-    <summary>第一次來？從這幾篇開始</summary>
-    <ol class="side-start">{{ range first 5 (. | uniq) }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>{{ end }}</ol>
-  </details>
-  {{ end }}
 </aside>
-<script>(function(){ if (window.matchMedia('(max-width:860px)').matches) { var d = document.querySelectorAll('.blog-side > details'); for (var i = 0; i < d.length; i++) d[i].removeAttribute('open'); } })();</script>
+{{/* 手機（含橫放）：「依主題閱讀」先收起來；「第一次來」不收 */}}
+<script>(function(){ if (window.matchMedia('(max-width:960px)').matches) { var d = document.getElementById('topicToc'); if (d) d.removeAttribute('open'); } })();</script>

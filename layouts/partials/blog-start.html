@@ -1,0 +1,6 @@
+{{/* 第一次來？從這幾篇開始：各主題的總綱文章＋標了 featured: true 的文章（最多 6 篇）。文章列表首頁放在最上面、整排顯示；主題頁放在側欄最上面 */}}
+{{ $all := where (where (where site.RegularPages "Section" "blog") "Params.draft" "ne" true) "Params.noindex" "ne" true }}
+{{ $starts := slice }}
+{{ range (site.GetPage "/topics").Pages.ByWeight }}{{ with .Params.pillar }}{{ with site.GetPage (printf "/blog/%s" .) }}{{ $starts = $starts | append . }}{{ end }}{{ end }}{{ end }}
+{{ range where $all "Params.featured" true }}{{ $starts = $starts | append . }}{{ end }}
+{{ return first 6 ($starts | uniq) }}
