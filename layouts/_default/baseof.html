@@ -41,6 +41,9 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}img
 .site-nav-links a{font-size:13px;color:var(--text-light);font-weight:500;text-decoration:none}
 .site-nav-links a:hover{color:#fff}
 @media (max-width:560px){.site-nav{padding:0 12px}.site-nav-links{gap:10px}.site-nav-links a{font-size:12px}.site-nav-brand{font-size:14px;letter-spacing:0;white-space:nowrap}}
+/* 手機上連結字小，點的範圍加大（上下各 12px），比較不會點不到 */
+@media (max-width:560px){.site-nav-links a{display:inline-block;padding:12px 2px;font-size:13px}.site-nav-links{gap:8px}}
+@media (max-width:360px){.site-nav-links a{font-size:12px}.site-nav-links{gap:6px}}
 @media (max-width:480px){.site-nav-links a[href="/"]{display:none}}
 .site-footer{background:var(--navy);color:var(--text-muted);text-align:center;padding:24px;font-size:12px;margin-top:60px}
 .social-links{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}

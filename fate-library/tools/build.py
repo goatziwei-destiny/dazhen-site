@@ -66,7 +66,7 @@ def build_web(q=80):
     # 網站版不顯示上方的標題與說明文字（遊戲畫面裡已經有書庫名稱）
     s=s.replace('<header>','<header style="display:none">',1)
     s=s.replace("const SITE='https://dazhen-site.netlify.app';","const SITE='';").replace("a.target='_blank';a.rel='noopener';","a.target='_top';")
-    og='<meta property="og:title" content="命運書庫｜大正命理諮詢"><meta property="og:description" content="住在書庫裡的羊——大正，帶你翻翻命理小知識。">'
+    og='<meta name="description" content="住在書庫裡的羊——大正，帶你翻翻命理小知識。"><meta property="og:title" content="命運書庫｜大正命理諮詢"><meta property="og:description" content="住在書庫裡的羊——大正，帶你翻翻命理小知識。">'
     page='<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'+og+'</head><body style="margin:0">'+s+'</body></html>'
     open(os.path.join(out,'index.html'),'w',encoding='utf-8').write(page)
     os.remove(ct);os.remove(fw)

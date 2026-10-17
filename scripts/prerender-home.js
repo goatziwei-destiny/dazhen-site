@@ -37,7 +37,8 @@ function makeSandbox() {
     body: { appendChild: () => {} },
   };
   const window = { addEventListener: () => {} };
-  const sandbox = { document, window, console, setTimeout: () => 0, location: { pathname: '/' } };
+  // 首頁程式會讀 navigator（判斷是不是在 LINE 裡）、location.search、localStorage（看過命運書庫沒）；沒有的話整段會失敗、首頁變成空白給搜尋引擎
+  const sandbox = { document, window, console, setTimeout: () => 0, location: { pathname: '/', search: '' }, navigator: { userAgent: '' }, localStorage: { getItem: () => null, setItem: () => {} } };
   sandbox.window = sandbox;  // 頁面程式把 window._siteConfigCb 掛在 window 上
   sandbox.window.document = document;
   return { sandbox, app, metaDesc };
