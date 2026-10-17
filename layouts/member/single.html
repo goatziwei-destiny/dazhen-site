@@ -102,7 +102,11 @@ input[readonly]{background:var(--soft);color:var(--muted)}
 .mb-page{padding-block:32px 72px;min-height:calc(100vh - 230px)}
 .mb-page .container{max-width:600px}
 .mb-book{margin-top:20px}
-.mb-book .bk-frame{width:100%;height:1600px;border:0;display:block;background:transparent;transition:height .2s}
+/* 再預約：打開時變成蓋滿畫面的一層（導覽列下面），表單只在框裡捲，不會跟整頁兩層捲動 */
+.mb-book.full{position:fixed;left:0;right:0;bottom:0;z-index:90;margin:0;border-radius:0;max-width:none;overflow:hidden;padding:10px 12px 0}
+.mb-book.full .bk-wrap{position:relative}
+body.mb-lock{overflow:hidden}
+.mb-book .bk-frame{width:100%;height:600px;border:0;display:block;background:transparent}
 .mb-book .bk-load{text-align:center;padding:40px 16px 24px;color:#78716c;font-size:15px;line-height:1.8}.mb-book .bk-load i{display:block;width:40px;height:40px;margin:0 auto 14px;border:4px solid #e7e5e4;border-top-color:#b8864b;border-radius:50%;animation:bkspin .9s linear infinite}@keyframes bkspin{to{transform:rotate(360deg)}}
 .mb .loading{text-align:center;padding:48px 0;color:var(--muted)}
 .mb #gBtn{display:flex;justify-content:center;min-height:44px}
@@ -118,14 +122,16 @@ input[readonly]{background:var(--soft);color:var(--muted)}
     <section class="mb-book card" id="mbBooking" hidden aria-label="再預約">
       <div class="sec-h"><h2>再預約</h2><button class="btn btn-sm btn-ghost" type="button" id="bkClose">收起</button></div>
       <p class="muted" style="margin:0 0 8px">跟網站「線上預約」是同一份表單，上次的資料會自動帶入。</p>
-      <div class="bk-load" id="bkLoading" role="status"><i></i>預約表單載入中，請稍候約 10 秒…</div>
-      <iframe class="bk-frame" id="bookingFrame" data-booking-frame title="線上預約表單"></iframe>
+      <div class="bk-wrap">
+        <iframe class="bk-frame" id="bookingFrame" data-booking-frame title="線上預約表單"></iframe>
+        <div class="bk-load" id="bkLoading" role="status" style="position:absolute;left:0;right:0;top:0"><i></i>預約表單載入中，請稍候…</div>
+      </div>
     </section>
     <div id="appBottom" style="margin-top:16px"></div>
   </div>
 </div>
 <div id="layer"></div>
-<script src="/booking-bridge.js?v=20261013"></script>
+<script src="/booking-bridge.js?v=20261017"></script>
 <script>
 (function(){
 var API={{ .Site.Params.bookingFormUrl }}, LIFF_ID={{ .Site.Params.liffMemberId | default "" }}, GCID={{ .Site.Params.googleLoginClientId | default "" }};
@@ -201,11 +207,14 @@ function renderHome(stale){var d=S.data,m=d.member,up=d.upcoming,name=m.name||"�
 
 // ---------- 再預約：同一份預約表單 ----------
 var bkLoaded=false;
-function closeBooking(){var w=$("#mbBooking");if(w)w.hidden=true}
+var bkFit=null;
+function closeBooking(){var w=$("#mbBooking");if(w){w.hidden=true;w.classList.remove("full")}document.body.classList.remove("mb-lock")}
 function openBooking(){var w=$("#mbBooking");w.hidden=false;
+  var nav=document.querySelector(".site-nav");w.style.top=(nav?nav.getBoundingClientRect().bottom:0)+"px";w.classList.add("full");document.body.classList.add("mb-lock");
+  if(!bkFit)bkFit=window.dazhenFitFrame($("#bookingFrame"));bkFit();
   if(!bkLoaded){bkLoaded=true;var u=window.dazhenBookingUrl(API);if(S.data&&S.data.rb)u+="&rb="+encodeURIComponent(S.data.rb);if(S.kind==="line"&&S.token)u+="&lt="+encodeURIComponent(S.token);
     $("#bookingFrame").src=u;setTimeout(function(){var l=$("#bkLoading");if(l)l.remove()},40000);}
-  setTimeout(function(){w.scrollIntoView({behavior:"smooth",block:"start"})},50);}
+}
 $("#bkClose").onclick=closeBooking;
 
 // ---------- LINE 綁定訂單的結果 ----------
