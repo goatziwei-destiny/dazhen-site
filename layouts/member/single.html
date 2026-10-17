@@ -124,7 +124,7 @@ body.mb-lock{overflow:hidden}
       <p class="muted" style="margin:0 0 8px">跟網站「線上預約」是同一份表單，上次的資料會自動帶入。</p>
       <div class="bk-wrap">
         <iframe class="bk-frame" id="bookingFrame" data-booking-frame title="線上預約表單"></iframe>
-        <div class="bk-load" id="bkLoading" role="status" style="position:absolute;left:0;right:0;top:0"><i></i>預約表單載入中，請稍候…</div>
+        <div class="bk-load" id="bkLoading" role="status" style="position:absolute;left:0;right:0;top:0;bottom:0;background:#fff"><i></i>預約表單載入中，請稍候…</div>
       </div>
     </section>
     <div id="appBottom" style="margin-top:16px"></div>
@@ -211,7 +211,7 @@ var bkFit=null;
 function closeBooking(){var w=$("#mbBooking");if(w){w.hidden=true;w.classList.remove("full")}document.body.classList.remove("mb-lock")}
 function openBooking(){var w=$("#mbBooking");w.hidden=false;
   var nav=document.querySelector(".site-nav");w.style.top=(nav?nav.getBoundingClientRect().bottom:0)+"px";w.classList.add("full");document.body.classList.add("mb-lock");
-  if(!bkFit)bkFit=window.dazhenFitFrame($("#bookingFrame"));bkFit();
+  if(!bkFit){bkFit=window.dazhenFitFrame($("#bookingFrame"));$("#bookingFrame").addEventListener("load",function(){if(!this.src)return;setTimeout(function(){var l=$("#bkLoading");if(l)l.remove()},600)})}bkFit();
   if(!bkLoaded){bkLoaded=true;var u=window.dazhenBookingUrl(API);if(S.data&&S.data.rb)u+="&rb="+encodeURIComponent(S.data.rb);if(S.kind==="line"&&S.token)u+="&lt="+encodeURIComponent(S.token);
     $("#bookingFrame").src=u;setTimeout(function(){var l=$("#bkLoading");if(l)l.remove()},40000);}
 }
