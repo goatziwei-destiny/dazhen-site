@@ -49,6 +49,13 @@ def build_web(q=80):
     mp=open(P('assets','media','loop.mp3'),'rb').read();mname='loop.'+hashlib.md5(mp).hexdigest()[:8]+'.mp3'
     open(os.path.join(out,mname),'wb').write(mp)
     s=open(P('src','game-src.html'),encoding='utf-8').read()
+    # 網站版加「離開書庫」的按鈕（畫面最上面）：從網站點進來＝回上一頁；在 LINE 裡直接打開＝回到 LINE 聊天；其他＝回首頁
+    # 要在字型子集化之前加，按鈕上的字才會用像素字型
+    s=s.replace('<div class="wrap">','<div class="wrap">\n  <div class="exitbar"><a id="exitLib" href="/">← 回大正首頁</a></div>',1)
+    s=s.replace('.ctl{display:flex;','.exitbar a{display:inline-block;color:var(--gold);border:2px solid var(--gold);padding:.35rem .9rem;font-size:.95rem;text-decoration:none}.exitbar a:focus-visible{outline:2px solid var(--paper);outline-offset:2px}body.capture .exitbar{display:none}\n.ctl{display:flex;',1)
+    s=s.replace('<script>','<script>\n(function(){var a=document.getElementById(\'exitLib\');if(!a)return;var fromSite=false;try{fromSite=!!document.referrer&&new URL(document.referrer).origin===location.origin&&history.length>1;}catch(e){}'
+      'if(fromSite){a.textContent=\'← 離開書庫，回上一頁\';a.addEventListener(\'click\',function(e){e.preventDefault();history.back();});}'
+      'else if(/\\bLine\\//i.test(navigator.userAgent)){a.textContent=\'← 離開書庫，回到 LINE\';a.href=\'https://line.me/R/oaMessage/@159cibme/\';}})();\n</script>\n<script>',1)
     chars=set(c for c in s if ord(c)>127)|set('0123456789')
     ct=P('dist','chars.txt');fw=P('dist','font.woff2');open(ct,'w',encoding='utf-8').write(''.join(sorted(chars)))
     subprocess.run([sys.executable,'-m','fontTools.subset',P('assets','media','Cubic_11_1.100_R.ttf'),f'--text-file={ct}','--flavor=woff2',f'--output-file={fw}'],check=True,capture_output=True)
