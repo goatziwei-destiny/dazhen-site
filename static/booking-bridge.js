@@ -40,7 +40,10 @@
     track('booking_view', { page: location.pathname });
     url.searchParams.set('bridge', nonce);
     var tf = new URLSearchParams(location.search).get('testfill'); if (tf) url.searchParams.set('testfill', tf);
-    var cd = new URLSearchParams(location.search).get('code'); if (cd && /^[A-Za-z0-9]{4,12}$/.test(cd)) url.searchParams.set('code', cd);   // 專屬優惠連結（/booking/?code=XXXXXX）：表單自動套用優惠
+    // 專屬優惠連結（/booking/?code=XXXXXX）：表單自動套用優惠。先記在這個分頁裡，LINE 登入跳轉回來網址沒帶 code 也找得回來
+    var cd = new URLSearchParams(location.search).get('code');
+    try { if (cd) sessionStorage.setItem('dz_code', cd); else cd = sessionStorage.getItem('dz_code'); } catch (_) {}
+    if (cd && /^[A-Za-z0-9]{4,12}$/.test(cd)) url.searchParams.set('code', cd);   // 專屬優惠連結（/booking/?code=XXXXXX）：表單自動套用優惠
     var rb = new URLSearchParams(location.search).get('rb'); if (rb && /^[A-Za-z0-9.\-]{8,80}$/.test(rb)) url.searchParams.set('rb', rb);   // 信裡「下次預約點這裡」：沿用上次的命盤資料
     return url.href;
   };
@@ -116,6 +119,7 @@
     if (origin.protocol !== 'https:' || !/^(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(origin.hostname)) return;
     if (!/^GR\d{8}-\d{2}$/.test(data.batchId) || !/^@[a-zA-Z0-9._-]+$/.test(data.basicId)) return;
     redirected = true;
+    try { sessionStorage.removeItem('dz_code'); } catch (_) {}   // 優惠碼用掉了，這個分頁之後再預約不再自動帶
     busyOv_(false);
     // 送出後表單會縮短、成功頁出現在最上面；把網頁捲回表單頂端，避免手機畫面還停在原本很下面的位置而看不到成功頁
     scrollFrame_();

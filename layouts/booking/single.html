@@ -46,7 +46,7 @@ document.getElementById('bookingFrame').addEventListener('load', function () { i
     s.src = 'https://static.line-scdn.net/liff/edge/2/sdk.js';
     s.onload = function () {
       liff.init({ liffId: liffId }).then(function () {
-        if (!liff.isLoggedIn()) { liff.login(); return; }
+        if (!liff.isLoggedIn()) { liff.login({ redirectUri: location.href }); return; }   // 帶原網址回來（專屬優惠連結的 ?code= 不會掉）
         clearTimeout(timer); load(liff.getIDToken() || '');
       }).catch(function () { clearTimeout(timer); load(''); });
     };
