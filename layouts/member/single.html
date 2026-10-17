@@ -198,7 +198,7 @@ function renderHome(stale){var d=S.data,m=d.member,up=d.upcoming,name=m.name||"�
   var bottom='<div class="stack"><section class="card" aria-labelledby="oh"><div class="sec-h"><h2 id="oh">購買紀錄</h2><span class="muted">'+d.orders.length+' 筆</span></div>'+
    (d.orders.length?d.orders.map(function(o){return '<div class="order"><div style="min-width:0"><div class="id"><span class="mono">'+esc(o.id)+'</span><button type="button" data-copy="'+esc(o.id)+'">複製</button></div><div class="title">'+esc(o.title)+'</div><div class="muted mono">'+esc(o.when)+'</div></div>'+
      '<div><div class="amt">'+money(o.amount)+'</div>'+(o.off?'<div class="muted" style="text-align:right;font-size:12.5px">專屬優惠 −'+money(o.off)+'</div>':'')+'<div style="text-align:right"><span class="pill '+pillOf(o.status)+'">'+esc(o.status)+'</span></div></div>'+
-     (o.survey?'<div class="sub"><a class="btn btn-sm" href="'+esc(o.survey)+'">填寫諮詢回饋問卷</a></div>':'')+'</div>'}).join(""):'<p class="muted">還沒有購買紀錄。如果你以前用別的 Email 或沒有用 LINE 預約過，那幾筆訂單不會出現在這裡。</p>')+
+     (o.survey?'<div class="sub"><a class="btn btn-sm" href="'+esc(o.survey)+'">填寫諮詢回饋問卷</a></div>':'')+'</div>'}).join(""):(m.kind==="line"?'<p class="muted">這裡還沒有訂單。以前預約過的話，打開大正寄給你的任何一封信，點最下面的「用 LINE 開啟」，訂單就會自動接上。</p>':'<p class="muted">還沒有購買紀錄。如果你以前用別的 Email 預約，那幾筆訂單不會出現在這裡。</p>'))+
    '</section><section class="card stack"><div class="sec-h"><h2>登入方式</h2></div><div><span class="pill ok">'+(m.kind==="line"?"LINE":"Google（"+esc(m.email)+"）")+'</span></div>'+
    (inLine?'':'<button class="btn btn-ghost" id="logout">登出</button>')+'</section></div>';
   $("#app").innerHTML=top;$("#appBottom").innerHTML=bottom;
