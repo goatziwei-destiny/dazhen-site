@@ -40,6 +40,7 @@
     track('booking_view', { page: location.pathname });
     url.searchParams.set('bridge', nonce);
     var tf = new URLSearchParams(location.search).get('testfill'); if (tf) url.searchParams.set('testfill', tf);
+    var cd = new URLSearchParams(location.search).get('code'); if (cd && /^[A-Za-z0-9]{4,12}$/.test(cd)) url.searchParams.set('code', cd);   // 專屬優惠連結（/booking/?code=XXXXXX）：表單自動套用優惠
     var rb = new URLSearchParams(location.search).get('rb'); if (rb && /^[A-Za-z0-9.\-]{8,80}$/.test(rb)) url.searchParams.set('rb', rb);   // 信裡「下次預約點這裡」：沿用上次的命盤資料
     return url.href;
   };
