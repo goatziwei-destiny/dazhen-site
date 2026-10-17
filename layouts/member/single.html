@@ -102,7 +102,11 @@ input[readonly]{background:var(--soft);color:var(--muted)}
 .mb-page{padding-block:32px 72px;min-height:calc(100vh - 230px)}
 .mb-page .container{max-width:600px}
 .mb-book{margin-top:20px}
-.mb-book .bk-frame{width:100%;height:1600px;border:0;display:block;background:transparent;transition:height .2s}
+/* 再預約：打開時變成蓋滿畫面的一層（導覽列下面），表單只在框裡捲，不會跟整頁兩層捲動 */
+.mb-book.full{position:fixed;left:0;right:0;bottom:0;z-index:90;margin:0;border-radius:0;max-width:none;overflow:hidden;padding:10px 12px 0}
+.mb-book.full .bk-wrap{position:relative}
+body.mb-lock{overflow:hidden}
+.mb-book .bk-frame{width:100%;height:600px;border:0;display:block;background:transparent}
 .mb-book .bk-load{text-align:center;padding:40px 16px 24px;color:#78716c;font-size:15px;line-height:1.8}.mb-book .bk-load i{display:block;width:40px;height:40px;margin:0 auto 14px;border:4px solid #e7e5e4;border-top-color:#b8864b;border-radius:50%;animation:bkspin .9s linear infinite}@keyframes bkspin{to{transform:rotate(360deg)}}
 .mb .loading{text-align:center;padding:48px 0;color:var(--muted)}
 .mb #gBtn{display:flex;justify-content:center;min-height:44px}
@@ -118,14 +122,16 @@ input[readonly]{background:var(--soft);color:var(--muted)}
     <section class="mb-book card" id="mbBooking" hidden aria-label="再預約">
       <div class="sec-h"><h2>再預約</h2><button class="btn btn-sm btn-ghost" type="button" id="bkClose">收起</button></div>
       <p class="muted" style="margin:0 0 8px">跟網站「線上預約」是同一份表單，上次的資料會自動帶入。</p>
-      <div class="bk-load" id="bkLoading" role="status"><i></i>預約表單載入中，請稍候約 10 秒…</div>
-      <iframe class="bk-frame" id="bookingFrame" data-booking-frame title="線上預約表單"></iframe>
+      <div class="bk-wrap">
+        <iframe class="bk-frame" id="bookingFrame" data-booking-frame title="線上預約表單"></iframe>
+        <div class="bk-load" id="bkLoading" role="status" style="position:absolute;left:0;right:0;top:0;bottom:0;background:#fff"><i></i>預約表單載入中，請稍候…</div>
+      </div>
     </section>
     <div id="appBottom" style="margin-top:16px"></div>
   </div>
 </div>
 <div id="layer"></div>
-<script src="/booking-bridge.js?v=20261013"></script>
+<script src="/booking-bridge.js?v=20261017"></script>
 <script>
 (function(){
 var API={{ .Site.Params.bookingFormUrl }}, LIFF_ID={{ .Site.Params.liffMemberId | default "" }}, GCID={{ .Site.Params.googleLoginClientId | default "" }};
@@ -182,7 +188,7 @@ function renderHome(stale){var d=S.data,m=d.member,up=d.upcoming,name=m.name||"�
    '<div><h1 style="font-size:24px">'+esc(name)+'，你好</h1>'+(stale?'<p class="muted" id="mbSync" style="margin:4px 0 0;font-size:13px">正在更新最新資料…</p>':'')+'</div>';
   if(up){var paid=up.status==="已收款";
     top+='<section class="card next" aria-labelledby="nh"><div class="next-top"><div><div class="eyebrow" id="nh">下一次諮詢</div><div class="when mono">'+esc(up.when)+'</div></div><span class="pill '+pillOf(up.status)+'">'+esc(up.status)+'</span></div>'+
-     '<dl class="kv"><dt>訂單編號</dt><dd class="mono">'+esc(up.id)+'</dd><dt>方案</dt><dd>'+esc(up.title)+'</dd><dt>金額</dt><dd class="mono">'+money(up.amount)+'</dd>'+
+     '<dl class="kv"><dt>訂單編號</dt><dd class="mono">'+esc(up.id)+'</dd><dt>方案</dt><dd>'+esc(up.title)+'</dd><dt>金額</dt><dd class="mono">'+money(up.amount)+(up.off?' <span class="muted">（專屬優惠已折抵 '+money(up.off)+'）</span>':'')+'</dd>'+
      (up.isLine?'<dt>進行方式</dt><dd>時間到了，大正會用 LINE 撥給你</dd>':'<dt>Google Meet</dt><dd>'+(up.meet?'<span class="mono">'+esc(up.meet)+'</span>':'<span class="muted">確認收到匯款後會出現在這裡</span>')+'</dd>')+'</dl>'+
      (paid?'':'<div class="notice" style="margin-bottom:12px">請在訂單成立後 24 小時內完成匯款，匯款後按下面的按鈕回報末五碼。</div>')+
      '<div class="actions">'+(up.meet?'<a class="btn btn-main btn-sm" href="'+esc(up.meet)+'" target="_blank" rel="noopener">進入 Google Meet</a>':'')+(up.cal?'<a class="btn btn-sm" href="'+esc(up.cal)+'" target="_blank" rel="noopener">加到行事曆</a>':'')+
@@ -191,8 +197,8 @@ function renderHome(stale){var d=S.data,m=d.member,up=d.upcoming,name=m.name||"�
   top+='<button class="btn btn-main" id="rebook">'+(d.orders.length?'再預約一次（自動帶入上次資料）':'預約諮詢')+'</button></div>';
   var bottom='<div class="stack"><section class="card" aria-labelledby="oh"><div class="sec-h"><h2 id="oh">購買紀錄</h2><span class="muted">'+d.orders.length+' 筆</span></div>'+
    (d.orders.length?d.orders.map(function(o){return '<div class="order"><div style="min-width:0"><div class="id"><span class="mono">'+esc(o.id)+'</span><button type="button" data-copy="'+esc(o.id)+'">複製</button></div><div class="title">'+esc(o.title)+'</div><div class="muted mono">'+esc(o.when)+'</div></div>'+
-     '<div><div class="amt">'+money(o.amount)+'</div><div style="text-align:right"><span class="pill '+pillOf(o.status)+'">'+esc(o.status)+'</span></div></div>'+
-     (o.survey?'<div class="sub"><a class="btn btn-sm" href="'+esc(o.survey)+'">填寫諮詢回饋問卷</a></div>':'')+'</div>'}).join(""):'<p class="muted">還沒有購買紀錄。如果你以前用別的 Email 或沒有用 LINE 預約過，那幾筆訂單不會出現在這裡。</p>')+
+     '<div><div class="amt">'+money(o.amount)+'</div>'+(o.off?'<div class="muted" style="text-align:right;font-size:12.5px">專屬優惠 −'+money(o.off)+'</div>':'')+'<div style="text-align:right"><span class="pill '+pillOf(o.status)+'">'+esc(o.status)+'</span></div></div>'+
+     (o.survey?'<div class="sub"><a class="btn btn-sm" href="'+esc(o.survey)+'">填寫諮詢回饋問卷</a></div>':'')+'</div>'}).join(""):(m.kind==="line"?'<p class="muted">這裡還沒有訂單。以前預約過的話，打開大正寄給你的任何一封信，點最下面的「用 LINE 開啟」，訂單就會自動接上。</p>':'<p class="muted">還沒有購買紀錄。如果你以前用別的 Email 預約，那幾筆訂單不會出現在這裡。</p>'))+
    '</section><section class="card stack"><div class="sec-h"><h2>登入方式</h2></div><div><span class="pill ok">'+(m.kind==="line"?"LINE":"Google（"+esc(m.email)+"）")+'</span></div>'+
    (inLine?'':'<button class="btn btn-ghost" id="logout">登出</button>')+'</section></div>';
   $("#app").innerHTML=top;$("#appBottom").innerHTML=bottom;
@@ -201,11 +207,14 @@ function renderHome(stale){var d=S.data,m=d.member,up=d.upcoming,name=m.name||"�
 
 // ---------- 再預約：同一份預約表單 ----------
 var bkLoaded=false;
-function closeBooking(){var w=$("#mbBooking");if(w)w.hidden=true}
+var bkFit=null;
+function closeBooking(){var w=$("#mbBooking");if(w){w.hidden=true;w.classList.remove("full")}document.body.classList.remove("mb-lock")}
 function openBooking(){var w=$("#mbBooking");w.hidden=false;
+  var nav=document.querySelector(".site-nav");w.style.top=(nav?nav.getBoundingClientRect().bottom:0)+"px";w.classList.add("full");document.body.classList.add("mb-lock");
+  if(!bkFit){bkFit=window.dazhenFitFrame($("#bookingFrame"));$("#bookingFrame").addEventListener("load",function(){if(!this.src)return;setTimeout(function(){var l=$("#bkLoading");if(l)l.remove()},600)})}bkFit();
   if(!bkLoaded){bkLoaded=true;var u=window.dazhenBookingUrl(API);if(S.data&&S.data.rb)u+="&rb="+encodeURIComponent(S.data.rb);if(S.kind==="line"&&S.token)u+="&lt="+encodeURIComponent(S.token);
     $("#bookingFrame").src=u;setTimeout(function(){var l=$("#bkLoading");if(l)l.remove()},40000);}
-  setTimeout(function(){w.scrollIntoView({behavior:"smooth",block:"start"})},50);}
+}
 $("#bkClose").onclick=closeBooking;
 
 // ---------- LINE 綁定訂單的結果 ----------

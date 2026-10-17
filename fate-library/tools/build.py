@@ -49,6 +49,13 @@ def build_web(q=80):
     mp=open(P('assets','media','loop.mp3'),'rb').read();mname='loop.'+hashlib.md5(mp).hexdigest()[:8]+'.mp3'
     open(os.path.join(out,mname),'wb').write(mp)
     s=open(P('src','game-src.html'),encoding='utf-8').read()
+    # 網站版加「離開書庫」的按鈕（畫面最上面）：從網站點進來＝回上一頁；在 LINE 裡直接打開＝回到 LINE 聊天；其他＝回首頁
+    # 要在字型子集化之前加，按鈕上的字才會用像素字型
+    s=s.replace('<div class="wrap">','<div class="wrap">\n  <div class="exitbar"><a id="exitLib" href="/">← 回大正首頁</a></div>',1)
+    s=s.replace('.ctl{display:flex;','.exitbar a{display:inline-block;color:var(--gold);border:2px solid var(--gold);padding:.35rem .9rem;font-size:.95rem;text-decoration:none}.exitbar a:focus-visible{outline:2px solid var(--paper);outline-offset:2px}body.capture .exitbar{display:none}\n.ctl{display:flex;',1)
+    s=s.replace('<script>','<script>\n(function(){var a=document.getElementById(\'exitLib\');if(!a)return;var fromSite=false;try{fromSite=!!document.referrer&&new URL(document.referrer).origin===location.origin&&history.length>1;}catch(e){}'
+      'if(fromSite){a.textContent=\'← 離開書庫，回上一頁\';a.addEventListener(\'click\',function(e){e.preventDefault();history.back();});}'
+      'else if(/\\bLine\\//i.test(navigator.userAgent)){a.textContent=\'← 離開書庫，回到 LINE\';a.href=\'https://line.me/R/oaMessage/@159cibme/\';}})();\n</script>\n<script>',1)
     chars=set(c for c in s if ord(c)>127)|set('0123456789')
     ct=P('dist','chars.txt');fw=P('dist','font.woff2');open(ct,'w',encoding='utf-8').write(''.join(sorted(chars)))
     subprocess.run([sys.executable,'-m','fontTools.subset',P('assets','media','Cubic_11_1.100_R.ttf'),f'--text-file={ct}','--flavor=woff2',f'--output-file={fw}'],check=True,capture_output=True)
@@ -59,7 +66,7 @@ def build_web(q=80):
     # 網站版不顯示上方的標題與說明文字（遊戲畫面裡已經有書庫名稱）
     s=s.replace('<header>','<header style="display:none">',1)
     s=s.replace("const SITE='https://dazhen-site.netlify.app';","const SITE='';").replace("a.target='_blank';a.rel='noopener';","a.target='_top';")
-    og='<meta property="og:title" content="命運書庫｜大正命理諮詢"><meta property="og:description" content="住在書庫裡的羊——大正，帶你翻翻命理小知識。">'
+    og='<meta name="description" content="住在書庫裡的羊——大正，帶你翻翻命理小知識。"><meta property="og:title" content="命運書庫｜大正命理諮詢"><meta property="og:description" content="住在書庫裡的羊——大正，帶你翻翻命理小知識。">'
     page='<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'+og+'</head><body style="margin:0">'+s+'</body></html>'
     open(os.path.join(out,'index.html'),'w',encoding='utf-8').write(page)
     os.remove(ct);os.remove(fw)

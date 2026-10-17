@@ -50,7 +50,7 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 .nav-brand{font-weight:700;color:#fff;letter-spacing:1px}.nav-brand i{font-style:normal;color:var(--warm)}
 .nav-links{display:flex;gap:22px}.nav-links a{font-size:13px;color:var(--text-light)}.nav-links a:hover{color:#fff}
 .nav-cta{background:var(--accent);color:#fff;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:700;white-space:nowrap}
-@media(max-width:900px){.nav-inner{flex-wrap:wrap;height:auto;padding-top:10px;row-gap:6px}.nav-links{order:3;width:100%;display:flex;gap:18px;overflow-x:auto;white-space:nowrap;padding:2px 0 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.nav-links::-webkit-scrollbar{display:none}[id]{scroll-margin-top:104px}}/* 手機：選單放第二行，可以左右滑（以前直接隱藏，手機看不到「關於大正」等項目） */
+@media(max-width:900px){.nav-inner{flex-wrap:wrap;height:auto;padding-top:10px;row-gap:6px}.nav-links{order:3;width:100%;display:flex;gap:18px;overflow-x:auto;white-space:nowrap;padding:2px 0 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.nav-links::-webkit-scrollbar{display:none}.nav-links a{padding:8px 0}.nav-links{padding-bottom:2px;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}[id]{scroll-margin-top:112px}}/* 手機：選單放第二行，可以左右滑（以前直接隱藏，手機看不到「關於大正」等項目） */
 .hero{padding:64px 0 56px}
 .hero-inner{display:grid;grid-template-columns:1.25fr .75fr;gap:48px;align-items:center}
 .hero h1{font-size:clamp(36px,6vw,56px);line-height:1.2;color:#fff;margin-bottom:12px}.hero h1 i{font-style:normal;color:var(--warm)}
@@ -157,7 +157,7 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 </head>
 <body>
 <div id="app"></div>
-<script src="/booking-bridge.js?v=20261013"></script>
+<script src="/booking-bridge.js?v=20261017"></script>
 <script src="/line-qr.js?v=20261011" defer></script>
 <script>
 // ╔═══════════════════════════════════════════════════════════════════════════╗
@@ -274,7 +274,7 @@ const SITE = {
   processSteps: [
     { title: "填寫預約表單", desc: "選擇諮詢方式和時段，填寫出生資料。不確定準確的出生時間也沒關係，勾選後大正會在諮詢時協助定盤。", done: true },
     { title: "匯款", desc: "請在訂單成立 24 小時內匯款 NT$3,600，匯款時請備註「論命費用」。匯款資訊會顯示在送出後的畫面，也會寄到你的 Email。", done: false },
-    { title: "回報匯款末五碼", desc: "選 Google Meet：在網頁填帳號末五碼就好，不用加 LINE（想加也可以）。選 LINE 語音：加入官方 LINE、傳送訂單編號，並在 LINE 回覆末五碼。", done: false },
+    { title: "回報匯款末五碼", desc: "選 Google Meet：在網頁填帳號末五碼就好，不用加 LINE（想加也可以）。選 LINE 語音：預約完成後用手機掃 QR Code（或點按鈕）登入 LINE，訂單會自動綁定，再在 LINE 回覆末五碼。", done: false },
     { title: "收到預約成功通知", desc: "確認收款後，LINE 和 Email 都會通知你；選 Google Meet 的話，會附上視訊連結並加入你的行事曆。", done: false },
     { title: "諮詢當天準時上線", desc: "諮詢前一天會再提醒你一次。Google Meet 點連結加入；選 LINE 語音的話，時間到了大正會撥給你。", done: false },
   ],

@@ -1,4 +1,4 @@
-{{/* 文章卡片（文章列表、主題頁共用）：上半＝主題、日期、標題、摘要（＋封面）；下半淡色＝文章開頭幾行＋閱讀更多，整張是一個框 */}}
+{{/* 文章卡片（文章列表、主題頁共用）：上半＝主題、日期、標題、摘要（＋封面）；下半淡色＝閱讀更多（沒有摘要的文章才補上文章開頭幾行；有摘要時再放開頭會重複、卡片太長），整張是一個框 */}}
 {{ $pid := "" }}{{ with .File }}{{ $pid = .ContentBaseName }}{{ end }}
 <article class="blog-card" data-slug="{{ $pid }}">
   <div class="blog-card-top">
@@ -13,7 +13,7 @@
     </div>
   </div>
   <a href="{{ .RelPermalink }}" class="blog-card-more">
-    <span class="blog-card-excerpt">{{ .RawContent | replaceRE "!\\[[^\\]]*\\]\\([^)]*\\)" "" | replaceRE "(?m)^#+ .*$" "" | markdownify | plainify | replaceRE "\\s+" " " | strings.TrimSpace | truncate 110 }}</span>
+    {{ if not .Description }}<span class="blog-card-excerpt">{{ .RawContent | replaceRE "!\\[[^\\]]*\\]\\([^)]*\\)" "" | replaceRE "(?m)^#+ .*$" "" | markdownify | plainify | replaceRE "\\s+" " " | strings.TrimSpace | truncate 110 }}</span>{{ end }}
     <span class="blog-card-go">閱讀更多 →</span>
   </a>
 </article>

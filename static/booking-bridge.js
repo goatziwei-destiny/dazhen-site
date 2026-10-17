@@ -16,6 +16,21 @@
     };
     go(); setTimeout(go, 300); setTimeout(go, 900);
   }
+  // 表單框固定成「剛好塞滿畫面剩下的高度」，只在表單裡面捲動。
+  // 原本是把框撐到跟表單一樣長、讓整頁捲，但手機上 Google 包在外面的那一層有時沒跟著變高，客人得在框裡再滑一次（兩層捲動）。
+  window.dazhenFitFrame = function (fr) {
+    if (!fr) return function () {};
+    fr.setAttribute('data-fixed', '');
+    var fit = function () {
+      if (!fr.offsetParent) return;   // 收起來（看不到）時不用算
+      var vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+      fr.style.height = Math.max(360, Math.floor(vh - fr.getBoundingClientRect().top)) + 'px';
+    };
+    window.addEventListener('resize', fit);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', fit);
+    fit(); setTimeout(fit, 300);
+    return fit;
+  };
   window.dazhenBookingUrl = function (raw) {
     var url = new URL(raw);
     var bytes = new Uint8Array(16);
@@ -25,6 +40,10 @@
     track('booking_view', { page: location.pathname });
     url.searchParams.set('bridge', nonce);
     var tf = new URLSearchParams(location.search).get('testfill'); if (tf) url.searchParams.set('testfill', tf);
+    // 專屬優惠連結（/booking/?code=XXXXXX）：表單自動套用優惠。先記在這個分頁裡，LINE 登入跳轉回來網址沒帶 code 也找得回來
+    var cd = new URLSearchParams(location.search).get('code');
+    try { if (cd) sessionStorage.setItem('dz_code', cd); else cd = sessionStorage.getItem('dz_code'); } catch (_) {}
+    if (cd && /^[A-Za-z0-9]{4,12}$/.test(cd)) url.searchParams.set('code', cd);   // 專屬優惠連結（/booking/?code=XXXXXX）：表單自動套用優惠
     var rb = new URLSearchParams(location.search).get('rb'); if (rb && /^[A-Za-z0-9.\-]{8,80}$/.test(rb)) url.searchParams.set('rb', rb);   // 信裡「下次預約點這裡」：沿用上次的命盤資料
     return url.href;
   };
@@ -36,7 +55,7 @@
     if (o.protocol !== 'https:' || !/^(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(o.hostname)) return;
     var ld = document.getElementById('bkLoading'); if (ld) ld.remove();
     var h = Math.max(600, Math.min(20000, Number(d.height) || 0));
-    document.querySelectorAll('iframe[data-booking-frame], .booking-iframe-wrap iframe').forEach(function (f) { f.style.height = (h + 24) + 'px'; });
+    document.querySelectorAll('iframe[data-booking-frame], .booking-iframe-wrap iframe').forEach(function (f) { if (!f.hasAttribute('data-fixed')) f.style.height = (h + 24) + 'px'; });
   });
   // 表單回報「客人開始填寫」→ 記錄漏斗第 ③ 步（每次打開只記一次）
   window.addEventListener('message', function (event) {
@@ -100,6 +119,7 @@
     if (origin.protocol !== 'https:' || !/^(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(origin.hostname)) return;
     if (!/^GR\d{8}-\d{2}$/.test(data.batchId) || !/^@[a-zA-Z0-9._-]+$/.test(data.basicId)) return;
     redirected = true;
+    try { sessionStorage.removeItem('dz_code'); } catch (_) {}   // 優惠碼用掉了，這個分頁之後再預約不再自動帶
     busyOv_(false);
     // 送出後表單會縮短、成功頁出現在最上面；把網頁捲回表單頂端，避免手機畫面還停在原本很下面的位置而看不到成功頁
     scrollFrame_();
