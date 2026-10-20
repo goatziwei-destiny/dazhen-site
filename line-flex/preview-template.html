@@ -95,7 +95,7 @@ pre{background:var(--surface);border:1px solid var(--line);border-radius:8px;pad
         <ul>
           <li>第 1 張「服務與收費」、第 2 張「預約與準備」，上面是你原圖裡的插圖，裁成橫式。</li>
           <li>文字、價格、按鈕都是 LINE 自己的文字，不是圖片，所以在手機上清楚、以後改字不用重畫。</li>
-          <li>「立即預約」「填寫預約表單」按鈕點了會打開網站的預約頁。</li>
+          <li>第二張底部的「點這裡填寫預約表單」是預約唯一入口（LIFF），點了會打開預約頁，回頭客資料自動帶入。</li>
         </ul>
       </section>
       <section>
@@ -133,7 +133,7 @@ pre{background:var(--surface);border:1px solid var(--line);border-radius:8px;pad
 // 插圖：正式版放在網站上；預覽時換成內嵌的圖
 const IMG={"https://dazhen-site.netlify.app/images/line/title-service.png":"__T1__","https://dazhen-site.netlify.app/images/line/title-choose.png":"__T4__","https://dazhen-site.netlify.app/images/line/btn-one.png":"__T5__","https://dazhen-site.netlify.app/images/line/btn-text.png":"__T6__","https://dazhen-site.netlify.app/images/line/title-booking.png":"__T2__","https://dazhen-site.netlify.app/images/line/title-text.png":"__T3__","https://dazhen-site.netlify.app/images/line/service-1-t.jpg":"__HERO1__","https://dazhen-site.netlify.app/images/line/service-2-t.jpg":"__HERO2__","https://dazhen-site.netlify.app/images/line/text-1-t.jpg":"__HERO3__","https://dazhen-site.netlify.app/images/line/text-2-t.jpg":"__HERO4__"};
 const SITE="https://dazhen-site.netlify.app/images/line/";
-const BOOK="https://dazhen-site.netlify.app/booking/";
+const BOOK="https://liff.line.me/2007939639-l2APYkwk"; // 預約唯一入口（LIFF，回頭客自動帶入）
 const TEXT_FORM=BOOK; // 待辦：文字版表單做好後換成它的網址
 const C={bg:"#FDF6E9",green:"#1F3D33",gold:"#B07A3E",ink:"#45443D",soft:"#8A7558",line:"#E6D9C3",note:"#F5EAD6"};
 
@@ -187,6 +187,9 @@ function bubbleOf(f,bodyContents,btn,uri){
   if(btn)o.footer=footer(btn,uri);
   return o;
 }
+function bookLink(){
+  return {type:"text",text:"要預約了嗎？點這裡填寫預約表單 ›",size:"xs",weight:"bold",color:C.green,margin:"xl",align:"center",decoration:"none",action:{type:"uri",label:"預約",uri:BOOK}};
+}
 function carousel(alt,bubbles){return {type:"flex",altText:alt,contents:{type:"carousel",contents:bubbles}};}
 function priceRow(left,price,note){
   return [{type:"separator",color:C.line,margin:"xl"},
@@ -215,7 +218,8 @@ const SETS={
      item("01","準備資料","提供性別、生辰八字，時間精確到分鐘。","（海外出生、雙胞胎請於表單備註）"),
      item("02","預約、回報匯款","填寫表單後，請依網頁指示匯款並回報。"),
      item("03","論命前提醒","開始前 24 小時寄送提醒，請準時上線。","（Email、LINE）"),
-     item("04","特別注意事項","無法核對過去事件，即結束並全額退費。")],"填寫預約表單")]),
+     item("04","特別注意事項","無法核對過去事件，即結束並全額退費。"),
+     bookLink()])]),
  // 文字版諮詢：不核對過去事件、10 個工作天內回覆
  text:carousel("大正文字諮詢｜服務與收費、預約與準備",[
   bubbleOf("text-1.jpg",[
@@ -230,7 +234,8 @@ const SETS={
      item("01","準備資料","提供性別、生辰八字，時間精確到分鐘。","（海外出生、雙胞胎請於表單備註）"),
      item("02","預約、回報匯款","填寫表單後，請依網頁指示匯款並回報。"),
      item("03","收取回覆","7 到 10 個工作天內寄至您的 Email"),
-     item("04","特別注意事項","付款後 7 天內、未撰寫前可退款。")],"填寫文字版表單",TEXT_FORM)]),
+     item("04","特別注意事項","付款後 7 天內、未撰寫前可退款。"),
+     bookLink()])]),
  // 點「服務方案」先出的選擇卡：兩個按鈕各送出一句話，客人不會看到混在一起的內容
  choose:{type:"flex",altText:"請選擇服務方案",contents:{type:"bubble",size:"kilo",
    body:{type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"20px",contents:[
