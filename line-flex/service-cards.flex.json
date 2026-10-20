@@ -290,7 +290,7 @@
                     },
                     {
                       "type": "text",
-                      "text": "諮詢內容不涉及醫療建議、\n投資建議及違法事項。",
+                      "text": "不提供：醫療、投資、違法事項等建議",
                       "size": "xs",
                       "color": "#45443D",
                       "wrap": true,
@@ -388,14 +388,6 @@
               "margin": "lg"
             },
             {
-              "type": "text",
-              "text": "（海外出生、雙胞胎請於填表時備註）",
-              "size": "xs",
-              "color": "#8A7558",
-              "margin": "lg",
-              "wrap": true
-            },
-            {
               "type": "box",
               "layout": "vertical",
               "margin": "xl",
@@ -413,11 +405,23 @@
                     },
                     {
                       "type": "text",
-                      "text": "準備資料",
-                      "size": "sm",
-                      "weight": "bold",
-                      "color": "#1F3D33",
-                      "flex": 9
+                      "flex": 9,
+                      "wrap": false,
+                      "contents": [
+                        {
+                          "type": "span",
+                          "text": "準備資料",
+                          "size": "sm",
+                          "weight": "bold",
+                          "color": "#1F3D33"
+                        },
+                        {
+                          "type": "span",
+                          "text": "（海外出生、雙胞胎請於表單備註）",
+                          "size": "xxs",
+                          "color": "#8A7558"
+                        }
+                      ]
                     }
                   ]
                 },
@@ -632,7 +636,7 @@
                     },
                     {
                       "type": "text",
-                      "text": "若無法核對過去事件，\n則結束論命並全額退費。",
+                      "text": "無法核對過去事件，即結束並全額退費。",
                       "size": "xs",
                       "color": "#45443D",
                       "wrap": true,

@@ -224,11 +224,23 @@
                     },
                     {
                       "type": "text",
-                      "text": "寄送與提醒",
-                      "size": "sm",
-                      "weight": "bold",
-                      "color": "#1F3D33",
-                      "flex": 9
+                      "flex": 9,
+                      "wrap": false,
+                      "contents": [
+                        {
+                          "type": "span",
+                          "text": "完成提醒",
+                          "size": "sm",
+                          "weight": "bold",
+                          "color": "#1F3D33"
+                        },
+                        {
+                          "type": "span",
+                          "text": "（綁定 LINE 可收到雙份提醒）",
+                          "size": "xxs",
+                          "color": "#8A7558"
+                        }
+                      ]
                     }
                   ]
                 },
@@ -243,7 +255,7 @@
                     },
                     {
                       "type": "text",
-                      "text": "以 Email 回覆內容\n（綁定 LINE 可收到提醒）",
+                      "text": "完成時會寄 Email 提醒",
                       "size": "xs",
                       "color": "#45443D",
                       "wrap": true,
@@ -290,7 +302,7 @@
                     },
                     {
                       "type": "text",
-                      "text": "諮詢內容不涉及醫療建議、\n投資建議及違法事項。",
+                      "text": "不提供：醫療、投資、違法事項等建議",
                       "size": "xs",
                       "color": "#45443D",
                       "wrap": true,
@@ -388,14 +400,6 @@
               "margin": "lg"
             },
             {
-              "type": "text",
-              "text": "（海外出生、雙胞胎請於填表時備註）",
-              "size": "xs",
-              "color": "#8A7558",
-              "margin": "lg",
-              "wrap": true
-            },
-            {
               "type": "box",
               "layout": "vertical",
               "margin": "xl",
@@ -413,11 +417,23 @@
                     },
                     {
                       "type": "text",
-                      "text": "準備資料",
-                      "size": "sm",
-                      "weight": "bold",
-                      "color": "#1F3D33",
-                      "flex": 9
+                      "flex": 9,
+                      "wrap": false,
+                      "contents": [
+                        {
+                          "type": "span",
+                          "text": "準備資料",
+                          "size": "sm",
+                          "weight": "bold",
+                          "color": "#1F3D33"
+                        },
+                        {
+                          "type": "span",
+                          "text": "（海外出生、雙胞胎請於表單備註）",
+                          "size": "xxs",
+                          "color": "#8A7558"
+                        }
+                      ]
                     }
                   ]
                 },
@@ -632,7 +648,7 @@
                     },
                     {
                       "type": "text",
-                      "text": "不核對過去事件；\n付款後 7 天內、未開始撰寫可退款。",
+                      "text": "付款後 7 天內、未撰寫前可退款。",
                       "size": "xs",
                       "color": "#45443D",
                       "wrap": true,
