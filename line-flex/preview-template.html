@@ -131,7 +131,7 @@ pre{background:var(--surface);border:1px solid var(--line);border-radius:8px;pad
 <script>
 (function(){
 // 插圖：正式版放在網站上；預覽時換成內嵌的圖
-const IMG={"https://dazhen-site.netlify.app/images/line/service-1.jpg":"__HERO1__","https://dazhen-site.netlify.app/images/line/service-2.jpg":"__HERO2__","https://dazhen-site.netlify.app/images/line/text-1.jpg":"__HERO3__","https://dazhen-site.netlify.app/images/line/text-2.jpg":"__HERO4__"};
+const IMG={"https://dazhen-site.netlify.app/images/line/service-1-w.jpg":"__HERO1__","https://dazhen-site.netlify.app/images/line/service-2-w.jpg":"__HERO2__","https://dazhen-site.netlify.app/images/line/text-1-w.jpg":"__HERO3__","https://dazhen-site.netlify.app/images/line/text-2-w.jpg":"__HERO4__"};
 const BOOK="https://dazhen-site.netlify.app/booking/";
 const TEXT_FORM=BOOK; // 待辦：文字版表單做好後換成它的網址
 const C={bg:"#FDF6E9",green:"#1F3D33",gold:"#B07A3E",ink:"#45443D",soft:"#8A7558",line:"#E6D9C3",note:"#F5EAD6"};
@@ -143,10 +143,10 @@ function item(no,title,desc,sub){
       {type:"span",text:title,size:"sm",weight:"bold",color:C.green},
       {type:"span",text:sub,size:"xxs",color:C.soft}]}
     :{type:"text",text:title,size:"sm",weight:"bold",color:C.green,flex:9};
-  return {type:"box",layout:"vertical",margin:"xl",contents:[
+  return {type:"box",layout:"vertical",margin:"lg",contents:[
     {type:"box",layout:"baseline",contents:[
       {type:"text",text:no,size:"xs",color:C.gold,flex:1},t]},
-    {type:"box",layout:"horizontal",margin:"sm",contents:[
+    {type:"box",layout:"horizontal",margin:"xs",contents:[
       {type:"filler",flex:1},
       {type:"text",text:desc,size:"xs",color:C.ink,wrap:true,flex:9}]}]};
 }
@@ -162,28 +162,28 @@ function head(eyebrow,title,page){
       {type:"text",text:eyebrow,size:"xxs",color:C.soft,flex:1},
       {type:"text",text:page,size:"xxs",color:C.gold,flex:0}]},
     {type:"text",text:title,size:"xl",weight:"bold",color:C.green,margin:"sm"},
-    {type:"separator",color:C.line,margin:"lg"}];
+    {type:"separator",color:C.line,margin:"md"}];
 }
 function footer(label,uri){
-  return {type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"16px",paddingTop:"4px",contents:[
+  return {type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"12px",paddingTop:"0px",contents:[
     {type:"button",style:"primary",color:C.green,height:"sm",action:{type:"uri",label:label,uri:uri||BOOK}}]};
 }
 const SITE="https://dazhen-site.netlify.app/images/line/";
-const HERO_RATIO="2:1";
-function hero(f){return {type:"image",url:SITE+f,size:"full",aspectRatio:HERO_RATIO,aspectMode:"cover"};}
+const HERO_RATIO="5:2";
+function hero(f){return {type:"image",url:SITE+f.replace(".jpg","-w.jpg"),size:"full",aspectRatio:HERO_RATIO,aspectMode:"cover"};}
 function bubbleOf(f,bodyContents,btn,uri){
   const o={type:"bubble",size:"mega",hero:hero(f),
-    body:{type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"20px",contents:bodyContents}};
+    body:{type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"16px",contents:bodyContents}};
   if(btn)o.footer=footer(btn,uri);
   return o;
 }
 function carousel(alt,bubbles){return {type:"flex",altText:alt,contents:{type:"carousel",contents:bubbles}};}
 function priceRow(left,price,note){
-  return [{type:"separator",color:C.line,margin:"xxl"},
+  return [{type:"separator",color:C.line,margin:"xl"},
     {type:"box",layout:"baseline",margin:"lg",contents:[
       {type:"text",text:left,size:"sm",color:C.green,flex:0},
       {type:"text",text:price,size:"xl",weight:"bold",color:C.green,align:"end",flex:1}]},
-    {type:"text",text:note,size:"xxs",color:C.soft,margin:"sm"}];
+    ];
 }
 function noteBox(title,lines){
   return {type:"box",layout:"vertical",margin:"xxl",paddingAll:"14px",backgroundColor:C.note,cornerRadius:"md",spacing:"sm",contents:[
@@ -273,7 +273,7 @@ function go(i){i=Math.max(0,Math.min(cards.length-1,i));car.scrollTo({left:cards
 function sync(){const i=cur();dotEls.forEach((d,k)=>d.setAttribute("aria-current",k===i?"true":"false"));document.getElementById("prev").disabled=i===0;document.getElementById("next").disabled=i===cards.length-1;}
 document.getElementById("prev").addEventListener("click",()=>go(cur()-1));document.getElementById("next").addEventListener("click",()=>go(cur()+1));
 car.addEventListener("scroll",()=>requestAnimationFrame(sync));car.addEventListener("keydown",e=>{if(e.key==="ArrowRight"){go(cur()+1);e.preventDefault();}if(e.key==="ArrowLeft"){go(cur()-1);e.preventDefault();}});sync();
-document.getElementById("av").style.backgroundImage="url("+IMG["https://dazhen-site.netlify.app/images/line/service-1.jpg"]+")";
+document.getElementById("av").style.backgroundImage="url("+IMG["https://dazhen-site.netlify.app/images/line/service-1-w.jpg"]+")";
 document.getElementById("av").style.backgroundPosition="22% 18%";document.getElementById("av").style.backgroundSize="420%";
 const json=JSON.stringify(FLEX,null,2);document.getElementById("json").textContent=json;
 document.getElementById("copy").addEventListener("click",function(){const b=this;navigator.clipboard.writeText(json).then(()=>{b.textContent="已複製";setTimeout(()=>b.textContent="複製資料",1600);}).catch(()=>{const r=document.createRange();r.selectNodeContents(document.getElementById("json"));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="已選取，請按複製";});});
