@@ -17,17 +17,24 @@
           "color": "#8A7558"
         },
         {
-          "type": "text",
-          "text": "請選擇您想了解的方案",
-          "size": "lg",
-          "weight": "bold",
-          "color": "#1F3D33",
-          "margin": "sm"
+          "type": "box",
+          "layout": "horizontal",
+          "margin": "sm",
+          "contents": [
+            {
+              "type": "image",
+              "url": "https://dazhen-site.netlify.app/images/line/title-choose.png",
+              "size": "190px",
+              "aspectRatio": "760:90",
+              "aspectMode": "fit",
+              "flex": 0
+            }
+          ]
         },
         {
           "type": "separator",
           "color": "#E6D9C3",
-          "margin": "lg"
+          "margin": "md"
         },
         {
           "type": "box",
@@ -36,24 +43,26 @@
           "spacing": "sm",
           "contents": [
             {
-              "type": "button",
-              "style": "primary",
-              "color": "#1F3D33",
-              "height": "sm",
+              "type": "image",
+              "url": "https://dazhen-site.netlify.app/images/line/btn-one.png",
+              "size": "full",
+              "aspectRatio": "880:160",
+              "aspectMode": "fit",
               "action": {
                 "type": "message",
-                "label": "一對一語音諮詢　NT$3,600",
+                "label": "一對一語音諮詢",
                 "text": "一對一方案"
               }
             },
             {
-              "type": "button",
-              "style": "secondary",
-              "color": "#F5EAD6",
-              "height": "sm",
+              "type": "image",
+              "url": "https://dazhen-site.netlify.app/images/line/btn-text.png",
+              "size": "full",
+              "aspectRatio": "880:160",
+              "aspectMode": "fit",
               "action": {
                 "type": "message",
-                "label": "文字版諮詢　NT$990",
+                "label": "文字版諮詢",
                 "text": "文字版方案"
               }
             }

@@ -52,7 +52,7 @@
                   "type": "image",
                   "url": "https://dazhen-site.netlify.app/images/line/title-text.png",
                   "size": "154px",
-                  "aspectRatio": "441:104",
+                  "aspectRatio": "617:104",
                   "aspectMode": "fit",
                   "flex": 0
                 },

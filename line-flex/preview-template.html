@@ -131,7 +131,7 @@ pre{background:var(--surface);border:1px solid var(--line);border-radius:8px;pad
 <script>
 (function(){
 // 插圖：正式版放在網站上；預覽時換成內嵌的圖
-const IMG={"https://dazhen-site.netlify.app/images/line/title-service.png":"__T1__","https://dazhen-site.netlify.app/images/line/title-booking.png":"__T2__","https://dazhen-site.netlify.app/images/line/title-text.png":"__T3__","https://dazhen-site.netlify.app/images/line/service-1-t.jpg":"__HERO1__","https://dazhen-site.netlify.app/images/line/service-2-t.jpg":"__HERO2__","https://dazhen-site.netlify.app/images/line/text-1-t.jpg":"__HERO3__","https://dazhen-site.netlify.app/images/line/text-2-t.jpg":"__HERO4__"};
+const IMG={"https://dazhen-site.netlify.app/images/line/title-service.png":"__T1__","https://dazhen-site.netlify.app/images/line/title-choose.png":"__T4__","https://dazhen-site.netlify.app/images/line/btn-one.png":"__T5__","https://dazhen-site.netlify.app/images/line/btn-text.png":"__T6__","https://dazhen-site.netlify.app/images/line/title-booking.png":"__T2__","https://dazhen-site.netlify.app/images/line/title-text.png":"__T3__","https://dazhen-site.netlify.app/images/line/service-1-t.jpg":"__HERO1__","https://dazhen-site.netlify.app/images/line/service-2-t.jpg":"__HERO2__","https://dazhen-site.netlify.app/images/line/text-1-t.jpg":"__HERO3__","https://dazhen-site.netlify.app/images/line/text-2-t.jpg":"__HERO4__"};
 const SITE="https://dazhen-site.netlify.app/images/line/";
 const BOOK="https://dazhen-site.netlify.app/booking/";
 const TEXT_FORM=BOOK; // 待辦：文字版表單做好後換成它的網址
@@ -159,8 +159,8 @@ function note(text,bold){
     {type:"text",text:"・",size:"xs",color:bold?C.green:C.ink,flex:0},t]};
 }
 // 標題用思源宋體做成小圖（title-*.png，寬度以「點」指定：每個字 22 點）；價格仍是文字
-const TITLE={"服務與收費":["title-service",5],"預約與準備":["title-booking",5],"文字版諮詢服務":["title-text",7]};
-function titleImg(t){const k=TITLE[t];return {type:"image",url:SITE+k[0]+".png",size:(k[1]*22)+"px",aspectRatio:"441:104",aspectMode:"fit",flex:0};}
+const TITLE={"服務與收費":["title-service",5,"441:104"],"預約與準備":["title-booking",5,"441:104"],"文字版諮詢服務":["title-text",7,"617:104"]};
+function titleImg(t){const k=TITLE[t];return {type:"image",url:SITE+k[0]+".png",size:(k[1]*22)+"px",aspectRatio:k[2],aspectMode:"fit",flex:0};}
 function head(eyebrow,title,page,price){
   const titleRow=price
     ?{type:"box",layout:"horizontal",alignItems:"flex-end",margin:"sm",contents:[
@@ -235,11 +235,11 @@ const SETS={
  choose:{type:"flex",altText:"請選擇服務方案",contents:{type:"bubble",size:"kilo",
    body:{type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"20px",contents:[
      {type:"text",text:"大正・服務方案",size:"xxs",color:C.soft},
-     {type:"text",text:"請選擇您想了解的方案",size:"lg",weight:"bold",color:C.green,margin:"sm"},
-     {type:"separator",color:C.line,margin:"lg"},
+     {type:"box",layout:"horizontal",margin:"sm",contents:[{type:"image",url:SITE+"title-choose.png",size:"190px",aspectRatio:"760:90",aspectMode:"fit",flex:0}]},
+     {type:"separator",color:C.line,margin:"md"},
      {type:"box",layout:"vertical",margin:"lg",spacing:"sm",contents:[
-       {type:"button",style:"primary",color:C.green,height:"sm",action:{type:"message",label:"一對一語音諮詢　NT$3,600",text:"一對一方案"}},
-       {type:"button",style:"secondary",color:C.note,height:"sm",action:{type:"message",label:"文字版諮詢　NT$990",text:"文字版方案"}}]}]}}}
+       {type:"image",url:SITE+"btn-one.png",size:"full",aspectRatio:"880:160",aspectMode:"fit",action:{type:"message",label:"一對一語音諮詢",text:"一對一方案"}},
+       {type:"image",url:SITE+"btn-text.png",size:"full",aspectRatio:"880:160",aspectMode:"fit",action:{type:"message",label:"文字版諮詢",text:"文字版方案"}}]}]}}}
 };
 const SETNAME=(location.hash||"#one").slice(1);
 const FLEX=SETS[SETNAME]||SETS.one;
