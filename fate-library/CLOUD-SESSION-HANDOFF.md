@@ -69,3 +69,6 @@ p_parcel 包好的經典、p_basket 紙簍、p_burner 香爐、p_bookHalf 燒到
 - 回報講清楚：改了什麼、自己修了什麼、還缺什麼、哪些要大正決定。
 - 素材由大正用 GPT 畫；ChatGPT 不能直接寫進 GitHub，大正會自己用網頁上傳到 `fate-library/assets/sprites/`。
 - 給 GPT 的提示詞要附參考圖、要求透明背景（做不到就用純綠 #00FF00）、火焰等動畫請它在同一張圖並排畫 4 格。
+
+## 6. 後來加的：LINE 服務方案卡片（2026-10-20）
+雲端對話又做了 LINE Flex Message 的「服務與收費／預約與準備」兩張卡片，只到預覽、還沒接進預約系統。說明、JSON、預覽頁在 `line-flex/`（先讀 `line-flex/README.md`），插圖在 `static/images/line/`。

@@ -1,0 +1,225 @@
+<title>LINE 服務方案卡片</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700&display=swap&text=LINE%20%E6%9C%8D%E5%8B%99%E6%96%B9%E6%A1%88%E5%8D%A1%E7%89%87%E9%A0%90%E8%A6%BD%E7%9C%8B%E5%88%B0%E4%BB%80%E9%BA%BC%E8%B7%9F%E8%A8%AD%E8%A8%88%E7%A8%BF%E4%B8%8D%E4%B8%80%E6%A8%A3%E7%9A%84%E5%9C%B0%E6%96%B9%E6%8E%A5%E4%B8%8B%E4%BE%86%E8%B3%87%E6%96%99">
+<style>
+/* layout: 左邊一支仿 LINE 的手機（卡片由真的 Flex Message 資料畫出來），右邊是說明；窄螢幕上下排 */
+:root{
+  --bg:#f3efe7; --surface:#fffdf8; --ink:#24302b; --muted:#6b6a60; --line:#ddd5c4; --accent:#1f5a47;
+  --display:"Noto Serif TC","Songti TC","Noto Serif CJK TC",serif;
+  --body:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+  --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#151a18;--surface:#1d2421;--ink:#e9e6dc;--muted:#a8a596;--line:#34403b;--accent:#8fd0b3;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#151a18;--surface:#1d2421;--ink:#e9e6dc;--muted:#a8a596;--line:#34403b;--accent:#8fd0b3;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.6;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:1040px;margin:0 auto;display:grid;gap:28px}
+header h1{font-family:var(--display);font-weight:700;font-size:clamp(1.6rem,4vw,2.2rem);margin:0;text-wrap:balance;letter-spacing:.02em}
+header p{margin:.4rem 0 0;color:var(--muted);max-width:62ch}
+.grid{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:32px;align-items:start}
+@media (max-width:820px){.grid{grid-template-columns:minmax(0,1fr)}}
+.notes{display:grid;gap:22px;min-width:0}
+.notes section{display:grid;gap:8px}
+.notes h2{font-family:var(--display);font-weight:600;font-size:1.15rem;margin:0}
+.notes ul{margin:0;padding-left:1.2em;display:grid;gap:6px}
+.notes li{max-width:62ch}
+.notes b{color:var(--accent);font-weight:600}
+details{border-top:1px solid var(--line);padding-top:14px}
+summary{cursor:pointer;font-weight:600;color:var(--accent)}
+summary:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+pre{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;overflow:auto;max-height:420px;font:12px/1.5 var(--mono);color:var(--ink)}
+.copy{font:inherit;font-size:.9rem;padding:.35rem .8rem;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;margin-top:8px}
+
+/* ---- 仿 LINE 手機（固定 LINE 的配色，不跟著深淺色切換） ---- */
+.phone{width:100%;max-width:400px;justify-self:center;border-radius:28px;overflow:hidden;border:8px solid #1b1b1b;background:#1b1b1b;box-shadow:0 18px 40px rgba(0,0,0,.18)}
+.bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f7f8fa;color:#111;font-weight:600;font-size:15px}
+.bar .back{font-size:20px;line-height:1;color:#111}
+.chat{background:#8ea8c8;padding:14px 0 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:12px;min-height:640px;align-content:start}
+.row{display:flex;gap:8px;padding:0 12px}
+.row.me{justify-content:flex-end}
+.time{font-size:10px;color:#e9eef5;align-self:flex-end}
+.msg{background:#9be382;color:#111;padding:8px 12px;border-radius:16px;font-size:15px;max-width:70%}
+.av{width:36px;height:36px;border-radius:50%;background:#fdf6e9 center/cover;flex:0 0 36px}
+.from{display:grid;gap:4px;min-width:0;flex:1}
+.from .nm{font-size:12px;color:#f4f7fb;padding-left:2px}
+.hint{font-size:11px;color:#eef3f9;text-align:center}
+/* 卡片輪播：左右滑 */
+.carousel{display:flex;gap:9px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:56px;padding:2px 12px 6px 56px;scrollbar-width:none}
+.carousel::-webkit-scrollbar{display:none}
+.bubble{flex:0 0 auto;scroll-snap-align:start;border-radius:18px;overflow:hidden;background:#fff;display:flex;flex-direction:column;font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;color:#111}
+.fx-box{display:flex;min-width:0}
+.fx-text{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4}
+.fx-text.fx-wrap{white-space:normal;overflow-wrap:anywhere}
+.fx-sep{border:0;border-top:1px solid #ddd;margin:0;flex:0 0 auto;align-self:stretch}
+.fx-btn{border:0;border-radius:8px;font:inherit;font-size:16px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.fx-img{display:block;width:100%;object-fit:cover}
+.cwrap{position:relative;min-width:0}
+.nav{position:absolute;top:42%;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#1f3d33;font-size:20px;line-height:1;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center}
+.nav.prev{left:6px}.nav.next{right:6px}
+.nav:disabled{opacity:0;pointer-events:none}
+.dots{display:flex;gap:8px;justify-content:center;align-items:center}
+.dot{width:8px;height:8px;border-radius:50%;border:0;padding:0;background:rgba(255,255,255,.5);cursor:pointer}
+.dot[aria-current="true"]{background:#fff;width:20px;border-radius:4px}
+.side{display:grid;gap:14px}
+.side h2{font-family:var(--display);font-weight:600;font-size:1.15rem;margin:0}
+.side p{margin:0;color:var(--muted)}
+.pair{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;background:#8ea8c8;border-radius:14px;padding:20px 12px}
+.pair .bubble{box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.carousel{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){.carousel{scroll-behavior:auto}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>LINE 服務方案卡片預覽</h1>
+    <p>客人在 LINE 傳「服務方案」（或點圖文選單），大正自動回這兩張卡片，左右滑著看。下面的卡片是用真正的 Flex Message 資料畫出來的，之後可以直接接進預約系統。</p>
+  </header>
+  <div class="grid">
+    <div class="phone" aria-label="LINE 聊天室預覽">
+      <div class="bar"><span class="back" aria-hidden="true">‹</span><span>大正・命理諮詢</span></div>
+      <div class="chat" id="chat">
+        <div class="row me"><span class="time">下午 2:15</span><div class="msg">服務方案</div></div>
+        <div class="row"><div class="av" id="av"></div><div class="from"><span class="nm">大正・命理諮詢</span></div></div>
+        <div class="cwrap">
+          <div class="carousel" id="carousel" tabindex="0" aria-label="服務方案卡片，可左右滑動"></div>
+          <button class="nav prev" id="prev" type="button" aria-label="上一張">‹</button>
+          <button class="nav next" id="next" type="button" aria-label="下一張">›</button>
+        </div>
+        <div class="dots" id="dots"></div>
+        <div class="hint">在 LINE 裡用手指左右滑；這裡也可以點箭頭</div>
+      </div>
+    </div>
+    <div class="notes">
+      <section>
+        <h2>你看到的是什麼</h2>
+        <ul>
+          <li>第 1 張「服務與收費」、第 2 張「預約與準備」，上面是你原圖裡的插圖，裁成橫式。</li>
+          <li>文字、價格、按鈕都是 LINE 自己的文字，不是圖片，所以在手機上清楚、以後改字不用重畫。</li>
+          <li>「立即預約」「填寫預約表單」按鈕點了會打開網站的預約頁。</li>
+        </ul>
+      </section>
+      <section>
+        <h2>跟設計稿不一樣的地方</h2>
+        <ul>
+          <li><b>字型</b>：LINE 卡片只能用手機內建字型，設計稿的書法標題字沒辦法用。這頁也是用手機字型模擬，實際看起來會很接近。</li>
+          <li><b>排法</b>：卡片比較窄，四個重點改成一條一條往下排，比左右兩欄好讀。</li>
+          <li><b>頁碼</b>：右上角的「1／2」「2／2」保留了，提醒客人還有下一張。</li>
+        </ul>
+      </section>
+      <section>
+        <h2>接下來</h2>
+        <ul>
+          <li>你覺得可以，我就把卡片接進預約系統：客人傳「服務方案」自動回覆（用回覆的方式，不扣 LINE 訊息額度）。</li>
+          <li>兩張插圖要放上網站才能在 LINE 顯示，網站要部署一次。</li>
+          <li>想改顏色、文字或順序，直接跟我說。</li>
+        </ul>
+      </section>
+      <details>
+        <summary>Flex Message 資料（給工程用）</summary>
+        <pre id="json"></pre>
+        <button class="copy" id="copy" type="button">複製資料</button>
+      </details>
+    </div>
+  </div>
+  <section class="side">
+    <h2>兩張並排</h2>
+    <p>不用滑，直接看兩張卡片的完整內容。</p>
+    <div class="pair" id="pair"></div>
+  </section>
+</div>
+
+<script>
+(function(){
+// 插圖：正式版放在網站上；預覽時換成內嵌的圖
+const IMG={"https://dazhen-site.netlify.app/images/line/service-1.jpg":"__HERO1__","https://dazhen-site.netlify.app/images/line/service-2.jpg":"__HERO2__"};
+const BOOK="https://dazhen-site.netlify.app/booking/";
+const C={bg:"#FDF6E9",green:"#1F3D33",gold:"#B07A3E",ink:"#45443D",soft:"#8A7558",line:"#E6D9C3",note:"#F5EAD6"};
+
+function item(no,title,desc){
+  return {type:"box",layout:"horizontal",spacing:"md",margin:"lg",contents:[
+    {type:"text",text:no,size:"sm",color:C.gold,flex:0,margin:"xs"},
+    {type:"box",layout:"vertical",flex:1,spacing:"xs",contents:[
+      {type:"text",text:title,size:"md",weight:"bold",color:C.green},
+      {type:"text",text:desc,size:"sm",color:C.ink,wrap:true}]}]};
+}
+function head(eyebrow,title,page){
+  return [{type:"box",layout:"horizontal",contents:[
+      {type:"text",text:eyebrow,size:"xs",color:C.soft,flex:1},
+      {type:"text",text:page,size:"xs",color:C.gold,flex:0}]},
+    {type:"text",text:title,size:"xxl",weight:"bold",color:C.green,margin:"sm"},
+    {type:"separator",color:C.line,margin:"lg"}];
+}
+function footer(label){
+  return {type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"16px",paddingTop:"4px",contents:[
+    {type:"button",style:"primary",color:C.green,height:"sm",action:{type:"uri",label:label,uri:BOOK}}]};
+}
+const FLEX={type:"flex",altText:"大正線上諮詢｜服務與收費、預約與準備",contents:{type:"carousel",contents:[
+  {type:"bubble",size:"mega",
+   hero:{type:"image",url:"https://dazhen-site.netlify.app/images/line/service-1.jpg",size:"full",aspectRatio:"16:9",aspectMode:"cover"},
+   body:{type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"20px",contents:[
+     ...head("大正・線上諮詢","服務與收費","1／2"),
+     item("01","前置流程","先說明諮詢流程，並確認你的命盤。"),
+     item("02","服務內容","一對一線上語音諮詢（Google Meet 線上會議、LINE 語音），加看面相不另收費用。"),
+     item("03","可以聊什麼","感情、工作、人生方向皆可聊。"),
+     item("04","一起看命盤","需要您互相合作，您提問我回答。"),
+     {type:"separator",color:C.line,margin:"xl"},
+     {type:"box",layout:"baseline",margin:"lg",contents:[
+       {type:"text",text:"60 分鐘",size:"md",color:C.green,flex:0},
+       {type:"text",text:"NT$3,600",size:"xxl",weight:"bold",color:C.green,align:"end",flex:1}]},
+     {type:"text",text:"先確認命盤，再正式開始計時",size:"xs",color:C.soft,margin:"sm"}]},
+   footer:footer("立即預約")},
+  {type:"bubble",size:"mega",
+   hero:{type:"image",url:"https://dazhen-site.netlify.app/images/line/service-2.jpg",size:"full",aspectRatio:"16:9",aspectMode:"cover"},
+   body:{type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"20px",contents:[
+     ...head("從填表，到論命前提醒","預約與準備","2／2"),
+     item("01","準備資料","提供性別、生辰八字（需要到分鐘）。"),
+     item("02","填寫時段","填寫預約表單，並選擇您的時段。"),
+     item("03","預約匯款回報","匯款完成後，請依網頁指示回報。"),
+     item("04","論命前提醒","開始 24 小時前會以 Email、LINE 寄送提醒訊息，請準時上線。"),
+     {type:"box",layout:"vertical",margin:"xl",paddingAll:"14px",backgroundColor:C.note,cornerRadius:"md",spacing:"sm",contents:[
+       {type:"text",text:"特別注意事項",size:"md",weight:"bold",color:C.green},
+       {type:"text",text:"・若為海外出生，請提供出生城市；雙胞胎請提前告知。",size:"sm",color:C.ink,wrap:true},
+       {type:"text",text:"・諮詢時不涉及醫療、投資、違法之建議。",size:"sm",color:C.ink,wrap:true},
+       {type:"text",text:"・若核對過去事件不足以反映命盤，則結束本次論命，並退回全部費用。",size:"sm",weight:"bold",color:C.green,wrap:true,decoration:"underline"}]}]},
+   footer:footer("填寫預約表單")}
+]}};
+
+// ---- 簡易 Flex 繪製（依 LINE 規格的尺寸對照） ----
+const SIZE={xxs:11,xs:13,sm:14,md:16,lg:19,xl:22,xxl:29,"3xl":35,"4xl":48,"5xl":74};
+const SP={none:0,xs:2,sm:4,md:8,lg:12,xl:16,xxl:20};
+const BW={nano:120,micro:160,deca:220,hecto:241,kilo:260,mega:300,giga:386};
+const px=v=>v==null?null:(v in SP?SP[v]:parseFloat(v));
+function el(tag,cls){const e=document.createElement(tag);if(cls)e.className=cls;return e;}
+function pad(e,o){const a=px(o.paddingAll);if(a!=null)e.style.padding=a+"px";["Top","Bottom","Start","End"].forEach(k=>{const v=px(o["padding"+k]);if(v!=null)e.style["padding"+({Start:"Left",End:"Right"}[k]||k)]=v+"px";});}
+function render(o,parent){
+  let e;
+  if(o.type==="box"){e=el("div","fx-box");e.style.flexDirection=o.layout==="vertical"?"column":"row";if(o.layout==="baseline")e.style.alignItems="baseline";
+    if(o.backgroundColor)e.style.background=o.backgroundColor;if(o.cornerRadius)e.style.borderRadius=(px(o.cornerRadius)||parseFloat(o.cornerRadius)||0)+"px";pad(e,o);
+    o.contents.forEach((c,i)=>{const ce=render(c,o);const m=c.margin!=null?px(c.margin):(i?px(o.spacing)||0:0);if(i||c.margin!=null)ce.style[o.layout==="vertical"?"marginTop":"marginLeft"]=m+"px";e.appendChild(ce);});}
+  else if(o.type==="text"){e=el("div","fx-text"+(o.wrap?" fx-wrap":""));e.textContent=o.text;e.style.fontSize=(SIZE[o.size]||16)+"px";if(o.weight==="bold")e.style.fontWeight="700";e.style.color=o.color||"#111";if(o.align)e.style.textAlign={start:"left",end:"right",center:"center"}[o.align];if(o.decoration==="underline")e.style.textDecoration="underline";}
+  else if(o.type==="separator"){e=el("hr","fx-sep");if(o.color)e.style.borderTopColor=o.color;}
+  else if(o.type==="button"){e=el("a","fx-btn");e.href=o.action.uri;e.target="_blank";e.rel="noopener";e.textContent=o.action.label;e.style.height=(o.height==="sm"?40:52)+"px";
+    if(o.style==="primary"){e.style.background=o.color||"#17c950";e.style.color="#fff";}else if(o.style==="secondary"){e.style.background=o.color||"#dcdfe5";e.style.color="#111";}else{e.style.background="transparent";e.style.color=o.color||"#42659a";}}
+  else if(o.type==="image"){e=el("img","fx-img");e.src=IMG[o.url]||o.url;e.alt="";const [w,h]=(o.aspectRatio||"1:1").split(":").map(Number);e.style.aspectRatio=w+"/"+h;}
+  else e=el("div");
+  // flex：水平排列的子元件預設 1、垂直預設 0
+  const f=o.flex!=null?o.flex:(parent&&parent.layout!=="vertical"?1:0);e.style.flex=f===0?"0 0 auto":f+" 1 0";if(f!==0)e.style.minWidth="0";
+  return e;
+}
+const car=document.getElementById("carousel"),pair=document.getElementById("pair"),dots=document.getElementById("dots");
+function bubble(b){const w=el("div","bubble");w.style.width=Math.min(BW[b.size]||300,window.innerWidth-80)+"px";w.style.background=b.body.backgroundColor||"#fff";
+  ["hero","body","footer"].forEach(k=>{if(b[k])w.appendChild(render(b[k],{layout:"vertical"}));});return w;}
+const cards=FLEX.contents.contents.map(b=>{const w=bubble(b);car.appendChild(w);pair.appendChild(bubble(b));return w;});
+// 箭頭和點點：換到第幾張
+const dotEls=cards.map((c,i)=>{const d=el("button","dot");d.type="button";d.setAttribute("aria-label","第 "+(i+1)+" 張");d.addEventListener("click",()=>go(i));dots.appendChild(d);return d;});
+function cur(){let best=0,bd=1e9;cards.forEach((c,i)=>{const d=Math.abs(c.offsetLeft-56-car.scrollLeft);if(d<bd){bd=d;best=i;}});return best;}
+function go(i){i=Math.max(0,Math.min(cards.length-1,i));car.scrollTo({left:cards[i].offsetLeft-56});}
+function sync(){const i=cur();dotEls.forEach((d,k)=>d.setAttribute("aria-current",k===i?"true":"false"));document.getElementById("prev").disabled=i===0;document.getElementById("next").disabled=i===cards.length-1;}
+document.getElementById("prev").addEventListener("click",()=>go(cur()-1));document.getElementById("next").addEventListener("click",()=>go(cur()+1));
+car.addEventListener("scroll",()=>requestAnimationFrame(sync));car.addEventListener("keydown",e=>{if(e.key==="ArrowRight"){go(cur()+1);e.preventDefault();}if(e.key==="ArrowLeft"){go(cur()-1);e.preventDefault();}});sync();
+document.getElementById("av").style.backgroundImage="url("+IMG["https://dazhen-site.netlify.app/images/line/service-1.jpg"]+")";
+document.getElementById("av").style.backgroundPosition="22% 18%";document.getElementById("av").style.backgroundSize="420%";
+const json=JSON.stringify(FLEX,null,2);document.getElementById("json").textContent=json;
+document.getElementById("copy").addEventListener("click",function(){const b=this;navigator.clipboard.writeText(json).then(()=>{b.textContent="已複製";setTimeout(()=>b.textContent="複製資料",1600);}).catch(()=>{const r=document.createRange();r.selectNodeContents(document.getElementById("json"));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="已選取，請按複製";});});
+})();
+</script>
