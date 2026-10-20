@@ -254,6 +254,53 @@
               ]
             },
             {
+              "type": "box",
+              "layout": "vertical",
+              "margin": "xl",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "baseline",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "05",
+                      "size": "xs",
+                      "color": "#B07A3E",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "諮詢範圍",
+                      "size": "sm",
+                      "weight": "bold",
+                      "color": "#1F3D33",
+                      "flex": 9
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "margin": "sm",
+                  "contents": [
+                    {
+                      "type": "filler",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "諮詢內容不涉及醫療建議、\n投資建議及違法事項。",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "wrap": true,
+                      "flex": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
               "type": "separator",
               "color": "#E6D9C3",
               "margin": "xxl"
@@ -339,6 +386,14 @@
               "type": "separator",
               "color": "#E6D9C3",
               "margin": "lg"
+            },
+            {
+              "type": "text",
+              "text": "（海外出生、雙胞胎請於填表時備註）",
+              "size": "xs",
+              "color": "#8A7558",
+              "margin": "lg",
+              "wrap": true
             },
             {
               "type": "box",
@@ -543,101 +598,45 @@
             {
               "type": "box",
               "layout": "vertical",
-              "margin": "xxl",
-              "paddingAll": "14px",
-              "backgroundColor": "#F5EAD6",
-              "cornerRadius": "md",
-              "spacing": "sm",
+              "margin": "xl",
               "contents": [
                 {
-                  "type": "text",
-                  "text": "特別注意事項",
-                  "size": "sm",
-                  "weight": "bold",
-                  "color": "#1F3D33"
-                },
-                {
                   "type": "box",
-                  "layout": "horizontal",
+                  "layout": "baseline",
                   "contents": [
                     {
                       "type": "text",
-                      "text": "・",
+                      "text": "05",
                       "size": "xs",
-                      "color": "#45443D",
-                      "flex": 0
+                      "color": "#B07A3E",
+                      "flex": 1
                     },
                     {
                       "type": "text",
-                      "text": "若為海外出生，請提供出生城市。",
-                      "size": "xs",
-                      "color": "#45443D",
-                      "wrap": true,
-                      "flex": 1
-                    }
-                  ]
-                },
-                {
-                  "type": "box",
-                  "layout": "horizontal",
-                  "contents": [
-                    {
-                      "type": "text",
-                      "text": "・",
-                      "size": "xs",
-                      "color": "#45443D",
-                      "flex": 0
-                    },
-                    {
-                      "type": "text",
-                      "text": "雙胞胎請提前告知。",
-                      "size": "xs",
-                      "color": "#45443D",
-                      "wrap": true,
-                      "flex": 1
-                    }
-                  ]
-                },
-                {
-                  "type": "box",
-                  "layout": "horizontal",
-                  "contents": [
-                    {
-                      "type": "text",
-                      "text": "・",
-                      "size": "xs",
-                      "color": "#45443D",
-                      "flex": 0
-                    },
-                    {
-                      "type": "text",
-                      "text": "諮詢不涉及醫療、投資、違法建議。",
-                      "size": "xs",
-                      "color": "#45443D",
-                      "wrap": true,
-                      "flex": 1
-                    }
-                  ]
-                },
-                {
-                  "type": "box",
-                  "layout": "horizontal",
-                  "contents": [
-                    {
-                      "type": "text",
-                      "text": "・",
-                      "size": "xs",
+                      "text": "特別注意事項",
+                      "size": "sm",
+                      "weight": "bold",
                       "color": "#1F3D33",
-                      "flex": 0
+                      "flex": 9
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "margin": "sm",
+                  "contents": [
+                    {
+                      "type": "filler",
+                      "flex": 1
                     },
                     {
                       "type": "text",
-                      "text": "若核對過去事件不足以反映命盤，則結束本次論命，並退回全部費用。",
+                      "text": "若無法核對過去事件，\n則結束論命並全額退費。",
                       "size": "xs",
-                      "color": "#1F3D33",
+                      "color": "#45443D",
                       "wrap": true,
-                      "flex": 1,
-                      "weight": "bold"
+                      "flex": 9
                     }
                   ]
                 }
