@@ -27,14 +27,14 @@
                 {
                   "type": "text",
                   "text": "大正・線上諮詢",
-                  "size": "xs",
+                  "size": "xxs",
                   "color": "#8A7558",
                   "flex": 1
                 },
                 {
                   "type": "text",
                   "text": "1／2",
-                  "size": "xs",
+                  "size": "xxs",
                   "color": "#B07A3E",
                   "flex": 0
                 }
@@ -43,7 +43,7 @@
             {
               "type": "text",
               "text": "服務與收費",
-              "size": "xxl",
+              "size": "xl",
               "weight": "bold",
               "color": "#1F3D33",
               "margin": "sm"
@@ -55,37 +55,46 @@
             },
             {
               "type": "box",
-              "layout": "horizontal",
-              "spacing": "md",
-              "margin": "lg",
+              "layout": "vertical",
+              "margin": "xl",
               "contents": [
                 {
-                  "type": "text",
-                  "text": "01",
-                  "size": "sm",
-                  "color": "#B07A3E",
-                  "flex": 0,
-                  "margin": "xs"
-                },
-                {
                   "type": "box",
-                  "layout": "vertical",
-                  "flex": 1,
-                  "spacing": "xs",
+                  "layout": "baseline",
                   "contents": [
                     {
                       "type": "text",
+                      "text": "01",
+                      "size": "xs",
+                      "color": "#B07A3E",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
                       "text": "前置流程",
-                      "size": "md",
+                      "size": "sm",
                       "weight": "bold",
-                      "color": "#1F3D33"
+                      "color": "#1F3D33",
+                      "flex": 9
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "margin": "sm",
+                  "contents": [
+                    {
+                      "type": "filler",
+                      "flex": 1
                     },
                     {
                       "type": "text",
                       "text": "先說明諮詢流程，並確認您的命盤。",
-                      "size": "sm",
+                      "size": "xs",
                       "color": "#45443D",
-                      "wrap": true
+                      "wrap": true,
+                      "flex": 9
                     }
                   ]
                 }
@@ -93,37 +102,58 @@
             },
             {
               "type": "box",
-              "layout": "horizontal",
-              "spacing": "md",
-              "margin": "lg",
+              "layout": "vertical",
+              "margin": "xl",
               "contents": [
                 {
-                  "type": "text",
-                  "text": "02",
-                  "size": "sm",
-                  "color": "#B07A3E",
-                  "flex": 0,
-                  "margin": "xs"
-                },
-                {
                   "type": "box",
-                  "layout": "vertical",
-                  "flex": 1,
-                  "spacing": "xs",
+                  "layout": "baseline",
                   "contents": [
                     {
                       "type": "text",
-                      "text": "服務內容",
-                      "size": "md",
-                      "weight": "bold",
-                      "color": "#1F3D33"
+                      "text": "02",
+                      "size": "xs",
+                      "color": "#B07A3E",
+                      "flex": 1
                     },
                     {
                       "type": "text",
-                      "text": "一對一線上語音諮詢（Google Meet 線上會議、LINE 語音），加看面相不另收費用。",
-                      "size": "sm",
+                      "flex": 9,
+                      "wrap": false,
+                      "contents": [
+                        {
+                          "type": "span",
+                          "text": "服務內容",
+                          "size": "sm",
+                          "weight": "bold",
+                          "color": "#1F3D33"
+                        },
+                        {
+                          "type": "span",
+                          "text": "（Google Meet、LINE 語音）",
+                          "size": "xxs",
+                          "color": "#8A7558"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "margin": "sm",
+                  "contents": [
+                    {
+                      "type": "filler",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "一對一語音諮詢，加看面相不另收費。",
+                      "size": "xs",
                       "color": "#45443D",
-                      "wrap": true
+                      "wrap": true,
+                      "flex": 9
                     }
                   ]
                 }
@@ -131,37 +161,46 @@
             },
             {
               "type": "box",
-              "layout": "horizontal",
-              "spacing": "md",
-              "margin": "lg",
+              "layout": "vertical",
+              "margin": "xl",
               "contents": [
                 {
-                  "type": "text",
-                  "text": "03",
-                  "size": "sm",
-                  "color": "#B07A3E",
-                  "flex": 0,
-                  "margin": "xs"
-                },
-                {
                   "type": "box",
-                  "layout": "vertical",
-                  "flex": 1,
-                  "spacing": "xs",
+                  "layout": "baseline",
                   "contents": [
                     {
                       "type": "text",
+                      "text": "03",
+                      "size": "xs",
+                      "color": "#B07A3E",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
                       "text": "可以聊什麼",
-                      "size": "md",
+                      "size": "sm",
                       "weight": "bold",
-                      "color": "#1F3D33"
+                      "color": "#1F3D33",
+                      "flex": 9
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "margin": "sm",
+                  "contents": [
+                    {
+                      "type": "filler",
+                      "flex": 1
                     },
                     {
                       "type": "text",
                       "text": "感情、工作、人生方向皆可聊。",
-                      "size": "sm",
+                      "size": "xs",
                       "color": "#45443D",
-                      "wrap": true
+                      "wrap": true,
+                      "flex": 9
                     }
                   ]
                 }
@@ -169,37 +208,46 @@
             },
             {
               "type": "box",
-              "layout": "horizontal",
-              "spacing": "md",
-              "margin": "lg",
+              "layout": "vertical",
+              "margin": "xl",
               "contents": [
                 {
-                  "type": "text",
-                  "text": "04",
-                  "size": "sm",
-                  "color": "#B07A3E",
-                  "flex": 0,
-                  "margin": "xs"
-                },
-                {
                   "type": "box",
-                  "layout": "vertical",
-                  "flex": 1,
-                  "spacing": "xs",
+                  "layout": "baseline",
                   "contents": [
                     {
                       "type": "text",
+                      "text": "04",
+                      "size": "xs",
+                      "color": "#B07A3E",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
                       "text": "一起看命盤",
-                      "size": "md",
+                      "size": "sm",
                       "weight": "bold",
-                      "color": "#1F3D33"
+                      "color": "#1F3D33",
+                      "flex": 9
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "margin": "sm",
+                  "contents": [
+                    {
+                      "type": "filler",
+                      "flex": 1
                     },
                     {
                       "type": "text",
                       "text": "需要您互相合作，您提問我回答。",
-                      "size": "sm",
+                      "size": "xs",
                       "color": "#45443D",
-                      "wrap": true
+                      "wrap": true,
+                      "flex": 9
                     }
                   ]
                 }
@@ -208,7 +256,7 @@
             {
               "type": "separator",
               "color": "#E6D9C3",
-              "margin": "xl"
+              "margin": "xxl"
             },
             {
               "type": "box",
@@ -218,14 +266,14 @@
                 {
                   "type": "text",
                   "text": "60 分鐘",
-                  "size": "md",
+                  "size": "sm",
                   "color": "#1F3D33",
                   "flex": 0
                 },
                 {
                   "type": "text",
                   "text": "NT$3,600",
-                  "size": "xxl",
+                  "size": "xl",
                   "weight": "bold",
                   "color": "#1F3D33",
                   "align": "end",
@@ -236,7 +284,7 @@
             {
               "type": "text",
               "text": "先確認命盤，再正式開始計時",
-              "size": "xs",
+              "size": "xxs",
               "color": "#8A7558",
               "margin": "sm"
             }
@@ -286,14 +334,14 @@
                 {
                   "type": "text",
                   "text": "從填表，到論命前提醒",
-                  "size": "xs",
+                  "size": "xxs",
                   "color": "#8A7558",
                   "flex": 1
                 },
                 {
                   "type": "text",
                   "text": "2／2",
-                  "size": "xs",
+                  "size": "xxs",
                   "color": "#B07A3E",
                   "flex": 0
                 }
@@ -302,7 +350,7 @@
             {
               "type": "text",
               "text": "預約與準備",
-              "size": "xxl",
+              "size": "xl",
               "weight": "bold",
               "color": "#1F3D33",
               "margin": "sm"
@@ -314,151 +362,46 @@
             },
             {
               "type": "box",
-              "layout": "horizontal",
-              "spacing": "md",
-              "margin": "lg",
+              "layout": "vertical",
+              "margin": "xl",
               "contents": [
                 {
-                  "type": "text",
-                  "text": "01",
-                  "size": "sm",
-                  "color": "#B07A3E",
-                  "flex": 0,
-                  "margin": "xs"
-                },
-                {
                   "type": "box",
-                  "layout": "vertical",
-                  "flex": 1,
-                  "spacing": "xs",
+                  "layout": "baseline",
                   "contents": [
                     {
                       "type": "text",
+                      "text": "01",
+                      "size": "xs",
+                      "color": "#B07A3E",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
                       "text": "準備資料",
-                      "size": "md",
+                      "size": "sm",
                       "weight": "bold",
-                      "color": "#1F3D33"
+                      "color": "#1F3D33",
+                      "flex": 9
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "margin": "sm",
+                  "contents": [
+                    {
+                      "type": "filler",
+                      "flex": 1
                     },
                     {
                       "type": "text",
                       "text": "提供性別、生辰八字（需要到分鐘）。",
-                      "size": "sm",
+                      "size": "xs",
                       "color": "#45443D",
-                      "wrap": true
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "box",
-              "layout": "horizontal",
-              "spacing": "md",
-              "margin": "lg",
-              "contents": [
-                {
-                  "type": "text",
-                  "text": "02",
-                  "size": "sm",
-                  "color": "#B07A3E",
-                  "flex": 0,
-                  "margin": "xs"
-                },
-                {
-                  "type": "box",
-                  "layout": "vertical",
-                  "flex": 1,
-                  "spacing": "xs",
-                  "contents": [
-                    {
-                      "type": "text",
-                      "text": "填寫時段",
-                      "size": "md",
-                      "weight": "bold",
-                      "color": "#1F3D33"
-                    },
-                    {
-                      "type": "text",
-                      "text": "填寫預約表單，並選擇您的時段。",
-                      "size": "sm",
-                      "color": "#45443D",
-                      "wrap": true
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "box",
-              "layout": "horizontal",
-              "spacing": "md",
-              "margin": "lg",
-              "contents": [
-                {
-                  "type": "text",
-                  "text": "03",
-                  "size": "sm",
-                  "color": "#B07A3E",
-                  "flex": 0,
-                  "margin": "xs"
-                },
-                {
-                  "type": "box",
-                  "layout": "vertical",
-                  "flex": 1,
-                  "spacing": "xs",
-                  "contents": [
-                    {
-                      "type": "text",
-                      "text": "預約匯款回報",
-                      "size": "md",
-                      "weight": "bold",
-                      "color": "#1F3D33"
-                    },
-                    {
-                      "type": "text",
-                      "text": "匯款完成後，請依網頁指示回報。",
-                      "size": "sm",
-                      "color": "#45443D",
-                      "wrap": true
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "box",
-              "layout": "horizontal",
-              "spacing": "md",
-              "margin": "lg",
-              "contents": [
-                {
-                  "type": "text",
-                  "text": "04",
-                  "size": "sm",
-                  "color": "#B07A3E",
-                  "flex": 0,
-                  "margin": "xs"
-                },
-                {
-                  "type": "box",
-                  "layout": "vertical",
-                  "flex": 1,
-                  "spacing": "xs",
-                  "contents": [
-                    {
-                      "type": "text",
-                      "text": "論命前提醒",
-                      "size": "md",
-                      "weight": "bold",
-                      "color": "#1F3D33"
-                    },
-                    {
-                      "type": "text",
-                      "text": "開始 24 小時前會以 Email、LINE 寄送提醒訊息，請準時上線。",
-                      "size": "sm",
-                      "color": "#45443D",
-                      "wrap": true
+                      "wrap": true,
+                      "flex": 9
                     }
                   ]
                 }
@@ -468,6 +411,159 @@
               "type": "box",
               "layout": "vertical",
               "margin": "xl",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "baseline",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "02",
+                      "size": "xs",
+                      "color": "#B07A3E",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "填寫時段",
+                      "size": "sm",
+                      "weight": "bold",
+                      "color": "#1F3D33",
+                      "flex": 9
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "margin": "sm",
+                  "contents": [
+                    {
+                      "type": "filler",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "填寫預約表單，並選擇您的時段。",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "wrap": true,
+                      "flex": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "margin": "xl",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "baseline",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "03",
+                      "size": "xs",
+                      "color": "#B07A3E",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "預約匯款回報",
+                      "size": "sm",
+                      "weight": "bold",
+                      "color": "#1F3D33",
+                      "flex": 9
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "margin": "sm",
+                  "contents": [
+                    {
+                      "type": "filler",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "匯款完成後，請依網頁指示回報。",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "wrap": true,
+                      "flex": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "margin": "xl",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "baseline",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "04",
+                      "size": "xs",
+                      "color": "#B07A3E",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "flex": 9,
+                      "wrap": false,
+                      "contents": [
+                        {
+                          "type": "span",
+                          "text": "論命前提醒",
+                          "size": "sm",
+                          "weight": "bold",
+                          "color": "#1F3D33"
+                        },
+                        {
+                          "type": "span",
+                          "text": "（Email、LINE）",
+                          "size": "xxs",
+                          "color": "#8A7558"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "margin": "sm",
+                  "contents": [
+                    {
+                      "type": "filler",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "開始前 24 小時寄送提醒，請準時上線。",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "wrap": true,
+                      "flex": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "margin": "xxl",
               "paddingAll": "14px",
               "backgroundColor": "#F5EAD6",
               "cornerRadius": "md",
@@ -476,32 +572,94 @@
                 {
                   "type": "text",
                   "text": "特別注意事項",
-                  "size": "md",
+                  "size": "sm",
                   "weight": "bold",
                   "color": "#1F3D33"
                 },
                 {
-                  "type": "text",
-                  "text": "・若為海外出生，請提供出生城市；雙胞胎請提前告知。",
-                  "size": "sm",
-                  "color": "#45443D",
-                  "wrap": true
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "・",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "flex": 0
+                    },
+                    {
+                      "type": "text",
+                      "text": "若為海外出生，請提供出生城市。",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "wrap": true,
+                      "flex": 1
+                    }
+                  ]
                 },
                 {
-                  "type": "text",
-                  "text": "・諮詢時不涉及醫療、投資、違法之建議。",
-                  "size": "sm",
-                  "color": "#45443D",
-                  "wrap": true
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "・",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "flex": 0
+                    },
+                    {
+                      "type": "text",
+                      "text": "雙胞胎請提前告知。",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "wrap": true,
+                      "flex": 1
+                    }
+                  ]
                 },
                 {
-                  "type": "text",
-                  "text": "・若核對過去事件不足以反映命盤，則結束本次論命，並退回全部費用。",
-                  "size": "sm",
-                  "weight": "bold",
-                  "color": "#1F3D33",
-                  "wrap": true,
-                  "decoration": "underline"
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "・",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "flex": 0
+                    },
+                    {
+                      "type": "text",
+                      "text": "諮詢不涉及醫療、投資、違法建議。",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "wrap": true,
+                      "flex": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "・",
+                      "size": "xs",
+                      "color": "#1F3D33",
+                      "flex": 0
+                    },
+                    {
+                      "type": "text",
+                      "text": "若核對過去事件不足以反映命盤，則結束本次論命，並退回全部費用。",
+                      "size": "xs",
+                      "color": "#1F3D33",
+                      "wrap": true,
+                      "flex": 1,
+                      "weight": "bold"
+                    }
+                  ]
                 }
               ]
             }

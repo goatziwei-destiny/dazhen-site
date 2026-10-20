@@ -135,18 +135,32 @@ const IMG={"https://dazhen-site.netlify.app/images/line/service-1.jpg":"__HERO1_
 const BOOK="https://dazhen-site.netlify.app/booking/";
 const C={bg:"#FDF6E9",green:"#1F3D33",gold:"#B07A3E",ink:"#45443D",soft:"#8A7558",line:"#E6D9C3",note:"#F5EAD6"};
 
-function item(no,title,desc){
-  return {type:"box",layout:"horizontal",spacing:"md",margin:"lg",contents:[
-    {type:"text",text:no,size:"sm",color:C.gold,flex:0,margin:"xs"},
-    {type:"box",layout:"vertical",flex:1,spacing:"xs",contents:[
-      {type:"text",text:title,size:"md",weight:"bold",color:C.green},
-      {type:"text",text:desc,size:"sm",color:C.ink,wrap:true}]}]};
+// 一個項目：第一行「編號＋標題（可附小字括號）」用 baseline 對齊；第二行說明縮排到標題下方。
+// 編號與縮排都用同一比例（1:9），所以標題與說明的左邊一定對齊。
+function item(no,title,desc,sub){
+  const t=sub?{type:"text",flex:9,wrap:false,contents:[
+      {type:"span",text:title,size:"sm",weight:"bold",color:C.green},
+      {type:"span",text:sub,size:"xxs",color:C.soft}]}
+    :{type:"text",text:title,size:"sm",weight:"bold",color:C.green,flex:9};
+  return {type:"box",layout:"vertical",margin:"xl",contents:[
+    {type:"box",layout:"baseline",contents:[
+      {type:"text",text:no,size:"xs",color:C.gold,flex:1},t]},
+    {type:"box",layout:"horizontal",margin:"sm",contents:[
+      {type:"filler",flex:1},
+      {type:"text",text:desc,size:"xs",color:C.ink,wrap:true,flex:9}]}]};
+}
+// 注意事項：項目符號獨立一欄，換行時文字會對齊第一行的字
+function note(text,bold){
+  const t={type:"text",text:text,size:"xs",color:bold?C.green:C.ink,wrap:true,flex:1};
+  if(bold)t.weight="bold";
+  return {type:"box",layout:"horizontal",contents:[
+    {type:"text",text:"・",size:"xs",color:bold?C.green:C.ink,flex:0},t]};
 }
 function head(eyebrow,title,page){
   return [{type:"box",layout:"horizontal",contents:[
-      {type:"text",text:eyebrow,size:"xs",color:C.soft,flex:1},
-      {type:"text",text:page,size:"xs",color:C.gold,flex:0}]},
-    {type:"text",text:title,size:"xxl",weight:"bold",color:C.green,margin:"sm"},
+      {type:"text",text:eyebrow,size:"xxs",color:C.soft,flex:1},
+      {type:"text",text:page,size:"xxs",color:C.gold,flex:0}]},
+    {type:"text",text:title,size:"xl",weight:"bold",color:C.green,margin:"sm"},
     {type:"separator",color:C.line,margin:"lg"}];
 }
 function footer(label){
@@ -159,14 +173,14 @@ const FLEX={type:"flex",altText:"大正線上諮詢｜服務與收費、預約�
    body:{type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"20px",contents:[
      ...head("大正・線上諮詢","服務與收費","1／2"),
      item("01","前置流程","先說明諮詢流程，並確認您的命盤。"),
-     item("02","服務內容","一對一線上語音諮詢（Google Meet 線上會議、LINE 語音），加看面相不另收費用。"),
+     item("02","服務內容","一對一語音諮詢，加看面相不另收費。","（Google Meet、LINE 語音）"),
      item("03","可以聊什麼","感情、工作、人生方向皆可聊。"),
      item("04","一起看命盤","需要您互相合作，您提問我回答。"),
-     {type:"separator",color:C.line,margin:"xl"},
+     {type:"separator",color:C.line,margin:"xxl"},
      {type:"box",layout:"baseline",margin:"lg",contents:[
-       {type:"text",text:"60 分鐘",size:"md",color:C.green,flex:0},
-       {type:"text",text:"NT$3,600",size:"xxl",weight:"bold",color:C.green,align:"end",flex:1}]},
-     {type:"text",text:"先確認命盤，再正式開始計時",size:"xs",color:C.soft,margin:"sm"}]},
+       {type:"text",text:"60 分鐘",size:"sm",color:C.green,flex:0},
+       {type:"text",text:"NT$3,600",size:"xl",weight:"bold",color:C.green,align:"end",flex:1}]},
+     {type:"text",text:"先確認命盤，再正式開始計時",size:"xxs",color:C.soft,margin:"sm"}]},
    footer:footer("立即預約")},
   {type:"bubble",size:"mega",
    hero:{type:"image",url:"https://dazhen-site.netlify.app/images/line/service-2.jpg",size:"full",aspectRatio:"16:9",aspectMode:"cover"},
@@ -175,12 +189,13 @@ const FLEX={type:"flex",altText:"大正線上諮詢｜服務與收費、預約�
      item("01","準備資料","提供性別、生辰八字（需要到分鐘）。"),
      item("02","填寫時段","填寫預約表單，並選擇您的時段。"),
      item("03","預約匯款回報","匯款完成後，請依網頁指示回報。"),
-     item("04","論命前提醒","開始 24 小時前會以 Email、LINE 寄送提醒訊息，請準時上線。"),
-     {type:"box",layout:"vertical",margin:"xl",paddingAll:"14px",backgroundColor:C.note,cornerRadius:"md",spacing:"sm",contents:[
-       {type:"text",text:"特別注意事項",size:"md",weight:"bold",color:C.green},
-       {type:"text",text:"・若為海外出生，請提供出生城市；雙胞胎請提前告知。",size:"sm",color:C.ink,wrap:true},
-       {type:"text",text:"・諮詢時不涉及醫療、投資、違法之建議。",size:"sm",color:C.ink,wrap:true},
-       {type:"text",text:"・若核對過去事件不足以反映命盤，則結束本次論命，並退回全部費用。",size:"sm",weight:"bold",color:C.green,wrap:true,decoration:"underline"}]}]},
+     item("04","論命前提醒","開始前 24 小時寄送提醒，請準時上線。","（Email、LINE）"),
+     {type:"box",layout:"vertical",margin:"xxl",paddingAll:"14px",backgroundColor:C.note,cornerRadius:"md",spacing:"sm",contents:[
+       {type:"text",text:"特別注意事項",size:"sm",weight:"bold",color:C.green},
+       note("若為海外出生，請提供出生城市。"),
+       note("雙胞胎請提前告知。"),
+       note("諮詢不涉及醫療、投資、違法建議。"),
+       note("若核對過去事件不足以反映命盤，則結束本次論命，並退回全部費用。",true)]}]},
    footer:footer("填寫預約表單")}
 ]}};
 
@@ -196,7 +211,7 @@ function render(o,parent){
   if(o.type==="box"){e=el("div","fx-box");e.style.flexDirection=o.layout==="vertical"?"column":"row";if(o.layout==="baseline")e.style.alignItems="baseline";
     if(o.backgroundColor)e.style.background=o.backgroundColor;if(o.cornerRadius)e.style.borderRadius=(px(o.cornerRadius)||parseFloat(o.cornerRadius)||0)+"px";pad(e,o);
     o.contents.forEach((c,i)=>{const ce=render(c,o);const m=c.margin!=null?px(c.margin):(i?px(o.spacing)||0:0);if(i||c.margin!=null)ce.style[o.layout==="vertical"?"marginTop":"marginLeft"]=m+"px";e.appendChild(ce);});}
-  else if(o.type==="text"){e=el("div","fx-text"+(o.wrap?" fx-wrap":""));e.textContent=o.text;e.style.fontSize=(SIZE[o.size]||16)+"px";if(o.weight==="bold")e.style.fontWeight="700";e.style.color=o.color||"#111";if(o.align)e.style.textAlign={start:"left",end:"right",center:"center"}[o.align];if(o.decoration==="underline")e.style.textDecoration="underline";}
+  else if(o.type==="text"){e=el("div","fx-text"+(o.wrap?" fx-wrap":""));if(o.contents){o.contents.forEach(sp=>{const x=el("span");x.textContent=sp.text;x.style.fontSize=(SIZE[sp.size]||16)+"px";x.style.fontWeight=sp.weight==="bold"?"700":"400";x.style.color=sp.color||"";e.appendChild(x);});}else e.textContent=o.text;e.style.fontSize=(SIZE[o.size]||16)+"px";if(o.weight==="bold")e.style.fontWeight="700";e.style.color=o.color||"#111";if(o.align)e.style.textAlign={start:"left",end:"right",center:"center"}[o.align];if(o.decoration==="underline")e.style.textDecoration="underline";}
   else if(o.type==="separator"){e=el("hr","fx-sep");if(o.color)e.style.borderTopColor=o.color;}
   else if(o.type==="button"){e=el("a","fx-btn");e.href=o.action.uri;e.target="_blank";e.rel="noopener";e.textContent=o.action.label;e.style.height=(o.height==="sm"?40:52)+"px";
     if(o.style==="primary"){e.style.background=o.color||"#17c950";e.style.color="#fff";}else if(o.style==="secondary"){e.style.background=o.color||"#dcdfe5";e.style.color="#111";}else{e.style.background="transparent";e.style.color=o.color||"#42659a";}}
