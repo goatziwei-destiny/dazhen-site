@@ -50,19 +50,30 @@
                 {
                   "type": "text",
                   "text": "文字版諮詢服務",
-                  "size": "xl",
+                  "size": "lg",
                   "weight": "bold",
                   "color": "#1F3D33",
                   "flex": 1
                 },
                 {
                   "type": "text",
-                  "text": "2 題  NT$990",
-                  "size": "sm",
-                  "weight": "bold",
-                  "color": "#1F3D33",
                   "align": "end",
-                  "flex": 0
+                  "flex": 0,
+                  "contents": [
+                    {
+                      "type": "span",
+                      "text": "2 題 ",
+                      "size": "sm",
+                      "color": "#1F3D33"
+                    },
+                    {
+                      "type": "span",
+                      "text": "NT$990",
+                      "size": "lg",
+                      "weight": "bold",
+                      "color": "#1F3D33"
+                    }
+                  ]
                 }
               ]
             },

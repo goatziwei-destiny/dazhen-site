@@ -50,19 +50,30 @@
                 {
                   "type": "text",
                   "text": "服務與收費",
-                  "size": "xl",
+                  "size": "lg",
                   "weight": "bold",
                   "color": "#1F3D33",
                   "flex": 1
                 },
                 {
                   "type": "text",
-                  "text": "60 分鐘  NT$3,600",
-                  "size": "sm",
-                  "weight": "bold",
-                  "color": "#1F3D33",
                   "align": "end",
-                  "flex": 0
+                  "flex": 0,
+                  "contents": [
+                    {
+                      "type": "span",
+                      "text": "60 分鐘 ",
+                      "size": "sm",
+                      "color": "#1F3D33"
+                    },
+                    {
+                      "type": "span",
+                      "text": "NT$3,600",
+                      "size": "lg",
+                      "weight": "bold",
+                      "color": "#1F3D33"
+                    }
+                  ]
                 }
               ]
             },

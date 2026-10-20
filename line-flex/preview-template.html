@@ -160,8 +160,10 @@ function note(text,bold){
 function head(eyebrow,title,page,price){
   const titleRow=price
     ?{type:"box",layout:"baseline",margin:"sm",contents:[
-        {type:"text",text:title,size:"xl",weight:"bold",color:C.green,flex:1},
-        {type:"text",text:price,size:"sm",weight:"bold",color:C.green,align:"end",flex:0}]}
+        {type:"text",text:title,size:"lg",weight:"bold",color:C.green,flex:1},
+        {type:"text",align:"end",flex:0,contents:[
+          {type:"span",text:price[0]+" ",size:"sm",color:C.green},
+          {type:"span",text:price[1],size:"lg",weight:"bold",color:C.green}]}]}
     :{type:"text",text:title,size:"xl",weight:"bold",color:C.green,margin:"sm"};
   return [{type:"box",layout:"horizontal",contents:[
       {type:"text",text:eyebrow,size:"xxs",color:C.soft,flex:1},
@@ -199,7 +201,7 @@ const SETS={
  // 一對一語音諮詢：服務與收費（沒有按鈕）、預約與準備（填寫預約表單）
  one:carousel("大正線上諮詢｜服務與收費、預約與準備",[
   bubbleOf("service-1.jpg",[
-     ...head("大正・線上諮詢","服務與收費","1／2","60 分鐘  NT$3,600"),
+     ...head("大正・線上諮詢","服務與收費","1／2",["60 分鐘","NT$3,600"]),
      item("01","前置流程","先說明諮詢流程，並確認您的命盤。"),
      item("02","服務內容","一對一語音諮詢，加看面相不另收費。","（Google Meet、LINE 語音）"),
      item("03","可以聊什麼","感情、工作、人生方向皆可聊。"),
@@ -214,7 +216,7 @@ const SETS={
  // 文字版諮詢：不核對過去事件、10 個工作天內回覆
  text:carousel("大正文字諮詢｜服務與收費、預約與準備",[
   bubbleOf("text-1.jpg",[
-     ...head("大正・文字諮詢","文字版諮詢服務","1／2","2 題  NT$990"),
+     ...head("大正・文字諮詢","文字版諮詢服務","1／2",["2 題","NT$990"]),
      item("01","前置流程","請填寫文字版服務表單。"),
      item("02","服務內容","付款後 7 到 10 個工作天內回覆。"),
      item("03","可以聊什麼","感情、工作、人生方向皆可聊。"),
