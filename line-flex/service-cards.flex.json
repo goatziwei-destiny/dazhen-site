@@ -44,21 +44,22 @@
             },
             {
               "type": "box",
-              "layout": "baseline",
+              "layout": "horizontal",
+              "alignItems": "flex-end",
               "margin": "sm",
               "contents": [
                 {
-                  "type": "text",
-                  "text": "服務與收費",
-                  "size": "xl",
-                  "weight": "bold",
-                  "color": "#1F3D33",
-                  "flex": 1
+                  "type": "image",
+                  "url": "https://dazhen-site.netlify.app/images/line/title-service.png",
+                  "size": "110px",
+                  "aspectRatio": "441:104",
+                  "aspectMode": "fit",
+                  "flex": 0
                 },
                 {
                   "type": "text",
                   "align": "end",
-                  "flex": 0,
+                  "flex": 1,
                   "contents": [
                     {
                       "type": "span",
@@ -371,12 +372,19 @@
               ]
             },
             {
-              "type": "text",
-              "text": "預約與準備",
-              "size": "xl",
-              "weight": "bold",
-              "color": "#1F3D33",
-              "margin": "sm"
+              "type": "box",
+              "layout": "horizontal",
+              "margin": "sm",
+              "contents": [
+                {
+                  "type": "image",
+                  "url": "https://dazhen-site.netlify.app/images/line/title-booking.png",
+                  "size": "110px",
+                  "aspectRatio": "441:104",
+                  "aspectMode": "fit",
+                  "flex": 0
+                }
+              ]
             },
             {
               "type": "separator",

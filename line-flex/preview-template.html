@@ -131,7 +131,8 @@ pre{background:var(--surface);border:1px solid var(--line);border-radius:8px;pad
 <script>
 (function(){
 // 插圖：正式版放在網站上；預覽時換成內嵌的圖
-const IMG={"https://dazhen-site.netlify.app/images/line/service-1-t.jpg":"__HERO1__","https://dazhen-site.netlify.app/images/line/service-2-t.jpg":"__HERO2__","https://dazhen-site.netlify.app/images/line/text-1-t.jpg":"__HERO3__","https://dazhen-site.netlify.app/images/line/text-2-t.jpg":"__HERO4__"};
+const IMG={"https://dazhen-site.netlify.app/images/line/title-service.png":"__T1__","https://dazhen-site.netlify.app/images/line/title-booking.png":"__T2__","https://dazhen-site.netlify.app/images/line/title-text.png":"__T3__","https://dazhen-site.netlify.app/images/line/service-1-t.jpg":"__HERO1__","https://dazhen-site.netlify.app/images/line/service-2-t.jpg":"__HERO2__","https://dazhen-site.netlify.app/images/line/text-1-t.jpg":"__HERO3__","https://dazhen-site.netlify.app/images/line/text-2-t.jpg":"__HERO4__"};
+const SITE="https://dazhen-site.netlify.app/images/line/";
 const BOOK="https://dazhen-site.netlify.app/booking/";
 const TEXT_FORM=BOOK; // 待辦：文字版表單做好後換成它的網址
 const C={bg:"#FDF6E9",green:"#1F3D33",gold:"#B07A3E",ink:"#45443D",soft:"#8A7558",line:"#E6D9C3",note:"#F5EAD6"};
@@ -157,14 +158,17 @@ function note(text,bold){
   return {type:"box",layout:"horizontal",contents:[
     {type:"text",text:"・",size:"xs",color:bold?C.green:C.ink,flex:0},t]};
 }
+// 標題用思源宋體做成小圖（title-*.png，寬度以「點」指定：每個字 22 點）；價格仍是文字
+const TITLE={"服務與收費":["title-service",5],"預約與準備":["title-booking",5],"文字版諮詢服務":["title-text",7]};
+function titleImg(t){const k=TITLE[t];return {type:"image",url:SITE+k[0]+".png",size:(k[1]*22)+"px",aspectRatio:"441:104",aspectMode:"fit",flex:0};}
 function head(eyebrow,title,page,price){
   const titleRow=price
-    ?{type:"box",layout:"baseline",margin:"sm",contents:[
-        {type:"text",text:title,size:"xl",weight:"bold",color:C.green,flex:1},
-        {type:"text",align:"end",flex:0,contents:[
+    ?{type:"box",layout:"horizontal",alignItems:"flex-end",margin:"sm",contents:[
+        titleImg(title),
+        {type:"text",align:"end",flex:1,contents:[
           {type:"span",text:price[0]+" ",size:"xxs",color:C.green},
           {type:"span",text:price[1],size:"md",weight:"bold",color:C.green}]}]}
-    :{type:"text",text:title,size:"xl",weight:"bold",color:C.green,margin:"sm"};
+    :{type:"box",layout:"horizontal",margin:"sm",contents:[titleImg(title)]};
   return [{type:"box",layout:"horizontal",contents:[
       {type:"text",text:eyebrow,size:"xxs",color:C.soft,flex:1},
       {type:"text",text:page,size:"xxs",color:C.gold,flex:0,position:"relative",offsetTop:"-3px"}]},
@@ -175,7 +179,6 @@ function footer(label,uri){
   return {type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"12px",paddingTop:"0px",contents:[
     {type:"button",style:"primary",color:C.green,height:"sm",action:{type:"uri",label:label,uri:uri||BOOK}}]};
 }
-const SITE="https://dazhen-site.netlify.app/images/line/";
 const HERO_RATIO="1040:533"; // 插圖裁掉底部桌面，只留一點桌緣（-t 檔）
 function hero(f){return {type:"image",url:SITE+f.replace(".jpg","-t.jpg"),size:"full",aspectRatio:HERO_RATIO,aspectMode:"cover"};}
 function bubbleOf(f,bodyContents,btn,uri){
@@ -253,13 +256,13 @@ function pad(e,o){const a=px(o.paddingAll);if(a!=null)e.style.padding=a+"px";["T
 function render(o,parent){
   let e;
   if(o.type==="box"){e=el("div","fx-box");e.style.flexDirection=o.layout==="vertical"?"column":"row";if(o.layout==="baseline")e.style.alignItems="baseline";
-    if(o.backgroundColor)e.style.background=o.backgroundColor;if(o.cornerRadius)e.style.borderRadius=(px(o.cornerRadius)||parseFloat(o.cornerRadius)||0)+"px";pad(e,o);
+    if(o.alignItems)e.style.alignItems={"flex-end":"flex-end","flex-start":"flex-start",center:"center"}[o.alignItems];if(o.backgroundColor)e.style.background=o.backgroundColor;if(o.cornerRadius)e.style.borderRadius=(px(o.cornerRadius)||parseFloat(o.cornerRadius)||0)+"px";pad(e,o);
     o.contents.forEach((c,i)=>{const ce=render(c,o);const m=c.margin!=null?px(c.margin):(i?px(o.spacing)||0:0);if(i||c.margin!=null)ce.style[o.layout==="vertical"?"marginTop":"marginLeft"]=m+"px";e.appendChild(ce);});}
   else if(o.type==="text"){e=el("div","fx-text"+(o.wrap?" fx-wrap":""));if(o.contents){o.contents.forEach(sp=>{const x=el("span");x.textContent=sp.text;x.style.fontSize=(SIZE[sp.size]||16)+"px";x.style.fontWeight=sp.weight==="bold"?"700":"400";x.style.color=sp.color||"";e.appendChild(x);});}else e.textContent=o.text;e.style.fontSize=(SIZE[o.size]||16)+"px";if(o.weight==="bold")e.style.fontWeight="700";e.style.color=o.color||"#111";if(o.align)e.style.textAlign={start:"left",end:"right",center:"center"}[o.align];if(o.decoration==="underline")e.style.textDecoration="underline";}
   else if(o.type==="separator"){e=el("hr","fx-sep");if(o.color)e.style.borderTopColor=o.color;}
   else if(o.type==="button"){e=el("a","fx-btn");e.href=o.action.uri||"#";e.target="_blank";e.rel="noopener";e.textContent=o.action.label;e.style.height=(o.height==="sm"?40:52)+"px";
     if(o.style==="primary"){e.style.background=o.color||"#17c950";e.style.color="#fff";}else if(o.style==="secondary"){e.style.background=o.color||"#dcdfe5";e.style.color="#111";}else{e.style.background="transparent";e.style.color=o.color||"#42659a";}}
-  else if(o.type==="image"){e=el("img","fx-img");e.src=IMG[o.url]||o.url;e.alt="";const [w,h]=(o.aspectRatio||"1:1").split(":").map(Number);e.style.aspectRatio=w+"/"+h;}
+  else if(o.type==="image"){e=el("img","fx-img");e.src=IMG[o.url]||o.url;e.alt="";const [w,h]=(o.aspectRatio||"1:1").split(":").map(Number);e.style.aspectRatio=w+"/"+h;if(/px$/.test(o.size||"")){e.style.width=o.size;e.style.height="auto";}}
   else e=el("div");
   // flex：水平排列的子元件預設 1、垂直預設 0
   if(o.offsetTop){e.style.position="relative";e.style.top=o.offsetTop;}
