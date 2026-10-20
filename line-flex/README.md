@@ -1,6 +1,6 @@
 # LINE 服務方案卡片（Flex Message）
 
-> 給桌面版 Claude：這是大正在雲端對話（2026-10-20）做的，**還沒接進預約系統、還沒上線**，只做到預覽。
+> 2026-10-20 已接進預約系統並部署（dazhen-booking `src/ServiceCards.gs`＋`handleLineTextMessage_`）。客人在 LINE 傳「服務方案／價格／收費…」就回一對一兩張卡片。文字版還沒開放（`LINE_TEXT_PLAN_OPEN_ = false`）。
 
 ## 是什麼
 客人在 LINE 傳「服務方案」（或點圖文選單），大正自動回兩張可左右滑的卡片：
@@ -29,3 +29,9 @@
 1. 文字、顏色、順序有沒有要改。
 2. 第 1 張「確認**你**的命盤」要不要統一成「您」（其他地方都用「您」）。
 3. 確認後：插圖要隨網站部署一次（消耗 Netlify 點數），再改預約系統。
+
+## 2026-10-20 現況
+- 檔案：`service-cards.flex.json`（一對一）、`text-cards.flex.json`（文字版）、`choose-card.flex.json`（方案選擇卡）。三份都由 `preview-template.html` 產生（改完執行 `python3 build.py`，再用瀏覽器開 `preview.html#one`／`#text`／`#choose` 取出 JSON）。
+- 預約系統裡的版本在 `dazhen-booking/src/ServiceCards.gs`，插圖網址改成 `raw.githubusercontent.com/.../main/static/images/line/`（公開 GitHub，不經 Netlify；4 張圖用 `[skip ci]` 推到 main，沒有觸發網站部署）。改文字要兩邊都改。
+- 文字版開放時：把 `LINE_TEXT_PLAN_OPEN_` 改成 `true` 並部署，「服務方案」會先出選擇卡；文字版表單做好後，把 `text-cards` 第 2 張按鈕網址換成表單網址（目前暫連預約頁）。
+- 圖文選單：建議改小尺寸（2500×843），加一格「服務方案」，動作設「傳送文字：服務方案」。
