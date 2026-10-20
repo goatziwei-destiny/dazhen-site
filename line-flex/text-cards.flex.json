@@ -118,23 +118,11 @@
                     },
                     {
                       "type": "text",
-                      "flex": 9,
-                      "wrap": false,
-                      "contents": [
-                        {
-                          "type": "span",
-                          "text": "服務內容",
-                          "size": "sm",
-                          "weight": "bold",
-                          "color": "#1F3D33"
-                        },
-                        {
-                          "type": "span",
-                          "text": "（兩題）",
-                          "size": "xxs",
-                          "color": "#8A7558"
-                        }
-                      ]
+                      "text": "服務內容",
+                      "size": "sm",
+                      "weight": "bold",
+                      "color": "#1F3D33",
+                      "flex": 9
                     }
                   ]
                 },
@@ -448,7 +436,7 @@
                     },
                     {
                       "type": "text",
-                      "text": "提供性別、生辰八字（需要到分鐘）。",
+                      "text": "提供性別、生辰八字，時間精確到分鐘。",
                       "size": "xs",
                       "color": "#45443D",
                       "wrap": true,
@@ -570,23 +558,11 @@
                     },
                     {
                       "type": "text",
-                      "flex": 9,
-                      "wrap": false,
-                      "contents": [
-                        {
-                          "type": "span",
-                          "text": "收取回覆",
-                          "size": "sm",
-                          "weight": "bold",
-                          "color": "#1F3D33"
-                        },
-                        {
-                          "type": "span",
-                          "text": "（Email）",
-                          "size": "xxs",
-                          "color": "#8A7558"
-                        }
-                      ]
+                      "text": "收取回覆",
+                      "size": "sm",
+                      "weight": "bold",
+                      "color": "#1F3D33",
+                      "flex": 9
                     }
                   ]
                 },
@@ -601,7 +577,7 @@
                     },
                     {
                       "type": "text",
-                      "text": "7 到 10 個工作天內寄至您的信箱。",
+                      "text": "7 到 10 個工作天內寄至您的 Email",
                       "size": "xs",
                       "color": "#45443D",
                       "wrap": true,
