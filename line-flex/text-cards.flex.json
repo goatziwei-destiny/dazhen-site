@@ -9,9 +9,9 @@
         "size": "mega",
         "hero": {
           "type": "image",
-          "url": "https://dazhen-site.netlify.app/images/line/text-1.jpg",
+          "url": "https://dazhen-site.netlify.app/images/line/text-1-t.jpg",
           "size": "full",
-          "aspectRatio": "2:1",
+          "aspectRatio": "1040:533",
           "aspectMode": "cover"
         },
         "body": {
@@ -50,7 +50,7 @@
                 {
                   "type": "text",
                   "text": "文字版諮詢服務",
-                  "size": "lg",
+                  "size": "xl",
                   "weight": "bold",
                   "color": "#1F3D33",
                   "flex": 1
@@ -63,13 +63,13 @@
                     {
                       "type": "span",
                       "text": "2 題 ",
-                      "size": "sm",
+                      "size": "xs",
                       "color": "#1F3D33"
                     },
                     {
                       "type": "span",
                       "text": "NT$990",
-                      "size": "lg",
+                      "size": "md",
                       "weight": "bold",
                       "color": "#1F3D33"
                     }
@@ -337,9 +337,9 @@
         "size": "mega",
         "hero": {
           "type": "image",
-          "url": "https://dazhen-site.netlify.app/images/line/text-2.jpg",
+          "url": "https://dazhen-site.netlify.app/images/line/text-2-t.jpg",
           "size": "full",
-          "aspectRatio": "2:1",
+          "aspectRatio": "1040:533",
           "aspectMode": "cover"
         },
         "body": {
