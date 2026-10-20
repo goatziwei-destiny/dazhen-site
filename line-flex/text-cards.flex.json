@@ -11,7 +11,7 @@
           "type": "image",
           "url": "https://dazhen-site.netlify.app/images/line/text-1.jpg",
           "size": "full",
-          "aspectRatio": "16:9",
+          "aspectRatio": "2:1",
           "aspectMode": "cover"
         },
         "body": {
@@ -339,7 +339,7 @@
           "type": "image",
           "url": "https://dazhen-site.netlify.app/images/line/text-2.jpg",
           "size": "full",
-          "aspectRatio": "16:9",
+          "aspectRatio": "2:1",
           "aspectMode": "cover"
         },
         "body": {

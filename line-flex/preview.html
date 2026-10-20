@@ -176,7 +176,7 @@ function footer(label,uri){
     {type:"button",style:"primary",color:C.green,height:"sm",action:{type:"uri",label:label,uri:uri||BOOK}}]};
 }
 const SITE="https://dazhen-site.netlify.app/images/line/";
-const HERO_RATIO="16:9";
+const HERO_RATIO="2:1";
 function hero(f){return {type:"image",url:SITE+f,size:"full",aspectRatio:HERO_RATIO,aspectMode:"cover"};}
 function bubbleOf(f,bodyContents,btn,uri){
   const o={type:"bubble",size:"mega",hero:hero(f),
