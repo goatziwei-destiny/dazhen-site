@@ -36,17 +36,35 @@
                   "text": "1／2",
                   "size": "xxs",
                   "color": "#B07A3E",
-                  "flex": 0
+                  "flex": 0,
+                  "position": "relative",
+                  "offsetTop": "-3px"
                 }
               ]
             },
             {
-              "type": "text",
-              "text": "服務與收費",
-              "size": "xl",
-              "weight": "bold",
-              "color": "#1F3D33",
-              "margin": "sm"
+              "type": "box",
+              "layout": "baseline",
+              "margin": "sm",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "服務與收費",
+                  "size": "xl",
+                  "weight": "bold",
+                  "color": "#1F3D33",
+                  "flex": 1
+                },
+                {
+                  "type": "text",
+                  "text": "60 分鐘  NT$3,600",
+                  "size": "sm",
+                  "weight": "bold",
+                  "color": "#1F3D33",
+                  "align": "end",
+                  "flex": 0
+                }
+              ]
             },
             {
               "type": "separator",
@@ -299,34 +317,6 @@
                   ]
                 }
               ]
-            },
-            {
-              "type": "separator",
-              "color": "#E6D9C3",
-              "margin": "xl"
-            },
-            {
-              "type": "box",
-              "layout": "baseline",
-              "margin": "lg",
-              "contents": [
-                {
-                  "type": "text",
-                  "text": "60 分鐘",
-                  "size": "sm",
-                  "color": "#1F3D33",
-                  "flex": 0
-                },
-                {
-                  "type": "text",
-                  "text": "NT$3,600",
-                  "size": "xl",
-                  "weight": "bold",
-                  "color": "#1F3D33",
-                  "align": "end",
-                  "flex": 1
-                }
-              ]
             }
           ]
         }
@@ -363,7 +353,9 @@
                   "text": "2／2",
                   "size": "xxs",
                   "color": "#B07A3E",
-                  "flex": 0
+                  "flex": 0,
+                  "position": "relative",
+                  "offsetTop": "-3px"
                 }
               ]
             },
@@ -457,7 +449,7 @@
                     },
                     {
                       "type": "text",
-                      "text": "填寫時段",
+                      "text": "預約、回報匯款",
                       "size": "sm",
                       "weight": "bold",
                       "color": "#1F3D33",
@@ -476,7 +468,7 @@
                     },
                     {
                       "type": "text",
-                      "text": "填寫預約表單，並選擇您的時段。",
+                      "text": "填寫表單後，請依網頁指示匯款並回報。",
                       "size": "xs",
                       "color": "#45443D",
                       "wrap": true,
@@ -498,53 +490,6 @@
                     {
                       "type": "text",
                       "text": "03",
-                      "size": "xs",
-                      "color": "#B07A3E",
-                      "flex": 1
-                    },
-                    {
-                      "type": "text",
-                      "text": "預約匯款回報",
-                      "size": "sm",
-                      "weight": "bold",
-                      "color": "#1F3D33",
-                      "flex": 9
-                    }
-                  ]
-                },
-                {
-                  "type": "box",
-                  "layout": "horizontal",
-                  "margin": "xs",
-                  "contents": [
-                    {
-                      "type": "filler",
-                      "flex": 1
-                    },
-                    {
-                      "type": "text",
-                      "text": "匯款完成後，請依網頁指示回報。",
-                      "size": "xs",
-                      "color": "#45443D",
-                      "wrap": true,
-                      "flex": 9
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "box",
-              "layout": "vertical",
-              "margin": "lg",
-              "contents": [
-                {
-                  "type": "box",
-                  "layout": "baseline",
-                  "contents": [
-                    {
-                      "type": "text",
-                      "text": "04",
                       "size": "xs",
                       "color": "#B07A3E",
                       "flex": 1
@@ -603,7 +548,7 @@
                   "contents": [
                     {
                       "type": "text",
-                      "text": "05",
+                      "text": "04",
                       "size": "xs",
                       "color": "#B07A3E",
                       "flex": 1
