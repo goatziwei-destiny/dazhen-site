@@ -1,0 +1,671 @@
+{
+  "type": "flex",
+  "altText": "大正文字諮詢｜服務與收費、預約與準備",
+  "contents": {
+    "type": "carousel",
+    "contents": [
+      {
+        "type": "bubble",
+        "size": "mega",
+        "hero": {
+          "type": "image",
+          "url": "https://dazhen-site.netlify.app/images/line/text-1.jpg",
+          "size": "full",
+          "aspectRatio": "2:1",
+          "aspectMode": "cover"
+        },
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "backgroundColor": "#FDF6E9",
+          "paddingAll": "20px",
+          "contents": [
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "大正・文字諮詢",
+                  "size": "xxs",
+                  "color": "#8A7558",
+                  "flex": 1
+                },
+                {
+                  "type": "text",
+                  "text": "1／2",
+                  "size": "xxs",
+                  "color": "#B07A3E",
+                  "flex": 0
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": "文字版諮詢服務",
+              "size": "xl",
+              "weight": "bold",
+              "color": "#1F3D33",
+              "margin": "sm"
+            },
+            {
+              "type": "separator",
+              "color": "#E6D9C3",
+              "margin": "lg"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "margin": "xl",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "baseline",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "01",
+                      "size": "xs",
+                      "color": "#B07A3E",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "前置流程",
+                      "size": "sm",
+                      "weight": "bold",
+                      "color": "#1F3D33",
+                      "flex": 9
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "margin": "sm",
+                  "contents": [
+                    {
+                      "type": "filler",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "請填寫文字版服務表單。",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "wrap": true,
+                      "flex": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "margin": "xl",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "baseline",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "02",
+                      "size": "xs",
+                      "color": "#B07A3E",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "flex": 9,
+                      "wrap": false,
+                      "contents": [
+                        {
+                          "type": "span",
+                          "text": "服務內容",
+                          "size": "sm",
+                          "weight": "bold",
+                          "color": "#1F3D33"
+                        },
+                        {
+                          "type": "span",
+                          "text": "（兩題）",
+                          "size": "xxs",
+                          "color": "#8A7558"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "margin": "sm",
+                  "contents": [
+                    {
+                      "type": "filler",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "付款完成後，10 個工作天內回覆。",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "wrap": true,
+                      "flex": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "margin": "xl",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "baseline",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "03",
+                      "size": "xs",
+                      "color": "#B07A3E",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "可以聊什麼",
+                      "size": "sm",
+                      "weight": "bold",
+                      "color": "#1F3D33",
+                      "flex": 9
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "margin": "sm",
+                  "contents": [
+                    {
+                      "type": "filler",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "感情、工作、人生方向皆可聊。",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "wrap": true,
+                      "flex": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "margin": "xl",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "baseline",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "04",
+                      "size": "xs",
+                      "color": "#B07A3E",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "寄送與提醒",
+                      "size": "sm",
+                      "weight": "bold",
+                      "color": "#1F3D33",
+                      "flex": 9
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "margin": "sm",
+                  "contents": [
+                    {
+                      "type": "filler",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "寄送至您的信箱，並以 Email、LINE 提醒。",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "wrap": true,
+                      "flex": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "separator",
+              "color": "#E6D9C3",
+              "margin": "xxl"
+            },
+            {
+              "type": "box",
+              "layout": "baseline",
+              "margin": "lg",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "2 題",
+                  "size": "sm",
+                  "color": "#1F3D33",
+                  "flex": 0
+                },
+                {
+                  "type": "text",
+                  "text": "NT$990",
+                  "size": "xl",
+                  "weight": "bold",
+                  "color": "#1F3D33",
+                  "align": "end",
+                  "flex": 1
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": "依填寫問題提供文字回覆",
+              "size": "xxs",
+              "color": "#8A7558",
+              "margin": "sm"
+            }
+          ]
+        }
+      },
+      {
+        "type": "bubble",
+        "size": "mega",
+        "hero": {
+          "type": "image",
+          "url": "https://dazhen-site.netlify.app/images/line/text-2.jpg",
+          "size": "full",
+          "aspectRatio": "2:1",
+          "aspectMode": "cover"
+        },
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "backgroundColor": "#FDF6E9",
+          "paddingAll": "20px",
+          "contents": [
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "從填表，到收到回覆",
+                  "size": "xxs",
+                  "color": "#8A7558",
+                  "flex": 1
+                },
+                {
+                  "type": "text",
+                  "text": "2／2",
+                  "size": "xxs",
+                  "color": "#B07A3E",
+                  "flex": 0
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": "預約與準備",
+              "size": "xl",
+              "weight": "bold",
+              "color": "#1F3D33",
+              "margin": "sm"
+            },
+            {
+              "type": "separator",
+              "color": "#E6D9C3",
+              "margin": "lg"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "margin": "xl",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "baseline",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "01",
+                      "size": "xs",
+                      "color": "#B07A3E",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "準備資料",
+                      "size": "sm",
+                      "weight": "bold",
+                      "color": "#1F3D33",
+                      "flex": 9
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "margin": "sm",
+                  "contents": [
+                    {
+                      "type": "filler",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "提供性別、生辰八字（需要到分鐘）。",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "wrap": true,
+                      "flex": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "margin": "xl",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "baseline",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "02",
+                      "size": "xs",
+                      "color": "#B07A3E",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "填寫問題",
+                      "size": "sm",
+                      "weight": "bold",
+                      "color": "#1F3D33",
+                      "flex": 9
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "margin": "sm",
+                  "contents": [
+                    {
+                      "type": "filler",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "填寫文字版表單，寫下您的 2 個問題。",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "wrap": true,
+                      "flex": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "margin": "xl",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "baseline",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "03",
+                      "size": "xs",
+                      "color": "#B07A3E",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "預約匯款回報",
+                      "size": "sm",
+                      "weight": "bold",
+                      "color": "#1F3D33",
+                      "flex": 9
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "margin": "sm",
+                  "contents": [
+                    {
+                      "type": "filler",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "匯款完成後，請依網頁指示回報。",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "wrap": true,
+                      "flex": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "margin": "xl",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "baseline",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "04",
+                      "size": "xs",
+                      "color": "#B07A3E",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "flex": 9,
+                      "wrap": false,
+                      "contents": [
+                        {
+                          "type": "span",
+                          "text": "收取回覆",
+                          "size": "sm",
+                          "weight": "bold",
+                          "color": "#1F3D33"
+                        },
+                        {
+                          "type": "span",
+                          "text": "（Email、LINE）",
+                          "size": "xxs",
+                          "color": "#8A7558"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "margin": "sm",
+                  "contents": [
+                    {
+                      "type": "filler",
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "text": "10 個工作天內寄至您的信箱。",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "wrap": true,
+                      "flex": 9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "margin": "xxl",
+              "paddingAll": "14px",
+              "backgroundColor": "#F5EAD6",
+              "cornerRadius": "md",
+              "spacing": "sm",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "特別注意事項",
+                  "size": "sm",
+                  "weight": "bold",
+                  "color": "#1F3D33"
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "・",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "flex": 0
+                    },
+                    {
+                      "type": "text",
+                      "text": "若為海外出生，請提供出生城市。",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "wrap": true,
+                      "flex": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "・",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "flex": 0
+                    },
+                    {
+                      "type": "text",
+                      "text": "雙胞胎請提前告知。",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "wrap": true,
+                      "flex": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "・",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "flex": 0
+                    },
+                    {
+                      "type": "text",
+                      "text": "文字版不核對過去事件。",
+                      "size": "xs",
+                      "color": "#45443D",
+                      "wrap": true,
+                      "flex": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "・",
+                      "size": "xs",
+                      "color": "#1F3D33",
+                      "flex": 0
+                    },
+                    {
+                      "type": "text",
+                      "text": "付款後 7 天內、未開始撰寫可退款。",
+                      "size": "xs",
+                      "color": "#1F3D33",
+                      "wrap": true,
+                      "flex": 1,
+                      "weight": "bold"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "footer": {
+          "type": "box",
+          "layout": "vertical",
+          "backgroundColor": "#FDF6E9",
+          "paddingAll": "16px",
+          "paddingTop": "4px",
+          "contents": [
+            {
+              "type": "button",
+              "style": "primary",
+              "color": "#1F3D33",
+              "height": "sm",
+              "action": {
+                "type": "uri",
+                "label": "填寫文字版表單",
+                "uri": "https://dazhen-site.netlify.app/booking/"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

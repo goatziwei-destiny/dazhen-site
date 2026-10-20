@@ -131,8 +131,9 @@ pre{background:var(--surface);border:1px solid var(--line);border-radius:8px;pad
 <script>
 (function(){
 // 插圖：正式版放在網站上；預覽時換成內嵌的圖
-const IMG={"https://dazhen-site.netlify.app/images/line/service-1.jpg":"__HERO1__","https://dazhen-site.netlify.app/images/line/service-2.jpg":"__HERO2__"};
+const IMG={"https://dazhen-site.netlify.app/images/line/service-1.jpg":"__HERO1__","https://dazhen-site.netlify.app/images/line/service-2.jpg":"__HERO2__","https://dazhen-site.netlify.app/images/line/text-1.jpg":"__HERO3__","https://dazhen-site.netlify.app/images/line/text-2.jpg":"__HERO4__"};
 const BOOK="https://dazhen-site.netlify.app/booking/";
+const TEXT_FORM=BOOK; // 待辦：文字版表單做好後換成它的網址
 const C={bg:"#FDF6E9",green:"#1F3D33",gold:"#B07A3E",ink:"#45443D",soft:"#8A7558",line:"#E6D9C3",note:"#F5EAD6"};
 
 // 一個項目：第一行「編號＋標題（可附小字括號）」用 baseline 對齊；第二行說明縮排到標題下方。
@@ -163,41 +164,79 @@ function head(eyebrow,title,page){
     {type:"text",text:title,size:"xl",weight:"bold",color:C.green,margin:"sm"},
     {type:"separator",color:C.line,margin:"lg"}];
 }
-function footer(label){
+function footer(label,uri){
   return {type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"16px",paddingTop:"4px",contents:[
-    {type:"button",style:"primary",color:C.green,height:"sm",action:{type:"uri",label:label,uri:BOOK}}]};
+    {type:"button",style:"primary",color:C.green,height:"sm",action:{type:"uri",label:label,uri:uri||BOOK}}]};
 }
-const FLEX={type:"flex",altText:"大正線上諮詢｜服務與收費、預約與準備",contents:{type:"carousel",contents:[
-  {type:"bubble",size:"mega",
-   hero:{type:"image",url:"https://dazhen-site.netlify.app/images/line/service-1.jpg",size:"full",aspectRatio:"16:9",aspectMode:"cover"},
-   body:{type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"20px",contents:[
+const SITE="https://dazhen-site.netlify.app/images/line/";
+const HERO_RATIO="2:1";
+function hero(f){return {type:"image",url:SITE+f,size:"full",aspectRatio:HERO_RATIO,aspectMode:"cover"};}
+function bubbleOf(f,bodyContents,btn,uri){
+  const o={type:"bubble",size:"mega",hero:hero(f),
+    body:{type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"20px",contents:bodyContents}};
+  if(btn)o.footer=footer(btn,uri);
+  return o;
+}
+function carousel(alt,bubbles){return {type:"flex",altText:alt,contents:{type:"carousel",contents:bubbles}};}
+function priceRow(left,price,note){
+  return [{type:"separator",color:C.line,margin:"xxl"},
+    {type:"box",layout:"baseline",margin:"lg",contents:[
+      {type:"text",text:left,size:"sm",color:C.green,flex:0},
+      {type:"text",text:price,size:"xl",weight:"bold",color:C.green,align:"end",flex:1}]},
+    {type:"text",text:note,size:"xxs",color:C.soft,margin:"sm"}];
+}
+function noteBox(title,lines){
+  return {type:"box",layout:"vertical",margin:"xxl",paddingAll:"14px",backgroundColor:C.note,cornerRadius:"md",spacing:"sm",contents:[
+    {type:"text",text:title,size:"sm",weight:"bold",color:C.green},
+    ...lines.map(l=>note(l[0],l[1]))]};
+}
+const SETS={
+ // 一對一語音諮詢：服務與收費（沒有按鈕）、預約與準備（填寫預約表單）
+ one:carousel("大正線上諮詢｜服務與收費、預約與準備",[
+  bubbleOf("service-1.jpg",[
      ...head("大正・線上諮詢","服務與收費","1／2"),
      item("01","前置流程","先說明諮詢流程，並確認您的命盤。"),
      item("02","服務內容","一對一語音諮詢，加看面相不另收費。","（Google Meet、LINE 語音）"),
      item("03","可以聊什麼","感情、工作、人生方向皆可聊。"),
      item("04","一起看命盤","需要您互相合作，您提問我回答。"),
-     {type:"separator",color:C.line,margin:"xxl"},
-     {type:"box",layout:"baseline",margin:"lg",contents:[
-       {type:"text",text:"60 分鐘",size:"sm",color:C.green,flex:0},
-       {type:"text",text:"NT$3,600",size:"xl",weight:"bold",color:C.green,align:"end",flex:1}]},
-     {type:"text",text:"先確認命盤，再正式開始計時",size:"xxs",color:C.soft,margin:"sm"}]},
-   footer:footer("立即預約")},
-  {type:"bubble",size:"mega",
-   hero:{type:"image",url:"https://dazhen-site.netlify.app/images/line/service-2.jpg",size:"full",aspectRatio:"16:9",aspectMode:"cover"},
-   body:{type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"20px",contents:[
+     ...priceRow("60 分鐘","NT$3,600","先確認命盤，再正式開始計時")]),
+  bubbleOf("service-2.jpg",[
      ...head("從填表，到論命前提醒","預約與準備","2／2"),
      item("01","準備資料","提供性別、生辰八字（需要到分鐘）。"),
      item("02","填寫時段","填寫預約表單，並選擇您的時段。"),
      item("03","預約匯款回報","匯款完成後，請依網頁指示回報。"),
      item("04","論命前提醒","開始前 24 小時寄送提醒，請準時上線。","（Email、LINE）"),
-     {type:"box",layout:"vertical",margin:"xxl",paddingAll:"14px",backgroundColor:C.note,cornerRadius:"md",spacing:"sm",contents:[
-       {type:"text",text:"特別注意事項",size:"sm",weight:"bold",color:C.green},
-       note("若為海外出生，請提供出生城市。"),
-       note("雙胞胎請提前告知。"),
-       note("諮詢不涉及醫療、投資、違法建議。"),
-       note("若核對過去事件不足以反映命盤，則結束本次論命，並退回全部費用。",true)]}]},
-   footer:footer("填寫預約表單")}
-]}};
+     noteBox("特別注意事項",[["若為海外出生，請提供出生城市。"],["雙胞胎請提前告知。"],["諮詢不涉及醫療、投資、違法建議。"],["若核對過去事件不足以反映命盤，則結束本次論命，並退回全部費用。",true]])],"填寫預約表單")]),
+ // 文字版諮詢：不核對過去事件、10 個工作天內回覆
+ text:carousel("大正文字諮詢｜服務與收費、預約與準備",[
+  bubbleOf("text-1.jpg",[
+     ...head("大正・文字諮詢","文字版諮詢服務","1／2"),
+     item("01","前置流程","請填寫文字版服務表單。"),
+     item("02","服務內容","付款完成後，10 個工作天內回覆。","（兩題）"),
+     item("03","可以聊什麼","感情、工作、人生方向皆可聊。"),
+     item("04","寄送與提醒","寄送至您的信箱，並以 Email、LINE 提醒。"),
+     ...priceRow("2 題","NT$990","依填寫問題提供文字回覆")]),
+  bubbleOf("text-2.jpg",[
+     ...head("從填表，到收到回覆","預約與準備","2／2"),
+     item("01","準備資料","提供性別、生辰八字（需要到分鐘）。"),
+     item("02","填寫問題","填寫文字版表單，寫下您的 2 個問題。"),
+     item("03","預約匯款回報","匯款完成後，請依網頁指示回報。"),
+     item("04","收取回覆","10 個工作天內寄至您的信箱。","（Email、LINE）"),
+     noteBox("特別注意事項",[["若為海外出生，請提供出生城市。"],["雙胞胎請提前告知。"],["文字版不核對過去事件。"],["付款後 7 天內、未開始撰寫可退款。",true]])],"填寫文字版表單",TEXT_FORM)]),
+ // 點「服務方案」先出的選擇卡：兩個按鈕各送出一句話，客人不會看到混在一起的內容
+ choose:{type:"flex",altText:"請選擇服務方案",contents:{type:"bubble",size:"kilo",
+   body:{type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"20px",contents:[
+     {type:"text",text:"大正・服務方案",size:"xxs",color:C.soft},
+     {type:"text",text:"請選擇您想了解的方案",size:"lg",weight:"bold",color:C.green,margin:"sm"},
+     {type:"separator",color:C.line,margin:"lg"},
+     {type:"box",layout:"vertical",margin:"lg",spacing:"sm",contents:[
+       {type:"button",style:"primary",color:C.green,height:"sm",action:{type:"message",label:"一對一語音諮詢　NT$3,600",text:"一對一方案"}},
+       {type:"button",style:"secondary",color:C.note,height:"sm",action:{type:"message",label:"文字版諮詢　NT$990",text:"文字版方案"}}]}]}}}
+};
+const SETNAME=(location.hash||"#one").slice(1);
+const FLEX=SETS[SETNAME]||SETS.one;
+const ME={one:"一對一方案",text:"文字版方案",choose:"服務方案"}[SETNAME]||"服務方案";
+document.querySelector(".msg").textContent=ME;
 
 // ---- 簡易 Flex 繪製（依 LINE 規格的尺寸對照） ----
 const SIZE={xxs:11,xs:13,sm:14,md:16,lg:19,xl:22,xxl:29,"3xl":35,"4xl":48,"5xl":74};
@@ -213,7 +252,7 @@ function render(o,parent){
     o.contents.forEach((c,i)=>{const ce=render(c,o);const m=c.margin!=null?px(c.margin):(i?px(o.spacing)||0:0);if(i||c.margin!=null)ce.style[o.layout==="vertical"?"marginTop":"marginLeft"]=m+"px";e.appendChild(ce);});}
   else if(o.type==="text"){e=el("div","fx-text"+(o.wrap?" fx-wrap":""));if(o.contents){o.contents.forEach(sp=>{const x=el("span");x.textContent=sp.text;x.style.fontSize=(SIZE[sp.size]||16)+"px";x.style.fontWeight=sp.weight==="bold"?"700":"400";x.style.color=sp.color||"";e.appendChild(x);});}else e.textContent=o.text;e.style.fontSize=(SIZE[o.size]||16)+"px";if(o.weight==="bold")e.style.fontWeight="700";e.style.color=o.color||"#111";if(o.align)e.style.textAlign={start:"left",end:"right",center:"center"}[o.align];if(o.decoration==="underline")e.style.textDecoration="underline";}
   else if(o.type==="separator"){e=el("hr","fx-sep");if(o.color)e.style.borderTopColor=o.color;}
-  else if(o.type==="button"){e=el("a","fx-btn");e.href=o.action.uri;e.target="_blank";e.rel="noopener";e.textContent=o.action.label;e.style.height=(o.height==="sm"?40:52)+"px";
+  else if(o.type==="button"){e=el("a","fx-btn");e.href=o.action.uri||"#";e.target="_blank";e.rel="noopener";e.textContent=o.action.label;e.style.height=(o.height==="sm"?40:52)+"px";
     if(o.style==="primary"){e.style.background=o.color||"#17c950";e.style.color="#fff";}else if(o.style==="secondary"){e.style.background=o.color||"#dcdfe5";e.style.color="#111";}else{e.style.background="transparent";e.style.color=o.color||"#42659a";}}
   else if(o.type==="image"){e=el("img","fx-img");e.src=IMG[o.url]||o.url;e.alt="";const [w,h]=(o.aspectRatio||"1:1").split(":").map(Number);e.style.aspectRatio=w+"/"+h;}
   else e=el("div");
@@ -224,7 +263,7 @@ function render(o,parent){
 const car=document.getElementById("carousel"),pair=document.getElementById("pair"),dots=document.getElementById("dots");
 function bubble(b){const w=el("div","bubble");w.style.width=Math.min(BW[b.size]||300,window.innerWidth-80)+"px";w.style.background=b.body.backgroundColor||"#fff";
   ["hero","body","footer"].forEach(k=>{if(b[k])w.appendChild(render(b[k],{layout:"vertical"}));});return w;}
-const cards=FLEX.contents.contents.map(b=>{const w=bubble(b);car.appendChild(w);pair.appendChild(bubble(b));return w;});
+const cards=(FLEX.contents.type==="carousel"?FLEX.contents.contents:[FLEX.contents]).map(b=>{const w=bubble(b);car.appendChild(w);pair.appendChild(bubble(b));return w;});
 // 箭頭和點點：換到第幾張
 const dotEls=cards.map((c,i)=>{const d=el("button","dot");d.type="button";d.setAttribute("aria-label","第 "+(i+1)+" 張");d.addEventListener("click",()=>go(i));dots.appendChild(d);return d;});
 function cur(){let best=0,bd=1e9;cards.forEach((c,i)=>{const d=Math.abs(c.offsetLeft-56-car.scrollLeft);if(d<bd){bd=d;best=i;}});return best;}

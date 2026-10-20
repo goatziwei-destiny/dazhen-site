@@ -1,0 +1,65 @@
+{
+  "type": "flex",
+  "altText": "請選擇服務方案",
+  "contents": {
+    "type": "bubble",
+    "size": "kilo",
+    "body": {
+      "type": "box",
+      "layout": "vertical",
+      "backgroundColor": "#FDF6E9",
+      "paddingAll": "20px",
+      "contents": [
+        {
+          "type": "text",
+          "text": "大正・服務方案",
+          "size": "xxs",
+          "color": "#8A7558"
+        },
+        {
+          "type": "text",
+          "text": "請選擇您想了解的方案",
+          "size": "lg",
+          "weight": "bold",
+          "color": "#1F3D33",
+          "margin": "sm"
+        },
+        {
+          "type": "separator",
+          "color": "#E6D9C3",
+          "margin": "lg"
+        },
+        {
+          "type": "box",
+          "layout": "vertical",
+          "margin": "lg",
+          "spacing": "sm",
+          "contents": [
+            {
+              "type": "button",
+              "style": "primary",
+              "color": "#1F3D33",
+              "height": "sm",
+              "action": {
+                "type": "message",
+                "label": "一對一語音諮詢　NT$3,600",
+                "text": "一對一方案"
+              }
+            },
+            {
+              "type": "button",
+              "style": "secondary",
+              "color": "#F5EAD6",
+              "height": "sm",
+              "action": {
+                "type": "message",
+                "label": "文字版諮詢　NT$990",
+                "text": "文字版方案"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
