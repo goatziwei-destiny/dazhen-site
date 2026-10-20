@@ -590,21 +590,6 @@
                   ]
                 }
               ]
-            },
-            {
-              "type": "text",
-              "text": "要預約了嗎？點這裡填寫預約表單 ›",
-              "size": "xs",
-              "weight": "bold",
-              "color": "#1F3D33",
-              "margin": "xl",
-              "align": "center",
-              "decoration": "none",
-              "action": {
-                "type": "uri",
-                "label": "預約",
-                "uri": "https://liff.line.me/2007939639-l2APYkwk"
-              }
             }
           ]
         }
