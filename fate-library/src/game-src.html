@@ -214,8 +214,8 @@ function plaque(cx,y,title,sub,a){ctx.globalAlpha=a;ctx.font=`56px ${FONT}`;cons
 function coin(x,y,r){for(let j=-r;j<=r;j++)for(let i=-r;i<=r;i++){const d=i*i+j*j;if(d<=r*r){ctx.fillStyle=d>(r-1.2)*(r-1.2)?'#a07a2c':(i<-1&&j<-1&&d<(r*.6)**2?'#fbe7a8':'#e3b84f');ctx.fillRect(x+i*U,y+j*U,U,U);}}ctx.fillStyle='#a07a2c';ctx.fillRect(x-U,y-U*3,U*2,U*6);}
 let regions=[],SEL=null;
 function cursor(x,y){if(Math.floor(T*3)%3===2)return;ctx.fillStyle=C.gold;for(let k=0;k<5;k++)ctx.fillRect(x+k*U,y-30+k*U,U,(10-2*k)*U);}
-function item(id,label,x,y,w,size,href){const on=SEL===id;regions.push({x,y:y-size-16,w,h:size+36,id,href});
-  if(on){ctx.globalAlpha=.18;ctx.fillStyle=C.gold;ctx.fillRect(x,y-size-16,w,size+36);ctx.globalAlpha=1;cursor(x+16,y-size/2+4);}text(label,x+70,y,size,on?C.paper:C.muted);}
+function item(id,label,x,y,w,size,href,hl){const on=SEL===id;regions.push({x,y:y-size-16,w,h:size+36,id,href});
+  if(on){ctx.globalAlpha=.18;ctx.fillStyle=C.gold;ctx.fillRect(x,y-size-16,w,size+36);ctx.globalAlpha=1;cursor(x+16,y-size/2+4);}text(label,x+70,y,size,on?C.paper:(hl?C.gold:C.muted));}
 function button(id,label,x,y,w,href,primary){const on=SEL===id,h=88;regions.push({x,y,w,h,id,href});
   ctx.fillStyle=primary?(on?'#e8c473':C.gold):(on?C.panel2:C.panel);ctx.fillRect(x,y,w,h);ctx.fillStyle=primary?C.gold2:C.gold;ctx.fillRect(x,y+h-U,w,U);
   if(!primary){ctx.fillRect(x,y,w,U);ctx.fillRect(x,y,U,h);ctx.fillRect(x+w-U,y,U,h);}text(label,x+w/2,y+60,44,primary?'#1a1408':(on?C.paper:C.muted),'center');}
@@ -439,7 +439,7 @@ function poseFrame(b){if(G.walking)return (G.left?'wl':'walk')+(Math.floor(T*7)%
 // ================= 場景介面 =================
 function sceneMenu(){const P=LY.panel,a=eo(prog(ST.bt,0,.5));const x=P.x-(1-a)*1100,h=TALL?700:P.h;
   frameBox(x,P.y,P.w,h);text('命運書庫',x+70,P.y+120,80,C.gold);text('大正・住在書庫裡的羊',x+74,P.y+185,36,C.muted);ctx.fillStyle=C.gold2;ctx.fillRect(x+70,P.y+220,P.w-140,3);
-  {const L=[['booking','預約諮詢'],['shelf','挑選一本書'],['draw','抽一張命運卡'],['palace','十二宮圖鑑'],['tgo','羊的小佛堂']].concat(DUO_PREVIEW?[['duo','抽兩張牌（預覽）']]:[]);const c=L.length>4;L.forEach(([id,l],i)=>item(id,l,x+60,P.y+(c?(TALL?300:285):(TALL?325:305))+i*(c?(TALL?84:76):(TALL?100:92)),P.w-120,c?50:56));}
+  {const L=[['booking','預約諮詢'],['shelf','挑選一本書'],['draw','抽一張命運卡・今日運勢'],['palace','十二宮圖鑑'],['tgo','羊的小佛堂'],['site','官方網站']].concat(DUO_PREVIEW?[['duo','抽兩張牌（預覽）']]:[]);const c=L.length>4;L.forEach(([id,l],i)=>item(id,l,x+60,P.y+(c?(TALL?(L.length>5?285:300):(L.length>5?262:285)):(TALL?325:305))+i*(c?(TALL?(L.length>5?70:84):(L.length>5?62:76)):(TALL?100:92)),P.w-120,c?(L.length>5?46:50):56,id==='site'?SITE+'/':undefined,id==='draw'));}
   }
 function sceneBooking(){const b=beat();if(!b||b.fx!=='panel')return;const P=LY.panel,a=eo(prog(ST.bt,0,.5));const x=P.x-(1-a)*1100,h=TALL?700:P.h;
   frameBox(x,P.y,P.w,h);text('預約諮詢',x+70,P.y+110,72,C.gold);ctx.fillStyle=C.gold2;ctx.fillRect(x+70,P.y+148,P.w-140,3);
@@ -458,7 +458,9 @@ function sceneShelf(){const P=LY.panel,a=eo(prog(ST.bt,0,.5));const x=P.x,y=P.y-
   pill('menu','◀ 回選單',x+P.w-240,y+50);}
 function sceneBook(){const id=ST.scene,b=beat();floatBook(eo(prog(ST.bt+(ST.bi?9:0),0,.6)),TITLE[id],(id==='basics'||id==='faq')?ST.ch:(id==='rules'?'第一次論命':''));
   if(b&&b.fx==='end'){const a=eo(prog(ST.bt,1.4,1.9)),P=LY.panel,bw=TALL?440:400;const y=TALL?LY.dlg.y+40:LY.dlg.y+70,x=TALL?(W-2*bw-40)/2:LY.dlg.x+(LY.dlg.w-2*bw-40)/2;
-    ctx.globalAlpha=a;button('shelf','回書架',x,y,bw,null,true);button('menu','回選單',x+bw+40,y,bw);ctx.globalAlpha=1;}
+    ctx.globalAlpha=a;const BL={star:'/topics/basics/',notes:'/topics/notes/'}[id];
+    if(BL){const b3=(2*bw+40-60)/3;button('blog','閱讀文章',x,y,b3,SITE+BL,true);button('shelf','回書架',x+b3+30,y,b3);button('menu','回選單',x+2*(b3+30),y,b3);}
+    else{button('shelf','回書架',x,y,bw,null,true);button('menu','回選單',x+bw+40,y,bw);}ctx.globalAlpha=1;}
   else pill('shelf','◀ 回書架',40,40);}
 
 
@@ -823,7 +825,7 @@ function act(id){IDLE.last=T;if(ST.next||ST.leave)return;
 const pool=[];
 function syncLinks(){const hs=regions.filter(r=>r.href&&!ST.next);while(pool.length<hs.length){const a=document.createElement('a');a.target='_blank';a.rel='noopener';
     a.addEventListener('mouseenter',()=>{SEL=a.dataset.id;});a.addEventListener('focus',()=>{SEL=a.dataset.id;});a.addEventListener('click',e=>e.stopPropagation());links.appendChild(a);pool.push(a);}
-  pool.forEach((a,i)=>{const r=hs[i];if(!r){a.hidden=true;return;}a.hidden=false;a.href=r.href;a.dataset.id=r.id;a.setAttribute('aria-label','前往預約');
+  pool.forEach((a,i)=>{const r=hs[i];if(!r){a.hidden=true;return;}a.hidden=false;a.href=r.href;a.dataset.id=r.id;a.setAttribute('aria-label',a.dataset.id==='site'?'前往官方網站':(a.dataset.id==='blog'?'閱讀文章':'前往預約'));
     Object.assign(a.style,{left:(r.x/W*100)+'%',top:(r.y/H*100)+'%',width:(r.w/W*100)+'%',height:(r.h/H*100)+'%'});});}
 function hit(e){const b=stage.getBoundingClientRect();const x=(e.clientX-b.left)/b.width*W,y=(e.clientY-b.top)/b.height*H;
   for(let i=regions.length-1;i>=0;i--){const r=regions[i];if(x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h)return r;}return null;}
