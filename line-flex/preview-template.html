@@ -131,7 +131,7 @@ pre{background:var(--surface);border:1px solid var(--line);border-radius:8px;pad
 <script>
 (function(){
 // 插圖：正式版放在網站上；預覽時換成內嵌的圖
-const IMG={"https://dazhen-site.netlify.app/images/line/title-service.png":"__T1__","https://dazhen-site.netlify.app/images/line/title-choose.png":"__T4__","https://dazhen-site.netlify.app/images/line/btn-one.png":"__T5__","https://dazhen-site.netlify.app/images/line/btn-text.png":"__T6__","https://dazhen-site.netlify.app/images/line/title-booking.png":"__T2__","https://dazhen-site.netlify.app/images/line/title-text.png":"__T3__","https://dazhen-site.netlify.app/images/line/service-1-t.jpg":"__HERO1__","https://dazhen-site.netlify.app/images/line/service-2-t.jpg":"__HERO2__","https://dazhen-site.netlify.app/images/line/text-1-t.jpg":"__HERO3__","https://dazhen-site.netlify.app/images/line/text-2-t.jpg":"__HERO4__"};
+const IMG={"https://dazhen-site.netlify.app/images/line/welcome-a.jpg":"__I:welcome-a.jpg__","https://dazhen-site.netlify.app/images/line/wc-service.jpg":"__I:wc-service.jpg__","https://dazhen-site.netlify.app/images/line/wc-library.jpg":"__I:wc-library.jpg__","https://dazhen-site.netlify.app/images/line/wc-book.jpg":"__I:wc-book.jpg__","https://dazhen-site.netlify.app/images/line/title-welcome.png":"__I:title-welcome.png__","https://dazhen-site.netlify.app/images/line/title-service.png":"__I:title-service.png__","https://dazhen-site.netlify.app/images/line/wc-t-library.png":"__I:wc-t-library.png__","https://dazhen-site.netlify.app/images/line/wc-t-book.png":"__I:wc-t-book.png__","https://dazhen-site.netlify.app/images/line/wc-b-service.png":"__I:wc-b-service.png__","https://dazhen-site.netlify.app/images/line/wc-b-library.png":"__I:wc-b-library.png__","https://dazhen-site.netlify.app/images/line/wc-b-book.png":"__I:wc-b-book.png__","https://dazhen-site.netlify.app/images/line/welcome-b.jpg":"__W5__","https://dazhen-site.netlify.app/images/line/btn-w-service.png":"__W2__","https://dazhen-site.netlify.app/images/line/btn-w-library.png":"__W3__","https://dazhen-site.netlify.app/images/line/btn-w-book.png":"__W4__","https://dazhen-site.netlify.app/images/line/title-choose.png":"__T4__","https://dazhen-site.netlify.app/images/line/btn-one.png":"__T5__","https://dazhen-site.netlify.app/images/line/btn-text.png":"__T6__","https://dazhen-site.netlify.app/images/line/title-booking.png":"__T2__","https://dazhen-site.netlify.app/images/line/title-text.png":"__T3__","https://dazhen-site.netlify.app/images/line/service-1-t.jpg":"__HERO1__","https://dazhen-site.netlify.app/images/line/service-2-t.jpg":"__HERO2__","https://dazhen-site.netlify.app/images/line/text-1-t.jpg":"__HERO3__","https://dazhen-site.netlify.app/images/line/text-2-t.jpg":"__HERO4__"};
 const SITE="https://dazhen-site.netlify.app/images/line/";
 const BOOK="https://liff.line.me/2007939639-l2APYkwk"; // 預約唯一入口（LIFF，回頭客自動帶入）
 const TEXT_FORM=BOOK; // 待辦：文字版表單做好後換成它的網址
@@ -181,10 +181,15 @@ function footer(label,uri){
 }
 const HERO_RATIO="1040:533"; // 插圖裁掉底部桌面，只留一點桌緣（-t 檔）
 function hero(f){return {type:"image",url:SITE+f.replace(".jpg","-t.jpg"),size:"full",aspectRatio:HERO_RATIO,aspectMode:"cover"};}
+function imgFooter(img,action){
+  return {type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"12px",paddingTop:"0px",contents:[
+    Object.assign({type:"image",url:SITE+img,size:"full",aspectRatio:"880:150",aspectMode:"fit"},{action:action})]};
+}
 function bubbleOf(f,bodyContents,btn,uri){
   const o={type:"bubble",size:"mega",hero:hero(f),
     body:{type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"16px",contents:bodyContents}};
   if(btn)o.footer=footer(btn,uri);
+  if(arguments[4])o.footer=imgFooter(arguments[4][0],arguments[4][1]);
   return o;
 }
 function bookLink(){
@@ -218,7 +223,7 @@ const SETS={
      item("01","準備資料","提供性別、生辰八字，時間精確到分鐘。","（海外出生、雙胞胎請於表單備註）"),
      item("02","預約、回報匯款","填寫表單後，請依網頁指示匯款並回報。"),
      item("03","論命前提醒","開始前 24 小時寄送提醒，請準時上線。","（Email、LINE）"),
-     item("04","特別注意事項","無法核對過去事件，即結束並全額退費。")])]),
+     item("04","特別注意事項","無法核對過去事件，即結束並全額退費。")],null,null,["wc-b-book.png",{type:"uri",label:"預約論命",uri:BOOK}])]),
  // 文字版諮詢：不核對過去事件、10 個工作天內回覆
  text:carousel("大正文字諮詢｜服務與收費、預約與準備",[
   bubbleOf("text-1.jpg",[
@@ -233,7 +238,7 @@ const SETS={
      item("01","準備資料","提供性別、生辰八字，時間精確到分鐘。","（海外出生、雙胞胎請於表單備註）"),
      item("02","預約、回報匯款","填寫表單後，請依網頁指示匯款並回報。"),
      item("03","收取回覆","7 到 10 個工作天內寄至您的 Email"),
-     item("04","特別注意事項","付款後 7 天內、未撰寫前可退款。")])]),
+     item("04","特別注意事項","付款後 7 天內、未撰寫前可退款。")],null,null,["wc-b-book.png",{type:"uri",label:"預約論命",uri:TEXT_FORM}])]),
  // 點「服務方案」先出的選擇卡：兩個按鈕各送出一句話，客人不會看到混在一起的內容
  choose:{type:"flex",altText:"請選擇服務方案",contents:{type:"bubble",size:"kilo",
    body:{type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"20px",contents:[
@@ -244,9 +249,36 @@ const SETS={
        {type:"image",url:SITE+"btn-one.png",size:"full",aspectRatio:"880:160",aspectMode:"fit",action:{type:"message",label:"一對一語音諮詢",text:"一對一方案"}},
        {type:"image",url:SITE+"btn-text.png",size:"full",aspectRatio:"880:160",aspectMode:"fit",action:{type:"message",label:"文字版諮詢",text:"文字版方案"}}]}]}}}
 };
+welcomeOf=(f,ratio)=>({type:"flex",altText:"歡迎來到大正命運書庫",contents:{type:"bubble",size:"mega",
+   hero:{type:"image",url:SITE+f,size:"full",aspectRatio:ratio,aspectMode:"cover"},
+   body:{type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"16px",contents:[
+     {type:"text",text:"大正・紫微斗數",size:"xxs",color:C.soft},
+     {type:"box",layout:"horizontal",margin:"sm",contents:[{type:"image",url:SITE+"title-welcome.png",size:"200px",aspectRatio:"800:94",aspectMode:"fit",flex:0}]},
+     {type:"text",text:"命盤解讀與一對一諮詢，想先看哪裡？",size:"sm",color:C.green,margin:"md",wrap:true},
+     {type:"box",layout:"vertical",margin:"lg",spacing:"sm",contents:[
+       {type:"image",url:SITE+"btn-w-service.png",size:"full",aspectRatio:"880:150",aspectMode:"fit",action:{type:"message",label:"服務與收費",text:"服務方案"}},
+       {type:"image",url:SITE+"btn-w-library.png",size:"full",aspectRatio:"880:150",aspectMode:"fit",action:{type:"uri",label:"命運書庫",uri:"https://liff.line.me/2007939639-wMPJothc"}},
+       {type:"image",url:SITE+"btn-w-book.png",size:"full",aspectRatio:"880:150",aspectMode:"fit",action:{type:"uri",label:"預約論命",uri:BOOK}}]}]}}});
+SETS.welcomeA=welcomeOf("welcome-a.jpg","1040:1040");SETS.welcomeB=welcomeOf("welcome-b.jpg","1040:832");
+const HR="1040:1040";
+const wcImg=(u,size,ratio,extra)=>Object.assign({type:"image",url:SITE+u,size:size,aspectRatio:ratio,aspectMode:"fit",flex:0},extra||{});
+function wcCard(hero,eyebrow,titleBox,desc,btn,foot){
+  const body=[{type:"box",layout:"horizontal",contents:[
+      {type:"text",text:eyebrow,size:"xxs",color:C.soft,flex:1},
+      ]},
+    {type:"box",layout:"horizontal",margin:"sm",contents:[titleBox]},
+    {type:"text",text:desc,size:"sm",color:C.green,margin:"md",wrap:true}];
+  if(foot)body.push({type:"text",text:foot,size:"sm",weight:"bold",color:C.gold,align:"center",margin:"xl"});
+  if(btn)body.push({type:"box",layout:"vertical",margin:"lg",contents:[Object.assign({type:"image",url:SITE+btn[0],size:"full",aspectRatio:"880:150",aspectMode:"fit"},{action:btn[1]})]});
+  return {type:"bubble",size:"mega",hero:{type:"image",url:SITE+hero,size:"full",aspectRatio:HR,aspectMode:"cover"},
+    body:{type:"box",layout:"vertical",backgroundColor:C.bg,paddingAll:"16px",contents:body}};
+}
+SETS.welcomeC={type:"flex",altText:"歡迎來到大正命運書庫",contents:{type:"carousel",contents:[
+  wcCard("welcome-a.jpg","大正・紫微斗數",wcImg("title-welcome.png","210px","800:95"),"這裡是大正的命運書庫。\n先逛逛書庫，再往右滑看服務。",["wc-b-library.png",{type:"uri",label:"進入命運書庫",uri:"https://liff.line.me/2007939639-wMPJothc"}]),
+  wcCard("wc-service.jpg","大正・線上諮詢",wcImg("title-service.png","110px","441:104"),"我們是線上一對一諮詢。\n點下方按鈕，看更詳細的資訊。",["wc-b-service.png",{type:"message",label:"服務方案",text:"服務方案"}])]}};
 const SETNAME=(location.hash||"#one").slice(1);
 const FLEX=SETS[SETNAME]||SETS.one;
-const ME={one:"一對一方案",text:"文字版方案",choose:"服務方案"}[SETNAME]||"服務方案";
+const ME={one:"一對一方案",text:"文字版方案",choose:"服務方案",welcomeC:"（加入好友）",welcomeA:"（加入好友）",welcomeB:"（加入好友）"}[SETNAME]||"服務方案";
 document.querySelector(".msg").textContent=ME;
 
 // ---- 簡易 Flex 繪製（依 LINE 規格的尺寸對照） ----

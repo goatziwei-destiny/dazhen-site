@@ -592,6 +592,27 @@
               ]
             }
           ]
+        },
+        "footer": {
+          "type": "box",
+          "layout": "vertical",
+          "backgroundColor": "#FDF6E9",
+          "paddingAll": "12px",
+          "paddingTop": "0px",
+          "contents": [
+            {
+              "type": "image",
+              "url": "https://dazhen-site.netlify.app/images/line/wc-b-book.png",
+              "size": "full",
+              "aspectRatio": "880:150",
+              "aspectMode": "fit",
+              "action": {
+                "type": "uri",
+                "label": "預約論命",
+                "uri": "https://liff.line.me/2007939639-l2APYkwk"
+              }
+            }
+          ]
         }
       }
     ]

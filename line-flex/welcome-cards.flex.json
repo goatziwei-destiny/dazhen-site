@@ -1,0 +1,157 @@
+{
+  "type": "flex",
+  "altText": "歡迎來到大正命運書庫",
+  "contents": {
+    "type": "carousel",
+    "contents": [
+      {
+        "type": "bubble",
+        "size": "mega",
+        "hero": {
+          "type": "image",
+          "url": "https://dazhen-site.netlify.app/images/line/welcome-a.jpg",
+          "size": "full",
+          "aspectRatio": "1040:1040",
+          "aspectMode": "cover"
+        },
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "backgroundColor": "#FDF6E9",
+          "paddingAll": "16px",
+          "contents": [
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "大正・紫微斗數",
+                  "size": "xxs",
+                  "color": "#8A7558",
+                  "flex": 1
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "margin": "sm",
+              "contents": [
+                {
+                  "type": "image",
+                  "url": "https://dazhen-site.netlify.app/images/line/title-welcome.png",
+                  "size": "210px",
+                  "aspectRatio": "800:95",
+                  "aspectMode": "fit",
+                  "flex": 0
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": "這裡是大正的命運書庫。\n先逛逛書庫，再往右滑看服務。",
+              "size": "sm",
+              "color": "#1F3D33",
+              "margin": "md",
+              "wrap": true
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "margin": "lg",
+              "contents": [
+                {
+                  "type": "image",
+                  "url": "https://dazhen-site.netlify.app/images/line/wc-b-library.png",
+                  "size": "full",
+                  "aspectRatio": "880:150",
+                  "aspectMode": "fit",
+                  "action": {
+                    "type": "uri",
+                    "label": "進入命運書庫",
+                    "uri": "https://liff.line.me/2007939639-wMPJothc"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "type": "bubble",
+        "size": "mega",
+        "hero": {
+          "type": "image",
+          "url": "https://dazhen-site.netlify.app/images/line/wc-service.jpg",
+          "size": "full",
+          "aspectRatio": "1040:1040",
+          "aspectMode": "cover"
+        },
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "backgroundColor": "#FDF6E9",
+          "paddingAll": "16px",
+          "contents": [
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "大正・線上諮詢",
+                  "size": "xxs",
+                  "color": "#8A7558",
+                  "flex": 1
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "margin": "sm",
+              "contents": [
+                {
+                  "type": "image",
+                  "url": "https://dazhen-site.netlify.app/images/line/title-service.png",
+                  "size": "110px",
+                  "aspectRatio": "441:104",
+                  "aspectMode": "fit",
+                  "flex": 0
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": "我們是線上一對一諮詢。\n點下方按鈕，看更詳細的資訊。",
+              "size": "sm",
+              "color": "#1F3D33",
+              "margin": "md",
+              "wrap": true
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "margin": "lg",
+              "contents": [
+                {
+                  "type": "image",
+                  "url": "https://dazhen-site.netlify.app/images/line/wc-b-service.png",
+                  "size": "full",
+                  "aspectRatio": "880:150",
+                  "aspectMode": "fit",
+                  "action": {
+                    "type": "message",
+                    "label": "服務方案",
+                    "text": "服務方案"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
