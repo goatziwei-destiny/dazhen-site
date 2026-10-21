@@ -863,7 +863,7 @@ const loads=LAZY?(layout(),[need(GRP.core)]):Object.entries(SPR).map(([k,src])=>
 const fontReady=document.fonts?Promise.race([document.fonts.load(`44px "Cubic11"`,'命運書庫'),new Promise(r=>setTimeout(r,2500))]):Promise.resolve();
 if(capture)document.body.classList.add('capture');
 layout();window.addEventListener('resize',()=>{const was=TALL;layout();if(was!==TALL){G.x=LY.gx;if(LAZY){need(GRP.core);need(groupKeys(ST.scene));}}});
-Promise.all([fontReady,...loads]).then(()=>{{const hs=(location.hash||'').slice(1);enter(DUO_GAME?'duo':(TSC[hs]||hs==='tgo'?hs:(seen&&!capture?'back':'intro')));}if(DUO_GAME){const r=document.getElementById('replay');if(r)r.style.display='none';const hd=document.querySelector('header');if(hd)hd.style.display='none';}
+Promise.all([fontReady,...loads]).then(()=>{{const hs=(location.hash||'').slice(1);enter(DUO_GAME?'duo':(TSC[hs]||hs==='tgo'||hs==='draw'?hs:(seen&&!capture?'back':'intro')));}if(DUO_GAME){const r=document.getElementById('replay');if(r)r.style.display='none';const hd=document.querySelector('header');if(hd)hd.style.display='none';}
   if(capture){window.__step=n=>{for(let i=0;i<n;i++)step(1/30);};window.__act=act;window.__sel=v=>{SEL=v;};window.__poke=()=>userPoke();window.__regions=()=>regions.map(r=>[r.id,Math.round(r.x),Math.round(r.y),Math.round(r.w),Math.round(r.h)]);window.__state=()=>({scene:ST.scene,bi:ST.bi});window.__ready=true;render();}
   else{last=performance.now();requestAnimationFrame(loop);}});
 })();
