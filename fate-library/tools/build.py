@@ -20,7 +20,7 @@ def build(which,out,title=None):
     subprocess.run([sys.executable,'-m','fontTools.subset',P('assets','media','Cubic_11_1.100_R.ttf'),f'--text-file={ct}','--flavor=woff2',f'--output-file={fw}'],check=True,capture_output=True)
     s=s.replace('__FONT__','data:font/woff2;base64,'+b64(fw)).replace('__AUDIO__','data:audio/mpeg;base64,'+b64(P('assets','media','loop.mp3')))
     fm=open(P('assets','frames-main.json' if which=='main' else 'frames-duo.json'),encoding='utf-8').read()
-    s=s.replace('__SPR__',json.dumps(sprites(which))).replace('__FM__',json.dumps(json.loads(fm))).replace('__GRP__','null')
+    s=s.replace('__SPR__',json.dumps(sprites(which))).replace('__FM__',json.dumps(json.loads(fm))).replace('__GRP__','null').replace('__LIBURL__','null')
     open(P('dist',out),'w',encoding='utf-8').write(s)
     # 本機預覽版（含 doctype，可直接用瀏覽器開；截圖工具也用這個）
     open(P('dist','local-'+out),'w',encoding='utf-8').write('<!doctype html><html><head><meta charset="utf-8"></head><body style="margin:0">'+s+'</body></html>')
@@ -29,6 +29,7 @@ def build(which,out,title=None):
         og='<meta property="og:title" content="大正的抽牌小遊戲"><meta property="og:description" content="大正幫你洗牌，憑直覺抽兩張星曜卡，看看今天的提示。">'
         open(P('dist','web-'+out),'w',encoding='utf-8').write('<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'+og+'</head><body style="margin:0">'+s+'</body></html>')
     os.remove(ct);os.remove(fw);print(out,round(len(s)/1e6,2),'MB')
+BOOKING_URL='https://script.google.com/macros/s/AKfycbx3aDlFDBayTKgvGtQMrWrpDMx3WuU5Yd3Uh4c6BJK5kmKpZnBsXH7fK97yrkQkgx9fkQ/exec'  # 預約系統公開網址（書庫內容從這裡讀）
 def build_web(q=80):
     """網站／LINE 用的命運書庫：圖片拆成獨立檔案、用到才載入（不受 16 MB 限制，手機開得快、省流量）。
     輸出 dist/web/library/（index.html＋img/＋音樂），整個資料夾複製到 dazhen-site/static/library/ 就會在 /library/ 上線。
@@ -37,13 +38,15 @@ def build_web(q=80):
     from PIL import Image
     out=P('dist','web','library');shutil.rmtree(out,ignore_errors=True);os.makedirs(os.path.join(out,'img'))
     man=json.load(open(P('assets','manifest.json'),encoding='utf-8'))['main']
-    grp=json.load(open(P('assets','groups.json'),encoding='utf-8'));grp.pop('_說明',None)
+    grp=json.load(open(P('assets','groups.json'),encoding='utf-8'));grp.pop('_說明',None);raw=grp.pop('raw',[]);grp['raw']=raw
     spr={};tot=0
     for k,f in man.items():
-        im=Image.open(P('assets','sprites',f));b=io.BytesIO()
-        im.save(b,'WEBP',quality=q,method=6);data=b.getvalue()
         src=open(P('assets','sprites',f),'rb').read()
-        if len(src)<=len(data):data=src   # 重新壓縮沒有變小就用原檔
+        if k in grp.get('raw',[]):data=src   # 指定用原檔的圖（像素對齊過的背景）
+        else:
+            im=Image.open(P('assets','sprites',f));b=io.BytesIO()
+            im.save(b,'WEBP',quality=q,method=6);data=b.getvalue()
+            if len(src)<=len(data):data=src   # 重新壓縮沒有變小就用原檔
         h=hashlib.md5(data).hexdigest()[:8];name=f'img/{k}.{h}.webp'
         open(os.path.join(out,name),'wb').write(data);spr[k]=name;tot+=len(data)
     mp=open(P('assets','media','loop.mp3'),'rb').read();mname='loop.'+hashlib.md5(mp).hexdigest()[:8]+'.mp3'
@@ -59,7 +62,10 @@ def build_web(q=80):
     chars=set(c for c in s if ord(c)>127)|set('0123456789')
     ct=P('dist','chars.txt');fw=P('dist','font.woff2');open(ct,'w',encoding='utf-8').write(''.join(sorted(chars)))
     subprocess.run([sys.executable,'-m','fontTools.subset',P('assets','media','Cubic_11_1.100_R.ttf'),f'--text-file={ct}','--flavor=woff2',f'--output-file={fw}'],check=True,capture_output=True)
-    s=s.replace('__FONT__','data:font/woff2;base64,'+b64(fw)).replace('__AUDIO__',mname)
+    # 網站版用完整字型檔（約 380 KB，存在 img/ 下長期快取），後台新增的文字也一定有像素字可用
+    subprocess.run([sys.executable,'-m','fontTools.subset',P('assets','media','Cubic_11_1.100_R.ttf'),'--unicodes=*','--flavor=woff2',f'--output-file={fw}'],check=True,capture_output=True)
+    fb=open(fw,'rb').read();fname='img/font.'+hashlib.md5(fb).hexdigest()[:8]+'.woff2';open(os.path.join(out,fname),'wb').write(fb)
+    s=s.replace('__FONT__',fname).replace('__AUDIO__',mname).replace('__LIBURL__',json.dumps(BOOKING_URL))
     fm=json.load(open(P('assets','frames-main.json'),encoding='utf-8'))
     s=s.replace('__SPR__',json.dumps(spr)).replace('__FM__',json.dumps(fm)).replace('__GRP__',json.dumps(grp,ensure_ascii=False))
     # 放在自己網站：連結用本站網址、在同一個視窗開（LINE 裡不會跳出去）

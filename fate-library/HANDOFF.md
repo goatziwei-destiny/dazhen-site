@@ -58,3 +58,12 @@
 - 上線方式：抽牌小遊戲已放在 `static/draw/`（待合併上線）；命運書庫完整版要不要也放進 `static/`。
 - 完整版（game.html）裡的「抽兩張」只有 `DUO_PREVIEW=true` 才會出現在選單，一般訪客進不去，所以 main 不打包 face0–face13。若要在完整版開放，記得把 14 張星曜卡加進 manifest 的 main（base64 後約多 1.8 MB）。
 - 2026-10-14 完整版減肥：game.html 15.9 MB → 12.2 MB（Artifact 上限 16 MB）。做法是從 manifest 的 main 拿掉沒用到的 39 張圖：舊版站姿佛堂動作 count/lamp/pray/sutra/beads1-2、舊門 door/wdoor/cdl、walkbook、cardback、sp、舊經書道具 p_cup/p_stand/p_sutF/p_sutO/p_sutraO，以及只有抽牌近景才用的 cbgw/cbgt/h1_0–h5_1。圖檔仍留在 assets/sprites/，要用再加回 manifest 就好。確認方式：逐一跑完每個場景，用程式記下實際畫出的圖，確定沒有缺圖。
+
+## 2026-10-23 書架改版＋後台可編輯
+- 選單：預約諮詢／諮詢須知／紫微小知識（原「挑選一本書」）／抽一張命運卡／十二宮圖鑑／羊的小佛堂。
+- 規則之書＋問答之書合併成「諮詢須知」（scene `guide`），從選單直接進，結尾按鈕是「預約諮詢／回選單」。書架剩啟蒙者之書、星辰典籍、羊的手札、山羊之書。
+- 書架名稱、書、問答、諮詢須知可在預約後台「網站內容 → ⑬ 命運書庫內容」編輯（dazhen-booking `src/Library.gs`）：存草稿 → `/library/?draft=1` 預覽 → 發布。書庫用 JSONP 讀 `?page=library`，讀不到就用內建內容；上次讀到的內容存在 localStorage（`dzLibContent`）。
+  - 台詞跟內建內容一模一樣的句子，會沿用原本的動作和圖解；新的句子輪流用 talk／present 動作。
+  - 內建內容（`S` 裡的 basics、star、notes、goat、guide）改了的話，`Library.gs` 的 `libraryDefault_()` 也要一起改（可用 `window.__libExport()` 匯出）。
+- 網站版改用完整像素字型檔（img/font.*.woff2，約 380 KB，長期快取），後台新增的字也有像素字。
+- 像素對齊過的背景（bgw/bgt/tbgw/tbgt）已放回 assets/sprites，groups.json 的 raw 讓網站版直接用原檔，重新 build 不會再蓋掉。

@@ -303,18 +303,6 @@ const S={
   {say:'所以，不需要因為有私心，就覺得愧疚。',pose:'kneel:1'},
   {fx:'tend',say:'還想知道什麼呢？',pose:'ktalk',stay:1}],
  palace:[{say:'這是十二宮圖鑑。點一張卡片，我告訴你那一宮在看什麼。',pose:'present:1',stay:1}],
- faq:[{ch:'怎麼預約？',say:'怎麼預約？',pose:'think:1'},
-  {say:'在網站填預約表單就可以，時段開放兩天以後的。',pose:'present:1'},
-  {ch:'怎麼付款？',say:'怎麼付款？',pose:'think:1'},
-  {say:'訂單成立後，24 小時內完成匯款；超過時間，時段會自動釋出。',pose:'talk'},
-  {ch:'可以改時間嗎？',say:'可以改時間嗎？',pose:'think:1'},
-  {say:'可以，在預約開始的 24 小時前告訴我就好。',pose:'present:2'},
-  {ch:'遲到怎麼辦？',say:'遲到怎麼辦？',pose:'think:1'},
-  {say:'我會等你 15 分鐘；超過就沒辦法等了，費用也不退。',pose:'talk'},
-  {ch:'要準備什麼？',say:'要準備什麼？',pose:'think:1'},
-  {say:'你的出生年月日、出生時間，還有你最想問的事。',pose:'present:1',dg:'dgB'},
-  {say:'在國外出生的話，請告訴我出生城市；雙胞胎也請先說一聲。',pose:'talk'},
-  {fx:'end',stay:1}],
  basics:[{ch:'命運是什麼？',say:'命運是什麼？',pose:'think:1'},
   {say:'命，是你天生的色彩、個性，和與生俱來的資源。',pose:'talk',dg:'dg3'},
   {say:'運，是你走到哪裡、遇到什麼樣的環境。',pose:'present:1'},
@@ -335,7 +323,8 @@ const S={
   {say:'就像一個能幹的人，放錯位置也會辛苦；遇到對的夥伴，才能發揮得最好。',pose:'talk'},
   {say:'所以看盤不能只看單顆星，要看整體的組合。',pose:'present:1'},
   {fx:'end',stay:1}],
- rules:[{say:'這是規則之書，記著第一次論命怎麼進行。',pose:'watch:0'},
+ guide:[{say:'這是諮詢須知，記著論命怎麼進行，和預約的小規則。',pose:'watch:0'},
+  {ch:'論命怎麼進行？',say:'論命怎麼進行？',pose:'think:1'},
   {say:'用 Google Meet 或 LINE 語音進行。',pose:'talk'},
   {say:'如果方便，可以先傳一張正面照片給我看面相；沒有也沒關係。',pose:'present:1'},
   {say:'開始前，我會先把你的命盤排好、看過一遍。',pose:'watch:2'},
@@ -343,6 +332,17 @@ const S={
   {say:'說明和定盤完成後，才開始正式的六十分鐘；時間之內，想問幾題都可以。',pose:'watch:1'},
   {say:'接著一起看盤，一問一答；聽不懂，隨時打斷我。',pose:'present:1'},
   {say:'最後整理今天的重點，和離開後可以先做的一件事。',pose:'watch:3'},
+  {ch:'怎麼預約？',say:'怎麼預約？',pose:'think:1'},
+  {say:'在網站或 LINE 都可以預約，時段開放兩天以後的。',pose:'present:1'},
+  {ch:'怎麼付款？',say:'怎麼付款？',pose:'think:1'},
+  {say:'訂單成立後，24 小時內完成匯款；超過時間，時段會自動釋出。',pose:'talk'},
+  {ch:'可以改時間嗎？',say:'可以改時間嗎？',pose:'think:1'},
+  {say:'可以，在預約開始的 24 小時前告訴我；每筆預約可以改一次。',pose:'present:2'},
+  {ch:'遲到怎麼辦？',say:'遲到怎麼辦？',pose:'think:1'},
+  {say:'我會等你 15 分鐘；超過就沒辦法等了，費用也不退。',pose:'talk'},
+  {ch:'要準備什麼？',say:'要準備什麼？',pose:'think:1'},
+  {say:'你的出生年月日、出生時間，還有你最想問的事。',pose:'present:1',dg:'dgB'},
+  {say:'在國外出生的話，請告訴我出生城市；雙胞胎也請先說一聲。',pose:'talk'},
   {fx:'end',stay:1}],
  star:[{say:'這一排是星辰典籍。',pose:'present:1'},
   {say:'裡面記著命理的學理：星曜、宮位、四化。',pose:'talk'},
@@ -359,8 +359,9 @@ const S={
   {say:'路怎麼走，永遠由你決定。',pose:'welcome:1'},
   {fx:'end',stay:1}],
 };
-const BOOKS=[{id:'basics',t:'啟蒙者之書',c:'#2f5b56'},{id:'rules',t:'規則之書',c:'#6b2c34'},{id:'star',t:'星辰典籍',c:'#2c3d66'},{id:'notes',t:'羊的手札',c:'#6b4a26'},{id:'goat',t:'山羊之書',c:'#5a4a7a'},{id:'faq',t:'問答之書',c:'#3f5a3a'}];
-const TITLE={basics:'啟蒙者之書',rules:'規則之書',star:'星辰典籍',notes:'羊的手札',goat:'山羊之書',faq:'問答之書'};
+let SHELF_TITLE='紫微小知識';
+let BOOKS=[{id:'basics',t:'啟蒙者之書',c:'#2f5b56'},{id:'star',t:'星辰典籍',c:'#2c3d66'},{id:'notes',t:'羊的手札',c:'#6b4a26'},{id:'goat',t:'山羊之書',c:'#5a4a7a'}];
+const TITLE={basics:'啟蒙者之書',star:'星辰典籍',notes:'羊的手札',goat:'山羊之書',guide:'諮詢須知'};
 const CPS=14,HOLD=2.2;
 
 // ================= 狀態 =================
@@ -437,9 +438,9 @@ function poseFrame(b){if(G.walking)return (G.left?'wl':'walk')+(Math.floor(T*7)%
   return set+fr;}
 
 // ================= 場景介面 =================
-function sceneMenu(){const P=LY.panel,a=eo(prog(ST.bt,0,.5));const x=P.x-(1-a)*1100,h=TALL?700:P.h;
+function sceneMenu(){const P=LY.panel,a=eo(prog(ST.bt,0,.5));const x=P.x-(1-a)*1100,h=TALL?780:P.h;
   frameBox(x,P.y,P.w,h);text('命運書庫',x+70,P.y+120,80,C.gold);text('大正・住在書庫裡的羊',x+74,P.y+185,36,C.muted);ctx.fillStyle=C.gold2;ctx.fillRect(x+70,P.y+220,P.w-140,3);
-  {const L=[['booking','預約諮詢'],['shelf','挑選一本書'],['draw','抽一張命運卡'],['palace','十二宮圖鑑'],['tgo','羊的小佛堂']].concat(DUO_PREVIEW?[['duo','抽兩張牌（預覽）']]:[]);const c=L.length>4;L.forEach(([id,l],i)=>item(id,l,x+60,P.y+(c?(TALL?300:285):(TALL?325:305))+i*(c?(TALL?84:76):(TALL?100:92)),P.w-120,c?50:56));}
+  {const L=[['booking','預約諮詢'],['guide',TITLE.guide],['shelf',SHELF_TITLE],['draw','抽一張命運卡'],['palace','十二宮圖鑑'],['tgo','羊的小佛堂']].concat(DUO_PREVIEW?[['duo','抽兩張牌（預覽）']]:[]);const c=L.length>4;L.forEach(([id,l],i)=>item(id,l,x+60,P.y+(c?(TALL?300:280):(TALL?325:305))+i*(c?(TALL?86:70):(TALL?100:92)),P.w-120,c?(TALL?50:48):56));}
   }
 function sceneBooking(){const b=beat();if(!b||b.fx!=='panel')return;const P=LY.panel,a=eo(prog(ST.bt,0,.5));const x=P.x-(1-a)*1100,h=TALL?700:P.h;
   frameBox(x,P.y,P.w,h);text('預約諮詢',x+70,P.y+110,72,C.gold);ctx.fillStyle=C.gold2;ctx.fillRect(x+70,P.y+148,P.w-140,3);
@@ -447,7 +448,7 @@ function sceneBooking(){const b=beat();if(!b||b.fx!=='panel')return;const P=LY.p
   coin(x+130,P.y+425,7);text('NT$ 3600',x+190,P.y+448,58,C.fire);ctx.font=`58px ${FONT}`;const ww=ctx.measureText('NT$ 3600').width;text('山羊金幣',x+210+ww,P.y+446,36,C.muted);
   const bw=(P.w-160)/2;button('book','前往預約',x+60,P.y+(TALL?560:540),bw,SITE+'/booking/',true);button('menu','回選單',x+100+bw,P.y+(TALL?560:540),bw);}
 function sceneShelf(){const P=LY.panel,a=eo(prog(ST.bt,0,.5));const x=P.x,y=P.y-(1-a)*900,h=TALL?700:P.h;
-  frameBox(x,y,P.w,h);text('挑選一本書',x+70,y+105,64,C.gold);
+  frameBox(x,y,P.w,h);text(SHELF_TITLE,x+70,y+105,64,C.gold);
   const n=BOOKS.length,sw=130,gap=(P.w-120-n*sw)/(n-1),baseY=y+h-90,bh=TALL?420:390;
   ctx.fillStyle=C.wood;ctx.fillRect(x+40,baseY,P.w-80,U*4);ctx.fillStyle=C.wood2;ctx.fillRect(x+40,baseY+U*4,P.w-80,U*2);
   BOOKS.forEach((bk,i)=>{const bx=x+60+i*(sw+gap),on=SEL===bk.id,lift=on?36:0,by=baseY-bh-lift;regions.push({x:bx,y:by,w:sw,h:bh+lift,id:bk.id});
@@ -456,10 +457,10 @@ function sceneShelf(){const P=LY.panel,a=eo(prog(ST.bt,0,.5));const x=P.x,y=P.y-
     ctx.fillStyle=C.gold;[18,34,bh-40,bh-24].forEach(o=>ctx.fillRect(bx,by+o,sw,U));
     const chars=[...bk.t],fs=TALL?52:52,y0=by+bh/2-(chars.length-1)*fs*.58;chars.forEach((ch,k)=>text(ch,bx+sw/2,y0+k*fs*1.16+fs*.36,fs,on?C.paper:C.cream,'center'));});
   pill('menu','◀ 回選單',x+P.w-240,y+50);}
-function sceneBook(){const id=ST.scene,b=beat();floatBook(eo(prog(ST.bt+(ST.bi?9:0),0,.6)),TITLE[id],(id==='basics'||id==='faq')?ST.ch:(id==='rules'?'第一次論命':''));
+function sceneBook(){const id=ST.scene,b=beat();floatBook(eo(prog(ST.bt+(ST.bi?9:0),0,.6)),TITLE[id],ST.ch||'');const gd=id==='guide';
   if(b&&b.fx==='end'){const a=eo(prog(ST.bt,1.4,1.9)),P=LY.panel,bw=TALL?440:400;const y=TALL?LY.dlg.y+40:LY.dlg.y+70,x=TALL?(W-2*bw-40)/2:LY.dlg.x+(LY.dlg.w-2*bw-40)/2;
-    ctx.globalAlpha=a;button('shelf','回書架',x,y,bw,null,true);button('menu','回選單',x+bw+40,y,bw);ctx.globalAlpha=1;}
-  else pill('shelf','◀ 回書架',40,40);}
+    ctx.globalAlpha=a;if(gd){button('booking','預約諮詢',x,y,bw,null,true);button('menu','回選單',x+bw+40,y,bw);}else{button('shelf','回書架',x,y,bw,null,true);button('menu','回選單',x+bw+40,y,bw);}ctx.globalAlpha=1;}
+  else pill(gd?'menu':'shelf',gd?'◀ 回選單':'◀ 回書架',40,40);}
 
 
 // ================= 抽一張命運卡 =================
@@ -832,7 +833,7 @@ stage.addEventListener('click',e=>{const woke=userPoke();if(!music&&!started){st
 stage.addEventListener('keydown',e=>{if(userPoke()){e.preventDefault();return;}const ids=regions.filter(r=>r.id!=='__adv').map(r=>r.id);
   if(e.key==='Escape'&&ST.scene==='palace'&&PZ.i>=0){act('palback');return;}
   if(e.key==='Escape'&&inTemple()&&ST.scene!=='temple'){act('temple');return;}
-  if(e.key==='Escape'){act(ST.scene==='menu'?'__none':(TITLE[ST.scene]?'shelf':'menu'));return;}
+  if(e.key==='Escape'){act(ST.scene==='menu'?'__none':(TITLE[ST.scene]&&ST.scene!=='guide'?'shelf':'menu'));return;}
   if((e.key==='Enter'||e.key===' ')&&regions.some(r=>r.id==='__adv')&&!SEL){advance();e.preventDefault();return;}
   if(!ids.length)return;let i=ids.indexOf(SEL);
   if(['ArrowDown','ArrowRight'].includes(e.key)){SEL=ids[(i+1)%ids.length];e.preventDefault();}
@@ -857,6 +858,38 @@ function step(dt){update(dt);while(SFXQ.length){const k=SFXQ.shift();if(!capture
 function loadingMark(){const w=TALL?300:280,h=72,x=W-w-30,y=H-h-30;ctx.globalAlpha=.92;frameBox(x,y,w,h);const n=Math.floor(T*3)%4;text('載入中'+'．'.repeat(n),x+w/2,y+h/2+14,TALL?36:34,C.paper,'center');ctx.globalAlpha=1;}
 let last=0;function loop(now){step(Math.min(.1,(now-last)/1000));last=now;requestAnimationFrame(loop);}
 let seen=false;try{seen=localStorage.getItem('dz_seen')==='1';localStorage.setItem('dz_seen','1');}catch(e){}
+
+// ================= 書庫內容（可在預約後台修改） =================
+// 網站版會向預約系統讀取後台存的內容（書架名稱、每本書的問答、諮詢須知）；讀不到就用上面內建的內容。
+const LIB_URL=__LIBURL__;
+const LIBDEF={S:{},BOOKS:BOOKS.slice(),TITLE:Object.assign({},TITLE),SHELF:SHELF_TITLE},LIBLINE={};
+Object.keys(TITLE).forEach(id=>{LIBDEF.S[id]=S[id];(S[id]||[]).forEach(b=>{if(b.say&&!b.ch&&!LIBLINE[b.say])LIBLINE[b.say]=b;});});
+function libBeats(bk){const P=['talk','present:1','talk','present:2'];let k=0;const out=[];
+  const line=t=>{t=String(t||'').trim();if(!t)return;const o=LIBLINE[t];out.push(o?Object.assign({},o):{say:t,pose:P[k++%P.length]});};
+  (bk.intro||[]).forEach(line);
+  (bk.sections||[]).forEach(sec=>{const q=String(sec.q||'').trim();if(q)out.push({ch:q,say:q,pose:'think:1'});(sec.lines||[]).forEach(line);});
+  out.push({fx:'end',stay:1});return out;}
+function libExport(){const one=id=>{const L=LIBDEF.S[id]||[],o={title:LIBDEF.TITLE[id],intro:[],sections:[]};let cur=null;
+    L.forEach(b=>{if(b.ch){cur={q:b.ch,lines:[]};o.sections.push(cur);}else if(b.say){(cur?cur.lines:o.intro).push(b.say);}});return o;};
+  return {shelfTitle:LIBDEF.SHELF,books:LIBDEF.BOOKS.map(b=>Object.assign({id:b.id,color:b.c},one(b.id))),guide:one('guide')};}
+function applyLib(d){const busy=id=>ST.scene===id&&!!TITLE[id];
+  // 先還原成內建內容，再套用後台的版本
+  SHELF_TITLE=LIBDEF.SHELF;BOOKS=LIBDEF.BOOKS.slice();Object.keys(TITLE).forEach(id=>{if(!LIBDEF.TITLE[id]&&!busy(id))delete TITLE[id];});
+  Object.keys(LIBDEF.S).forEach(id=>{if(!busy(id))S[id]=LIBDEF.S[id];TITLE[id]=LIBDEF.TITLE[id];});
+  if(!d||!Array.isArray(d.books))return;
+  try{if(d.shelfTitle)SHELF_TITLE=String(d.shelfTitle).slice(0,8);
+    const nb=[];d.books.forEach((bk,i)=>{if(!bk||!bk.title)return;let id=(bk.id&&LIBDEF.TITLE[bk.id]&&bk.id!=='guide'&&!nb.some(x=>x.id===bk.id))?bk.id:('bk'+i);
+      if(!busy(id))S[id]=libBeats(bk);TITLE[id]=String(bk.title).slice(0,6);nb.push({id,t:TITLE[id],c:/^#[0-9a-f]{6}$/i.test(bk.color||'')?bk.color:'#2f5b56'});});
+    if(nb.length)BOOKS=nb.slice(0,6);
+    if(d.guide&&(d.guide.sections||d.guide.intro)){if(!busy('guide'))S.guide=libBeats(d.guide);if(d.guide.title)TITLE.guide=String(d.guide.title).slice(0,6);}
+  }catch(e){}}
+function loadLib(){if(!LIB_URL||capture)return;const draft=/[?&]draft=1/.test(location.search);
+  if(!draft){try{const c=localStorage.getItem('dzLibContent');if(c)applyLib(JSON.parse(c));}catch(e){}}
+  const cb='__dzlib'+Date.now();window[cb]=r=>{try{delete window[cb];}catch(e){}const d=r&&r.content||null;applyLib(d);
+    if(!draft){try{if(d)localStorage.setItem('dzLibContent',JSON.stringify(d));else localStorage.removeItem('dzLibContent');}catch(e){}}};
+  const sc=document.createElement('script');sc.async=true;sc.src=LIB_URL+'?page=library'+(draft?'&draft=1':'')+'&callback='+cb+'&t='+Date.now();document.head.appendChild(sc);}
+window.__libExport=libExport;window.__applyLib=applyLib;
+loadLib();
 const loads=LAZY?(layout(),[need(GRP.core)]):Object.entries(SPR).map(([k,src])=>new Promise(r=>{const im=new Image();im.onload=()=>{IM[k]=im;r();};im.onerror=r;im.src=src;}));
 const fontReady=document.fonts?Promise.race([document.fonts.load(`44px "Cubic11"`,'命運書庫'),new Promise(r=>setTimeout(r,2500))]):Promise.resolve();
 if(capture)document.body.classList.add('capture');
