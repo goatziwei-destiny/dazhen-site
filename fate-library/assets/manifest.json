@@ -186,20 +186,6 @@
   "chandw": "chandw.webp",
   "cidt": "cidt.webp",
   "cidw": "cidw.webp",
-  "face0": "face0.webp",
-  "face1": "face1.webp",
-  "face10": "face10.webp",
-  "face11": "face11.webp",
-  "face12": "face12.webp",
-  "face13": "face13.webp",
-  "face2": "face2.webp",
-  "face3": "face3.webp",
-  "face4": "face4.webp",
-  "face5": "face5.webp",
-  "face6": "face6.webp",
-  "face7": "face7.webp",
-  "face8": "face8.webp",
-  "face9": "face9.webp",
   "fx0": "fx0.webp",
   "fx1": "fx1.webp",
   "fx10": "fx10.webp",
@@ -219,6 +205,8 @@
   "h4_0": "h4_0_duo.webp",
   "h4_1": "h4_1_duo.webp",
   "h5_0": "h5_0_duo.webp",
-  "h5_1": "h5_1_duo.webp"
+  "h5_1": "h5_1_duo.webp",
+  "face_sun": "face_sun.webp",
+  "face_sha": "face_sha.webp"
  }
 }
