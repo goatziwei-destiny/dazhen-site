@@ -212,7 +212,7 @@ function wrap(str,x,y,maxw,size,col){ctx.font=`${size}px ${FONT}`;let line='',yy
 function plaque(cx,y,title,sub,a){ctx.globalAlpha=a;ctx.font=`56px ${FONT}`;const w=Math.max(ctx.measureText(title).width,sub?ctx.measureText(sub).width*.6:0)+120;const h=sub?150:100;
   frameBox(cx-w/2,y-10,w,h,C.panel2);text(title,cx,y+62,56,C.gold,'center');if(sub)text(sub,cx,y+118,34,C.paper,'center');ctx.globalAlpha=1;}
 function coin(x,y,r){for(let j=-r;j<=r;j++)for(let i=-r;i<=r;i++){const d=i*i+j*j;if(d<=r*r){ctx.fillStyle=d>(r-1.2)*(r-1.2)?'#a07a2c':(i<-1&&j<-1&&d<(r*.6)**2?'#fbe7a8':'#e3b84f');ctx.fillRect(x+i*U,y+j*U,U,U);}}ctx.fillStyle='#a07a2c';ctx.fillRect(x-U,y-U*3,U*2,U*6);}
-let regions=[],SEL=null;
+let regions=[],SEL=null,ZOOM=-1;
 function cursor(x,y){if(Math.floor(T*3)%3===2)return;ctx.fillStyle=C.gold;for(let k=0;k<5;k++)ctx.fillRect(x+k*U,y-30+k*U,U,(10-2*k)*U);}
 function item(id,label,x,y,w,size,href){const on=SEL===id;regions.push({x,y:y-size-16,w,h:size+36,id,href});
   if(on){ctx.globalAlpha=.18;ctx.fillStyle=C.gold;ctx.fillRect(x,y-size-16,w,size+36);ctx.globalAlpha=1;cursor(x+16,y-size/2+4);}text(label,x+70,y,size,on?C.paper:C.muted);}
@@ -391,7 +391,7 @@ function enter(sc){if(LAZY){const ks=groupKeys(sc).filter(k=>!IM[k]&&!oriSkip(k)
   if(sc==='draw'){let p;do{p=Math.floor(Math.random()*12);}while(p===DRAW.last);DRAW.pick=DRAW.last=p;let q;do{q=Math.floor(Math.random()*BLESS.length);}while(q===DRAW.lastB&&BLESS.length>1);DRAW.lastB=q;S.draw[3].say=BLESS[q];}
   if(sc==='back'){const g=timeGreet();S.back[0].say=g==='early'?'這麼早來呀？歡迎回到命運書庫。':(g==='late'?'這麼晚還來翻書啊？':'歡迎回到命運書庫。');GREETED=true;}
   if(sc==='menu'){const g=timeGreet();S.menu[0].say=(!GREETED&&g==='early')?'這麼早來呀？想從哪裡開始看呢？':((!GREETED&&g==='late')?'這麼晚還來翻書啊？想從哪裡開始看呢？':'想從哪裡開始看呢？');GREETED=true;}
-  if(sc==='duo'){newFan2();DUOP.ids=[];DUOP.t=[];DUOP.done=0;DUOP.ws=-1;S.duo[1].dur=DUO_GAME?CT.end:8.1;let p,q;p=Math.floor(Math.random()*12);do{q=Math.floor(Math.random()*12);}while(q===p);DRAW.pick=p;DRAW.pick2=q;
+  if(sc==='duo'){ZOOM=-1;newFan2();DUOP.ids=[];DUOP.t=[];DUOP.done=0;DUOP.ws=-1;S.duo[1].dur=DUO_GAME?CT.end:8.1;let p,q;p=Math.floor(Math.random()*12);do{q=Math.floor(Math.random()*12);}while(q===p);DRAW.pick=p;DRAW.pick2=q;
     const n=DUOCARDS.length;DUOSEL=[Math.floor(Math.random()*n),Math.floor(Math.random()*n)];if(n>1)while(DUOSEL[1]===DUOSEL[0])DUOSEL[1]=Math.floor(Math.random()*n);
     const c0=DUOCARDS[DUOSEL[0]],c1=DUOCARDS[DUOSEL[1]];S.duo[4].say='第一張是'+c0.star+'，主題是「'+c0.theme+'」。';S.duo[5].say='第二張是'+c1.star+'：'+c1.act;}
   if(sc==='palace'){PSEL=-1;PZ.i=-1;PZ.back=0;PAL_T0=T;S.palace[0]={say:'這是十二宮圖鑑。點一張卡片，我告訴你那一宮在看什麼。',pose:'present:1',stay:1};}
@@ -469,7 +469,7 @@ const DRAW={pick:0,last:-1,bless:0,lastB:-1,pick2:1};
 const DUO_PREVIEW=false,DUO_GAME=false;
 const DUOCARDS_ALL=[{"img": "face0", "star": "紫微", "theme": "穩住中心", "act": "先決定今天最重要的一件事。"}, {"img": "face1", "star": "天機", "theme": "靈活轉念", "act": "換個角度，再試一個小方法。"}, {"img": "face2", "star": "太陽", "theme": "主動照亮", "act": "把善意說出口，替自己也替人打氣。"}, {"img": "face3", "star": "武曲", "theme": "俐落執行", "act": "列出三步，先完成第一步。"}, {"img": "face4", "star": "天同", "theme": "留點餘裕", "act": "暫停一下，照顧自己的節奏。"}, {"img": "face5", "star": "廉貞", "theme": "守住原則", "act": "想清楚界線，再做選擇。"}, {"img": "face6", "star": "天府", "theme": "穩穩累積", "act": "整理一項資源，讓明天更省力。"}, {"img": "face7", "star": "太陰", "theme": "聽見內心", "act": "安靜五分鐘，記下真正的感受。"}, {"img": "face8", "star": "貪狼", "theme": "好奇探索", "act": "為一件新鮮事保留一點彈性。"}, {"img": "face9", "star": "巨門", "theme": "說清楚些", "act": "先問再答，別讓猜測替你發言。"}, {"img": "face10", "star": "天相", "theme": "協調合作", "act": "找一個能彼此補位的人聊聊。"}, {"img": "face11", "star": "天梁", "theme": "今天先照顧好自己", "act": "不必逞強，穩住再往前。"}, {"img": "face12", "star": "七殺", "theme": "勇敢破關", "act": "挑一件卡關小事，直接開始。"}, {"img": "face13", "star": "破軍", "theme": "改變規則，勇敢試試看", "act": "放下舊做法，試一個新路徑。"}];
 // 2026-10-24：卡面改用「日式紙雕」原圖（定稿 01–14，不像素化），卡背維持像素卡背
-const DUOCARDS=[{"img": "o_00", "star": "紫微", "theme": "穩住中心", "act": "先決定今天最重要的一件事。"}, {"img": "o_01", "star": "天機", "theme": "靈活轉念", "act": "換個角度，再試一個小方法。"}, {"img": "o_02", "star": "太陽", "theme": "主動照亮", "act": "把善意說出口，替自己也替人打氣。"}, {"img": "o_03", "star": "武曲", "theme": "俐落執行", "act": "列出三步，先完成第一步。"}, {"img": "o_04", "star": "天同", "theme": "留點餘裕", "act": "暫停一下，照顧自己的節奏。"}, {"img": "o_05", "star": "廉貞", "theme": "守住原則", "act": "想清楚界線，再做選擇。"}, {"img": "o_06", "star": "天府", "theme": "穩穩累積", "act": "整理一項資源，讓明天更省力。"}, {"img": "o_07", "star": "太陰", "theme": "聽見內心", "act": "安靜五分鐘，記下真正的感受。"}, {"img": "o_08", "star": "貪狼", "theme": "好奇探索", "act": "為一件新鮮事保留一點彈性。"}, {"img": "o_09", "star": "巨門", "theme": "說清楚些", "act": "先問再答，別讓猜測替你發言。"}, {"img": "o_10", "star": "天相", "theme": "協調合作", "act": "找一個能彼此補位的人聊聊。"}, {"img": "o_11", "star": "天梁", "theme": "今天先照顧好自己", "act": "不必逞強，穩住再往前。"}, {"img": "o_12", "star": "七殺", "theme": "勇敢破關", "act": "挑一件卡關小事，直接開始。"}, {"img": "o_13", "star": "破軍", "theme": "改變規則，勇敢試試看", "act": "放下舊做法，試一個新路徑。"}];
+const DUOCARDS=[{"img":"o_00","zimg":"zo_00", "star": "紫微", "theme": "穩住中心", "act": "先決定今天最重要的一件事。"}, {"img":"o_01","zimg":"zo_01", "star": "天機", "theme": "靈活轉念", "act": "換個角度，再試一個小方法。"}, {"img":"o_02","zimg":"zo_02", "star": "太陽", "theme": "主動照亮", "act": "把善意說出口，替自己也替人打氣。"}, {"img":"o_03","zimg":"zo_03", "star": "武曲", "theme": "俐落執行", "act": "列出三步，先完成第一步。"}, {"img":"o_04","zimg":"zo_04", "star": "天同", "theme": "留點餘裕", "act": "暫停一下，照顧自己的節奏。"}, {"img":"o_05","zimg":"zo_05", "star": "廉貞", "theme": "守住原則", "act": "想清楚界線，再做選擇。"}, {"img":"o_06","zimg":"zo_06", "star": "天府", "theme": "穩穩累積", "act": "整理一項資源，讓明天更省力。"}, {"img":"o_07","zimg":"zo_07", "star": "太陰", "theme": "聽見內心", "act": "安靜五分鐘，記下真正的感受。"}, {"img":"o_08","zimg":"zo_08", "star": "貪狼", "theme": "好奇探索", "act": "為一件新鮮事保留一點彈性。"}, {"img":"o_09","zimg":"zo_09", "star": "巨門", "theme": "說清楚些", "act": "先問再答，別讓猜測替你發言。"}, {"img":"o_10","zimg":"zo_10", "star": "天相", "theme": "協調合作", "act": "找一個能彼此補位的人聊聊。"}, {"img":"o_11","zimg":"zo_11", "star": "天梁", "theme": "今天先照顧好自己", "act": "不必逞強，穩住再往前。"}, {"img":"o_12","zimg":"zo_12", "star": "七殺", "theme": "勇敢破關", "act": "挑一件卡關小事，直接開始。"}, {"img":"o_13","zimg":"zo_13", "star": "破軍", "theme": "改變規則，勇敢試試看", "act": "放下舊做法，試一個新路徑。"}];
 let DUOSEL=[0,0];
 const CL={w:{X:1590,top:96,s:1.08,table:800,ring:{x:700,y:390,rx:430,ry:170,cw:150},fan:{dx:-40,dy:-40,rad:250}},t:{X:790,top:700,s:.98,table:1330,ring:{x:540,y:330,rx:380,ry:150,cw:150},fan:{dx:-20,dy:-30,rad:220}}};
 function cl(){return CL[TALL?'t':'w'];}
@@ -560,9 +560,15 @@ function drawDuo(){if(ST.scene!=='duo'||ST.bi<2)return;const bx0=ST.bi===4+0?eo(
   for(let k=0;k<2;k++){const P=duoPos(k),fk=ST.bi===2?eo(prog(ST.bt,.2+k*.15,.9+k*.15)):1,sx=Math.cos(fk*Math.PI),ss=Math.abs(sx)<.08?.08:Math.abs(sx);
     const y=P.y+Math.sin(T*1.3+k)*6;soft(P.x,y,P.w*.9,.3,WARM);
     if(fk<.5)cardK(P.x,y,P.w,ss,1,0);else cardFace(DUOCARDS[DUOSEL[k]].img,P.x,y,P.w,ss,1);
+    if(ST.bi>=3&&fk>=1&&ZOOM<0){regions.push({x:P.x-P.w/2,y:y-P.w*.75,w:P.w,h:P.w*1.5,id:'zoom'+k});const lw=118,lx=P.x+P.w/2-lw-10,ly=y-P.w*.75+12;ctx.globalAlpha=.78;ctx.fillStyle='#1b2a30';ctx.fillRect(lx,ly,lw,40);ctx.globalAlpha=1;text('點牌放大',lx+lw/2,ly+28,22,C.cream,'center');}
     const hl=(ST.bi===4&&k===0)||(ST.bi===5&&k===1);if(hl){ctx.strokeStyle=C.gold;ctx.lineWidth=6;ctx.globalAlpha=.6+.4*Math.sin(T*4);ctx.strokeRect(P.x-P.w/2-14,y-P.w*.75-14,P.w+28,P.w*1.5+28);ctx.globalAlpha=1;}
     if(ST.bi>=4+k){const c=DUOCARDS[DUOSEL[k]],bw=TALL?400:360,bh=TALL?150:142,bx=P.x-bw/2,by=P.y+P.w*.75+24;tealBox(bx,by,bw,bh);
       text(c.star+'・'+(k===0?'主題提示':'行動提示'),P.x,by+44,30,C.gold,'center');const str=k===0?c.theme:c.act;ctx.font=`26px ${FONT}`;let ln='',yy=by+84;for(const ch of str){if(ctx.measureText(ln+ch).width>bw-40){text(ln,P.x,yy,26,C.cream,'center');ln=ch;yy+=36;}else ln+=ch;}text(ln,P.x,yy,26,C.cream,'center');}}}
+// 點牌放大：整張牌用高解析版顯示，點任何地方關閉
+function drawZoom(){const c=DUOCARDS[DUOSEL[ZOOM]];if(!c)return;ctx.globalAlpha=.93;ctx.fillStyle='#07050c';ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;
+  let h=H*.88,w=h/1.5;if(w>W*.92){w=W*.92;h=w*1.5;}const cx=W/2,cy=H/2-18;
+  ctx.fillStyle='#f4e6c8';ctx.fillRect(cx-w/2-4,cy-h/2-4,w+8,h+8);ctx.imageSmoothingEnabled=true;sprite(c.zimg||c.img,cx-w/2,cy-h/2,w,h);ctx.imageSmoothingEnabled=false;
+  text('點一下回到牌桌',cx,cy+h/2+44,28,C.cream,'center');}
 function sceneDuo(){const b0=beat();if(b0&&ST.bi===0&&ST.bt>typeDur(b0)){if(closeUp()){const bw=TALL?440:360,x=TALL?(W-bw)/2:1530,y=TALL?1700:868;button('duogo','開始抽牌',x,y,bw,null,true);}else{const D=LY.dlg,bw=440,y=D.y-(TALL?120:118),x=TALL?(W-bw)/2:D.x+(D.w-bw)/2;button('duogo','開始抽牌',x,y,bw,null,true);}}
   const b=beat();if(!b||b.fx!=='dend')return;const td=typeDur(b);const a=eo(prog(ST.bt,td+.5,td+1));if(a<=0)return;
   const D=LY.dlg,bw=TALL?440:400,y=D.y-(TALL?120:118),x=TALL?(W-2*bw-40)/2:D.x+(D.w-2*bw-40)/2;
@@ -804,12 +810,14 @@ function render(){regions=[];ctx.imageSmoothingEnabled=false;bg(T);const b=beat(
   dialog();
   if(ST.scene==='intro')pill('skip','跳過 ▶▶',W-250,40);
   if(b&&b.say&&!b.stay)regions.unshift({x:0,y:0,w:W,h:H,id:'__adv'});
+  if(ZOOM>=0&&ST.scene==='duo'){drawZoom();regions=[{x:0,y:0,w:W,h:H,id:'zoomx'}];}
   const f=ST.next?prog(ST.fade,0,.35):(ST.fade<0?-ST.fade/.35:0);const fi=ST.scene==='intro'?1-prog(T-INTRO_T0,0,.8):0;const fa=Math.max(f,fi);
   if(fa>0){ctx.globalAlpha=fa;ctx.fillStyle='#07050c';ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;}
   syncLinks();}
 
 // ================= 互動 =================
 function act(id){IDLE.last=T;if(ST.next||ST.leave)return;
+  if(id==='zoomx'){ZOOM=-1;return;}if(id.startsWith('zoom')){ZOOM=+id.slice(4);if(!capture)sfx('pop');return;}
   if(id==='dazheng'){let k;do{k=Math.floor(Math.random()*POKE.length);}while(k===pokeLast);pokeLast=k;quip(POKE[k][0],POKE[k][1]);if(!capture)sfx('pop');return;}
   if(id==='__adv'){advance();return;}
   if(id==='skip'){go('menu');return;}
@@ -833,6 +841,7 @@ function hit(e){const b=stage.getBoundingClientRect();const x=(e.clientX-b.left)
 stage.addEventListener('mousemove',e=>{if(IDLE.st==='sit'){userPoke();return;}IDLE.last=T;const r=hit(e);SEL=r&&r.id!=='__adv'?r.id:(regions.some(q=>q.id===SEL&&q.id!=='__adv')&&e.buttons?SEL:null);stage.style.cursor=r?'pointer':'default';});
 stage.addEventListener('click',e=>{const woke=userPoke();if(!music&&!started){started=true;setMusic(true);}const r=hit(e);if(woke&&(!r||r.id==='dazheng'||r.id==='__adv'))return;if(r&&!r.href)act(r.id);});
 stage.addEventListener('keydown',e=>{if(userPoke()){e.preventDefault();return;}const ids=regions.filter(r=>r.id!=='__adv').map(r=>r.id);
+  if(e.key==='Escape'&&ZOOM>=0){ZOOM=-1;return;}
   if(e.key==='Escape'&&ST.scene==='palace'&&PZ.i>=0){act('palback');return;}
   if(e.key==='Escape'&&inTemple()&&ST.scene!=='temple'){act('temple');return;}
   if(e.key==='Escape'){act(ST.scene==='menu'?'__none':(TITLE[ST.scene]&&ST.scene!=='guide'?'shelf':'menu'));return;}
