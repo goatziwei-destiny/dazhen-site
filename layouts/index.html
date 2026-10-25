@@ -243,7 +243,7 @@ const SITE = {
   serviceDesc: "適合心裡有一件卡住的事，想好好談清楚的人。你會帶走對自己處境更清楚的理解、幾個可以比較的選項，和離開後可以先做的一件事。",
   servicePrice: "NT$3,600",
   servicePriceUnit: "每次 60 分鐘",
-  serviceDetail: "⏱ 60 分鐘，時間內不限題數<br>💻 Google Meet 視訊，或 LINE 語音通話（時間到由大正撥給你，請確認 LINE 通知是開著的）<br>📷 想一起看面相：選 Google Meet，或事先傳一張正面照片（不傳也可以）",
+  serviceDetail: "⏱ 60 分鐘，時間內不限題數<br>💻 Google Meet 或 LINE 語音通話（時間到由大正撥給你，請確認 LINE 通知是開著的）<br>📷 想一起看面相：事先傳一張正面照片（不傳也可以）",
 
   // ── 文字版諮詢（先做好、暫不顯示；要上線時把 config.toml 的 showTextService 改成 true）──
   textServiceLabel: "文字版諮詢",
@@ -275,7 +275,7 @@ const SITE = {
     { title: "填寫預約表單", desc: "選擇諮詢方式和時段，填寫出生資料。不確定準確的出生時間也沒關係，勾選後大正會在諮詢時協助定盤。", done: true },
     { title: "匯款", desc: "請在訂單成立 24 小時內匯款 NT$3,600，匯款時請備註「論命費用」。匯款資訊會顯示在送出後的畫面，也會寄到你的 Email。", done: false },
     { title: "回報匯款末五碼", desc: "選 Google Meet：在網頁填帳號末五碼就好，不用加 LINE（想加也可以）。選 LINE 語音：預約完成後用手機掃 QR Code（或點按鈕）登入 LINE，訂單會自動綁定，再在 LINE 回覆末五碼。", done: false },
-    { title: "收到預約成功通知", desc: "確認收款後，LINE 和 Email 都會通知你；選 Google Meet 的話，會附上視訊連結並加入你的行事曆。", done: false },
+    { title: "收到預約成功通知", desc: "確認收款後，LINE 和 Email 都會通知你；選 Google Meet 的話，會附上 Google Meet 連結並加入你的行事曆。", done: false },
     { title: "諮詢當天準時上線", desc: "諮詢前一天會再提醒你一次。Google Meet 點連結加入；選 LINE 語音的話，時間到了大正會撥給你。", done: false },
   ],
 
@@ -358,7 +358,7 @@ function renderServiceDetail(html) {
     return l.replace(/<[^>]*>/g, '').replace(/^[\s\u2190-\u2BFF\uFE0F\u200D]+/, '').replace(/^(?:\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|\uD83E[\uDC00-\uDFFF])+\s*/, '').trim();
   }).filter(Boolean);
   return '<ul class="svc-list">' + lines.map(function (l) {
-    var k = /分鐘|時間|題數/.test(l) ? 'time' : /面相|相機|鏡頭/.test(l) ? 'camera' : /Meet|視訊|線上/.test(l) ? 'video' : /LINE|語音|通話/.test(l) ? 'chat' : /文字|書面/.test(l) ? 'pen' : 'dot';
+    var k = /分鐘|時間|題數/.test(l) ? 'time' : /面相|相機|照片/.test(l) ? 'camera' : /LINE|語音|通話|Meet/.test(l) ? 'chat' : /視訊|線上/.test(l) ? 'video' : /文字|書面/.test(l) ? 'pen' : 'dot';
     return '<li><svg viewBox="0 0 24 24" aria-hidden="true">' + SVC_ICONS[k] + '</svg><span>' + esc(l) + '</span></li>';
   }).join('') + '</ul>';
 }
