@@ -358,7 +358,7 @@ function renderServiceDetail(html) {
     return l.replace(/<[^>]*>/g, '').replace(/^[\s\u2190-\u2BFF\uFE0F\u200D]+/, '').replace(/^(?:\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|\uD83E[\uDC00-\uDFFF])+\s*/, '').trim();
   }).filter(Boolean);
   return '<ul class="svc-list">' + lines.map(function (l) {
-    var k = /分鐘|時間|題數/.test(l) ? 'time' : /面相|相機|照片/.test(l) ? 'camera' : /LINE|語音|通話|Meet/.test(l) ? 'chat' : /視訊|線上/.test(l) ? 'video' : /文字|書面/.test(l) ? 'pen' : 'dot';
+    var k = /分鐘|題數/.test(l) ? 'time' : /面相|相機|照片/.test(l) ? 'camera' : /LINE|語音|通話|Meet/.test(l) ? 'chat' : /視訊|線上/.test(l) ? 'video' : /文字|書面/.test(l) ? 'pen' : 'dot';
     return '<li><svg viewBox="0 0 24 24" aria-hidden="true">' + SVC_ICONS[k] + '</svg><span>' + esc(l) + '</span></li>';
   }).join('') + '</ul>';
 }
