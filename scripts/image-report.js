@@ -33,7 +33,9 @@ function dims(file) {   // 讀 PNG／JPEG／WebP 的寬高，不用外部套件
   } catch (e) { /* 讀不到就不顯示尺寸 */ }
   return null;
 }
-const img = s => (BASE && /^\//.test(s) ? BASE + s : s);
+// 圖片網址：有 --base 用正式網址；沒有就指向本機 repo 的 static 資料夾（相對於輸出檔），直接打開報表也看得到縮圖（Codex #18）
+const LOCAL_STATIC = path.relative(path.dirname(path.resolve(OUT)), path.join(ROOT, 'static')).split(path.sep).join('/') || '.';
+const img = s => (!/^\//.test(s) ? s : BASE ? BASE + s : encodeURI(LOCAL_STATIC + s));
 const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const unq = v => String(v || '').trim().replace(/^["']|["']$/g, '');
 
