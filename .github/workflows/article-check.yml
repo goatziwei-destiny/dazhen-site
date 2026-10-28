@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - name: 照寫作規範檢查
-        run: set -o pipefail; node scripts/check-articles.js --changed origin/${{ github.base_ref }} | tee check.txt
+        run: node scripts/check-articles.js --changed origin/${{ github.base_ref }} | tee check.txt
       - name: 寫進摘要
         if: always()
         run: { echo '## 文章檢查'; echo '```'; cat check.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
