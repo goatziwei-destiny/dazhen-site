@@ -97,7 +97,7 @@ async function fetchSiteConfig(url) {
     const faqs = (S.faqItems || []).filter((f) => f && f.q && f.a).map((f) => ({ '@type': 'Question', name: plain(f.q), acceptedAnswer: { '@type': 'Answer', text: plain(f.a) } }));
     if (faqs.length && !out.includes('"FAQPage"')) {
       const ld = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs }).replace(/</g, '\\u003c');
-      out = out.replace('</head>', '<script type="application/ld+json">' + ld + '</script>\n</head>');
+      out = out.replace('</head>', () => '<script type="application/ld+json">' + ld + '</script>\n</head>');   // 用函式回傳，問答裡的 $& 之類不會被當成取代指令（Codex #17）
     }
   } catch (e) { console.warn('[prerender] 常見問題結構化資料略過：' + e.message); }
   fs.writeFileSync(FILE, out);
