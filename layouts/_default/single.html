@@ -119,6 +119,12 @@
 .article-body .container > p{text-indent:0}  /* 網頁文章不縮排，用段落間距分段（2026-10-14） */
 .article-body .container > p:has(> figure),.article-body .container > p:has(> img){text-indent:0}
 .article-cta{background:var(--navy);padding:48px 0;text-align:center}
+.article-cta-line{padding:8px 0 40px}.article-cta-line .container{max-width:720px;display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.article-cta-line p{font-size:16px;line-height:1.8;color:var(--body,#57534e);margin:0}
+.cta-outline{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 24px;border:1.5px solid var(--navy);border-radius:10px;color:var(--navy);background:#fff;font-weight:700;text-decoration:none}
+.cta-outline:hover{background:var(--navy);color:#fff;text-decoration:none}
+.toc-list{background:none;border-left:3px solid var(--warm,#cc8854);border-radius:0;padding:4px 0 4px 16px}
+.toc-list .toc-title{font-weight:700;color:var(--navy);font-size:15px}
 .article-cta p{color:var(--text-light);font-size:16px;margin-bottom:20px}
 .article-cta a{display:inline-block;background:var(--warm);color:#fff;padding:12px 28px;border-radius:8px;font-weight:700;text-decoration:none}
 .article-cta a:hover{background:#b07545;text-decoration:none}
@@ -164,10 +170,10 @@
 
     {{/* 自動目錄：有兩個以上大、中標題才顯示 */}}
     {{ if ge (len (findRE "<h[23][ >]" .Content)) 2 }}
-    <details class="article-toc" open>
-      <summary>本文目錄</summary>
+    <div class="article-toc toc-list">
+      <div class="toc-title">這篇會談到</div>
       {{ .TableOfContents }}
-    </details>
+    </div>
     {{ end }}
 
     {{ .Content }}
@@ -250,12 +256,11 @@
 </div>
 {{ end }}
 
-<div class="article-cta">
-  <h3 style="color:#fff;font-size:22px;margin-bottom:10px">想知道你的命盤怎麼說？</h3>
-  <p>一對一線上諮詢 60 分鐘，不限題數。不批評，好好聊。</p>
-  <a href="/booking/">預約一對一諮詢</a>
-  <a href="{{ .Site.Params.lineUrl }}" target="_blank" rel="noopener" data-line style="background:transparent;border:1px solid rgba(255,255,255,.5);margin-left:8px">先加入 LINE 聊聊</a>
-</div>
+{{/* 2026-10-28 大正選 B：文章結尾一句話＋圓角方形外框按鈕，不放大橫幅 */}}
+<div class="article-cta-line"><div class="container">
+  <p>想把這些放到你自己的命盤上看？</p>
+  <a class="cta-outline" href="/booking/">一對一諮詢</a>
+</div></div>
 
 {{ with .Site.Params.webAppUrl }}
 <script>

@@ -161,6 +161,39 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 .sticky-cta .x{flex:0 0 32px;height:32px;border:none;background:none;color:var(--text-muted);font-size:20px;cursor:pointer;font-family:inherit}
 @media(max-width:767px){.sticky-cta{display:flex}body{padding-bottom:64px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn,.faq-q::after,.sticky-cta,.post{transition:none}}
+/* ===== 2026-10-28 外觀改版（大正選：主視覺 C、數字列 A、服務卡 C、底部預約鈕 B；設計見 docs/site-look-1028.md）===== */
+:root{--paper:#fbf8f2;--paper-2:#f3ece0;--rule:#e3dccf;--clay:#a4643a;--gold:#e3c38f;--night:#0f1628}
+.hero.hero-paper{background:var(--paper);color:var(--navy);border-top:2px solid var(--navy)}
+.hero-paper .hero-eyebrow{display:flex;align-items:center;gap:10px;font-size:14px;letter-spacing:2px;color:var(--clay);margin-bottom:14px;font-weight:700}
+.hero-paper .hero-eyebrow svg{width:26px;height:26px;flex:none;fill:none;stroke:var(--clay);stroke-width:1.4}
+.hero-paper h1{color:var(--navy);font-size:clamp(38px,6.4vw,58px);line-height:1.25;margin-bottom:16px}
+.hero-paper .hero-desc{color:#4a443e;font-size:17px}
+.hero-paper .btn-ghost{color:var(--navy);border-color:rgba(27,40,69,.4)}.hero-paper .btn-ghost:hover{background:rgba(27,40,69,.05)}
+.hero-paper .btn-primary{background:var(--navy)}.hero-paper .btn-primary:hover{background:#21304c}
+.hero-me{display:none;align-items:center;gap:12px;margin:0 0 22px;font-size:14px;color:#6b635b;line-height:1.7}
+.hero-me img{width:60px;height:60px;border-radius:50%;object-fit:cover;flex:none}
+@media(max-width:768px){.hero-me{display:flex}}
+.stats-row{background:#fff;border-bottom:1px solid var(--line)}
+.stats-row .container{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding-top:20px;padding-bottom:20px;text-align:center}
+.stats-row .st{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:13px;color:var(--body)}
+.stats-row .st svg{width:24px;height:24px;fill:none;stroke:var(--navy);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;margin-bottom:2px}
+.stats-row .st b{font-size:19px;color:var(--navy)}
+.stats-row .stat-lib-row{grid-column:1/-1;justify-self:center;color:var(--navy);border-bottom-color:var(--clay)}
+.svc-wrap.svc-paper{background:var(--paper);color:var(--body);padding:56px 0 64px}
+.svc-paper .eyebrow{color:var(--clay)}.svc-paper .section-title{color:var(--navy)}
+.svc-paper .svc-card{background:transparent;border-radius:0;padding:0;border-top:2px solid var(--navy)}
+.svc-paper .svc-card h3{color:var(--navy)}.svc-paper .svc-card p{color:#4a443e}
+.svc-paper .svc-label{color:var(--clay)}
+.svc-paper .price{color:var(--navy);margin-top:18px}.svc-paper .price-unit{color:#6b635b}
+.svc-paper .svc-list{gap:0;color:var(--body);border-top:1px solid var(--rule);font-size:15px}
+.svc-paper .svc-list li{padding:12px 0;border-bottom:1px solid var(--rule)}
+.svc-paper .svc-list svg{stroke:var(--navy)}
+.svc-paper .btn-primary{background:var(--navy)}
+.sticky-cta.cta-night{background:var(--night);border-top:1px solid rgba(227,195,143,.3)}
+.cta-night .when{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;font-size:12px;line-height:1.45;color:#9aa3b5}
+.cta-night .when b{font-size:15px;color:#f5f3ef}
+.cta-night .btn-gold{flex:0 0 auto;background:var(--gold);color:var(--night);border-radius:4px;padding:11px 18px;font-size:15px}
+.cta-night .x{color:#9aa3b5}
 </style>
 {{ partial "analytics.html" . }}
 </head>
@@ -252,7 +285,7 @@ const SITE = {
   serviceDesc: "適合心裡有一件卡住的事，想好好談清楚的人。你會帶走對自己處境更清楚的理解、幾個可以比較的選項，和離開後可以先做的一件事。",
   servicePrice: "NT$3,600",
   servicePriceUnit: "每次 60 分鐘",
-  serviceDetail: "⏱ 60 分鐘，時間內不限題數<br>💻 Google Meet 或 LINE 語音通話（時間到由大正撥給你，請確認 LINE 通知是開著的）<br>📷 想一起看面相：事先傳一張正面照片（不傳也可以）",
+  serviceDetail: "⏱ 60 分鐘，時間內不限題數<br>💻 Google Meet 或 LINE 語音通話（時間到由大正撥給你，請確認 LINE 通知是開著的）<br>📷 想一起看面相：事先傳一張正面照片和一張側面照片（露出額頭跟耳朵，可以素顏最好）；不傳也可以",
 
   // ── 文字版諮詢（先做好、暫不顯示；要上線時把 config.toml 的 showTextService 改成 true）──
   textServiceLabel: "文字版諮詢",
@@ -384,7 +417,8 @@ function renderSite(S) {
   var fitYes = lines_(S.fitYes), fitNo = lines_(S.fitNo), agenda = lines_(S.firstAgenda), agendaStep = Number(S.firstAgendaStep) || 3;
   var lead = S.aboutLead || (S.aboutParagraphs || [])[0] || '';
   var photo = S.aboutPhoto || '';
-  var stats = (S.heroInfoCard || []).map(function (r) { return '<span><b>' + esc(r.value) + '</b>' + esc(r.label) + '</span>'; }).join('');
+  var STAT_ICONS = ['<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', '<rect x="3" y="3" width="18" height="18"/><path d="M7.5 3v18M16.5 3v18M3 7.5h18M3 16.5h18"/>', '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4.6A8 8 0 1 1 21 12z"/>'];
+  var stats = (S.heroInfoCard || []).map(function (r, i) { return '<div class="st"><svg viewBox="0 0 24 24" aria-hidden="true">' + STAT_ICONS[i % 3] + '</svg><b>' + esc(r.value) + '</b><span>' + esc(r.label) + '</span></div>'; }).join('');
   var steps = S.processSteps || [];
 
   var LIB_SEEN = libSeen_();
@@ -397,15 +431,15 @@ function renderSite(S) {
 '</div></nav>' +
 
 '<main>' +
-'<section class="hero section-dark"><div class="container hero-inner"><div>' +
+'<section class="hero hero-paper"><div class="container hero-inner"><div>' +
   (S.brandBadge ? '<div class="hero-badge">' + esc(S.brandBadge) + '</div>' : '') +
-  '<h1>' + esc(S.brandTitle||'').replace('·','<i>·</i>') + '</h1>' +
-  (S.brandTagline ? '<div class="tagline">' + esc(S.brandTagline) + '</div>' : '') +
+  '<h1><span class="hero-eyebrow"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20"/><path d="M7 2v20M17 2v20M2 7h20M2 17h20"/></svg>' + esc(S.brandTitle||'') + '</span>' + esc(S.brandTagline||S.brandTitle||'') + '</h1>' +
   '<p class="hero-desc">' + heroDesc + '</p>' +
+  (photo ? '<div class="hero-me"><img src="' + esc(photo) + '" alt="" width="60" height="60">' + esc(S.heroMeLine || '我是大正，一隻會算命的羊。') + '</div>' : '') +
   '<div class="btns"><a href="/booking/" class="btn btn-primary">預約一對一諮詢</a><a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-ghost">先加入 LINE 聊聊</a></div>' +
-  ((stats || LIB_SEEN) ? '<div class="stats">' + stats + (LIB_SEEN ? '<a class="stat-lib" href="/library/"><img src="/images/library-book-icon.png" alt="" width="18" height="25">回命運書庫逛逛</a>' : '') + '</div>' : '') +
   '</div>' + (photo ? '<div class="hero-goat"><img src="' + esc(photo) + '" alt="' + esc(S.aboutName||'大正') + '的頭像" width="280" height="280"></div>' : '') +
 '</div></section>' +
+((stats || LIB_SEEN) ? '<section class="stats-row" aria-label="大正的諮詢經驗"><div class="container">' + stats + (LIB_SEEN ? '<a class="stat-lib stat-lib-row" href="/library/"><img src="/images/library-book-icon.png" alt="" width="18" height="25">回命運書庫逛逛</a>' : '') + '</div></section>' : '') +
 
 /* 命運書庫入口（互動動畫，/library/）：沒看過＝置中的大卡片；看過（書庫留下的 dz_seen）或在 LINE 裡打開＝不放卡片，數字列最後放「回命運書庫逛逛」 */
 (LIB_SEEN ? '' :
@@ -415,7 +449,7 @@ function renderSite(S) {
   '<span class="lib-p">住在書庫裡的羊，帶你翻翻命理小知識。</span><span class="lib-btn">進入命運書庫 →</span></span>' +
 '</a></div></section>') +
 
-'<section id="service" class="section-dark svc-wrap"><div class="container">' +
+'<section id="service" class="svc-wrap svc-paper"><div class="container">' +
   '<div class="eyebrow">SERVICE</div><h2 class="section-title">諮詢服務</h2>' +
   '<div class="svc-cards">' +
     '<div class="svc-card"><div><div class="svc-label">' + esc(S.serviceLabel||'') + '</div><h3>' + esc(S.serviceTitle||'') + '</h3><p>' + esc(S.serviceDesc||'') + '</p></div>' +
@@ -496,15 +530,30 @@ function renderSite(S) {
   '<p>' + (S.footerText||'') + '　·　<a href="/privacy-policy/" style="color:inherit">隱私權政策</a></p>' +
 '</div></footer>' +
 
-'<div class="sticky-cta" id="stickyCta"><a href="/booking/" class="btn btn-primary">預約一對一</a><a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-warm">加 LINE 聊聊</a><button type="button" class="x" id="stickyClose" aria-label="關閉預約列">×</button></div>';
+'<div class="sticky-cta cta-night" id="stickyCta"><div class="when" id="ctaWhen"><span>一對一語音諮詢</span><b>' + esc(S.servicePrice || '') + '</b></div><a href="/booking/" class="btn btn-gold">預約諮詢</a><button type="button" class="x" id="stickyClose" aria-label="關閉預約列">×</button></div>';
   setupStickyCta_();
 }
 
 // 手機底部固定預約列：捲過開場才出現，按 × 關掉後這次瀏覽不再出現
 var stickyClosed_ = false;
+// 「最早可約」：向預約系統要即時空檔的第一天；讀不到、逾時或格式不對就維持顯示價格，不寫死日期
+var nextSlot_ = null, nextSlotAsked_ = false;
+function showNextSlot_() {
+  var w = document.getElementById('ctaWhen');
+  if (w && nextSlot_ && nextSlot_.ok && nextSlot_.label) w.innerHTML = '<span>最早可約</span><b>' + esc(String(nextSlot_.label).replace(/（農曆.*?）/, '').replace('（週', '（')) + ' 起</b>';
+}
+function askNextSlot_() {
+  if (nextSlotAsked_ || !SITE.bookingFormUrl || typeof document.createElement !== 'function' || !document.head) return;
+  nextSlotAsked_ = true;
+  window._nextSlotCb = function (d) { if (d && d.ok && typeof d.label === 'string' && d.label.length < 40) { nextSlot_ = d; showNextSlot_(); } };
+  var s = document.createElement('script'); s.async = true; s.src = SITE.bookingFormUrl + '?page=nextSlot&callback=_nextSlotCb';
+  s.onerror = function () { nextSlot_ = null; };
+  document.head.appendChild(s);
+}
 function setupStickyCta_() {
   var bar = document.getElementById('stickyCta'), hero = document.querySelector('.hero');
   if (!bar || !hero) return;
+  showNextSlot_(); askNextSlot_();
   document.getElementById('stickyClose').onclick = function () { stickyClosed_ = true; bar.classList.remove('show'); };
   var upd = function () { if (!stickyClosed_) bar.classList.toggle('show', hero.getBoundingClientRect().bottom < 0); };
   if (!window.__stickyBound) { window.addEventListener('scroll', function () { var b = document.getElementById('stickyCta'), h = document.querySelector('.hero'); if (b && h && !stickyClosed_) b.classList.toggle('show', h.getBoundingClientRect().bottom < 0); }, { passive: true }); window.__stickyBound = true; }
