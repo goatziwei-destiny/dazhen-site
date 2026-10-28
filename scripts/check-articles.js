@@ -101,15 +101,20 @@ function checkFile(file) {
 function listFiles() {
   const a = process.argv.slice(2);
   const isPost = f => /^content\/blog\/.+\.md$/.test(f) && !/_index\.md$/.test(f);
-  if (a[0] === '--all') return fs.readdirSync(path.join(ROOT, 'content/blog')).filter(f => f.endsWith('.md') && f !== '_index.md').map(f => 'content/blog/' + f);
+  if (a[0] === '--all') return listFiles.all();
   if (a[0] === '--changed') {
     const base = a[1] || 'origin/main';
     const out = execSync('git diff -z --name-only --diff-filter=AMR ' + base + '...HEAD', { cwd: ROOT }).toString().split('\0');   // -z：中文檔名不會被加引號跳脫（Codex #18）
-    return out.filter(isPost);
+    // 改到、刪掉或改名的圖片（含改名前的舊路徑）：把用到這些圖的文章也一起檢查，圖被刪了文章才會被擋（Codex #18）
+    const imgs = execSync('git diff -z --name-only --no-renames ' + base + '...HEAD -- static/images', { cwd: ROOT }).toString().split('\0').filter(Boolean).map(f => '/' + f.replace(/^static\//, ''));
+    const posts = new Set(out.filter(isPost));
+    if (imgs.length) listFiles.all().forEach(f => { const t = fs.readFileSync(path.join(ROOT, f), 'utf8'); if (imgs.some(i => t.includes(i))) posts.add(f); });
+    return [...posts].filter(f => fs.existsSync(path.join(ROOT, f)));
   }
   return a.map(f => path.relative(ROOT, path.resolve(f)));
 }
 
+listFiles.all = () => fs.readdirSync(path.join(ROOT, 'content/blog')).filter(f => f.endsWith('.md') && f !== '_index.md').map(f => 'content/blog/' + f);
 const files = listFiles(), all = process.argv[2] === '--all';
 if (!files.length) { console.log('沒有要檢查的文章'); process.exit(0); }
 let bad = 0;
