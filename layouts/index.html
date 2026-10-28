@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ site.Title }}</title>
 <meta name="description" content="{{ site.Params.description }}">
-<meta name="keywords" content="">
 <link rel="canonical" href="{{ .Permalink }}">
 {{ with .Site.Params.googleSiteVerification }}<meta name="google-site-verification" content="{{ . }}">{{ end }}
 <meta property="og:title" content="{{ site.Title }}">
@@ -15,7 +14,17 @@
 <meta property="og:image" content="{{ "/images/og-default.png" | absURL }}">
 <meta name="twitter:card" content="summary_large_image">
 <meta property="og:locale" content="zh_TW">
-<script type="application/ld+json" id="schema-ld"></script>
+{{/* 結構化資料（2026-10-28）：讓搜尋引擎與 AI 工具不用跑 JS 就讀得到「誰、提供什麼、多少錢、在哪預約」。價格改 config.toml 的 servicePrice。
+     常見問題不放這裡：首頁 FAQ 會被後台改，放固定的 JSON 會跟畫面不一致。 */}}
+{{ $base := "/" | absURL }}{{ $about := "/about/" | absURL }}{{ $same := slice }}{{ range site.Params.social }}{{ with .url }}{{ if hasPrefix . "http" }}{{ $same = $same | append . }}{{ end }}{{ end }}{{ end }}
+<script type="application/ld+json" id="schema-ld">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"WebSite","@id":{{ printf "%s#website" $base }},"url":{{ $base }},"name":"大正命理諮詢","inLanguage":"zh-Hant","publisher":{"@id":{{ printf "%s#person" $about }}}},
+ {"@type":"Person","@id":{{ printf "%s#person" $about }},"name":"大正","jobTitle":"紫微斗數命理師","url":{{ $about }},"image":{{ "/images/avatar-goat.webp" | absURL }},"knowsAbout":["紫微斗數","命盤","流年運勢","大限"],"sameAs":{{ $same }}},
+ {"@type":"Service","@id":{{ printf "%s#consultation" $base }},"name":"一對一線上紫微斗數諮詢","serviceType":"紫微斗數命理諮詢","description":{{ site.Params.description }},"provider":{"@id":{{ printf "%s#person" $about }}},"areaServed":{"@type":"Country","name":"台灣"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":{{ "/booking/" | absURL }},"name":"Google Meet 或 LINE 語音（只用語音）"},
+  "offers":{"@type":"Offer","price":{{ string (site.Params.servicePrice | default 3600) }},"priceCurrency":"TWD","url":{{ "/booking/" | absURL }},"description":"60 分鐘，時間內不限題數"}}
+]}
+</script>
 <link rel="preload" href="/fonts/dazhen-wenkai-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/dazhen-wenkai-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -471,7 +480,7 @@ function renderSite(S) {
 '<section id="latest" class="sec section-light"><div class="container">' +
   '<div class="eyebrow">ARTICLES</div><h2 class="section-title">最新文章</h2>' +
   '<div class="posts">' + LATEST_POSTS.map(function (p) {
-    return '<a class="post" href="' + p.url + '"><div class="post-img">' + (p.image ? '<img src="' + p.image + '" alt="" loading="lazy">' : '') + '</div><div class="post-body">' +
+    return '<a class="post" href="' + p.url + '"><div class="post-img">' + (p.image ? '<img src="' + p.image + '" alt="' + esc(p.title) + '" loading="lazy">' : '') + '</div><div class="post-body">' +
       (p.cat ? '<div class="post-cat">' + esc(p.cat) + '</div>' : '') + '<div class="post-title">' + esc(p.title) + '</div><div class="post-desc">' + esc(p.desc || '') + '</div></div></a>';
   }).join('') + '</div>' +
   '<div style="text-align:center;margin-top:22px"><a href="/blog/" class="more">看所有文章 →</a></div>' +

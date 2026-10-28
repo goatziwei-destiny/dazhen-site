@@ -2,7 +2,7 @@
 {{ $pid := "" }}{{ with .File }}{{ $pid = .ContentBaseName }}{{ end }}
 <article class="blog-card" data-slug="{{ $pid }}">
   <div class="blog-card-top">
-    {{ with .Params.image }}<a href="{{ $.RelPermalink }}" class="blog-card-thumb-link" tabindex="-1" aria-hidden="true"><img class="blog-card-thumb" src="{{ partial "img.html" (dict "src" . "w" 720) }}" alt="" loading="lazy"></a>{{ end }}
+    {{ with .Params.image }}<a href="{{ $.RelPermalink }}" class="blog-card-thumb-link" tabindex="-1" aria-hidden="true"><img class="blog-card-thumb" src="{{ partial "img.html" (dict "src" . "w" 720) }}" alt="{{ with $.Params.imageAlt }}{{ . }}{{ else }}{{ $.Title }}{{ end }}" loading="lazy"></a>{{ end }}
     <div class="blog-card-body">
       <div class="blog-card-meta">
         {{ with .Params.topics }}{{ range first 1 . }}{{ with site.GetPage (printf "/topics/%s" .) }}<a class="blog-card-cat" href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}{{ end }}{{ end }}{{ with .Params.subtopics }}{{ range first 1 . }}{{ with site.GetPage (printf "/subtopics/%s" .) }}<span>›</span><a class="blog-card-cat" href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}{{ end }}{{ end }}

@@ -8,6 +8,7 @@ title = "大正命理諮詢｜紫微斗數線上諮詢"
 
 [params]
   description = "大正紫微斗數命理諮詢。不批評、好好聊，用命盤讀懂你的命運脈絡。"
+  servicePrice = 3600   # 一對一諮詢價格（只給搜尋引擎的結構化資料用；畫面上的價格仍以後台為準，兩邊要一起改）
   lineUrl = "https://lin.ee/vlvPoMa"
   liffBookingId = "2007939639-l2APYkwk"   # 預約表單的 LIFF ID（LINE Developers 建立；Endpoint URL 要設成官網的 /booking/）
   liffMemberId = "2007939639-SJWD7dDI"   # 會員中心的 LIFF ID（Endpoint URL：官網的 /member/）
