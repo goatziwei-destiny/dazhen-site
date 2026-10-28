@@ -23,7 +23,8 @@ function parseFront(text) {
     let mm;
     if ((mm = raw.match(/^([A-Za-z][\w-]*):\s*(.*)$/))) {
       key = mm[1]; item = null; const v = mm[2].replace(/\s+#.*$/, '').trim();
-      fm[key] = v === '' ? [] : unq(v);
+      const flow = v.match(/^\[(.*)\]$/);   // YAML 的 [a, b] 寫法（Codex #18）
+      fm[key] = v === '' ? [] : flow ? (flow[1].trim() ? flow[1].split(',').map(x => unq(x.trim())).filter(Boolean) : []) : unq(v);
     } else if ((mm = raw.match(/^\s+-\s+([A-Za-z]\w*):\s*(.*)$/)) && key) {   // faq 的 - q: …
       item = {}; item[mm[1]] = unq(mm[2].trim()); if (!Array.isArray(fm[key])) fm[key] = []; fm[key].push(item);
     } else if ((mm = raw.match(/^\s+([A-Za-z]\w*):\s*(.*)$/)) && key) {
