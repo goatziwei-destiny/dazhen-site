@@ -57,7 +57,8 @@ function checkFile(file) {
   if (!f.image || Array.isArray(f.image)) warns.push('沒有封面 image（分享到 LINE、FB 會沒有圖）');
   else {
     const img = path.join(ROOT, 'static', String(f.image).replace(/^\//, ''));
-    if (!fs.existsSync(img)) errs.push('封面圖找不到：' + f.image);
+    if (/^https?:\/\//i.test(String(f.image))) warns.push('封面是外部網址，請確認圖片能長期使用（外站刪圖文章就沒封面）');   // 版型支援外部網址，不擋（Codex #18）
+    else if (!fs.existsSync(img)) errs.push('封面圖找不到：' + f.image);
     else { const kb = Math.round(fs.statSync(img).size / 1024); if (kb > 800) warns.push('封面圖 ' + kb + ' KB，網站會自動壓縮，但原檔建議 800 KB 以內'); }
     if (!f.imageAlt || Array.isArray(f.imageAlt)) warns.push('封面沒有 imageAlt（寫圖片在畫什麼）');
   }
