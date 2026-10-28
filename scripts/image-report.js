@@ -36,6 +36,9 @@ function dims(file) {   // 讀 PNG／JPEG／WebP 的寬高，不用外部套件
 // 圖片網址：有 --base 用正式網址；沒有就指向本機 repo 的 static 資料夾（相對於輸出檔），直接打開報表也看得到縮圖（Codex #18）
 const LOCAL_STATIC = path.relative(path.dirname(path.resolve(OUT)), path.join(ROOT, 'static')).split(path.sep).join('/') || '.';
 const img = s => (!/^\//.test(s) ? s : BASE ? BASE + s : encodeURI(LOCAL_STATIC + s));
+// 文章連結一律用網站網址（--base，沒有就用 config.toml 的 baseURL），本機打開報表也點得到原文（Codex #18）
+const SITE = BASE || ((fs.readFileSync(path.join(ROOT, 'config.toml'), 'utf8').match(/^baseURL\s*=\s*"([^"]+)"/m) || [, ''])[1]).replace(/\/+$/, '');
+const pageUrl = u => (u && SITE ? SITE + u : '');
 const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const unq = v => String(v || '').trim().replace(/^["']|["']$/g, '');
 
@@ -99,7 +102,7 @@ dialog{max-width:96vw;max-height:96vh;padding:0;border:0;border-radius:12px}dial
 <div class="bar" id="bar"><button data-f="" aria-pressed="true">全部</button>${ALL_FLAGS.map(f => `<button data-f="${esc(f)}" aria-pressed="false">${esc(f)}</button>`).join('')}<button data-f="__marked" aria-pressed="false">我勾的</button><button id="copy">複製清單</button></div>
 <div class="grid" id="grid">${rows.map((r, i) => `<div class="card" data-i="${i}" data-flags="${esc(r.flags.join('|'))}">
 <button class="thumb" style="background-image:url('${esc(img(r.src))}')" data-big="${esc(img(r.src))}" aria-label="放大 ${esc(r.title)}"></button>
-<div class="meta"><b>${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>` : esc(r.title)}</b>
+<div class="meta"><b>${pageUrl(r.url) ? `<a href="${esc(pageUrl(r.url))}" target="_blank" rel="noopener">${esc(r.title)}</a>` : esc(r.title)}</b>
 <span class="p">${esc(r.kind)}｜${esc(r.src)}</span>
 <span class="p">${r.dim ? r.dim[0] + '×' + r.dim[1] : '尺寸不明'}｜${r.kb != null ? r.kb + ' KB' : '—'}${r.file ? '｜' + esc(r.file) : ''}</span>
 <span class="p">替代文字：${r.alt ? esc(r.alt) : '（沒有）'}</span>
