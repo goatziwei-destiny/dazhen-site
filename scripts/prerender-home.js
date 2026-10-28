@@ -83,13 +83,13 @@ async function fetchSiteConfig(url) {
 
   if (!app.innerHTML || app.innerHTML.length < 500) { console.warn('[prerender] 畫出來的內容太少，保留原檔'); return; }
 
-  let out = html.replace('<div id="app"></div>', '<div id="app">' + app.innerHTML + '</div>');
-  if (sandbox.document.title) out = out.replace(/<title>[\s\S]*?<\/title>/, '<title>' + escHtml(sandbox.document.title) + '</title>');
+  let out = html.replace('<div id="app"></div>', () => '<div id="app">' + app.innerHTML + '</div>');
+  if (sandbox.document.title) out = out.replace(/<title>[\s\S]*?<\/title>/, () => '<title>' + escHtml(sandbox.document.title) + '</title>');
   if (metaDesc.content) {
-    out = out.replace(/<meta name="description" content="[^"]*">/, '<meta name="description" content="' + escAttr(metaDesc.content) + '">');
-    out = out.replace(/<meta property="og:description" content="[^"]*">/, '<meta property="og:description" content="' + escAttr(metaDesc.content) + '">');
+    out = out.replace(/<meta name="description" content="[^"]*">/, () => '<meta name="description" content="' + escAttr(metaDesc.content) + '">');
+    out = out.replace(/<meta property="og:description" content="[^"]*">/, () => '<meta property="og:description" content="' + escAttr(metaDesc.content) + '">');
   }
-  if (sandbox.document.title) out = out.replace(/<meta property="og:title" content="[^"]*">/, '<meta property="og:title" content="' + escAttr(sandbox.document.title) + '">');
+  if (sandbox.document.title) out = out.replace(/<meta property="og:title" content="[^"]*">/, () => '<meta property="og:title" content="' + escAttr(sandbox.document.title) + '">');
   // 常見問題的結構化資料（FAQPage）：用跟畫面同一份問答，搜尋引擎與 AI 工具不跑 JS 也讀得到。
   // 後台改了 FAQ，要等下次網站重新建置才會更新這段（畫面本身是即時的）。
   try {
