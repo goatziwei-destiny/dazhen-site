@@ -359,7 +359,7 @@ function libSeen_() {
   if (/Line\//i.test(navigator.userAgent)) return true;
   try { return localStorage.getItem('dz_seen') === '1'; } catch (e) { return false; }
 }
-function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }   // 也轉引號：放進屬性（href、alt）時不會被斷開
 
 // 10 個社群平台的簡化圖示（單色線條/色塊，配合各平台官方色當底色）
 var SOCIAL_ICONS = {
@@ -380,6 +380,7 @@ function renderSocialLinks(list) {
   if (!items.length) return '';
   return '<div class="social-links">' + items.map(function(s) {
     var href = s.key === 'email' ? ('mailto:' + s.url) : s.url;
+    if (!/^(https?:|mailto:)/i.test(String(href).trim())) return '';   // 只放一般網址，javascript: 之類的不輸出
     var icon = SOCIAL_ICONS[s.key] || '';
     var brand = /^(facebook|instagram|threads|line)$/.test(s.key);
     return '<a href="' + esc(href) + '" target="_blank" rel="noopener" class="social-icon si-' + s.key + '"' + (brand ? '' : ' style="background:' + s.color + '"') + ' title="' + esc(s.label) + '" aria-label="' + esc(s.label) + '"' + (s.key === 'line' ? ' data-line' : '') + '><svg viewBox="0 0 24 24" aria-hidden="true">' + icon + '</svg></a>';
@@ -530,7 +531,7 @@ function renderSite(S) {
 '</main>' +
 
 '<footer class="footer"><div class="container">' + renderSocialLinks(S.socialLinks) +
-  '<p><span' + dk('footerText') + '>' + (S.footerText||'') + '</span>　·　<a href="/privacy-policy/" style="color:inherit">隱私權政策</a></p>' +
+  '<p><span' + dk('footerText') + '>' + (DZ_PREVIEW ? esc(S.footerText||'') : (S.footerText||'')) + '</span>　·　<a href="/privacy-policy/" style="color:inherit">隱私權政策</a></p>' +
 '</div></footer>' +
 
 '<div class="sticky-cta cta-night" id="stickyCta"><div class="when" id="ctaWhen"><span>一對一語音諮詢</span><b>' + esc(S.servicePrice || '') + '</b></div><a href="/booking/" class="btn btn-gold">預約諮詢</a><button type="button" class="x" id="stickyClose" aria-label="關閉預約列">×</button></div>';
@@ -647,10 +648,14 @@ if (DZ_PREVIEW) {
   var pst = document.createElement('style');
   pst.textContent = '.dz-preview [data-k]{cursor:pointer;outline:1px dashed transparent;outline-offset:3px;border-radius:3px;transition:outline-color .15s,background .15s}.dz-preview [data-k]:hover{outline-color:#c99a45}.dz-preview [data-k].dz-lit{background:rgba(201,154,69,.25);outline-color:#c99a45}.dz-preview .sticky-cta{display:none!important}';
   document.head.appendChild(pst);
+  // 只接受預約系統後台（Google Apps Script 的網頁，網域是 *-script.googleusercontent.com）；本機測試另外允許 127.0.0.1／localhost
+  var dzTrusted = function (o) { return /^https:\/\/[a-z0-9-]+-script\.googleusercontent\.com$/.test(o) || (/^(127\.0\.0\.1|localhost)$/.test(location.hostname) && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(o)); };
+  var dzParent = null;   // 第一次收到合格資料的來源；點字只回傳給它
   window.addEventListener('message', function (e) {
-    if (e.source !== window.parent) return;
+    if (e.source !== window.parent || !dzTrusted(e.origin)) return;
     var m = e.data;
     if (!m || typeof m !== 'object' || m.type !== 'dz-preview') return;
+    dzParent = e.origin;
     if (m.data && typeof m.data === 'object' && JSON.stringify(m.data).length < 300000) {
       var d = {}; for (var k in m.data) if (typeof m.data[k] === 'string' || typeof m.data[k] === 'number' || typeof m.data[k] === 'boolean') d[k] = m.data[k];
       renderSite(mergeSiteConfig_(d));
@@ -658,15 +663,18 @@ if (DZ_PREVIEW) {
     if (typeof m.lit === 'string') {
       var on = document.querySelectorAll('.dz-lit'); for (var i = 0; i < on.length; i++) on[i].classList.remove('dz-lit');
       var t = document.querySelector('[data-k="' + m.lit.replace(/[^\w]/g, '') + '"]');
-      if (t) { t.classList.add('dz-lit'); if (m.scroll) t.scrollIntoView({ block: 'center' }); }
+      if (t) {
+        var fq = t.closest('.faq-item'); if (fq && !fq.classList.contains('open')) { fq.classList.add('open'); var qb = fq.querySelector('.faq-q'); if (qb) qb.setAttribute('aria-expanded', 'true'); }   // 常見問題的答案平常收著，要先展開才看得到
+        t.classList.add('dz-lit'); if (m.scroll) t.scrollIntoView({ block: 'center' });
+      }
     }
   });
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a,button'); if (a && !(a.classList && a.classList.contains('faq-q'))) e.preventDefault();
     var el = e.target.closest && e.target.closest('[data-k]');
-    if (el) { e.preventDefault(); window.parent.postMessage({ type: 'dz-pick', k: el.getAttribute('data-k') }, '*'); }
+    if (el && dzParent) { e.preventDefault(); window.parent.postMessage({ type: 'dz-pick', k: el.getAttribute('data-k') }, dzParent); }
   }, true);
-  window.parent.postMessage({ type: 'dz-ready' }, '*');
+  window.parent.postMessage({ type: 'dz-ready' }, '*');   // 只說「我準備好了」，不帶任何資料
 }
 
 // 背景載入試算表最新資料，有更新就重新渲染（不用重新部署 Netlify）

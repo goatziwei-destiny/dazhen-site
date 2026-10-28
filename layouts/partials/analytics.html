@@ -9,8 +9,10 @@
     line_click         點任何 LINE 連結
 */ -}}
 {{- with site.Params.ga4Id -}}
-<script async src="https://www.googletagmanager.com/gtag/js?id={{ . }}"></script>
 <script>
+  // 預約系統後台的設定頁預覽（?dzpreview=1）不統計、不載入追蹤碼
+  window.__dzNoGa = /[?&]dzpreview=1(&|$)/.test(location.search);
+  if (!window.__dzNoGa) { var gs_ = document.createElement('script'); gs_.async = true; gs_.src = 'https://www.googletagmanager.com/gtag/js?id=' + {{ . }}; document.head.appendChild(gs_); }
   window.dataLayer = window.dataLayer || [];
   function gtag(){ dataLayer.push(arguments); }
   gtag('js', new Date());
