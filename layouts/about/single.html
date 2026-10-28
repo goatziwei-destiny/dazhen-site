@@ -1,4 +1,8 @@
 {{ define "head" }}
+{{ $same := slice }}{{ range site.Params.social }}{{ with .url }}{{ if hasPrefix . "http" }}{{ $same = $same | append . }}{{ end }}{{ end }}{{ end }}
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ProfilePage","url":{{ .Permalink }},"inLanguage":"zh-Hant","mainEntity":{"@type":"Person","@id":{{ printf "%s#person" .Permalink }},"name":"大正","jobTitle":"紫微斗數命理師","url":{{ .Permalink }},"image":{{ "/images/avatar-goat.webp" | absURL }},"description":{{ .Description }},"knowsAbout":["紫微斗數","命盤","流年運勢","大限"],"sameAs":{{ $same }}}}
+</script>
 <style>
 .ab-hero{background:var(--navy);color:#fff;padding:76px 0 56px;text-align:center}
 .ab-hero .container{max-width:720px}

@@ -237,8 +237,8 @@
     <h2>你可能喜歡</h2>
     <div class="related-grid">
       {{ range . }}
-      <a class="related-card" href="{{ .RelPermalink }}">
-        {{ with .Params.image }}<img src="{{ partial "img.html" (dict "src" . "w" 600) }}" alt="" loading="lazy">{{ end }}
+      {{ $rp := . }}<a class="related-card" href="{{ .RelPermalink }}">
+        {{ with .Params.image }}<img src="{{ partial "img.html" (dict "src" . "w" 600) }}" alt="{{ $rp.Title }}" loading="lazy">{{ end }}
         <div class="related-card-body">
           {{ with .Params.topics }}{{ range first 1 . }}{{ with site.GetPage (printf "/topics/%s" .) }}<div class="related-card-cat">{{ .Title }}</div>{{ end }}{{ end }}{{ end }}
           <div class="related-card-title">{{ .Title }}</div>

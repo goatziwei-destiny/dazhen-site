@@ -82,13 +82,13 @@ async function fetchSiteConfig(url) {
 
   if (!app.innerHTML || app.innerHTML.length < 500) { console.warn('[prerender] 畫出來的內容太少，保留原檔'); return; }
 
-  let out = html.replace('<div id="app"></div>', '<div id="app">' + app.innerHTML + '</div>');
-  if (sandbox.document.title) out = out.replace(/<title>[\s\S]*?<\/title>/, '<title>' + escHtml(sandbox.document.title) + '</title>');
+  let out = html.replace('<div id="app"></div>', () => '<div id="app">' + app.innerHTML + '</div>');
+  if (sandbox.document.title) out = out.replace(/<title>[\s\S]*?<\/title>/, () => '<title>' + escHtml(sandbox.document.title) + '</title>');
   if (metaDesc.content) {
-    out = out.replace(/<meta name="description" content="[^"]*">/, '<meta name="description" content="' + escAttr(metaDesc.content) + '">');
-    out = out.replace(/<meta property="og:description" content="[^"]*">/, '<meta property="og:description" content="' + escAttr(metaDesc.content) + '">');
+    out = out.replace(/<meta name="description" content="[^"]*">/, () => '<meta name="description" content="' + escAttr(metaDesc.content) + '">');
+    out = out.replace(/<meta property="og:description" content="[^"]*">/, () => '<meta property="og:description" content="' + escAttr(metaDesc.content) + '">');
   }
-  if (sandbox.document.title) out = out.replace(/<meta property="og:title" content="[^"]*">/, '<meta property="og:title" content="' + escAttr(sandbox.document.title) + '">');
+  if (sandbox.document.title) out = out.replace(/<meta property="og:title" content="[^"]*">/, () => '<meta property="og:title" content="' + escAttr(sandbox.document.title) + '">');
   fs.writeFileSync(FILE, out);
   console.log('[prerender] 首頁已預先寫入（' + source + '），' + app.innerHTML.length + ' 字元');
 })().catch((e) => console.warn('[prerender] 未預期的錯誤，保留原檔：' + e.message));
