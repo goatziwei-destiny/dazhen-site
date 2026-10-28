@@ -359,7 +359,7 @@ function libSeen_() {
   if (/Line\//i.test(navigator.userAgent)) return true;
   try { return localStorage.getItem('dz_seen') === '1'; } catch (e) { return false; }
 }
-function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }   // 也轉引號：放進屬性（href、alt）時不會被斷開
 
 // 10 個社群平台的簡化圖示（單色線條/色塊，配合各平台官方色當底色）
 var SOCIAL_ICONS = {
@@ -380,6 +380,7 @@ function renderSocialLinks(list) {
   if (!items.length) return '';
   return '<div class="social-links">' + items.map(function(s) {
     var href = s.key === 'email' ? ('mailto:' + s.url) : s.url;
+    if (!/^(https?:|mailto:)/i.test(String(href).trim())) return '';   // 只放一般網址，javascript: 之類的不輸出
     var icon = SOCIAL_ICONS[s.key] || '';
     var brand = /^(facebook|instagram|threads|line)$/.test(s.key);
     return '<a href="' + esc(href) + '" target="_blank" rel="noopener" class="social-icon si-' + s.key + '"' + (brand ? '' : ' style="background:' + s.color + '"') + ' title="' + esc(s.label) + '" aria-label="' + esc(s.label) + '"' + (s.key === 'line' ? ' data-line' : '') + '><svg viewBox="0 0 24 24" aria-hidden="true">' + icon + '</svg></a>';
@@ -405,6 +406,9 @@ function renderServiceDetail(html) {
   }).join('') + '</ul>';
 }
 
+// 預覽模式（新版後台的設定頁嵌這一頁）用：每段可改的字標上欄位代號，點了就跳回後台那一格；正式頁面也標，不影響顯示
+function dk(k) { return k ? ' data-k="' + k + '"' : ''; }
+var DZ_PREVIEW = /[?&]dzpreview=1(&|$)/.test(location.search) && window.parent !== window;   // 預覽模式（說明在檔案下方）
 function lines_(t) { return String(t || '').split(/\n|<br\s*\/?>/i).map(function (s) { return s.trim(); }).filter(Boolean); }
 var LINE_ATTR = ' target="_blank" rel="noopener" data-line';
 
@@ -418,7 +422,7 @@ function renderSite(S) {
   var lead = S.aboutLead || (S.aboutParagraphs || [])[0] || '';
   var photo = S.aboutPhoto || '';
   var STAT_ICONS = ['<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', '<rect x="3" y="3" width="18" height="18"/><path d="M7.5 3v18M16.5 3v18M3 7.5h18M3 16.5h18"/>', '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4.6A8 8 0 1 1 21 12z"/>'];
-  var stats = (S.heroInfoCard || []).map(function (r, i) { return '<div class="st"><svg viewBox="0 0 24 24" aria-hidden="true">' + STAT_ICONS[i % 3] + '</svg><b>' + esc(r.value) + '</b><span>' + esc(r.label) + '</span></div>'; }).join('');
+  var stats = (S.heroInfoCard || []).map(function (r, i) { return '<div class="st"><svg viewBox="0 0 24 24" aria-hidden="true">' + STAT_ICONS[i % 3] + '</svg><b' + dk(r.n && 'heroCard' + r.n + 'Value') + '>' + esc(r.value) + '</b><span' + dk(r.n && 'heroCard' + r.n + 'Label') + '>' + esc(r.label) + '</span></div>'; }).join('');
   var steps = S.processSteps || [];
 
   var LIB_SEEN = libSeen_();
@@ -432,9 +436,9 @@ function renderSite(S) {
 
 '<main>' +
 '<section class="hero hero-paper"><div class="container hero-inner"><div>' +
-  (S.brandBadge ? '<div class="hero-badge">' + esc(S.brandBadge) + '</div>' : '') +
-  '<h1><span class="hero-eyebrow"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20"/><path d="M7 2v20M17 2v20M2 7h20M2 17h20"/></svg>' + esc(S.brandTitle||'') + '</span>' + esc(S.brandTagline||S.brandTitle||'') + '</h1>' +
-  '<p class="hero-desc">' + heroDesc + '</p>' +
+  (S.brandBadge ? '<div class="hero-badge"' + dk('brandBadge') + '>' + esc(S.brandBadge) + '</div>' : '') +
+  '<h1><span class="hero-eyebrow"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20"/><path d="M7 2v20M17 2v20M2 7h20M2 17h20"/></svg>' + '<span' + dk('brandTitle') + '>' + esc(S.brandTitle||'') + '</span></span><span' + dk(S.brandTagline ? 'brandTagline' : 'brandTitle') + '>' + esc(S.brandTagline||S.brandTitle||'') + '</span></h1>' +
+  '<p class="hero-desc"' + dk('heroDesc') + '>' + heroDesc + '</p>' +
   (photo ? '<div class="hero-me"><img src="' + esc(photo) + '" alt="" width="60" height="60">' + esc(S.heroMeLine || '我是大正，一隻會算命的羊。') + '</div>' : '') +
   '<div class="btns"><a href="/booking/" class="btn btn-primary">預約一對一諮詢</a><a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-ghost">先加入 LINE 聊聊</a></div>' +
   '</div>' + (photo ? '<div class="hero-goat"><img src="' + esc(photo) + '" alt="' + esc(S.aboutName||'大正') + '的頭像" width="280" height="280"></div>' : '') +
@@ -452,8 +456,8 @@ function renderSite(S) {
 '<section id="service" class="svc-wrap svc-paper"><div class="container">' +
   '<div class="eyebrow">SERVICE</div><h2 class="section-title">諮詢服務</h2>' +
   '<div class="svc-cards">' +
-    '<div class="svc-card"><div><div class="svc-label">' + esc(S.serviceLabel||'') + '</div><h3>' + esc(S.serviceTitle||'') + '</h3><p>' + esc(S.serviceDesc||'') + '</p></div>' +
-    '<div><div class="price">' + esc(S.servicePrice||'') + '</div><div class="price-unit">' + esc(S.servicePriceUnit||'') + '</div>' + renderServiceDetail(S.serviceDetail||'') +
+    '<div class="svc-card"><div><div class="svc-label"' + dk('serviceLabel') + '>' + esc(S.serviceLabel||'') + '</div><h3' + dk('serviceTitle') + '>' + esc(S.serviceTitle||'') + '</h3><p' + dk('serviceDesc') + '>' + esc(S.serviceDesc||'') + '</p></div>' +
+    '<div><div class="price"' + dk('servicePrice') + '>' + esc(S.servicePrice||'') + '</div><div class="price-unit"' + dk('servicePriceUnit') + '>' + esc(S.servicePriceUnit||'') + '</div><div' + dk('serviceDetail') + '>' + renderServiceDetail(S.serviceDetail||'') + '</div>' +
     '<a href="/booking/" class="btn btn-primary">預約一對一諮詢</a></div></div>' +
     (SHOW_TEXT_SERVICE ?
     '<div class="svc-card"><div><div class="svc-label">' + esc(S.textServiceLabel||'') + '</div><h3>' + esc(S.textServiceTitle||'') + '</h3><p>' + esc(S.textServiceDesc||'') + '</p></div>' +
@@ -464,16 +468,16 @@ function renderSite(S) {
 
 '<section id="about" class="sec section-light"><div class="container about-inner">' +
   '<div class="about-photo">' + (photo ? '<img src="' + esc(photo) + '" alt="' + esc(S.aboutName||'') + '" width="180" height="180" loading="lazy">' : '<div class="ph">🐏</div>') +
-    '<div><strong>' + esc(S.aboutName||'') + '</strong><span>' + esc(S.aboutRole||'') + '</span></div></div>' +
+    '<div><strong' + dk('aboutName') + '>' + esc(S.aboutName||'') + '</strong><span' + dk('aboutRole') + '>' + esc(S.aboutRole||'') + '</span></div></div>' +
   '<div style="min-width:0">' +
-    '<div class="eyebrow">ABOUT</div><h2 class="section-title">' + esc(S.aboutTitle||'') + '</h2>' +
-    (lead ? '<p class="about-lead">' + esc(lead) + '</p>' : '') +
+    '<div class="eyebrow">ABOUT</div><h2 class="section-title"' + dk('aboutTitle') + '>' + esc(S.aboutTitle||'') + '</h2>' +
+    (lead ? '<p class="about-lead"' + dk(S.aboutLead ? 'aboutLead' : 'aboutP1') + '>' + esc(lead) + '</p>' : '') +
     (aboutDo.length || aboutDont.length ? '<div class="dd">' +
-      (aboutDo.length ? '<div class="do"><h4>我會做的事</h4><ul>' + aboutDo.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') + '</ul></div>' : '') +
-      (aboutDont.length ? '<div class="dont"><h4>我不會做的事</h4><ul>' + aboutDont.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') + '</ul></div>' : '') + '</div>' : '') +
+      (aboutDo.length ? '<div class="do"><h4>我會做的事</h4><ul>' + aboutDo.map(function (i, j) { return '<li' + dk(S.aboutDoK && S.aboutDoK[j]) + '>' + esc(i) + '</li>'; }).join('') + '</ul></div>' : '') +
+      (aboutDont.length ? '<div class="dont"><h4>我不會做的事</h4><ul>' + aboutDont.map(function (i, j) { return '<li' + dk(S.aboutDontK && S.aboutDontK[j]) + '>' + esc(i) + '</li>'; }).join('') + '</ul></div>' : '') + '</div>' : '') +
     (fitYes.length || fitNo.length ? '<div class="fit">' +
-      (fitYes.length ? '<div><h4>適合找我的人</h4><ul>' + fitYes.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') + '</ul></div>' : '') +
-      (fitNo.length ? '<div><h4>可能不適合的人</h4><ul>' + fitNo.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') + '</ul></div>' : '') + '</div>' : '') +
+      (fitYes.length ? '<div' + dk('fitYes') + '><h4>適合找我的人</h4><ul>' + fitYes.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') + '</ul></div>' : '') +
+      (fitNo.length ? '<div' + dk('fitNo') + '><h4>可能不適合的人</h4><ul>' + fitNo.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') + '</ul></div>' : '') + '</div>' : '') +
     '<a class="more" href="/about/">更多關於大正與諮詢風格 →</a>' +
   '</div>' +
 '</div></section>' +
@@ -481,11 +485,11 @@ function renderSite(S) {
 ((S.firstSteps||[]).length ?
 '<section id="first-time" class="sec section-light" style="padding-top:0"><div class="container">' +
   '<div class="eyebrow">FIRST TIME</div><h2 class="section-title">第一次諮詢怎麼進行</h2>' +
-  (S.firstIntro ? '<p class="first-intro">' + esc(S.firstIntro) + '</p>' : '') +
+  (S.firstIntro ? '<p class="first-intro"' + dk('firstIntro') + '>' + esc(S.firstIntro) + '</p>' : '') +
   '<ol class="first-list">' + S.firstSteps.map(function (f, i) {
-    return '<li class="first-item"><div class="first-num">' + (i + 1) + '</div><div class="first-body">' + (f.when ? '<div class="first-when">' + esc(f.when) + '</div>' : '') +
-      '<div class="first-title">' + esc(f.title) + '</div><div class="first-desc">' + esc(f.desc || '') +
-      (agenda.length && i + 1 === agendaStep ? ' <ol class="agenda">' + agenda.map(function (a, j) { return '<li><b>' + (j + 1) + '</b>' + esc(a) + '</li>'; }).join('') + '</ol>' : '') + '</div>' +
+    return '<li class="first-item"><div class="first-num">' + (i + 1) + '</div><div class="first-body">' + (f.when ? '<div class="first-when"' + dk(f.n && 'first' + f.n + 'When') + '>' + esc(f.when) + '</div>' : '') +
+      '<div class="first-title"' + dk(f.n && 'first' + f.n + 'Title') + '>' + esc(f.title) + '</div><div class="first-desc"' + dk(f.n && 'first' + f.n + 'Desc') + '>' + esc(f.desc || '') +
+      (agenda.length && i + 1 === agendaStep ? ' <ol class="agenda"' + dk('firstAgenda') + '>' + agenda.map(function (a, j) { return '<li><b>' + (j + 1) + '</b>' + esc(a) + '</li>'; }).join('') + '</ol>' : '') + '</div>' +
       '</div></li>';
   }).join('') + '</ol>' +
 '</div></section>' : '') +
@@ -493,20 +497,20 @@ function renderSite(S) {
 '<section id="process" class="sec section-white"><div class="container">' +
   '<div class="eyebrow">PROCESS</div><h2 class="section-title">預約流程</h2>' +
   '<div class="process-grid n' + steps.length + '">' + steps.map(function (s, i) {
-    return '<div class="step"><div class="step-dot' + (i % 2 === 0 ? ' done' : '') + '"></div><div class="step-label">STEP ' + String(i + 1).padStart(2, '0') + '</div><div class="step-title">' + esc(s.title) + '</div><div class="step-desc">' + esc(s.desc) + '</div></div>';
+    return '<div class="step"><div class="step-dot' + (i % 2 === 0 ? ' done' : '') + '"></div><div class="step-label">STEP ' + String(i + 1).padStart(2, '0') + '</div><div class="step-title"' + dk(s.n && 'processStep' + s.n + 'Title') + '>' + esc(s.title) + '</div><div class="step-desc"' + dk(s.n && 'processStep' + s.n + 'Desc') + '>' + esc(s.desc) + '</div></div>';
   }).join('') + '</div>' +
 '</div></section>' +
 
 ((S.noteItems||[]).length ?
 '<section id="rules" class="sec section-light"><div class="container">' +
   '<div class="eyebrow">RULES</div><h2 class="section-title">預約規則</h2>' +
-  '<dl class="rules">' + S.noteItems.map(function (n) { return '<div class="rule"><dt>' + esc(n.title) + '</dt><dd>' + esc(n.desc) + '</dd></div>'; }).join('') + '</dl>' +
+  '<dl class="rules">' + S.noteItems.map(function (n) { return '<div class="rule"><dt' + dk(n.n && 'note' + n.n + 'Title') + '>' + esc(n.title) + '</dt><dd' + dk(n.n && 'note' + n.n + 'Desc') + '>' + esc(n.desc) + '</dd></div>'; }).join('') + '</dl>' +
 '</div></section>' : '') +
 
 '<section id="faq" class="sec section-white"><div class="container">' +
   '<div class="eyebrow" style="text-align:center">FAQ</div><h2 class="section-title" style="text-align:center">常見問題</h2>' +
   '<div class="faq-list">' + (S.faqItems||[]).map(function (f, i) {
-    return '<div class="faq-item"><button type="button" class="faq-q" aria-expanded="false" onclick="var o=this.parentElement.classList.toggle(\'open\');this.setAttribute(\'aria-expanded\',o)">' + esc(f.q) + '</button><div class="faq-a">' + esc(f.a) + '</div></div>';
+    return '<div class="faq-item"><button type="button" class="faq-q" aria-expanded="false" onclick="var o=this.parentElement.classList.toggle(\'open\');this.setAttribute(\'aria-expanded\',o)"' + dk(f.n && 'faq' + f.n + 'Q') + '>' + esc(f.q) + '</button><div class="faq-a"' + dk(f.n && 'faq' + f.n + 'A') + '>' + esc(f.a) + '</div></div>';
   }).join('') + '</div>' +
 '</div></section>' +
 
@@ -521,13 +525,13 @@ function renderSite(S) {
 '</div></section>' : '') +
 
 '<section class="sec cta section-dark"><div class="container">' +
-  '<h2 class="section-title">' + esc(S.ctaTitle||'') + '</h2><p>' + esc(S.ctaDesc||'') + '</p>' +
+  '<h2 class="section-title"' + dk('ctaTitle') + '>' + esc(S.ctaTitle||'') + '</h2><p' + dk('ctaDesc') + '>' + esc(S.ctaDesc||'') + '</p>' +
   '<div class="btns"><a href="/booking/" class="btn btn-primary">預約一對一諮詢</a><a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-warm">先加入 LINE 聊聊</a></div>' +
 '</div></section>' +
 '</main>' +
 
 '<footer class="footer"><div class="container">' + renderSocialLinks(S.socialLinks) +
-  '<p>' + (S.footerText||'') + '　·　<a href="/privacy-policy/" style="color:inherit">隱私權政策</a></p>' +
+  '<p><span' + dk('footerText') + '>' + (DZ_PREVIEW ? esc(S.footerText||'') : (S.footerText||'')) + '</span>　·　<a href="/privacy-policy/" style="color:inherit">隱私權政策</a></p>' +
 '</div></footer>' +
 
 '<div class="sticky-cta cta-night" id="stickyCta"><div class="when" id="ctaWhen"><span>一對一語音諮詢</span><b>' + esc(S.servicePrice || '') + '</b></div><a href="/booking/" class="btn btn-gold">預約諮詢</a><button type="button" class="x" id="stickyClose" aria-label="關閉預約列">×</button></div>';
@@ -543,7 +547,7 @@ function showNextSlot_() {
   if (w && nextSlot_ && nextSlot_.ok && nextSlot_.label) w.innerHTML = '<span>最早可約</span><b>' + esc(String(nextSlot_.label).replace(/（農曆.*?）/, '').replace('（週', '（')) + ' 起</b>';
 }
 function askNextSlot_() {
-  if (nextSlotAsked_ || !SITE.bookingFormUrl || typeof document.createElement !== 'function' || !document.head) return;
+  if (DZ_PREVIEW || nextSlotAsked_ || !SITE.bookingFormUrl || typeof document.createElement !== 'function' || !document.head) return;
   nextSlotAsked_ = true;
   window._nextSlotCb = function (d) { if (d && d.ok && typeof d.label === 'string' && d.label.length < 40) { nextSlot_ = d; showNextSlot_(); } };
   var s = document.createElement('script'); s.async = true; s.src = SITE.bookingFormUrl + '?page=nextSlot&callback=_nextSlotCb';
@@ -563,14 +567,8 @@ function setupStickyCta_() {
 // 先用 SITE 預設值立即渲染（SEO + 快速顯示）；建置時已預先寫好內容的話（scripts/prerender-home.js），就先沿用，只接上互動功能
 if (document.getElementById('app').children && document.getElementById('app').children.length) setupStickyCta_(); else renderSite(SITE);
 
-// 背景載入試算表最新資料，有更新就重新渲染（不用重新部署 Netlify）
-(function() {
-  var apiBase = SITE.bookingFormUrl;
-  if (!apiBase || apiBase === 'YOUR_APPS_SCRIPT_URL') return;
-  var s = document.createElement('script');
-  s.src = apiBase + '?page=siteConfig&callback=_siteConfigCb';
-  window._siteConfigCb = function(data) {
-    if (!data) return;
+// 後台資料（攤平的欄位）→ 首頁用的格式。正式頁面和預覽模式共用
+function mergeSiteConfig_(data) {
     var merged = {};
     for (var k in SITE) merged[k] = SITE[k];
     for (var k in data) if (data[k] !== '' && data[k] !== undefined) merged[k] = data[k];
@@ -581,10 +579,10 @@ if (document.getElementById('app').children && document.getElementById('app').ch
     }
 
     // 「我會做的事／不會做的事」（後台是 aboutDo1~4／aboutDont1~4 四個欄位存的，留空的那格不會出現在清單裡）
-    var aboutDo = [data.aboutDo1, data.aboutDo2, data.aboutDo3, data.aboutDo4].filter(Boolean);
-    if (aboutDo.length) merged.aboutDo = aboutDo;
-    var aboutDont = [data.aboutDont1, data.aboutDont2, data.aboutDont3, data.aboutDont4].filter(Boolean);
-    if (aboutDont.length) merged.aboutDont = aboutDont;
+    var aboutDoK = ['aboutDo1', 'aboutDo2', 'aboutDo3', 'aboutDo4'].filter(function (k) { return data[k]; }), aboutDo = aboutDoK.map(function (k) { return data[k]; });
+    if (aboutDo.length) { merged.aboutDo = aboutDo; merged.aboutDoK = aboutDoK; }
+    var aboutDontK = ['aboutDont1', 'aboutDont2', 'aboutDont3', 'aboutDont4'].filter(function (k) { return data[k]; }), aboutDont = aboutDontK.map(function (k) { return data[k]; });
+    if (aboutDont.length) { merged.aboutDont = aboutDont; merged.aboutDontK = aboutDontK; }
 
     // 我的諮詢風格（後台 style1~3 的 Title/Sub/Desc，標題留空代表這張不顯示）
     var styleItems = [];
@@ -598,7 +596,7 @@ if (document.getElementById('app').children && document.getElementById('app').ch
     var heroCards = [];
     for (var i = 1; i <= 5; i++) {
       var label = data['heroCard' + i + 'Label'], value = data['heroCard' + i + 'Value'];
-      if (label && value) heroCards.push({ label: label, value: value });
+      if (label && value) heroCards.push({ label: label, value: value, n: i });
     }
     if (heroCards.length) merged.heroInfoCard = heroCards;
 
@@ -606,7 +604,7 @@ if (document.getElementById('app').children && document.getElementById('app').ch
     var firsts = [];
     for (var fi = 1; fi <= 6; fi++) {
       var ft = data['first' + fi + 'Title'];
-      if (ft) firsts.push({ when: data['first' + fi + 'When'] || '', title: ft, desc: data['first' + fi + 'Desc'] || '' });
+      if (ft) firsts.push({ when: data['first' + fi + 'When'] || '', title: ft, desc: data['first' + fi + 'Desc'] || '', n: fi });
     }
     if (firsts.length) merged.firstSteps = firsts;
 
@@ -614,7 +612,7 @@ if (document.getElementById('app').children && document.getElementById('app').ch
     var steps = [];
     for (var i = 1; i <= 6; i++) {
       var title = data['processStep' + i + 'Title'];
-      if (title) steps.push({ title: title, desc: data['processStep' + i + 'Desc'] || '', done: data['processStep' + i + 'Done'] === true });
+      if (title) steps.push({ title: title, desc: data['processStep' + i + 'Desc'] || '', done: data['processStep' + i + 'Done'] === true, n: i });
     }
     if (steps.length) merged.processSteps = steps;
 
@@ -622,7 +620,7 @@ if (document.getElementById('app').children && document.getElementById('app').ch
     var notes = [];
     for (var i = 1; i <= 6; i++) {
       var title = data['note' + i + 'Title'];
-      if (title) notes.push({ title: title, desc: data['note' + i + 'Desc'] || '' });
+      if (title) notes.push({ title: title, desc: data['note' + i + 'Desc'] || '', n: i });
     }
     if (notes.length) merged.noteItems = notes;
 
@@ -630,7 +628,7 @@ if (document.getElementById('app').children && document.getElementById('app').ch
     var faqs = [];
     for (var i = 1; i <= 8; i++) {
       var q = data['faq' + i + 'Q'];
-      if (q) faqs.push({ q: q, a: data['faq' + i + 'A'] || '' });
+      if (q) faqs.push({ q: q, a: data['faq' + i + 'A'] || '', n: i });
     }
     if (faqs.length) merged.faqItems = faqs;
 
@@ -640,7 +638,61 @@ if (document.getElementById('app').children && document.getElementById('app').ch
       return url ? Object.assign({}, s, { url: url }) : s;
     });
 
-    renderSite(merged);
+    return merged;
+}
+
+// 預覽模式（?dzpreview=1）：新版後台的設定頁把這一頁嵌進來，用還沒存的草稿畫出首頁。
+// 不讀後台資料、不查空檔；只接受「嵌我的那一頁」傳來的資料；點到有欄位代號的字，告訴後台是哪一格；連結一律不跳走。
+if (DZ_PREVIEW) {
+  document.documentElement.classList.add('dz-preview');
+  var pst = document.createElement('style');
+  pst.textContent = '.dz-preview [data-k]{cursor:pointer;outline:1px dashed transparent;outline-offset:3px;border-radius:3px;transition:outline-color .15s,background .15s}.dz-preview [data-k]:hover{outline-color:#c99a45}.dz-preview [data-k].dz-lit{background:rgba(201,154,69,.25);outline-color:#c99a45}.dz-preview .sticky-cta{display:none!important}';
+  document.head.appendChild(pst);
+  // 只接受大正預約系統後台這一個 Apps Script 的網頁來源（2026-10-28 從正式預約頁核對）；本機測試另外允許 127.0.0.1／localhost
+  // 預約系統若換成新的 Apps Script 專案，網址會變，要回來更新這一行（變了的話預覽只是不會動，不會放行別人）
+  var DZ_ADMIN_ORIGINS = ['https://n-zsa5kblf6utdjampxzvdtwmrj3x3y4uiblx5uwq-0lu-script.googleusercontent.com'];
+  var dzTrusted = function (o) { return DZ_ADMIN_ORIGINS.indexOf(o) >= 0 || (/^(127\.0\.0\.1|localhost)$/.test(location.hostname) && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(o)); };
+  // 只收網站設定會用到的欄位名稱、每欄最多 4000 字、整包最多 400 欄
+  var DZ_KEY_RE = /^(aboutP[1-3]|aboutDo[1-4]|aboutDont[1-4]|style[1-3](Title|Sub|Desc)|heroCard[1-5](Label|Value)|first[1-6](When|Title|Desc)|processStep[1-6](Title|Desc|Done)|note[1-6](Title|Desc)|faq[1-8][QA]|social_[a-z]{1,20})$/;
+  var dzKeyOk = function (k) { return typeof k === 'string' && k.length <= 40 && (DZ_KEY_RE.test(k) || (Object.prototype.hasOwnProperty.call(SITE, k) && typeof SITE[k] !== 'object') || !!document.querySelector('[data-k="' + k.replace(/[^\w]/g, '') + '"]')); };
+  var dzValOk = function (v) { return typeof v === 'boolean' || (typeof v === 'number' && isFinite(v)) || (typeof v === 'string' && v.length <= 4000); };
+  var dzParent = null;   // 第一次收到合格資料的來源；點字只回傳給它
+  window.addEventListener('message', function (e) {
+    if (e.source !== window.parent || !dzTrusted(e.origin)) return;
+    var m = e.data;
+    if (!m || typeof m !== 'object' || m.type !== 'dz-preview') return;
+    dzParent = e.origin;
+    if (m.data && typeof m.data === 'object' && !Array.isArray(m.data) && Object.keys(m.data).length <= 400 && JSON.stringify(m.data).length < 200000) {
+      var d = {}; Object.keys(m.data).forEach(function (k) { if (dzKeyOk(k) && dzValOk(m.data[k])) d[k] = m.data[k]; });
+      renderSite(mergeSiteConfig_(d));
+    }
+    if (typeof m.lit === 'string') {
+      var on = document.querySelectorAll('.dz-lit'); for (var i = 0; i < on.length; i++) on[i].classList.remove('dz-lit');
+      var t = document.querySelector('[data-k="' + m.lit.replace(/[^\w]/g, '') + '"]');
+      if (t) {
+        var fq = t.closest('.faq-item'); if (fq && !fq.classList.contains('open')) { fq.classList.add('open'); var qb = fq.querySelector('.faq-q'); if (qb) qb.setAttribute('aria-expanded', 'true'); }   // 常見問題的答案平常收著，要先展開才看得到
+        t.classList.add('dz-lit'); if (m.scroll) t.scrollIntoView({ block: 'center' });
+      }
+    }
+  });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a,button'); if (a && !(a.classList && a.classList.contains('faq-q'))) e.preventDefault();
+    var el = e.target.closest && e.target.closest('[data-k]');
+    if (el && dzParent) { e.preventDefault(); window.parent.postMessage({ type: 'dz-pick', k: el.getAttribute('data-k') }, dzParent); }
+  }, true);
+  window.parent.postMessage({ type: 'dz-ready' }, '*');   // 只說「我準備好了」，不帶任何資料
+}
+
+// 背景載入試算表最新資料，有更新就重新渲染（不用重新部署 Netlify）
+(function() {
+  if (DZ_PREVIEW) return;
+  var apiBase = SITE.bookingFormUrl;
+  if (!apiBase || apiBase === 'YOUR_APPS_SCRIPT_URL') return;
+  var s = document.createElement('script');
+  s.src = apiBase + '?page=siteConfig&callback=_siteConfigCb';
+  window._siteConfigCb = function(data) {
+    if (!data) return;
+    renderSite(mergeSiteConfig_(data));
   };
   document.body.appendChild(s);
 })();
