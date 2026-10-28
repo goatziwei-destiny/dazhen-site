@@ -19,7 +19,6 @@ function escHtml(s) {
   return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 function escAttr(s) { return escHtml(s).replace(/"/g, '&quot;'); }
-function plain(s) { return String(s == null ? '' : s).replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim(); }
 
 function makeSandbox() {
   const app = { innerHTML: '' };
@@ -69,7 +68,7 @@ async function fetchSiteConfig(url) {
   try {
     vm.createContext(sandbox);
     // const/function 宣告留在 context 裡，最後把 SITE 交出來
-    vm.runInContext(code + '\n;this.__SITE = SITE; var __rs = renderSite; renderSite = function (S) { globalThis.__lastS = S; return __rs(S); };', sandbox, { timeout: 5000 });   // 記下最後一次畫面用的內容（含後台 FAQ），給結構化資料用
+    vm.runInContext(code + '\n;this.__SITE = SITE;', sandbox, { timeout: 5000 });
   } catch (e) { console.warn('[prerender] 執行首頁程式失敗，保留原檔：' + e.message); return; }
 
   let source = '預設文字';
@@ -90,16 +89,6 @@ async function fetchSiteConfig(url) {
     out = out.replace(/<meta property="og:description" content="[^"]*">/, () => '<meta property="og:description" content="' + escAttr(metaDesc.content) + '">');
   }
   if (sandbox.document.title) out = out.replace(/<meta property="og:title" content="[^"]*">/, () => '<meta property="og:title" content="' + escAttr(sandbox.document.title) + '">');
-  // 常見問題的結構化資料（FAQPage）：用跟畫面同一份問答，搜尋引擎與 AI 工具不跑 JS 也讀得到。
-  // 後台改了 FAQ，要等下次網站重新建置才會更新這段（畫面本身是即時的）。
-  try {
-    const S = sandbox.__lastS || sandbox.__SITE || {};
-    const faqs = (S.faqItems || []).filter((f) => f && f.q && f.a).map((f) => ({ '@type': 'Question', name: plain(f.q), acceptedAnswer: { '@type': 'Answer', text: plain(f.a) } }));
-    if (faqs.length && !out.includes('"FAQPage"')) {
-      const ld = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs }).replace(/</g, '\\u003c');
-      out = out.replace('</head>', () => '<script type="application/ld+json">' + ld + '</script>\n</head>');   // 用函式回傳，問答裡的 $& 之類不會被當成取代指令（Codex #17）
-    }
-  } catch (e) { console.warn('[prerender] 常見問題結構化資料略過：' + e.message); }
   fs.writeFileSync(FILE, out);
   console.log('[prerender] 首頁已預先寫入（' + source + '），' + app.innerHTML.length + ' 字元');
 })().catch((e) => console.warn('[prerender] 未預期的錯誤，保留原檔：' + e.message));
