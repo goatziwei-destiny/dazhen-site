@@ -1,6 +1,6 @@
 [build]
   publish = "public"
-  command = "hugo && node scripts/prerender-home.js"
+  command = "hugo && node scripts/prerender-home.js && (node scripts/image-report.js || true)"
 
 [build.environment]
   HUGO_VERSION = "0.147.6"
