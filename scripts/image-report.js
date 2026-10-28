@@ -74,7 +74,7 @@ h1{font-size:20px;color:var(--ink);margin:0 0 4px}.sub{color:#78716c;font-size:1
 .bar button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}.bar button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
-.card.marked{outline:3px solid var(--bad)}
+.card.marked{outline:3px solid var(--bad)}.card[hidden]{display:none}
 .thumb{aspect-ratio:3/2;background:#eee center/contain no-repeat;cursor:zoom-in;border:0;width:100%}
 .meta{padding:8px 10px;font-size:13px;display:flex;flex-direction:column;gap:4px;min-width:0}
 .meta b{font-size:14px;color:var(--ink);overflow-wrap:anywhere}.meta .p{color:#78716c;overflow-wrap:anywhere;font-size:12px}

@@ -102,7 +102,7 @@ function listFiles() {
   if (a[0] === '--all') return fs.readdirSync(path.join(ROOT, 'content/blog')).filter(f => f.endsWith('.md') && f !== '_index.md').map(f => 'content/blog/' + f);
   if (a[0] === '--changed') {
     const base = a[1] || 'origin/main';
-    const out = execSync('git diff --name-only --diff-filter=AM ' + base + '...HEAD', { cwd: ROOT }).toString().split('\n');
+    const out = execSync('git diff -z --name-only --diff-filter=AM ' + base + '...HEAD', { cwd: ROOT }).toString().split('\0');   // -z：中文檔名不會被加引號跳脫（Codex #18）
     return out.filter(isPost);
   }
   return a.map(f => path.relative(ROOT, path.resolve(f)));
