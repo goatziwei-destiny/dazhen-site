@@ -1,16 +1,21 @@
 #!/usr/bin/env node
 /*
- * 文章配圖總覽（2026-10-28，試行）
- * 建置時產生 public/admin/images/index.html（/admin/ 已被 robots.txt 排除，不會被搜尋到）。
- * 一頁看完所有文章用到的圖：縮圖、哪篇文章、替代文字、檔案大小、尺寸，並自動標出：
- *   找不到檔案、沒有替代文字、檔案太大、比例不像封面、同一張圖用在多篇、圖片資料夾裡沒被任何文章用到的圖。
- * 大正（或 GPT／Claude）可以在頁面上逐張勾「要改」＋選原因，按「複製清單」貼到 PR 或 ChatGPT。勾選只存在這台裝置。
- * 圖畫得對不對（手腳、持物、角色）程式看不出來，要人看；這頁只是讓人看得快、不漏看。
- * 用法：node scripts/image-report.js [輸出檔，預設 public/admin/images/index.html]
+ * 文章配圖總覽（2026-10-28，試行）— 只在本機或審查時手動產生，**不放進正式網站建置**（GPT #9：/admin/ 不是登入保護，草稿與未用素材會被看到）
+ * 用法：node scripts/image-report.js <輸出檔.html> [--base https://網站網址]
+ *   --base：圖片改用完整網址（例如給 Claude 做成只有大正看得到的私人頁面時）。草稿或還沒上線的圖，正式網址上看不到，會顯示空白。
+ * 列出文章用到的圖：縮圖、哪篇文章、封面或內文、替代文字、檔案大小、尺寸；標出找不到檔案、沒有替代文字、檔案太大、
+ *   封面比例、寬度、同一張用在多處、uploads 裡沒被任何文章用到的圖。草稿、未來日期的文章會標出來。
+ * 掃得到的寫法：front matter 的 image／imageAlt、Markdown 的 ![替代文字](網址)、HTML 的 <img src="…" alt="…">。
+ *   其他寫法（Hugo shortcode、CSS 背景圖、版型裡寫死的圖）掃不到，不能保證「不漏圖」。
+ * 頁面上可以逐張勾「要改」＋選原因，按「複製清單」貼給 GPT 或 Claude；勾選只存在那台裝置，不改任何檔案。
+ * 圖畫得對不對（手腳、持物、角色）程式看不出來，要人看。
  */
 'use strict';
 const fs = require('fs'), path = require('path');
-const ROOT = path.join(__dirname, '..'), OUT = process.argv[2] || path.join(ROOT, 'public', 'admin', 'images', 'index.html');
+const ROOT = path.join(__dirname, '..'), ARGS = process.argv.slice(2);
+const OUT = ARGS.find(a => !a.startsWith('--') && ARGS[ARGS.indexOf(a) - 1] !== '--base');
+const BASE = ARGS.includes('--base') ? String(ARGS[ARGS.indexOf('--base') + 1] || '').replace(/\/+$/, '') : '';
+if (!OUT) { console.error('用法：node scripts/image-report.js <輸出檔.html> [--base https://網站網址]'); process.exit(1); }
 const BIG_KB = 800;
 
 function walk(dir, out) { if (!fs.existsSync(dir)) return out; for (const f of fs.readdirSync(dir)) { const p = path.join(dir, f); if (fs.statSync(p).isDirectory()) walk(p, out); else out.push(p); } return out; }
@@ -28,6 +33,7 @@ function dims(file) {   // 讀 PNG／JPEG／WebP 的寬高，不用外部套件
   } catch (e) { /* 讀不到就不顯示尺寸 */ }
   return null;
 }
+const img = s => (BASE && /^\//.test(s) ? BASE + s : s);
 const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const unq = v => String(v || '').trim().replace(/^["']|["']$/g, '');
 
@@ -39,11 +45,13 @@ for (const file of walk(path.join(ROOT, 'content'), []).filter(f => f.endsWith('
   const slug = unq((fm.match(/^slug:\s*(.+)$/m) || [, ''])[1]);
   const section = path.relative(path.join(ROOT, 'content'), path.dirname(file)).split(path.sep)[0] || '';
   const url = section === 'blog' && slug ? '/blog/' + slug + '/' : '';
+  const draft = /^draft:\s*true/m.test(fm), date = unq((fm.match(/^date:\s*(.+)$/m) || [, ''])[1]), future = date && new Date(date.slice(0, 10)) > new Date();
+  const state = draft ? '草稿' : future ? '未來日期' : '';
   const src = path.relative(ROOT, file);
-  const img = unq((fm.match(/^image:\s*(.+)$/m) || [, ''])[1]);
-  if (img) uses.push({ src: img, alt: unq((fm.match(/^imageAlt:\s*(.+)$/m) || [, ''])[1]), title, url, file: src, kind: '封面' });
-  for (const m of body.matchAll(/!\[([^\]]*)\]\(([^)\s]+)[^)]*\)/g)) uses.push({ src: m[2], alt: m[1], title, url, file: src, kind: '內文' });
-  for (const m of body.matchAll(/<img[^>]*src="([^"]+)"[^>]*>/g)) { const a = (m[0].match(/alt="([^"]*)"/) || [, ''])[1]; uses.push({ src: m[1], alt: a, title, url, file: src, kind: '內文' }); }
+  const cover = unq((fm.match(/^image:\s*(.+)$/m) || [, ''])[1]);
+  if (cover) uses.push({ src: cover, alt: unq((fm.match(/^imageAlt:\s*(.+)$/m) || [, ''])[1]), title, url, file: src, kind: '封面', state });
+  for (const m of body.matchAll(/!\[([^\]]*)\]\(([^)\s]+)[^)]*\)/g)) uses.push({ src: m[2], alt: m[1], title, url, file: src, kind: '內文', state });
+  for (const m of body.matchAll(/<img[^>]*src="([^"]+)"[^>]*>/g)) { const a = (m[0].match(/alt="([^"]*)"/) || [, ''])[1]; uses.push({ src: m[1], alt: a, title, url, file: src, kind: '內文', state }); }
 }
 // 2. 圖片資料夾（LINE 選單圖另外管理，不列）
 const files = walk(path.join(ROOT, 'static', 'images'), []).filter(f => /\.(png|jpe?g|webp|gif)$/i.test(f) && !/[\\/]images[\\/]line[\\/]/.test(f));
@@ -59,11 +67,12 @@ const rows = uses.map(u => {
   if (info && info.kb > BIG_KB) flags.push('檔案太大');
   if (info && info.dim && u.kind === '封面') { const r = info.dim[0] / info.dim[1]; if (r < 1.2 || r > 2.1) flags.push('封面比例不像橫式'); if (info.dim[0] < 1200) flags.push('封面寬度不到 1200'); }
   if (usedCount[u.src] > 1) flags.push('同一張用在多處');
+  if (u.state) flags.push(u.state);
   return Object.assign({}, u, info || {}, { flags });
 });
 Object.keys(byPath).filter(p => !usedCount[p] && /^\/images\/uploads\//.test(p)).forEach(p => rows.push({ src: p, title: '（沒有文章用到）', file: '', kind: '未使用', alt: '', kb: byPath[p].kb, dim: byPath[p].dim, flags: ['沒有文章用到'] }));
 
-const ALL_FLAGS = ['找不到檔案', '沒有替代文字', '檔案太大', '封面比例不像橫式', '封面寬度不到 1200', '同一張用在多處', '沒有文章用到'];
+const ALL_FLAGS = ['草稿', '未來日期', '找不到檔案', '沒有替代文字', '檔案太大', '封面比例不像橫式', '封面寬度不到 1200', '同一張用在多處', '沒有文章用到'];
 const REASONS = ['角色不對', '比例／透視怪', '手腳或手指錯', '持物沒拿好', '服飾紋樣錯', '跟文章不搭', '文字或錯字', '其他'];
 const html = `<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>文章配圖總覽</title>
 <style>
@@ -84,10 +93,10 @@ dialog{max-width:96vw;max-height:96vh;padding:0;border:0;border-radius:12px}dial
 .out{width:100%;min-height:90px;font:13px/1.5 ui-monospace,monospace;margin-top:8px}
 </style></head><body>
 <h1>文章配圖總覽</h1>
-<div class="sub">共 ${rows.length} 筆（建置時產生）。點縮圖放大；勾「要改」並選原因，最後按「複製清單」貼給 GPT 或 Claude。勾選只存在這台裝置。</div>
+<div class="sub">共 ${rows.length} 筆（${new Date().toISOString().slice(0, 10)} 產生，只給審圖用，不是公開頁面）。掃得到 front matter 的 image、Markdown 圖片、HTML img；其他寫法掃不到。點縮圖放大；勾「要改」並選原因，最後按「複製清單」貼給 GPT 或 Claude。勾選只存在這台裝置。</div>
 <div class="bar" id="bar"><button data-f="" aria-pressed="true">全部</button>${ALL_FLAGS.map(f => `<button data-f="${esc(f)}" aria-pressed="false">${esc(f)}</button>`).join('')}<button data-f="__marked" aria-pressed="false">我勾的</button><button id="copy">複製清單</button></div>
 <div class="grid" id="grid">${rows.map((r, i) => `<div class="card" data-i="${i}" data-flags="${esc(r.flags.join('|'))}">
-<button class="thumb" style="background-image:url('${esc(r.src)}')" data-big="${esc(r.src)}" aria-label="放大 ${esc(r.title)}"></button>
+<button class="thumb" style="background-image:url('${esc(img(r.src))}')" data-big="${esc(img(r.src))}" aria-label="放大 ${esc(r.title)}"></button>
 <div class="meta"><b>${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>` : esc(r.title)}</b>
 <span class="p">${esc(r.kind)}｜${esc(r.src)}</span>
 <span class="p">${r.dim ? r.dim[0] + '×' + r.dim[1] : '尺寸不明'}｜${r.kb != null ? r.kb + ' KB' : '—'}${r.file ? '｜' + esc(r.file) : ''}</span>
@@ -111,4 +120,4 @@ document.getElementById('copy').addEventListener('click',function(){var lines=Ob
 </script></body></html>`;
 fs.mkdirSync(path.dirname(OUT), { recursive: true });
 fs.writeFileSync(OUT, html);
-console.log('[image-report] ' + rows.length + ' 筆，問題 ' + rows.filter(r => r.flags.length).length + ' 筆 → ' + path.relative(ROOT, OUT));
+console.log('[image-report] ' + rows.length + ' 筆，有標記 ' + rows.filter(r => r.flags.length).length + ' 筆 → ' + OUT);
