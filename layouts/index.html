@@ -160,6 +160,8 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 .sticky-cta .btn{flex:1;padding:11px 10px;font-size:14px}
 .sticky-cta .x{flex:0 0 32px;height:32px;border:none;background:none;color:var(--text-muted);font-size:20px;cursor:pointer;font-family:inherit}
 @media(max-width:767px){.sticky-cta{display:flex}body{padding-bottom:64px}}
+/* 電腦版也顯示（2026-10-29 大正）：置中的浮動條，不佔滿整個寬度 */
+@media(min-width:768px){.sticky-cta{display:flex;left:50%;right:auto;bottom:18px;width:min(560px,calc(100% - 40px));transform:translate(-50%,140%);border-radius:14px;border:1px solid rgba(227,195,143,.35);padding:12px 14px 12px 20px;box-shadow:0 10px 30px rgba(0,0,0,.25)}.sticky-cta.show{transform:translate(-50%,0)}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn,.faq-q::after,.sticky-cta,.post{transition:none}}
 /* ===== 2026-10-28 外觀改版（大正選：主視覺 C、數字列 A、服務卡 C、底部預約鈕 B；設計見 docs/site-look-1028.md）===== */
 :root{--paper:#fbf8f2;--paper-2:#f3ece0;--rule:#e3dccf;--clay:#a4643a;--gold:#e3c38f;--night:#0f1628}
@@ -538,7 +540,7 @@ function renderSite(S) {
   setupStickyCta_();
 }
 
-// 手機底部固定預約列：捲過開場才出現，按 × 關掉後這次瀏覽不再出現
+// 底部固定預約列（手機貼底、電腦置中浮動）：捲過開場才出現，按 × 關掉後這次瀏覽不再出現
 var stickyClosed_ = false;
 // 「最早可約」：向預約系統要即時空檔的第一天；讀不到、逾時或格式不對就維持顯示價格，不寫死日期
 var nextSlot_ = null, nextSlotAsked_ = false;
