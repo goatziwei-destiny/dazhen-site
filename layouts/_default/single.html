@@ -119,10 +119,10 @@
 .article-body .container > p{text-indent:0}  /* 網頁文章不縮排，用段落間距分段（2026-10-14） */
 .article-body .container > p:has(> figure),.article-body .container > p:has(> img){text-indent:0}
 .article-cta{background:var(--navy);padding:48px 0;text-align:center}
-.article-cta-line{padding:8px 0 40px}.article-cta-line .container{max-width:720px;display:flex;flex-direction:column;align-items:flex-start;gap:12px}
-.article-cta-line p{font-size:16px;line-height:1.8;color:var(--body,#57534e);margin:0}
-.cta-outline{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 24px;border:1.5px solid var(--navy);border-radius:10px;color:var(--navy);background:#fff;font-weight:700;text-decoration:none}
-.cta-outline:hover{background:var(--navy);color:#fff;text-decoration:none}
+.article-cta-line{margin:36px 0 8px;padding:22px 0 4px;border-top:1px solid var(--line,#e5e1da);display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.article-body .article-cta-line p{font-size:17px;line-height:1.8;color:var(--body,#57534e);margin:0}
+.article-body a.cta-outline,.cta-outline{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 24px;border:1.5px solid var(--navy);border-radius:10px;color:var(--navy);background:#fff;font-weight:700;text-decoration:none}
+.article-body a.cta-outline:hover,.cta-outline:hover{background:var(--navy);color:#fff;text-decoration:none}
 .toc-list{background:none;border-left:3px solid var(--warm,#cc8854);border-radius:0;padding:4px 0 4px 16px}
 .toc-list .toc-title{font-weight:700;color:var(--navy);font-size:15px}
 .article-cta p{color:var(--text-light);font-size:16px;margin-bottom:20px}
@@ -183,6 +183,11 @@
       {{ range . }}<details class="faq-item"><summary>{{ .q }}</summary><p>{{ .a }}</p></details>{{ end }}
     </section>
     {{ end }}
+    {{/* 2026-10-28 大正選 B：文章內容一結束就放一句話＋圓角方形外框按鈕（10/29 從頁面最底下移上來，讀完就看得到） */}}
+    <div class="article-cta-line">
+      <p>想把這些放到你自己的命盤上看？</p>
+      <a class="cta-outline" href="/booking/">一對一諮詢</a>
+    </div>
     {{ with .Params.tags }}<div class="article-tags" aria-label="關鍵字">{{ range . }}<span class="article-tag">#{{ . }}</span>{{ end }}</div>{{ end }}
     <aside class="author-card">
       <img src="/images/avatar-goat.webp" alt="大正" width="72" height="72" loading="lazy">
@@ -256,11 +261,6 @@
 </div>
 {{ end }}
 
-{{/* 2026-10-28 大正選 B：文章結尾一句話＋圓角方形外框按鈕，不放大橫幅 */}}
-<div class="article-cta-line"><div class="container">
-  <p>想把這些放到你自己的命盤上看？</p>
-  <a class="cta-outline" href="/booking/">一對一諮詢</a>
-</div></div>
 
 {{ with .Site.Params.webAppUrl }}
 <script>
