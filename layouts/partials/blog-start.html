@@ -1,6 +1,14 @@
-{{/* 第一次來？從這幾篇開始：各主題的總綱文章＋標了 featured: true 的文章（最多 6 篇）。文章列表首頁放在最上面、整排顯示；主題頁放在側欄最上面 */}}
+{{/* 入門閱讀區：各主題總綱＋featured文章，最多六篇；startOrder可指定入門順序，未指定者維持原本順序。 */}}
 {{ $all := where (where (where site.RegularPages "Section" "blog") "Params.draft" "ne" true) "Params.noindex" "ne" true }}
 {{ $starts := slice }}
-{{ range (site.GetPage "/topics").Pages.ByWeight }}{{ with .Params.pillar }}{{ with site.GetPage (printf "/blog/%s" .) }}{{ $starts = $starts | append . }}{{ end }}{{ end }}{{ end }}
+{{ range (site.GetPage "/topics").Pages.ByWeight }}{{ with .Params.pillar }}{{ with site.GetPage (printf "/blog/%s" .) }}{{ if and (ne .Params.draft true) (ne .Params.noindex true) }}{{ $starts = $starts | append . }}{{ end }}{{ end }}{{ end }}{{ end }}
 {{ range where $all "Params.featured" true }}{{ $starts = $starts | append . }}{{ end }}
-{{ return first 6 ($starts | uniq) }}
+{{ $ranked := slice }}
+{{ range $i, $p := ($starts | uniq) }}
+  {{ $order := add 1000 $i }}
+  {{ with $p.Params.startorder }}{{ $order = int . }}{{ end }}
+  {{ $ranked = $ranked | append (dict "page" $p "order" $order) }}
+{{ end }}
+{{ $ordered := slice }}
+{{ range sort $ranked "order" }}{{ $ordered = $ordered | append .page }}{{ end }}
+{{ return first 6 $ordered }}
