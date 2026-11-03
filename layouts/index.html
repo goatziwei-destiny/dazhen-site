@@ -238,6 +238,8 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 .post-img:empty{background:var(--paper-2) radial-gradient(circle at 70% 30%,rgba(201,154,69,.18),transparent 55%);display:flex;align-items:center;justify-content:center}
 .post-img:empty::after{content:"✦";font-size:30px;color:var(--brass)}
 .post{box-shadow:none;border:1px solid var(--line)}
+/* 底部預約列（手機）：細一點、不做滑入動畫，出現後就固定在原位 */
+@media(max-width:767px){.sticky-cta{transition:none;padding:7px 12px calc(7px + env(safe-area-inset-bottom,0px))}.sticky-cta:not(.show){display:none}.cta-night .btn-gold{padding:9px 16px;font-size:14px}.cta-night .when b{font-size:14px}body{padding-bottom:58px}}
 @media(prefers-reduced-motion:reduce){.btn:hover{transform:none}}
 </style>
 {{ partial "analytics.html" . }}
@@ -579,7 +581,7 @@ function renderSite(S) {
   '<p><span' + dk('footerText') + '>' + (DZ_PREVIEW ? esc(S.footerText||'') : (S.footerText||'')) + '</span>　·　<a href="/privacy-policy/" style="color:inherit">隱私權政策</a></p>' +
 '</div></footer>' +
 
-'<div class="sticky-cta cta-night" id="stickyCta"><div class="when" id="ctaWhen"><span>一對一語音諮詢</span><b>' + esc(S.servicePrice || '') + '</b></div><a href="/booking/" class="btn btn-gold">預約諮詢</a><button type="button" class="x" id="stickyClose" aria-label="關閉預約列">×</button></div>';
+'<div class="sticky-cta cta-night" id="stickyCta"><div class="when" id="ctaWhen"><span>最快可約時間</span><b>查詢中…</b></div><a href="/booking/" class="btn btn-gold">預約諮詢</a><button type="button" class="x" id="stickyClose" aria-label="關閉預約列">×</button></div>';
   setupStickyCta_();
 }
 
@@ -587,16 +589,22 @@ function renderSite(S) {
 var stickyClosed_ = false;
 // 「最早可約」：向預約系統要即時空檔的第一天；讀不到、逾時或格式不對就維持顯示價格，不寫死日期
 var nextSlot_ = null, nextSlotAsked_ = false;
-function showNextSlot_() {
-  var w = document.getElementById('ctaWhen');
-  if (w && nextSlot_ && nextSlot_.ok && nextSlot_.label) w.innerHTML = '<span>最早可約</span><b>' + esc(String(nextSlot_.label).replace(/（農曆.*?）/, '').replace('（週', '（')) + ' 起</b>';
+// 2026-11-03 大正：底部不放價格（畫面裡已經出現很多次），直接給「最快可約」的日期＋時間，客人一看就知道最快什麼時候能聊
+function nextSlotTime_(iso) {
+  try { var d = new Date(iso); if (isNaN(d)) return ''; return new Intl.DateTimeFormat('zh-TW', { timeZone: 'Asia/Taipei', hour: '2-digit', minute: '2-digit', hour12: false }).format(d).replace(/^24/, '00'); } catch (e) { return ''; }
+}
+function showNextSlot_(failed) {
+  var w = document.getElementById('ctaWhen'); if (!w) return;
+  if (nextSlot_ && nextSlot_.ok && nextSlot_.label) w.innerHTML = '<span>最快可約時間</span><b>' + esc(String(nextSlot_.label).replace(/（農曆.*?）/, '').replace('（週', '（') + ' ' + nextSlotTime_(nextSlot_.iso)).trim() + '</b>';
+  else if (failed) w.innerHTML = '<span>最快可約時間</span><b>點右邊看所有空檔</b>';
 }
 function askNextSlot_() {
   if (DZ_PREVIEW || nextSlotAsked_ || !SITE.bookingFormUrl || typeof document.createElement !== 'function' || !document.head) return;
   nextSlotAsked_ = true;
-  window._nextSlotCb = function (d) { if (d && d.ok && typeof d.label === 'string' && d.label.length < 40) { nextSlot_ = d; showNextSlot_(); } };
+  var done = false, give = setTimeout(function () { if (!done) showNextSlot_(true); }, 8000);   // 8 秒還沒回來就先說「點右邊看空檔」
+  window._nextSlotCb = function (d) { done = true; clearTimeout(give); if (d && d.ok && typeof d.label === 'string' && d.label.length < 40) { nextSlot_ = d; showNextSlot_(); } else showNextSlot_(true); };
   var s = document.createElement('script'); s.async = true; s.src = SITE.bookingFormUrl + '?page=nextSlot&callback=_nextSlotCb';
-  s.onerror = function () { nextSlot_ = null; };
+  s.onerror = function () { done = true; clearTimeout(give); nextSlot_ = null; showNextSlot_(true); };
   document.head.appendChild(s);
 }
 function setupStickyCta_() {
@@ -604,8 +612,10 @@ function setupStickyCta_() {
   if (!bar || !hero) return;
   showNextSlot_(); askNextSlot_();
   document.getElementById('stickyClose').onclick = function () { stickyClosed_ = true; bar.classList.remove('show'); };
-  var upd = function () { if (!stickyClosed_) bar.classList.toggle('show', hero.getBoundingClientRect().bottom < 0); };
-  if (!window.__stickyBound) { window.addEventListener('scroll', function () { var b = document.getElementById('stickyCta'), h = document.querySelector('.hero'); if (b && h && !stickyClosed_) b.classList.toggle('show', h.getBoundingClientRect().bottom < 0); }, { passive: true }); window.__stickyBound = true; }
+  // 2026-11-03 大正：手機上預約列跟著捲動一下出現一下消失，會擋視線。改成：捲過開場出現一次之後就固定在底部，不再進進出出（按 × 才收起）
+  var past = function (h) { return h.getBoundingClientRect().bottom < 0; };
+  var upd = function () { if (!stickyClosed_ && past(hero)) bar.classList.add('show'); };
+  if (!window.__stickyBound) { window.addEventListener('scroll', function () { var b = document.getElementById('stickyCta'), h = document.querySelector('.hero'); if (b && h && !stickyClosed_ && past(h)) b.classList.add('show'); }, { passive: true }); window.__stickyBound = true; }
   upd();
 }
 
