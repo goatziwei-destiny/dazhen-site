@@ -1,0 +1,50 @@
+<style>
+/* 其他頁精修 A（2026-11-07）：首頁 11/3 精修規則套到關於、文章、會員、預約頁。放在各頁自己的樣式之後 */
+/* A 統一：把首頁 11/3 的精修規則套到其他頁（同一個重點色、拿掉方框數字、拿掉卡片陰影與彩色底線） */
+:root{--brass:#c99a45;--brass-ink:#7a5a1e;--ink-2:#44403c;--line:#e7e3da}
+.ab-stats{gap:6px 26px;margin-top:18px}.ab-stat{background:none;padding:0;min-width:0;display:flex;align-items:baseline;gap:6px}
+.ab-stat b{display:inline;font-size:16px}.ab-stat span{font-size:14px;color:rgba(255,255,255,.75)}
+.ab-lead{color:#e3c38f}
+.ab-body h2{border-bottom:1px solid var(--line)}
+.ab-body strong{background:none;color:var(--navy)}
+.ab-cta-btns .a1{background:var(--brass);color:var(--navy)}
+.blog-card{box-shadow:none;border:1px solid var(--line)}
+.blog-card-cat{color:var(--brass-ink)}
+.topic-intro{box-shadow:none;border:1px solid var(--line)}
+.pillar small{color:#e3c38f}
+.sub-chips a,.other-topics a{border-color:var(--line)}
+.blog-card-tag{color:var(--navy)}
+.btn-primary,.mb .btn-line,.bk-member a{background-color:var(--navy)}
+.bk-member a{background:none;color:var(--navy);font-weight:700}
+.side-start-box{background:#fff;border:1px solid var(--line);box-shadow:none}.blog-card-more{background:none;border-top:1px solid var(--line)}
+/* B 書頁（只在關於、文章列表、主題、會員、預約頁）*/
+/* B 書頁：A ＋ 像在讀一本書（淺色紙張、楷書標題、窄欄、重點句變引言） */
+:root{--brass:#c99a45;--brass-ink:#7a5a1e;--ink-2:#44403c;--line:#e7e0d2;--paper:#f7f2e8}
+body:has(.ab-body,.blog-list,.mb-page,.bk-page,.topic-intro){background:var(--paper)}
+.ab-hero{background:var(--paper);color:var(--navy);padding:64px 0 24px}
+.ab-avatar{width:96px;height:96px;background:#fff;box-shadow:0 0 0 1px var(--line)}
+.ab-hero h1{font-family:"Dazhen WenKai","LXGW WenKai TC",serif;font-size:clamp(30px,6vw,40px);letter-spacing:4px}
+.ab-lead{color:var(--brass-ink);font-family:"Dazhen WenKai","LXGW WenKai TC",serif;font-size:19px}
+.ab-stats{gap:6px 26px;margin-top:14px}.ab-stat{background:none;padding:0;min-width:0;display:flex;align-items:baseline;gap:6px}
+.ab-stat b{display:inline;font-size:16px;color:var(--navy)}.ab-stat span{font-size:14px;color:var(--ink-2)}
+.ab-body{padding-top:8px}.ab-body .container{max-width:640px}
+.ab-body h2{font-family:"Dazhen WenKai","LXGW WenKai TC",serif;font-size:25px;border:0;text-align:center;margin:52px 0 18px}
+.ab-body h2::after{content:"";display:block;width:36px;height:2px;background:var(--brass);margin:10px auto 0}
+.ab-body p{font-size:17.5px;color:#2f2a24}
+.ab-body p:has(strong:only-child),.ab-body p:nth-of-type(4){font-family:"Dazhen WenKai","LXGW WenKai TC",serif;font-size:21px;line-height:1.8;color:var(--navy);border-left:3px solid var(--brass);padding:4px 0 4px 18px;margin:28px 0}
+.ab-body strong{background:none;color:inherit}
+.ab-cta-box{background:#fff;color:var(--navy);border:1px solid var(--line)}.ab-cta-box p{color:var(--ink-2)}
+.ab-cta-btns .a1{background:var(--navy);color:#fff}.ab-cta-btns .a2{color:var(--navy);border-color:var(--line)}
+.blog-header{background:var(--paper);color:var(--navy)}.blog-header h1{font-family:"Dazhen WenKai","LXGW WenKai TC",serif;letter-spacing:3px}.blog-header p,.crumbs,.crumbs a{color:var(--ink-2)!important}
+.topic-intro{background:none;box-shadow:none;border:0;padding:0 0 4px;font-family:"Dazhen WenKai","LXGW WenKai TC",serif;font-size:18px;color:#2f2a24;border-bottom:1px solid var(--line);border-radius:0}
+.blog-card{background:none;box-shadow:none;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:20px 0}
+.blog-card-title{font-family:"Dazhen WenKai","LXGW WenKai TC",serif}
+.blog-card-cat{color:var(--brass-ink)}
+.side-box{background:#fffdf8;box-shadow:none;border:1px solid var(--line)}
+.mb-page,.bk-page{background:var(--paper)}
+.side-start-box{background:#fffdf8;border:1px solid var(--line);box-shadow:none}.blog-card-more{background:none;border-top:1px solid var(--line)}
+/* 命理文章總頁「第一次來」：橘色圓圈、橘色底帶改成跟全站一樣的深藍＋金（11/7） */
+.bsb-n{background:var(--navy)}.bsb-list a:hover{border-color:var(--brass);box-shadow:none}
+.blog-start-band{background:transparent;border-bottom:1px solid var(--line)}
+.hot-badge{background:var(--brass);color:var(--navy)}
+</style>
