@@ -17,4 +17,27 @@
 .btn-primary,.mb .btn-line,.bk-member a{background-color:var(--navy)}
 .bk-member a{background:none;color:var(--navy);font-weight:700}
 .side-start-box{background:#fff;border:1px solid var(--line);box-shadow:none}.blog-card-more{background:none;border-top:1px solid var(--line)}
+/* C 安靜雜誌 */
+/* C 安靜雜誌：A ＋ 電腦版左右兩欄（左邊固定放大正與預約按鈕）、文章列表改成文字為主 */
+:root{--brass:#c99a45;--brass-ink:#7a5a1e;--ink-2:#44403c;--line:#e7e3da}
+.ab-stats{gap:6px 22px;margin-top:16px}.ab-stat{background:none;padding:0;min-width:0;display:flex;align-items:baseline;gap:6px}
+.ab-stat b{display:inline;font-size:16px}.ab-stat span{font-size:14px;color:rgba(255,255,255,.75)}
+.ab-lead{color:#e3c38f}
+.ab-body strong{background:none;color:var(--navy)}
+.ab-body h2{font-size:15px;letter-spacing:3px;color:var(--brass-ink);border:0;margin:40px 0 10px}
+.ab-body h2::before{content:"— "}
+.ab-cta-btns .a1{background:var(--brass);color:var(--navy)}
+@media(min-width:960px){
+  .ab-hero{position:fixed;left:0;top:64px;bottom:0;width:340px;padding:48px 28px;text-align:left;overflow:auto}
+  .ab-hero .ab-avatar{margin:0 0 18px}.ab-stats{justify-content:flex-start}
+  .ab-body,.ab-cta{margin-left:340px}.ab-body .container,.ab-cta .container{max-width:660px}
+  .ab-body{padding-top:56px}
+}
+.blog-card{box-shadow:none;border:0;border-top:1px solid var(--line);border-radius:0;background:none;padding:18px 0}
+.blog-card-thumb,.blog-card-thumb-link{display:none!important}
+.blog-card-title{font-size:19px}.blog-card-more{display:none}
+.blog-card-cat{color:var(--brass-ink)}
+.topic-intro{box-shadow:none;background:none;border-left:3px solid var(--brass);border-radius:0;padding:4px 0 4px 18px}
+.blog-header{text-align:left}.blog-header .container{max-width:1100px}
+.side-start-box{background:#fff;border:1px solid var(--line);box-shadow:none}.blog-card-more{background:none;border-top:1px solid var(--line)}
 </style>
