@@ -544,7 +544,7 @@ function renderSite(S) {
 '<section id="process" class="sec section-white"><div class="container">' +
   '<div class="eyebrow">PROCESS</div><h2 class="section-title">預約流程</h2>' +
   '<div class="process-grid n' + steps.length + '">' + steps.map(function (s, i) {
-    return '<div class="step"><div class="step-dot' + (i % 2 === 0 ? ' done' : '') + '"></div><div class="step-label">STEP ' + String(i + 1).padStart(2, '0') + '</div><div class="step-title"' + dk(s.n && 'processStep' + s.n + 'Title') + '>' + esc(s.title) + '</div><div class="step-desc"' + dk(s.n && 'processStep' + s.n + 'Desc') + '>' + esc(s.desc) + '</div></div>';
+    return '<div class="step"><div class="step-dot' + (i % 2 === 0 ? ' done' : '') + '"></div><div class="step-label">第 ' + (i + 1) + ' 步</div><div class="step-title"' + dk(s.n && 'processStep' + s.n + 'Title') + '>' + esc(s.title) + '</div><div class="step-desc"' + dk(s.n && 'processStep' + s.n + 'Desc') + '>' + esc(s.desc) + '</div></div>';
   }).join('') + '</div>' +
 '</div></section>' +
 
