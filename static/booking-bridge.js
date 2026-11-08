@@ -54,6 +54,8 @@
     var o; try { o = new URL(event.origin); } catch (_) { return; }
     if (o.protocol !== 'https:' || !/^(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(o.hostname)) return;
     var ld = document.getElementById('bkLoading'); if (ld) ld.remove();
+    window.dazhenBookingReady = true;   // 表單真的在跑（不只是框載完：Google 錯誤頁也會觸發 load）
+    var hp = document.getElementById('bkHelp'); if (hp) hp.remove();
     var h = Math.max(600, Math.min(20000, Number(d.height) || 0));
     document.querySelectorAll('iframe[data-booking-frame], .booking-iframe-wrap iframe').forEach(function (f) { if (!f.hasAttribute('data-fixed')) f.style.height = (h + 24) + 'px'; });
   });
@@ -127,8 +129,11 @@
     var mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     // 選 Google Meet／文字版（flow=email）：客人留在預約成功頁，在網頁回報匯款，不用加 LINE。
-    // 選 LINE 語音：手機直接開啟 LINE 加好友畫面；電腦不跳轉，成功頁上就有 QR Code。
-    var go = (data.flow === 'line' && mobile) ? 'https://lin.ee/vlvPoMa' : '';   // 官方帳號加好友短網址（oaMessage 在未認證帳號會被 LINE 導到首頁）；訂單編號在成功頁上有複製按鈕
+    // 選 LINE 語音：手機直接開 LINE 綁定這筆訂單；電腦不跳轉，成功頁上就有 QR Code。
+    // 有「LINE 登入綁定」連結（表單 11/8 起會帶）就用它：開 LINE → 登入 → 這筆訂單直接綁定，順便問要不要加好友，客人不用再傳訂單編號。
+    var bind = (typeof data.bindUrl === 'string' && /^https:\/\/liff\.line\.me\/[0-9A-Za-z-]+\?bind=GR\d{8}-\d{2}&bt=[0-9a-f]{24}$/.test(data.bindUrl) && data.bindUrl.indexOf('bind=' + data.batchId + '&') > 0) ? data.bindUrl : '';
+    // 沒有可用的綁定連結（舊版表單、格式不對）：不自動跳走，讓客人留在成功頁，那裡有訂單編號、複製鈕、LINE 按鈕和 QR（GPT #9 11/8）
+    var go = (data.flow === 'line' && mobile) ? bind : '';
     // 先把「送出成功」送到 GA（最多等 1.3 秒）；需要跳轉才跳轉，沒有 GA 就立刻跳
     track('booking_submit', { page: location.pathname, device: mobile ? 'mobile' : 'desktop', flow: data.flow === 'email' ? 'email' : (data.flow === 'bound' ? 'bound' : 'line') }, function () { if (go) window.location.assign(go); });
   });

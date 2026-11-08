@@ -23,15 +23,30 @@
     <p class="bk-member">預約過的人不用重填：<a href="/member/">會員中心登入 →</a></p>
     <div class="bk-box">
       <iframe class="bk-frame" id="bookingFrame" data-booking-frame title="線上預約表單"></iframe>
-      <div class="bk-load" id="bkLoading" role="status"><i></i>預約表單載入中，請稍候…<br><small>第一次開啟會比較久，請不要離開頁面。<br>可以先準備：出生年月日、出生時間（不確定也可以）、出生地。</small></div>
+      <div class="bk-load" id="bkLoading" role="status"><i></i>預約表單載入中，請稍候…<br><small>第一次開啟會比較久，請不要離開頁面。<br>可以先準備：西元出生年月日、確定的出生時間（到分鐘）、出生地。</small></div>
     </div>
   </div>
 </div>
-<script src="/booking-bridge.js?v=20261017"></script>
+<script src="/booking-bridge.js?v=20261108"></script>
 <script>window.dazhenFitFrame(document.getElementById('bookingFrame'));
 // 表單網頁載完就拿掉「載入中」（原本要等表單回報高度才拿掉；預覽網址收不到回報，會一直蓋著）
-document.getElementById('bookingFrame').addEventListener('load', function () { if (!this.src) return; setTimeout(function () { var l = document.getElementById('bkLoading'); if (l) l.remove(); }, 600); });</script>
-<script>setTimeout(function () { var l = document.getElementById('bkLoading'); if (l) l.remove(); }, 40000);</script>
+var bkLoaded = false;
+document.getElementById('bookingFrame').addEventListener('load', function () { if (!this.src) return; bkLoaded = true; setTimeout(function () { var l = document.getElementById('bkLoading'); if (l) l.remove(); }, 600); });</script>
+<script>// 40 秒還沒載入：不要只把提示拿掉留一片空白，改成告訴客人可以怎麼做（GPT #9 11/7）
+setTimeout(function () {
+  var l = document.getElementById('bkLoading');
+  if (bkLoaded || !l) {
+    if (l) l.remove();
+    // 框載完了，但表單一直沒回報（例如 Google 那邊顯示錯誤頁）：不蓋住表單，只在上面加一條提示（桌面 Codex 11/8）
+    if (!window.dazhenBookingReady) {
+      var hp = document.createElement('p'); hp.id = 'bkHelp'; hp.className = 'bk-member'; hp.setAttribute('role', 'status');
+      hp.innerHTML = '表單沒有正常出現嗎？<a href="#" onclick="location.reload();return false">重新整理</a>，或<a href="{{ .Site.Params.lineUrl | default "https://lin.ee/vlvPoMa" }}" target="_blank" rel="noopener" data-line>在 LINE 預約</a>';
+      var bx = document.querySelector('.bk-box'); bx.parentNode.insertBefore(hp, bx);
+    }
+    return;
+  }
+  l.innerHTML = '預約表單載入太久了。<br><small>請按下面的按鈕重新整理；一直載不出來的話，也可以直接在 LINE 跟大正預約。</small><br><button type="button" onclick="location.reload()" style="margin-top:12px;font:inherit;font-weight:700;padding:10px 20px;border-radius:999px;border:0;background:var(--navy);color:#fff;cursor:pointer">重新整理</button> <a href="{{ .Site.Params.lineUrl | default "https://lin.ee/vlvPoMa" }}" target="_blank" rel="noopener" data-line style="display:inline-block;margin-top:12px;padding:10px 20px;border-radius:999px;border:1px solid var(--navy);color:var(--navy);font-weight:700;text-decoration:none">在 LINE 預約</a>';
+}, 40000);</script>
 <script>
   // 在 LINE 裡開啟（LIFF）：先向 LINE 取得客人的身分憑證，帶給預約表單，送出後訂單自動綁定 LINE。
   // 不在 LINE 裡、或任何一步失敗，都直接載入一般表單（維持原本流程）。
