@@ -166,9 +166,9 @@ function useToken(kind,token){S.kind=kind;S.token=token;var c=cacheGet(kind);
   jsonp(q).then(function(d){
     if(!d||!d.ok){if(kind==="line"&&window.liff){try{liff.logout()}catch(e){}}cacheClear();renderLogin("登入逾時，請再登入一次。");bindFailNote();return}
     cacheSet(kind,d);S.data=d;renderHome();if(d.bound)showBound(d.bound);}).catch(function(){if(c){var u=$("#mbSync");if(u)u.textContent="目前顯示的是剛才讀到的資料，網路不穩，暫時無法更新。"}else renderError();bindFailNote()});}
-// 綁定兩次都沒完成：留下看得到的訂單編號和求助方式（GPT #9 11/8）
+// 綁定兩次都沒拿到結果（可能其實已綁好、只是回應遺失）：不說「沒綁」，說「無法確認」，留下訂單編號和求助方式（GPT #9 11/8）
 function bindFailNote(){if(!BIND)return;var app=$("#app");if(!app)return;var o=$("#bindNote");if(o)o.remove();
-  var box=document.createElement("div");box.className="notice";box.id="bindNote";box.textContent="訂單 "+BIND.bind+" 這次還沒綁定你的 LINE。請稍後再試一次，或直接在大正的 LINE 傳這個訂單編號，也可以完成綁定。";app.insertBefore(box,app.firstChild)}
+  var box=document.createElement("div");box.className="notice";box.id="bindNote";box.textContent="暫時無法確認訂單 "+BIND.bind+" 是否已綁定你的 LINE。請稍後再試一次（已綁好的話會顯示「之前就綁定」），或直接在大正的 LINE 傳這個訂單編號。";app.insertBefore(box,app.firstChild)}
 function renderError(){$("#appBottom").innerHTML="";$("#app").innerHTML='<div class="card stack"><h2>暫時讀不到資料</h2><p class="muted" style="margin:0">網路不穩或系統忙碌，請稍後再試。</p><button class="btn btn-main" id="retry">重新整理</button></div>';$("#retry").onclick=function(){location.reload()}}
 function renderLogin(note){$("#appBottom").innerHTML="";closeBooking();
   $("#app").innerHTML='<div class="stack"><div><h1 style="font-size:24px">會員中心</h1><p class="lead">登入後可以看到你的購買紀錄、訂單編號和下一次諮詢的時間，再預約也不用重填出生資料。</p></div>'+
@@ -227,7 +227,7 @@ function showBound(b){BIND=null;try{history.replaceState(null,"",location.pathna
     other:"這筆訂單（"+b.id+"）已經綁定另一個 LINE 帳號。如果要改綁，請直接在 LINE 告訴大正。",
     cancelled:"這筆訂單（"+b.id+"）已經取消，所以沒有綁定。",
     bad:"綁定連結不完整或已失效。請直接在大正的 LINE 傳訂單編號 "+b.id+"，也可以完成綁定。",
-    retry:"系統忙碌，訂單 "+b.id+" 這次還沒綁定。請稍後再試一次，或直接在大正的 LINE 傳這個訂單編號。",
+    retry:"系統忙碌，暫時無法確認訂單 "+b.id+" 是否已綁定你的 LINE。請稍後再試一次（已綁好的話會顯示「之前就綁定」），或直接在大正的 LINE 傳這個訂單編號。",
     notline:"要綁定 LINE，請用 LINE 登入。"}[b.status]||"";
   if(!msg)return;var ok=b.status==="bound"||b.status==="already";
   var box=document.createElement("div");box.className="notice"+(ok?" ok":"");box.id="bindNote";box.textContent=msg;
@@ -247,7 +247,7 @@ function bindOnly(token){S.kind="line";S.token=token;loading("正在綁定訂單
       other:"這筆訂單已經綁定另一個 LINE 帳號。如果要改綁，請直接在 LINE 告訴大正。",
       cancelled:"這筆訂單已經取消，所以沒有綁定。",
       bad:"綁定連結不完整或已失效。請直接在大正的 LINE 傳訂單編號 "+b.id+"，也可以完成綁定。",
-    retry:"系統忙碌，訂單 "+b.id+" 這次還沒綁定。請稍後再試一次，或直接在大正的 LINE 傳這個訂單編號。"}[b.status]||"";
+    retry:"系統忙碌，暫時無法確認訂單 "+b.id+" 是否已綁定你的 LINE。請稍後再試一次（已綁好的話會顯示「之前就綁定」），或直接在大正的 LINE 傳這個訂單編號。"}[b.status]||"";
     $("#appBottom").innerHTML="";
     $("#app").innerHTML='<div class="card stack" style="text-align:center"><div style="font-size:44px;line-height:1">'+(ok?"✅":"⚠️")+'</div>'+
       '<h1 style="font-size:22px;margin:0">'+(ok?'訂單 <span style="white-space:nowrap">'+esc(b.id)+'</span> 已綁定你的 LINE':"沒有完成綁定")+'</h1><p class="muted" style="margin:0">'+esc(msg)+'</p>'+
