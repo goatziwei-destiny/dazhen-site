@@ -223,7 +223,7 @@ function showBound(b){BIND=null;try{history.replaceState(null,"",location.pathna
     already:"✅ 訂單 "+b.id+" 之前就綁定你的 LINE 了，不用再做什麼。",
     other:"這筆訂單（"+b.id+"）已經綁定另一個 LINE 帳號。如果要改綁，請直接在 LINE 告訴大正。",
     cancelled:"這筆訂單（"+b.id+"）已經取消，所以沒有綁定。",
-    bad:"綁定連結不完整或已失效。請直接在大正的 LINE 傳訂單編號，也可以完成綁定。",
+    bad:"綁定連結不完整或已失效。請直接在大正的 LINE 傳訂單編號 "+b.id+"，也可以完成綁定。",
     notline:"要綁定 LINE，請用 LINE 登入。"}[b.status]||"";
   if(!msg)return;var ok=b.status==="bound"||b.status==="already";
   var box=document.createElement("div");box.className="notice"+(ok?" ok":"");box.id="bindNote";box.textContent=msg;
@@ -236,13 +236,13 @@ function showBound(b){BIND=null;try{history.replaceState(null,"",location.pathna
 // ---------- 只綁定訂單（從預約成功頁／確認信的 LINE 連結進來）：不讀整個會員中心，綁好就顯示，客人不用等 ----------
 function bindOnly(token){S.kind="line";S.token=token;loading("正在綁定訂單 "+BIND.bind+"…");
   jsonp({page:"lineBind",lt:token,bind:BIND.bind,bt:BIND.bt}).then(function(d){
-    if(!d||!d.ok){BIND=null;useToken("line",token);return}
+    if(!d||!d.ok){useToken("line",token);return}   // 快速綁定沒回應：保留 BIND，讓完整會員中心那一趟再綁一次並顯示結果（GPT #9 11/8）
     var b=d.bound||{},ok=b.status==="bound"||b.status==="already";try{history.replaceState(null,"",location.pathname)}catch(e){}BIND=null;
     var msg={bound:"訂單確認大約 1 分鐘內會傳到你的 LINE。之後的付款確認、諮詢提醒，也都會從 LINE 通知你。",
       already:"這筆訂單之前就綁定你的 LINE 了，不用再做什麼。",
       other:"這筆訂單已經綁定另一個 LINE 帳號。如果要改綁，請直接在 LINE 告訴大正。",
       cancelled:"這筆訂單已經取消，所以沒有綁定。",
-      bad:"綁定連結不完整或已失效。請直接在大正的 LINE 傳訂單編號，也可以完成綁定。"}[b.status]||"";
+      bad:"綁定連結不完整或已失效。請直接在大正的 LINE 傳訂單編號 "+b.id+"，也可以完成綁定。"}[b.status]||"";
     $("#appBottom").innerHTML="";
     $("#app").innerHTML='<div class="card stack" style="text-align:center"><div style="font-size:44px;line-height:1">'+(ok?"✅":"⚠️")+'</div>'+
       '<h1 style="font-size:22px;margin:0">'+(ok?'訂單 <span style="white-space:nowrap">'+esc(b.id)+'</span> 已綁定你的 LINE':"沒有完成綁定")+'</h1><p class="muted" style="margin:0">'+esc(msg)+'</p>'+

@@ -1,4 +1,4 @@
-// 預約送出後要跳去哪：手機 LINE 流程用綁定連結；舊表單／格式不對退回加好友；電腦、已綁、Google Meet 不跳（要先 hugo -d 並在 8768 開靜態伺服器）
+// 預約送出後要跳去哪：手機 LINE 流程只跳綁定連結；沒有可用連結就留在成功頁；電腦、已綁、Google Meet 不跳（要先 hugo -d 並在 8768 開靜態伺服器）
 const { chromium, devices } = require('/opt/npm-tools/node_modules/playwright');
 async function run(label, extra, ua) {
   const b = await chromium.launch(); const ctx = await b.newContext(ua === 'mobile' ? devices['iPhone 13'] : {}); const p = await ctx.newPage(); let went = '';
