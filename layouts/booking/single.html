@@ -27,15 +27,24 @@
     </div>
   </div>
 </div>
-<script src="/booking-bridge.js?v=20261017"></script>
+<script src="/booking-bridge.js?v=20261108"></script>
 <script>window.dazhenFitFrame(document.getElementById('bookingFrame'));
 // 表單網頁載完就拿掉「載入中」（原本要等表單回報高度才拿掉；預覽網址收不到回報，會一直蓋著）
 var bkLoaded = false;
 document.getElementById('bookingFrame').addEventListener('load', function () { if (!this.src) return; bkLoaded = true; setTimeout(function () { var l = document.getElementById('bkLoading'); if (l) l.remove(); }, 600); });</script>
 <script>// 40 秒還沒載入：不要只把提示拿掉留一片空白，改成告訴客人可以怎麼做（GPT #9 11/7）
 setTimeout(function () {
-  var l = document.getElementById('bkLoading'); if (!l) return;
-  if (bkLoaded) { l.remove(); return; }
+  var l = document.getElementById('bkLoading');
+  if (bkLoaded || !l) {
+    if (l) l.remove();
+    // 框載完了，但表單一直沒回報（例如 Google 那邊顯示錯誤頁）：不蓋住表單，只在上面加一條提示（桌面 Codex 11/8）
+    if (!window.dazhenBookingReady) {
+      var hp = document.createElement('p'); hp.id = 'bkHelp'; hp.className = 'bk-member'; hp.setAttribute('role', 'status');
+      hp.innerHTML = '表單沒有正常出現嗎？<a href="#" onclick="location.reload();return false">重新整理</a>，或<a href="{{ .Site.Params.lineUrl | default "https://lin.ee/vlvPoMa" }}" target="_blank" rel="noopener" data-line>在 LINE 預約</a>';
+      var bx = document.querySelector('.bk-box'); bx.parentNode.insertBefore(hp, bx);
+    }
+    return;
+  }
   l.innerHTML = '預約表單載入太久了。<br><small>請按下面的按鈕重新整理；一直載不出來的話，也可以直接在 LINE 跟大正預約。</small><br><button type="button" onclick="location.reload()" style="margin-top:12px;font:inherit;font-weight:700;padding:10px 20px;border-radius:999px;border:0;background:var(--navy);color:#fff;cursor:pointer">重新整理</button> <a href="{{ .Site.Params.lineUrl | default "https://lin.ee/vlvPoMa" }}" target="_blank" rel="noopener" data-line style="display:inline-block;margin-top:12px;padding:10px 20px;border-radius:999px;border:1px solid var(--navy);color:var(--navy);font-weight:700;text-decoration:none">在 LINE 預約</a>';
 }, 40000);</script>
 <script>

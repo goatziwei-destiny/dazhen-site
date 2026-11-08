@@ -54,6 +54,8 @@
     var o; try { o = new URL(event.origin); } catch (_) { return; }
     if (o.protocol !== 'https:' || !/^(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(o.hostname)) return;
     var ld = document.getElementById('bkLoading'); if (ld) ld.remove();
+    window.dazhenBookingReady = true;   // 表單真的在跑（不只是框載完：Google 錯誤頁也會觸發 load）
+    var hp = document.getElementById('bkHelp'); if (hp) hp.remove();
     var h = Math.max(600, Math.min(20000, Number(d.height) || 0));
     document.querySelectorAll('iframe[data-booking-frame], .booking-iframe-wrap iframe').forEach(function (f) { if (!f.hasAttribute('data-fixed')) f.style.height = (h + 24) + 'px'; });
   });
