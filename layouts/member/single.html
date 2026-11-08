@@ -164,8 +164,11 @@ function useToken(kind,token){S.kind=kind;S.token=token;var c=cacheGet(kind);
   if(c){c.member.joined=false;S.data=c;renderHome(true)}else loading("正在讀取你的資料…");
   var q=kind==="line"?{lt:token}:{gt:token};if(kind==="line"&&BIND){q.bind=BIND.bind;q.bt=BIND.bt}
   jsonp(q).then(function(d){
-    if(!d||!d.ok){if(kind==="line"&&window.liff){try{liff.logout()}catch(e){}}cacheClear();renderLogin("登入逾時，請再登入一次。");return}
-    cacheSet(kind,d);S.data=d;renderHome();if(d.bound)showBound(d.bound);}).catch(function(){if(c){var u=$("#mbSync");if(u)u.textContent="目前顯示的是剛才讀到的資料，網路不穩，暫時無法更新。"}else renderError()});}
+    if(!d||!d.ok){if(kind==="line"&&window.liff){try{liff.logout()}catch(e){}}cacheClear();renderLogin("登入逾時，請再登入一次。");bindFailNote();return}
+    cacheSet(kind,d);S.data=d;renderHome();if(d.bound)showBound(d.bound);}).catch(function(){if(c){var u=$("#mbSync");if(u)u.textContent="目前顯示的是剛才讀到的資料，網路不穩，暫時無法更新。"}else renderError();bindFailNote()});}
+// 綁定兩次都沒完成：留下看得到的訂單編號和求助方式（GPT #9 11/8）
+function bindFailNote(){if(!BIND)return;var app=$("#app");if(!app)return;var o=$("#bindNote");if(o)o.remove();
+  var box=document.createElement("div");box.className="notice";box.id="bindNote";box.textContent="訂單 "+BIND.bind+" 這次還沒綁定你的 LINE。請稍後再試一次，或直接在大正的 LINE 傳這個訂單編號，也可以完成綁定。";app.insertBefore(box,app.firstChild)}
 function renderError(){$("#appBottom").innerHTML="";$("#app").innerHTML='<div class="card stack"><h2>暫時讀不到資料</h2><p class="muted" style="margin:0">網路不穩或系統忙碌，請稍後再試。</p><button class="btn btn-main" id="retry">重新整理</button></div>';$("#retry").onclick=function(){location.reload()}}
 function renderLogin(note){$("#appBottom").innerHTML="";closeBooking();
   $("#app").innerHTML='<div class="stack"><div><h1 style="font-size:24px">會員中心</h1><p class="lead">登入後可以看到你的購買紀錄、訂單編號和下一次諮詢的時間，再預約也不用重填出生資料。</p></div>'+
@@ -258,7 +261,7 @@ function bindOnly(token){S.kind="line";S.token=token;loading("正在綁定訂單
     $("#bMine").onclick=function(){useToken("line",token)};
     if(ok&&liff.getFriendship)liff.getFriendship().then(function(f){if(f&&f.friendFlag)return;
       $("#bindFriend").innerHTML='<a class="btn btn-line" href="'+esc(LINE_ADD)+'">'+LINEICO+'加入大正的 LINE 好友（才收得到通知）</a>'}).catch(function(){});
-  }).catch(function(){renderError()});}
+  }).catch(function(){useToken("line",token)});}   // 快速綁定逾時／網路錯：同樣交給完整會員中心再綁一次（GPT #9 11/8）
 
 function backToLine(){var inClient=false;try{inClient=!!(window.liff&&liff.isInClient&&liff.isInClient())}catch(e){}
   if(inClient){try{liff.closeWindow()}catch(e){}}
