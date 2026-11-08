@@ -153,6 +153,7 @@ p,li,small,.note,.pay-bank,.method-note,.notice-box{text-wrap:pretty}
     try {
       var r = await jsonp({ action: 'report', o: O, t: T, last5: last5 });
       busy = false; $('btnGo').disabled = false; $('err').textContent = '';
+      if (r && r.paid) { $('err').textContent = ''; $('stateNote').textContent = '這筆訂單已經確認收款，不需要再回報。'; show('stateNote', true); show('formBox', false); return; }   // 送出前大正剛好確認收款（GPT #9 11/8）
       if (!r || !r.ok) { $('err').textContent = (r && r.message) || '回報失敗，請稍後再試一次。'; return; }
       done(r);
     } catch (e) { busy = false; $('btnGo').disabled = false; $('err').textContent = '連線失敗，請檢查網路後再試一次。'; }
