@@ -250,7 +250,7 @@ function bindOnly(token){S.kind="line";S.token=token;loading("正在綁定訂單
     retry:"系統忙碌，暫時無法確認訂單 "+b.id+" 是否已綁定你的 LINE。請稍後再試一次（已綁好的話會顯示「之前就綁定」），或直接在大正的 LINE 傳這個訂單編號。"}[b.status]||"";
     $("#appBottom").innerHTML="";
     $("#app").innerHTML='<div class="card stack" style="text-align:center"><div style="font-size:44px;line-height:1">'+(ok?"✅":"⚠️")+'</div>'+
-      '<h1 style="font-size:22px;margin:0">'+(ok?'訂單 <span style="white-space:nowrap">'+esc(b.id)+'</span> 已綁定你的 LINE':"沒有完成綁定")+'</h1><p class="muted" style="margin:0">'+esc(msg)+'</p>'+
+      '<h1 style="font-size:22px;margin:0">'+(ok?'訂單 <span style="white-space:nowrap">'+esc(b.id)+'</span> 已綁定你的 LINE':(b.status==="retry"?"暫時無法確認綁定結果":"沒有完成綁定"))+'</h1><p class="muted" style="margin:0">'+esc(msg)+'</p>'+
       '<div id="bindFriend"></div>'+
       '<button class="btn btn-line" id="bClose">'+LINEICO+'回到 LINE</button>'+
       (ok?'<p class="muted" id="bBack" style="margin:0;font-size:13px">完成了！可以直接關閉這個畫面，回到 LINE 聊天室。</p>':'')+

@@ -17,7 +17,7 @@ async function run(label, fast, full) {
   });
   await p.goto('http://localhost:8768/member/?bind=GR26110801-00&bt=0123456789abcdef01234567'); await p.waitForTimeout(2500);
   const note = await p.evaluate(() => (document.getElementById('bindNote') || {}).textContent || '');
-  const body = await p.evaluate(() => document.getElementById('app').innerText.replace(/\s+/g, ' ').slice(0, 160));
+  const body = await p.evaluate(() => { const h = document.querySelector('#app h1'); return (h ? '標題「' + h.innerText.replace(/\s+/g, ' ') + '」 ' : '') + document.getElementById('app').innerText.replace(/\s+/g, ' ').slice(0, 120); });
   console.log(label, '| 呼叫:', calls.join(','), '| 提示:', note || '(無)', '| 畫面:', body); await b.close();
 }
 const member = { ok: true, member: { name: '測', joined: true }, orders: [] };
@@ -25,5 +25,7 @@ const member = { ok: true, member: { name: '測', joined: true }, orders: [] };
   await run('A 快速沒回應→完整那趟回 already', 'abort', Object.assign({}, member, { bound: { id: 'GR26110801-00', status: 'already' } }));
   await run('B 兩趟都沒回應', 'abort', 'abort');
   await run('C 快速沒回應→完整回 ok:false', 'abort', { ok: false });
+  await run('E 快速回 retry（系統忙碌）', { ok: true, bound: { id: 'GR26110801-00', status: 'retry' } }, 'abort');
+  await run('F 快速回 other（已綁別人）', { ok: true, bound: { id: 'GR26110801-00', status: 'other' } }, 'abort');
   await run('D 快速 ok:false→完整回 bound', { ok: false }, Object.assign({}, member, { bound: { id: 'GR26110801-00', status: 'bound' } }));
 })();
