@@ -6,8 +6,9 @@ topics:
   - family
 subtopics:
   - family-children
-description: "婚姻去留不能只由一句為了孩子決定，要看孩子每天的相處、照顧與安全，也不讓孩子承擔大人的問題。"
+description: "婚姻去留不能只用一句「為了孩子」決定。先看孩子每天怎麼過：家裡的相處氣氛、誰照顧、安不安全，也別讓孩子傳話、選邊或承擔大人的問題。不論修復或分開，都要把孩子明天的生活安排清楚。"
 image: "/images/social/2026-11-01/children-and-marriage-decisions/fb-cover.png"
+imageAlt: "一對夫妻和戴眼鏡的羊坐在桌前，一起翻看筆記討論孩子的生活"
 tags:
   - "親子"
   - "家庭"
@@ -59,3 +60,8 @@ seo:
 我比較想提醒的是，孩子不是婚姻的理由用了就好。他是一個每天真的在家裡生活的人。
 
 大人可以很難決定，但至少不要讓孩子以為，一切都是因為他不夠好。
+
+**延伸閱讀**
+
+- [連假回家，是因為真的想家：命盤與親子關係的界線](/blog/holiday-home-family-boundaries/)
+- [正緣，也有自己的需要：感情為什麼需要呼吸空間？](/blog/relationship-expectations-and-boundaries/)

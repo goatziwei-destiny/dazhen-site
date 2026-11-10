@@ -6,8 +6,9 @@ topics:
   - notes
 subtopics:
   - notes-consulting
-description: "捐款是作者推薦的方式，時間、知識與鼓勵也能幫忙；選擇時先看對方需要與自己能負責的部分。"
+description: "做善事不一定要捐錢，但我很推薦捐款，因為時間和精力也很珍貴。志工、分享有用的知識、真心鼓勵都能幫忙；先問對方需要什麼，再看自己能負擔、能負責的部分，不必比較哪一種方式比較高尚。"
 image: "/images/social/2026-11-01/ways-to-help-beyond-donations/fb-cover.png"
+imageAlt: "白髮長輩和戴眼鏡的羊坐在桌前，一起看筆記本"
 tags:
   - "信仰"
   - "行善"
@@ -57,3 +58,7 @@ seo:
 我覺得善意不用弄得很盛大。做得到的事，好好做完，就已經有幫助。
 
 錢、時間、知識、鼓勵，都有用途。重點還是別人現在缺什麼，不是你看起來付出了多少。
+
+**延伸閱讀**
+
+- [做好事有所求是好的嗎？我覺得不用先考這個](/blog/kindness-and-expectations/)

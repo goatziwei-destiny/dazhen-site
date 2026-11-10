@@ -83,7 +83,7 @@ function checkFile(file) {
   if (h2 < 3 || h2 > 6) warns.push('大標題（##）有 ' + h2 + ' 個，建議 3～6 個');
   if (bold > 5) warns.push('粗體 ' + bold + ' 處，建議 5 處以內');
   // 段落：一句一段最多 2 處
-  const paras = body.split(/\n\s*\n/).map(s => s.trim()).filter(s => s && !/^(#|[-*] |\d+\.|!\[|>|\||<)/.test(s));
+  const paras = body.split(/\n\s*\n/).map(s => s.trim()).filter(s => s && !/^(#|[-*] |\d+\.|!\[|>|\||<)/.test(s) && !/^\*\*[^*]+\*\*$/.test(s));   // 「**延伸閱讀**」這種小標籤不算一句一段
   const oneLiners = paras.filter(s => (s.match(/[。！？]/g) || []).length <= 1 && len(s) < 60);
   if (oneLiners.length > 2) warns.push('一句一段有 ' + oneLiners.length + ' 處（規範最多 2 處）：「' + oneLiners.slice(0, 3).map(s => s.slice(0, 18)).join('」「') + '」…');
   // 用詞
@@ -114,7 +114,9 @@ function listFiles() {
   return a.map(f => path.relative(ROOT, path.resolve(f)));
 }
 
-listFiles.all = () => fs.readdirSync(path.join(ROOT, 'content/blog')).filter(f => f.endsWith('.md') && f !== '_index.md').map(f => 'content/blog/' + f);
+// 設成不讓搜尋引擎收錄（noindex: true）的文章不是 SEO 對象，--all 報告略過（例如 welcome 公告）
+listFiles.all = () => fs.readdirSync(path.join(ROOT, 'content/blog')).filter(f => f.endsWith('.md') && f !== '_index.md').map(f => 'content/blog/' + f)
+  .filter(f => !/^noindex:\s*true\s*$/m.test((fs.readFileSync(path.join(ROOT, f), 'utf8').match(/^---\r?\n([\s\S]*?)\r?\n---/) || [, ''])[1]));
 const files = listFiles(), all = process.argv[2] === '--all';
 if (!files.length) { console.log('沒有要檢查的文章'); process.exit(0); }
 let bad = 0;
