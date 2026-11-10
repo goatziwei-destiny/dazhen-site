@@ -90,19 +90,19 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 .yt .yt-play::after{content:"";position:absolute;left:27px;top:21px;border-style:solid;border-width:13px 0 13px 21px;border-color:transparent transparent transparent #fff}
 .yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .yt-cap{font-size:13px;color:var(--text-muted);text-align:center;margin:8px 0 0}
-.svc-card.svc-card-v{grid-template-columns:minmax(0,1fr) minmax(0,300px);gap:48px;align-items:center;padding-top:32px}
+.svc-card.svc-card-v{grid-template-columns:minmax(0,480px) 300px;justify-content:space-between;gap:48px;align-items:center;padding-top:32px}
 .svc-card-v .price{font-size:30px}
-.svc-paper .svc-card.svc-card-v{padding-top:32px}.proc-wrap{max-width:900px}
+.svc-paper .svc-card.svc-card-v{padding-top:32px}
 .svc-line{display:block;text-align:center;margin-top:12px;font-size:14px;font-weight:700;color:var(--warm);text-decoration:none}
 @media(max-width:768px){.svc-card.svc-card-v{grid-template-columns:1fr;gap:20px}.svc-card-v .svc-vid{max-width:300px;width:100%;margin:0 auto;order:-1}}
 /* 預約流程：影片＋一條直線 1～5 點 */
-.proc-wrap{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:48px;align-items:center;margin-top:28px}
+.proc-wrap{display:grid;grid-template-columns:minmax(0,480px) 300px;justify-content:space-between;gap:48px;align-items:center;margin-top:28px}
 .proc-line{list-style:none;margin:0;padding:0;position:relative;display:grid;gap:22px}
 .proc-line li:not(:last-child)::after{content:"";position:absolute;left:15px;top:32px;bottom:-22px;width:2px;background:rgba(98,146,171,.35)}
 .proc-line li{position:relative;display:grid;grid-template-columns:32px minmax(0,1fr);gap:14px;align-items:start}
 .proc-num{width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;position:relative;z-index:1}
 .proc-line .step-title{margin:4px 0 2px}.proc-line .step-desc{margin:0}
-@media(max-width:768px){.proc-wrap{grid-template-columns:1fr;gap:28px}.proc-wrap .proc-vid{max-width:260px;margin:0 auto;width:100%}}
+@media(max-width:768px){.proc-wrap{grid-template-columns:1fr;gap:28px}.proc-wrap .proc-vid{max-width:300px;margin:0 auto;width:100%}}
 .svc-card{background:var(--navy-2);border-radius:16px;padding:36px;display:grid;grid-template-columns:1.2fr .8fr;gap:32px;align-items:start}
 .svc-card h3{font-size:24px;margin:4px 0 12px}.svc-card p{color:var(--text-light);line-height:1.9}
 .svc-label{color:var(--warm);font-size:12px;letter-spacing:2px;font-weight:700}
@@ -382,11 +382,11 @@ const SITE = {
 
   // ── 預約流程 ──
   processSteps: [
-    { title: "填寫預約表單", desc: "選方式和時段，填出生資料（時間要確定到分鐘）。", done: true },
-    { title: "匯款", desc: "24 小時內匯款 NT$3,600，備註「論命費用」。", done: false },
-    { title: "回報匯款末五碼", desc: "在網頁或 LINE 回報帳號末五碼就完成。", done: false },
-    { title: "收到預約成功通知", desc: "確認收款後用 Email 通知，有加 LINE 也會收到。", done: false },
-    { title: "諮詢當天準時上線", desc: "前一天會提醒你；LINE 語音時間到由大正撥給你。", done: false },
+    { title: "填寫預約表單", desc: "選時段、填出生資料（時間要到分鐘）。", done: true },
+    { title: "匯款", desc: "24 小時內匯款 NT$3,600。", done: false },
+    { title: "回報末五碼", desc: "在網頁或 LINE 填帳號末五碼。", done: false },
+    { title: "收到預約成功通知", desc: "確認收款後通知你。", done: false },
+    { title: "諮詢當天準時上線", desc: "前一天會提醒你。", done: false },
   ],
 
   // ── 注意事項 ──
@@ -483,14 +483,14 @@ var LINE_ATTR = ' target="_blank" rel="noopener" data-line';
 var VIDEO_VOICE = 'WTGYqHe9-nA', VIDEO_LINE_BOOK = '7ism5VDFHRo';
 function ytLite(id, ratio, label) {
   return '<button type="button" class="yt ' + ratio + '" data-yt="' + esc(id) + '" aria-label="播放影片：' + esc(label) + '">' +
-    '<img src="https://i.ytimg.com/vi/' + esc(id) + '/hqdefault.jpg" alt="' + esc(label) + '" loading="lazy" width="480" height="360"><span class="yt-play"></span></button>';
+    '<img src="https://i.ytimg.com/vi/' + esc(id) + '/maxresdefault.jpg" onerror="if(!this.dataset.f){this.dataset.f=1;this.src=\'https://i.ytimg.com/vi/' + esc(id) + '/hqdefault.jpg\'}" alt="' + esc(label) + '" loading="lazy" width="1280" height="720"><span class="yt-play"></span></button>';
 }
 if (typeof document !== 'undefined' && document.addEventListener) document.addEventListener('click', function (e) {
   var t = e.target && e.target.closest ? e.target : null; if (!t) return;
   var y = t.closest('.yt[data-yt]');
   if (y && !y.querySelector('iframe')) {
     var f = document.createElement('iframe');
-    f.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(y.getAttribute('data-yt')) + '?autoplay=1&playsinline=1&rel=0&modestbranding=1';
+    f.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(y.getAttribute('data-yt')) + '?autoplay=1&playsinline=1&rel=0&modestbranding=1&vq=hd1080';
     f.title = y.getAttribute('aria-label') || '影片'; f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.allowFullscreen = true;
     y.appendChild(f); y.removeAttribute('aria-label'); return;
   }
@@ -581,7 +581,7 @@ function renderSite(S) {
   '<ol class="proc-line">' + steps.map(function (s, i) {
     return '<li><span class="proc-num">' + (i + 1) + '</span><div><div class="step-title"' + dk(s.n && 'processStep' + s.n + 'Title') + '>' + esc(s.title) + '</div><div class="step-desc"' + dk(s.n && 'processStep' + s.n + 'Desc') + '>' + esc(s.desc || '') + '</div></div></li>';
   }).join('') + '</ol>' +
-  '<div class="proc-vid">' + ytLite(VIDEO_LINE_BOOK, 'r916', '25 秒看懂怎麼用 LINE 預約') + '<p class="yt-cap">25 秒看懂怎麼用 LINE 預約</p></div></div>' +
+  '<div class="proc-vid">' + ytLite(VIDEO_LINE_BOOK, 'r916', '25 秒看懂怎麼用 LINE 預約') + '</div></div>' +
 '</div></section>' +
 
 ((S.noteItems||[]).length ?
