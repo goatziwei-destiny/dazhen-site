@@ -6,8 +6,9 @@ topics:
   - notes
 subtopics:
   - notes-consulting
-description: "行善不必先證明完全無所求；看真心與實際幫助，同時尊重對方，不把福報說成保證回報。"
+description: "做好事時有所求，不一定不好。很多人說無所求，其實也希望幫忙用在對的地方；堅持不能有回報，也是一種要求。比起先替自己做動機考試，更重要的是真心、實際幫到人，並尊重對方，不把福報說成保證回報。"
 image: "/images/social/2026-11-01/kindness-and-expectations/fb-cover.png"
+imageAlt: "綁辮子的女子和戴眼鏡的羊坐在桌前，喝茶聊天"
 tags:
   - "信仰"
   - "行善"
@@ -57,3 +58,7 @@ seo:
 我覺得求不求不是重點，是不是真心才是。你的幫助有沒有讓對方得到需要的東西，也比你把自己介紹得多無私重要。
 
 別想太多，做自己能負責的那一點就好。
+
+**延伸閱讀**
+
+- [做善事一定要捐錢嗎？不一定，但我很推薦](/blog/ways-to-help-beyond-donations/)
