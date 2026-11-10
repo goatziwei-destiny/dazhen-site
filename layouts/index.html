@@ -82,6 +82,24 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 @media(max-width:768px){.hero{padding:40px 0 44px}.hero-inner{grid-template-columns:1fr}.hero-goat{display:none}}
 .svc-wrap{padding:8px 0 72px}
 .svc-cards{display:grid;gap:24px}
+/* 11/10 介紹影片（YouTube）：先放 YouTube 的縮圖，按了才載入播放器（沒按之前不連 YouTube、不吃網站流量） */
+.yt{position:relative;width:100%;border-radius:14px;overflow:hidden;background:#1b2845;cursor:pointer;border:0;padding:0;display:block}
+.yt.r169{aspect-ratio:16/9}.yt.r916{aspect-ratio:9/16}
+.yt img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.yt .yt-play{position:absolute;left:50%;top:50%;width:68px;height:68px;margin:-34px 0 0 -34px;border-radius:50%;background:rgba(27,40,69,.82);box-shadow:0 4px 18px rgba(0,0,0,.25)}
+.yt .yt-play::after{content:"";position:absolute;left:27px;top:21px;border-style:solid;border-width:13px 0 13px 21px;border-color:transparent transparent transparent #fff}
+.yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.yt-cap{font-size:13px;color:var(--text-muted);text-align:center;margin:8px 0 0}
+.svc-video{max-width:760px;margin:0 auto 26px}
+.svc-video-cta{display:flex;flex-wrap:wrap;gap:10px 16px;justify-content:center;align-items:center;margin-top:14px}
+.svc-video-cta .line-link{font-size:14px;font-weight:700;color:var(--warm);text-decoration:none}
+.proc-wrap{display:grid;grid-template-columns:260px 1fr;gap:32px;align-items:start;margin-top:28px}
+.proc-wrap .process-grid{margin-top:0;grid-template-columns:1fr 1fr}
+.proc-wrap .process-grid .step::after{display:none!important}
+.proc-wrap .step-desc{display:none}.proc-wrap.open .step-desc{display:block}
+.proc-more{margin-top:14px;font:inherit;font-size:14px;font-weight:700;color:var(--navy);background:none;border:1px solid #d6d3d1;border-radius:999px;padding:8px 16px;cursor:pointer}
+@media(max-width:768px){.proc-wrap{grid-template-columns:1fr}.proc-wrap .proc-vid{max-width:260px;margin:0 auto;width:100%}}
+@media(max-width:480px){.proc-wrap .process-grid{grid-template-columns:1fr}}
 .svc-card{background:var(--navy-2);border-radius:16px;padding:36px;display:grid;grid-template-columns:1.2fr .8fr;gap:32px;align-items:start}
 .svc-card h3{font-size:24px;margin:4px 0 12px}.svc-card p{color:var(--text-light);line-height:1.9}
 .svc-label{color:var(--warm);font-size:12px;letter-spacing:2px;font-weight:700}
@@ -458,6 +476,24 @@ function dk(k) { return k ? ' data-k="' + k + '"' : ''; }
 var DZ_PREVIEW = /[?&]dzpreview=1(&|$)/.test(location.search) && window.parent !== window;   // 預覽模式（說明在檔案下方）
 function lines_(t) { return String(t || '').split(/\n|<br\s*\/?>/i).map(function (s) { return s.trim(); }).filter(Boolean); }
 var LINE_ATTR = ' target="_blank" rel="noopener" data-line';
+// 介紹影片（大正 11/10 上傳到 YouTube「大正-紫微命理」頻道）
+var VIDEO_VOICE = 'WTGYqHe9-nA', VIDEO_LINE_BOOK = '7ism5VDFHRo';
+function ytLite(id, ratio, label) {
+  return '<button type="button" class="yt ' + ratio + '" data-yt="' + esc(id) + '" aria-label="播放影片：' + esc(label) + '">' +
+    '<img src="https://i.ytimg.com/vi/' + esc(id) + '/hqdefault.jpg" alt="' + esc(label) + '" loading="lazy" width="480" height="360"><span class="yt-play"></span></button>';
+}
+if (typeof document !== 'undefined' && document.addEventListener) document.addEventListener('click', function (e) {
+  var t = e.target && e.target.closest ? e.target : null; if (!t) return;
+  var y = t.closest('.yt[data-yt]');
+  if (y && !y.querySelector('iframe')) {
+    var f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(y.getAttribute('data-yt')) + '?autoplay=1&playsinline=1&rel=0&modestbranding=1';
+    f.title = y.getAttribute('aria-label') || '影片'; f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.allowFullscreen = true;
+    y.appendChild(f); y.removeAttribute('aria-label'); return;
+  }
+  var m = t.closest('#procMore');
+  if (m) { var w = document.getElementById('procWrap'), o = !w.classList.contains('open'); w.classList.toggle('open', o); m.setAttribute('aria-expanded', o ? 'true' : 'false'); m.textContent = o ? '收起詳細說明' : '看每一步的詳細說明'; }
+});
 
 function renderSite(S) {
   document.title = S.siteTitle || '';
@@ -502,6 +538,8 @@ function renderSite(S) {
 
 '<section id="service" class="svc-wrap svc-paper"><div class="container">' +
   '<div class="eyebrow">SERVICE</div><h2 class="section-title">諮詢服務</h2>' +
+  '<div class="svc-video">' + ytLite(VIDEO_VOICE, 'r169', '30 秒看懂一對一語音諮詢') + '<p class="yt-cap">30 秒看懂一對一語音諮詢</p>' +
+    '<div class="svc-video-cta"><a href="/booking/" class="btn btn-primary">預約一對一語音諮詢</a><a class="line-link" href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + '>或加 LINE 預約／先問問題 →</a></div></div>' +
   '<div class="svc-cards">' +
     '<div class="svc-card"><div><div class="svc-label"' + dk('serviceLabel') + '>' + esc(S.serviceLabel||'') + '</div><h3' + dk('serviceTitle') + '>' + esc(S.serviceTitle||'') + '</h3><p' + dk('serviceDesc') + '>' + esc(S.serviceDesc||'') + '</p></div>' +
     '<div><div class="price"' + dk('servicePrice') + '>' + esc(S.servicePrice||'') + '</div><div class="price-unit"' + dk('servicePriceUnit') + '>' + esc(S.servicePriceUnit||'') + '</div><div' + dk('serviceDetail') + '>' + renderServiceDetail(S.serviceDetail||'') + '</div>' +
@@ -543,9 +581,11 @@ function renderSite(S) {
 
 '<section id="process" class="sec section-white"><div class="container">' +
   '<div class="eyebrow">PROCESS</div><h2 class="section-title">預約流程</h2>' +
+  '<div class="proc-wrap" id="procWrap"><div class="proc-vid">' + ytLite(VIDEO_LINE_BOOK, 'r916', '25 秒看懂怎麼用 LINE 預約') + '<p class="yt-cap">25 秒看懂怎麼用 LINE 預約</p></div><div style="min-width:0">' +
   '<div class="process-grid n' + steps.length + '">' + steps.map(function (s, i) {
     return '<div class="step"><div class="step-dot' + (i % 2 === 0 ? ' done' : '') + '"></div><div class="step-label">第 ' + (i + 1) + ' 步</div><div class="step-title"' + dk(s.n && 'processStep' + s.n + 'Title') + '>' + esc(s.title) + '</div><div class="step-desc"' + dk(s.n && 'processStep' + s.n + 'Desc') + '>' + esc(s.desc) + '</div></div>';
   }).join('') + '</div>' +
+  '<button type="button" class="proc-more" id="procMore" aria-expanded="false">看每一步的詳細說明</button></div></div>' +
 '</div></section>' +
 
 ((S.noteItems||[]).length ?
