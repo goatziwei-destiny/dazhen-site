@@ -90,12 +90,13 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 .yt .yt-play::after{content:"";position:absolute;left:27px;top:21px;border-style:solid;border-width:13px 0 13px 21px;border-color:transparent transparent transparent #fff}
 .yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .yt-cap{font-size:13px;color:var(--text-muted);text-align:center;margin:8px 0 0}
-.svc-card.svc-card-v{grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:36px;align-items:center}
+.svc-card.svc-card-v{grid-template-columns:minmax(0,1fr) minmax(0,300px);gap:48px;align-items:center;padding-top:32px}
 .svc-card-v .price{font-size:30px}
+.svc-paper .svc-card.svc-card-v{padding-top:32px}.proc-wrap{max-width:900px}
 .svc-line{display:block;text-align:center;margin-top:12px;font-size:14px;font-weight:700;color:var(--warm);text-decoration:none}
-@media(max-width:768px){.svc-card.svc-card-v{grid-template-columns:1fr;gap:20px}.svc-card-v .svc-vid{max-width:300px;width:100%;margin:0 auto}}
+@media(max-width:768px){.svc-card.svc-card-v{grid-template-columns:1fr;gap:20px}.svc-card-v .svc-vid{max-width:300px;width:100%;margin:0 auto;order:-1}}
 /* 預約流程：影片＋一條直線 1～5 點 */
-.proc-wrap{display:grid;grid-template-columns:260px minmax(0,1fr);gap:40px;align-items:center;margin-top:28px}
+.proc-wrap{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:48px;align-items:center;margin-top:28px}
 .proc-line{list-style:none;margin:0;padding:0;position:relative;display:grid;gap:22px}
 .proc-line li:not(:last-child)::after{content:"";position:absolute;left:15px;top:32px;bottom:-22px;width:2px;background:rgba(98,146,171,.35)}
 .proc-line li{position:relative;display:grid;grid-template-columns:32px minmax(0,1fr);gap:14px;align-items:start}
@@ -526,30 +527,10 @@ function renderSite(S) {
   '<div class="btns"><a href="/booking/" class="btn btn-primary">預約一對一諮詢</a><a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-ghost">先加入 LINE 聊聊</a></div>' +
   '</div>' + (photo ? '<div class="hero-goat"><img src="' + esc(photo) + '" alt="' + esc(S.aboutName||'大正') + '的頭像" width="280" height="280"></div>' : '') +
 '</div></section>' +
-((stats || LIB_SEEN) ? '<section class="stats-row" aria-label="大正的諮詢經驗"><div class="container">' + stats + (LIB_SEEN ? '<a class="stat-lib stat-lib-row" href="/library/"><img src="/images/library-book-icon.png" alt="" width="18" height="25">回命運書庫逛逛</a>' : '') + '</div></section>' : '') +
+'<section class="stats-row" aria-label="大正的諮詢經驗"><div class="container">' + stats + '<a class="stat-lib stat-lib-row" href="/library/"><img src="/images/library-book-icon.png" alt="" width="18" height="25">' + (LIB_SEEN ? '回命運書庫逛逛' : '逛逛命運書庫') + '</a></div></section>' +
 
-/* 命運書庫入口（互動動畫，/library/）：沒看過＝置中的大卡片；看過（書庫留下的 dz_seen）或在 LINE 裡打開＝不放卡片，數字列最後放「回命運書庫逛逛」 */
-(LIB_SEEN ? '' :
-'<section class="lib-entry section-dark"><div class="container"><a class="lib-card" href="/library/">' +
-  '<span class="lib-img"><img src="{{ partial "img.html" (dict "src" "/images/library-entry.png" "w" 960) }}" alt="住在書庫裡的羊——大正" width="960" height="540" loading="lazy"><span class="lib-play" aria-hidden="true">▶</span></span>' +
-  '<span class="lib-txt"><span class="eyebrow" style="color:var(--warm)">互動動畫</span><span class="lib-h">走進大正的命運書庫</span>' +
-  '<span class="lib-p">住在書庫裡的羊，帶你翻翻命理小知識。</span><span class="lib-btn">進入命運書庫 →</span></span>' +
-'</a></div></section>') +
+/* 命運書庫（11/11 大正）：首頁不放大卡片（主要放在 LINE），數字列最後留一個小連結 */
 
-'<section id="service" class="svc-wrap svc-paper"><div class="container">' +
-  '<div class="eyebrow">SERVICE</div><h2 class="section-title">諮詢服務</h2>' +
-  '<div class="svc-cards">' +
-    // 11/10 大正：影片放卡片左邊、標題和價格放右邊；服務說明那段小字不顯示（後台的字還在，影片取代它）
-    '<div class="svc-card svc-card-v"><div class="svc-vid">' + ytLite(VIDEO_VOICE, 'r916', '30 秒看懂一對一語音諮詢') + '</div>' +
-    '<div style="min-width:0"><div class="svc-label"' + dk('serviceLabel') + '>' + esc(S.serviceLabel||'') + '</div><h3' + dk('serviceTitle') + '>' + esc(S.serviceTitle||'') + '</h3>' +
-    '<div class="price"' + dk('servicePrice') + '>' + esc(S.servicePrice||'') + '</div><div class="price-unit"' + dk('servicePriceUnit') + '>' + esc(S.servicePriceUnit||'') + '</div><div' + dk('serviceDetail') + '>' + renderServiceDetail(S.serviceDetail||'') + '</div>' +
-    '<a href="/booking/" class="btn btn-primary">預約一對一語音諮詢</a><a class="svc-line" href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + '>或加 LINE 預約／先問問題 →</a></div></div>' +
-    (SHOW_TEXT_SERVICE ?
-    '<div class="svc-card"><div><div class="svc-label">' + esc(S.textServiceLabel||'') + '</div><h3>' + esc(S.textServiceTitle||'') + '</h3><p>' + esc(S.textServiceDesc||'') + '</p></div>' +
-    '<div><div class="price">' + esc(S.textServicePrice||'') + '</div><div class="price-unit">' + esc(S.textServicePriceUnit||'') + '</div>' + renderServiceDetail(S.textServiceDetail||'') +
-    '<a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-warm">' + esc(S.textServiceBtn||'用 LINE 詢問') + '</a></div></div>' : '') +
-  '</div>' +
-'</div></section>' +
 
 '<section id="about" class="sec section-light"><div class="container about-inner">' +
   '<div class="about-photo">' + (photo ? '<img src="' + esc(photo) + '" alt="' + esc(S.aboutName||'') + '" width="180" height="180" loading="lazy">' : '<div class="ph">🐏</div>') +
@@ -567,6 +548,21 @@ function renderSite(S) {
   '</div>' +
 '</div></section>' +
 
+'<section id="service" class="svc-wrap svc-paper"><div class="container">' +
+  '<div class="eyebrow">SERVICE</div><h2 class="section-title">諮詢服務</h2>' +
+  '<div class="svc-cards">' +
+    // 11/10 大正：影片放卡片左邊、標題和價格放右邊；服務說明那段小字不顯示（後台的字還在，影片取代它）
+    '<div class="svc-card svc-card-v"><div style="min-width:0"><div class="svc-label"' + dk('serviceLabel') + '>' + esc(S.serviceLabel||'') + '</div><h3' + dk('serviceTitle') + '>' + esc(S.serviceTitle||'') + '</h3>' +
+    '<div class="price"' + dk('servicePrice') + '>' + esc(S.servicePrice||'') + '</div><div class="price-unit"' + dk('servicePriceUnit') + '>' + esc(S.servicePriceUnit||'') + '</div><div' + dk('serviceDetail') + '>' + renderServiceDetail(S.serviceDetail||'') + '</div>' +
+    '<a href="/booking/" class="btn btn-primary">預約一對一語音諮詢</a><a class="svc-line" href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + '>或加 LINE 預約／先問問題 →</a></div>' +
+    '<div class="svc-vid">' + ytLite(VIDEO_VOICE, 'r916', '30 秒看懂一對一語音諮詢') + '</div></div>' +
+    (SHOW_TEXT_SERVICE ?
+    '<div class="svc-card"><div><div class="svc-label">' + esc(S.textServiceLabel||'') + '</div><h3>' + esc(S.textServiceTitle||'') + '</h3><p>' + esc(S.textServiceDesc||'') + '</p></div>' +
+    '<div><div class="price">' + esc(S.textServicePrice||'') + '</div><div class="price-unit">' + esc(S.textServicePriceUnit||'') + '</div>' + renderServiceDetail(S.textServiceDetail||'') +
+    '<a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-warm">' + esc(S.textServiceBtn||'用 LINE 詢問') + '</a></div></div>' : '') +
+  '</div>' +
+'</div></section>' +
+
 ((S.firstSteps||[]).length ?
 '<section id="first-time" class="sec section-light" style="padding-top:0"><div class="container">' +
   '<div class="eyebrow">FIRST TIME</div><h2 class="section-title">第一次諮詢怎麼進行</h2>' +
@@ -581,10 +577,11 @@ function renderSite(S) {
 
 '<section id="process" class="sec section-white"><div class="container">' +
   '<div class="eyebrow">PROCESS</div><h2 class="section-title">預約流程</h2>' +
-  '<div class="proc-wrap"><div class="proc-vid">' + ytLite(VIDEO_LINE_BOOK, 'r916', '25 秒看懂怎麼用 LINE 預約') + '<p class="yt-cap">25 秒看懂怎麼用 LINE 預約</p></div>' +
+  '<div class="proc-wrap">' +
   '<ol class="proc-line">' + steps.map(function (s, i) {
     return '<li><span class="proc-num">' + (i + 1) + '</span><div><div class="step-title"' + dk(s.n && 'processStep' + s.n + 'Title') + '>' + esc(s.title) + '</div><div class="step-desc"' + dk(s.n && 'processStep' + s.n + 'Desc') + '>' + esc(s.desc || '') + '</div></div></li>';
-  }).join('') + '</ol></div>' +
+  }).join('') + '</ol>' +
+  '<div class="proc-vid">' + ytLite(VIDEO_LINE_BOOK, 'r916', '25 秒看懂怎麼用 LINE 預約') + '<p class="yt-cap">25 秒看懂怎麼用 LINE 預約</p></div></div>' +
 '</div></section>' +
 
 ((S.noteItems||[]).length ?
