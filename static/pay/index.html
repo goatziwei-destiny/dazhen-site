@@ -179,8 +179,8 @@ p,li,small,.note,.pay-bank,.method-note,.notice-box{text-wrap:pretty}
     var qr = document.createElement('div'); qr.id = 'qrBox'; wrap.appendChild(qr); box.appendChild(wrap);
     var url = (info && info.lineUrl) || '';
     if (url && window.QRCode) { try { new QRCode(qr, { text: url, width: 180, height: 180, correctLevel: QRCode.CorrectLevel.L }); } catch (e) {} }
-    if (url && !qr.firstChild) { var img = document.createElement('img'); img.width = 180; img.height = 180; img.alt = 'LINE QR Code'; img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(url); qr.appendChild(img); }
-    var t = document.createElement('p'); t.className = 'qrnote'; t.innerHTML = '在電腦上預約？\n拿手機掃一下，按<span class="send-w">傳送<svg class="send-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.6 19.4 21 12 3.6 4.6 3.6 10.3 14.5 12 3.6 13.7Z" fill="#06c755" stroke="#06c755" stroke-width="2.4" stroke-linejoin="round"/></svg></span>就完成'; box.appendChild(t);
+    if (url && !qr.firstChild) { wrap.style.display = 'none'; }   // QR 工具沒載入：不改用外部 QR 服務（綁定連結帶簽章，不能交給第三方，Codex #4），只留按鈕
+    var t = document.createElement('p'); t.className = 'qrnote'; t.innerHTML = '在電腦上預約？\n拿手機掃一下，按<span class="send-w">傳送<svg class="send-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.6 19.4 21 12 3.6 4.6 3.6 10.3 14.5 12 3.6 13.7Z" fill="#06c755" stroke="#06c755" stroke-width="2.4" stroke-linejoin="round"/></svg></span>就完成'; if (!qr.firstChild) t.style.display = 'none'; box.appendChild(t);
     var a = document.createElement('a'); a.className = 'btn line'; a.href = (info && info.lineUrl) || '#'; a.target = '_blank'; a.rel = 'noopener'; a.id = 'lineBtn'; a.textContent = '在手機上預約？點這裡，一鍵綁定 LINE'; box.appendChild(a);
     var ob = document.createElement('div'); ob.className = 'orderbox'; ob.innerHTML = '<span>你的訂單編號</span><b></b>'; ob.querySelector('b').textContent = O; box.appendChild(ob);
     return box;

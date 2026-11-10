@@ -892,7 +892,7 @@ function loadLib(){if(!LIB_URL||capture)return;const draft=/[?&]draft=1/.test(lo
   if(!draft){try{const c=localStorage.getItem('dzLibContent');if(c)applyLib(JSON.parse(c));}catch(e){}}
   const cb='__dzlib'+Date.now();window[cb]=r=>{try{delete window[cb];}catch(e){}const d=r&&r.content||null;applyLib(d);
     if(!draft){try{if(d)localStorage.setItem('dzLibContent',JSON.stringify(d));else localStorage.removeItem('dzLibContent');}catch(e){}}};
-  const sc=document.createElement('script');sc.async=true;sc.src=LIB_URL+'?page=library'+(draft?'&draft=1':'')+'&callback='+cb+'&t='+Date.now();document.head.appendChild(sc);}
+  const sc=document.createElement('script');sc.async=true;var dtm=/[?&]dt=([^&]+)/.exec(location.search);sc.src=LIB_URL+'?page=library'+(draft?'&draft=1'+(dtm?'&dt='+dtm[1]:''):'')+'&callback='+cb+'&t='+Date.now();document.head.appendChild(sc);}
 window.__libExport=libExport;window.__applyLib=applyLib;
 loadLib();
 const loads=LAZY?(layout(),[need(GRP.core)]):Object.entries(SPR).map(([k,src])=>new Promise(r=>{const im=new Image();im.onload=()=>{IM[k]=im;r();};im.onerror=r;im.src=src;}));
