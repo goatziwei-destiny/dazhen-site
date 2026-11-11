@@ -170,17 +170,23 @@ p,li,small,.note,.pay-bank,.method-note,.notice-box{text-wrap:pretty}
     window.scrollTo(0, 0);
   }
 
-  // 已綁定 LINE：只留「關閉」。在 LINE 裡打開的頁面，網頁沒辦法自己關掉，關不掉就請客人按左上角的 ✕
+  // 已綁定 LINE：只留一顆按鈕（大正 11/11）。
+  // 在 LINE 裡打開的頁面，網頁沒辦法自己關掉（按了會沒反應），所以 LINE 裡改成「回到 LINE 聊天室」：直接打開大正的官方帳號聊天室
+  var LINE_OA = 'https://lin.ee/vlvPoMa';
   function closeScreen() {
-    var box = document.createElement('div');
-    var b = document.createElement('button'); b.type = 'button'; b.className = 'go'; b.textContent = '完成，關閉這個畫面'; box.appendChild(b);
-    var t = document.createElement('p'); t.className = 'note'; t.style.textAlign = 'center'; t.style.fontSize = '14px'; box.appendChild(t);
-    var inLine = /\bLine\//i.test(navigator.userAgent || '');
-    b.onclick = function () {
-      try { window.close(); } catch (e) {}
-      setTimeout(function () { if (!window.closed) t.textContent = inLine ? '請按左上角的 ✕ 回到 LINE 聊天室。' : '可以直接關掉這個分頁了。'; }, 400);
-    };
-    if (inLine) t.textContent = '也可以按左上角的 ✕ 回到 LINE 聊天室。';
+    var box = document.createElement('div'), inLine = /\bLine\//i.test(navigator.userAgent || '');
+    var t = document.createElement('p'); t.className = 'note'; t.style.cssText = 'text-align:center;font-size:14px';
+    if (inLine) {
+      var a = document.createElement('a'); a.className = 'btn go'; a.href = LINE_OA; a.textContent = '完成，回到 LINE 聊天室'; box.appendChild(a);
+      t.textContent = '也可以按左上角的 ✕ 關掉這個畫面。';
+    } else {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'go'; b.textContent = '完成，關閉這個畫面'; box.appendChild(b);
+      b.onclick = function () {
+        try { window.close(); } catch (e) {}
+        setTimeout(function () { if (!window.closed) { t.textContent = '這個瀏覽器不允許網頁自己關閉，請直接關掉這個分頁。'; t.style.color = 'var(--ink)'; } }, 400);
+      };
+    }
+    box.appendChild(t);
     return box;
   }
 
