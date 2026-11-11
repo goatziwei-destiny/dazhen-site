@@ -9,7 +9,7 @@ async function run(label, fast, full) {
     if (u.startsWith('http://localhost:8768')) return r.continue();
     if (/liff\/edge\/2\/sdk\.js/.test(u)) return r.fulfill({ contentType: 'application/javascript', body: FAKE_LIFF });
     if (/script\.google\.com/.test(u)) {
-      const q = new URL(u).searchParams, page = q.get('lineBind') ? 'x' : q.get('page'); const kind = q.get('page') === 'lineBind' ? 'fast' : 'full'; calls.push(kind + (q.get('bind') ? '+bind' : ''));
+      const q = new URL(u).searchParams, page = q.get('lineBind') ? 'x' : q.get('page'); if (q.get('page') === 'lineBindKick') { calls.push('kick'); return r.fulfill({ contentType: 'application/javascript', body: q.get('callback') + '({"ok":true,"sent":true})' }); } const kind = q.get('page') === 'lineBind' ? 'fast' : 'full'; calls.push(kind + (q.get('bind') ? '+bind' : ''));
       const d = kind === 'fast' ? fast : full; if (d === 'abort') return r.abort();
       return r.fulfill({ contentType: 'application/javascript', body: q.get('callback') + '(' + JSON.stringify(d) + ')' });
     }
@@ -27,5 +27,6 @@ const member = { ok: true, member: { name: '測', joined: true }, orders: [] };
   await run('C 快速沒回應→完整回 ok:false', 'abort', { ok: false });
   await run('E 快速回 retry（系統忙碌）', { ok: true, bound: { id: 'GR26110801-00', status: 'retry' } }, 'abort');
   await run('F 快速回 other（已綁別人）', { ok: true, bound: { id: 'GR26110801-00', status: 'other' } }, 'abort');
+  await run('G 快速回 bound（剛綁好）→ 當場呼叫 kick', { ok: true, bound: { id: 'GR26110801-00', status: 'bound' } }, 'abort');
   await run('D 快速 ok:false→完整回 bound', { ok: false }, Object.assign({}, member, { bound: { id: 'GR26110801-00', status: 'bound' } }));
 })();
