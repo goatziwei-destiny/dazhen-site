@@ -170,22 +170,14 @@ p,li,small,.note,.pay-bank,.method-note,.notice-box{text-wrap:pretty}
     window.scrollTo(0, 0);
   }
 
-  // 已綁定 LINE：只留一顆按鈕（大正 11/11）。
-  // 在 LINE 裡打開的頁面，網頁沒辦法自己關掉（按了會沒反應），所以 LINE 裡改成「回到 LINE 聊天室」：直接打開大正的官方帳號聊天室
+  // 已綁定 LINE（大正 11/11）：不再顯示加 LINE 的 QR Code，只留「完成，回到 LINE 聊天室」，按了直接打開大正的官方帳號。
+  // 不管在 LINE 裡還是一般瀏覽器都一樣（網頁在 LINE 裡關不掉，一般瀏覽器按了會跳到 LINE App）
   var LINE_OA = 'https://lin.ee/vlvPoMa';
   function closeScreen() {
     var box = document.createElement('div'), inLine = /\bLine\//i.test(navigator.userAgent || '');
+    var a = document.createElement('a'); a.className = 'btn go'; a.href = LINE_OA; a.textContent = '完成，回到 LINE 聊天室'; box.appendChild(a);
     var t = document.createElement('p'); t.className = 'note'; t.style.cssText = 'text-align:center;font-size:14px';
-    if (inLine) {
-      var a = document.createElement('a'); a.className = 'btn go'; a.href = LINE_OA; a.textContent = '完成，回到 LINE 聊天室'; box.appendChild(a);
-      t.textContent = '也可以按左上角的 ✕ 關掉這個畫面。';
-    } else {
-      var b = document.createElement('button'); b.type = 'button'; b.className = 'go'; b.textContent = '完成，關閉這個畫面'; box.appendChild(b);
-      b.onclick = function () {
-        try { window.close(); } catch (e) {}
-        setTimeout(function () { if (!window.closed) { t.textContent = '這個瀏覽器不允許網頁自己關閉，請直接關掉這個分頁。'; t.style.color = 'var(--ink)'; } }, 400);
-      };
-    }
+    t.textContent = inLine ? '也可以按左上角的 ✕ 關掉這個畫面。' : '不用回 LINE 的話，直接關掉這個分頁就可以了。';
     box.appendChild(t);
     return box;
   }
