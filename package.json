@@ -1,0 +1,8 @@
+{
+  "name": "dazhen-site",
+  "private": true,
+  "description": "網站本身用 Hugo 建置；這裡只放 Netlify 函式需要的套件（LINE 轉送的事件暫存）",
+  "dependencies": {
+    "@netlify/blobs": "11.1.6"
+  }
+}
