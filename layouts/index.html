@@ -486,8 +486,9 @@ var LINE_ATTR = ' target="_blank" rel="noopener" data-line';
 // 介紹影片（大正 11/10 上傳到 YouTube「大正-紫微命理」頻道）
 var VIDEO_VOICE = 'WTGYqHe9-nA', VIDEO_LINE_BOOK = '7ism5VDFHRo';
 function ytLite(id, ratio, label) {
-  return '<button type="button" class="yt ' + ratio + '" data-yt="' + esc(id) + '" aria-label="播放影片：' + esc(label) + '">' +
-    '<img src="https://i.ytimg.com/vi/' + esc(id) + '/maxresdefault.jpg" onerror="if(!this.dataset.f){this.dataset.f=1;this.src=\'https://i.ytimg.com/vi/' + esc(id) + '/hqdefault.jpg\'}" alt="' + esc(label) + '" loading="lazy" width="1280" height="720"><span class="yt-play"></span></button>';
+  // 11/11 大正：手機上原本要點兩次（第一次載入播放器、第二次才播），改成直接放 YouTube 播放器（捲到附近才載入），點一次就播。
+  // 影片從 YouTube 播，不吃網站流量；用 youtube-nocookie 網域。
+  return '<div class="yt ' + ratio + '"><iframe src="https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?playsinline=1&rel=0&modestbranding=1" title="' + esc(label) + '" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>';
 }
 if (typeof document !== 'undefined' && document.addEventListener) document.addEventListener('click', function (e) {
   var t = e.target && e.target.closest ? e.target : null; if (!t) return;
