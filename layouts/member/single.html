@@ -221,8 +221,9 @@ function openBooking(){var w=$("#mbBooking");w.hidden=false;
 $("#bkClose").onclick=closeBooking;
 
 // ---------- LINE 綁定訂單的結果 ----------
-function showBound(b){BIND=null;try{history.replaceState(null,"",location.pathname)}catch(e){}   // 綁過就把參數拿掉，重新整理不會再綁一次
-  var msg={bound:"✅ 訂單 "+b.id+" 已經綁定你的 LINE，訂單確認也傳到 LINE 了。之後的付款確認、提醒都會從 LINE 通知你。",
+function showBound(b){if(b.status==="bound"&&BIND&&S.kind==="line"&&S.token)jsonp({page:"lineBindKick",lt:S.token,bind:BIND.bind,bt:BIND.bt}).catch(function(){});   // 大正 11/11：當場送出 LINE 訂單確認
+  BIND=null;try{history.replaceState(null,"",location.pathname)}catch(e){}   // 綁過就把參數拿掉，重新整理不會再綁一次
+  var msg={bound:"✅ 訂單 "+b.id+" 已經綁定你的 LINE。訂單確認通常幾秒內就會傳到 LINE（最晚約 1 分鐘），之後的付款確認、提醒也都會從 LINE 通知你。",
     already:"✅ 訂單 "+b.id+" 之前就綁定你的 LINE 了，不用再做什麼。",
     other:"這筆訂單（"+b.id+"）已經綁定另一個 LINE 帳號。如果要改綁，請直接在 LINE 告訴大正。",
     cancelled:"這筆訂單（"+b.id+"）已經取消，所以沒有綁定。",
@@ -241,8 +242,10 @@ function showBound(b){BIND=null;try{history.replaceState(null,"",location.pathna
 function bindOnly(token){S.kind="line";S.token=token;loading("正在綁定訂單 "+BIND.bind+"…");
   jsonp({page:"lineBind",lt:token,bind:BIND.bind,bt:BIND.bt}).then(function(d){
     if(!d||!d.ok){useToken("line",token);return}   // 快速綁定沒回應：保留 BIND，讓完整會員中心那一趟再綁一次並顯示結果（GPT #9 11/8）
-    var b=d.bound||{},ok=b.status==="bound"||b.status==="already";try{history.replaceState(null,"",location.pathname)}catch(e){}BIND=null;
-    var msg={bound:"訂單確認大約 1 分鐘內會傳到你的 LINE。之後的付款確認、諮詢提醒，也都會從 LINE 通知你。",
+    var b=d.bound||{},ok=b.status==="bound"||b.status==="already";try{history.replaceState(null,"",location.pathname)}catch(e){}
+    if(b.status==="bound")jsonp({page:"lineBindKick",lt:token,bind:BIND.bind,bt:BIND.bt}).catch(function(){});   // 大正 11/11：當場送出 LINE 訂單確認（沒成功的話背景排程照樣會送）
+    BIND=null;
+    var msg={bound:"訂單確認通常幾秒內就會傳到你的 LINE（最晚約 1 分鐘）。之後的付款確認、諮詢提醒，也都會從 LINE 通知你。",
       already:"這筆訂單之前就綁定你的 LINE 了，不用再做什麼。",
       other:"這筆訂單已經綁定另一個 LINE 帳號。如果要改綁，請直接在 LINE 告訴大正。",
       cancelled:"這筆訂單已經取消，所以沒有綁定。",

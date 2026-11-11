@@ -161,12 +161,27 @@ p,li,small,.note,.pay-bank,.method-note,.notice-box{text-wrap:pretty}
 
   function done(r) {
     show('main', false); show('done', true);
+    var bound = !!((r && r.lineBound) || (info && info.lineBound));   // 大正 11/11：已綁定 LINE 的客人不再顯示加 LINE 的 QR Code
     $('doneText').textContent = info && info.isText
-      ? '請靜待 7-10 工作天，文字版回覆會使用 Email 通知，綁定 LINE@ 帳號會同步使用 LINE 訊息通知。'
-      : '匯款後 24 小時內，你會收到「預約成功」的通知信\n請留意 Email 信箱。';
+      ? '請靜待 7-10 工作天，文字版回覆會使用 Email 通知' + (bound ? '，LINE 也會同時通知。' : '，綁定 LINE@ 帳號會同步使用 LINE 訊息通知。')
+      : (bound ? '大正確認收款後，會用 LINE 和 Email 通知你「預約成功」。' : '匯款後 24 小時內，你會收到「預約成功」的通知信\n請留意 Email 信箱。');
     var ex = $('doneExtra'); ex.innerHTML = '';
-    ex.appendChild(lineScreen());
+    ex.appendChild(bound ? closeScreen() : lineScreen());
     window.scrollTo(0, 0);
+  }
+
+  // 已綁定 LINE：只留「關閉」。在 LINE 裡打開的頁面，網頁沒辦法自己關掉，關不掉就請客人按左上角的 ✕
+  function closeScreen() {
+    var box = document.createElement('div');
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'go'; b.textContent = '完成，關閉這個畫面'; box.appendChild(b);
+    var t = document.createElement('p'); t.className = 'note'; t.style.textAlign = 'center'; t.style.fontSize = '14px'; box.appendChild(t);
+    var inLine = /\bLine\//i.test(navigator.userAgent || '');
+    b.onclick = function () {
+      try { window.close(); } catch (e) {}
+      setTimeout(function () { if (!window.closed) t.textContent = inLine ? '請按左上角的 ✕ 回到 LINE 聊天室。' : '可以直接關掉這個分頁了。'; }, 400);
+    };
+    if (inLine) t.textContent = '也可以按左上角的 ✕ 回到 LINE 聊天室。';
+    return box;
   }
 
   // 加 LINE 畫面（跟預約系統、原本的轉導頁同一套文字）：手機＝開啟 LINE 按鈕；電腦＝QR Code ＋ 複製訂單編號訊息
