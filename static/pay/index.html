@@ -35,6 +35,7 @@ button,.btn{display:block;width:100%;border:0;border-radius:12px;font:inherit;fo
 button:disabled{opacity:.55;cursor:default}
 .note{font-size:12.5px;color:var(--muted);margin:12px 0 0}
 .ok h1{color:#15803d}#done>h1,#doneText{text-align:center}#doneText{white-space:pre-line}.btn.line{white-space:nowrap;font-size:clamp(13px,3.7vw,16px);padding-left:8px;padding-right:8px}@media (max-width:420px){#doneText{font-size:13px}}
+.bindwarn{margin-top:14px;padding:12px 14px;border-radius:12px;background:#fef3c7;border:1px solid #f59e0b;color:#78350f;text-align:left;line-height:1.7}.bindwarn b{display:block;font-size:15.5px}.bindwarn span{font-size:14px}
 .invite{background:var(--ink);color:#fff;border-radius:14px;padding:16px;text-align:center;margin-top:14px}
 .invite p{margin:0 0 10px;font-size:14px;white-space:pre-line}
 .invite{display:flex;flex-direction:column}.invite>*{order:2}.invite>.orderbox{order:0;margin:0 0 12px}.invite>p:first-child{order:1}.invite>.qrwrap{order:3}.invite>.qrnote{order:4}.invite>.line{order:5}.invite b{font-size:15.5px}
@@ -166,6 +167,11 @@ p,li,small,.note,.pay-bank,.method-note,.notice-box{text-wrap:pretty}
       ? '請靜待 7-10 工作天，文字版回覆會使用 Email 通知' + (bound ? '，LINE 也會同時通知。' : '，綁定 LINE@ 帳號會同步使用 LINE 訊息通知。')
       : (bound ? '大正確認收款後，會用 LINE 和 Email 通知你「預約成功」。' : '匯款後 24 小時內，你會收到「預約成功」的通知信\n請留意 Email 信箱。');
     var ex = $('doneExtra'); ex.innerHTML = '';
+    if (!bound && info && info.isLineVoice && !info.isText) {   // 大正 11/11：LINE 語音還沒綁定 LINE → 醒目提醒，不然諮詢時大正打不了 LINE
+      var w = document.createElement('div'); w.className = 'bindwarn';
+      w.innerHTML = '<b>⚠️ 還差一步：請綁定 LINE</b><span>你選的是 LINE 語音，沒有綁定的話，大正無法在諮詢時用 LINE 打給你。用手機的話直接點下方按鈕；在電腦上就用手機掃 QR Code。</span>';
+      ex.appendChild(w);
+    }
     ex.appendChild(bound ? closeScreen() : lineScreen());
     window.scrollTo(0, 0);
   }
