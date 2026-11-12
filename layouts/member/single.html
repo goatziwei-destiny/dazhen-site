@@ -268,7 +268,7 @@ function bindOnly(token){S.kind="line";S.token=token;loading("正在綁定訂單
 
 // 回到大正的 LINE 聊天室（大正 11/12）：一律開官方帳號連結，LINE 會直接打開跟大正的聊天室。
 // 只用 closeWindow 的話，用相機掃 QR 打開的人會回到 LINE 首頁，不是聊天室。
-function backToLine(){var inClient=false;try{inClient=!!(window.liff&&liff.isInClient&&liff.isInClient())}catch(e){}
+function backToLine(){
   var bb=$("#bBack");if(bb)bb.textContent="正在打開大正的 LINE 聊天室…";
   location.href=LINE_ADD;   // 不再計時關閉畫面（GPT #46 P1：跳轉慢的話會先被關掉）；沒跳過去就按上面的按鈕再開一次
   setTimeout(function(){if(document.visibilityState==="visible"&&bb)bb.textContent="如果沒有自動跳過去，請按上面的「打開大正的 LINE 聊天室」，訂單確認會出現在聊天室。"},2500);}
