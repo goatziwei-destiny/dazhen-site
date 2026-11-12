@@ -24,10 +24,11 @@ iframe{display:block;width:100%;height:760px;border:0;background:transparent}
 <body>
 <div class="brand"><a href="/">大正·命理諮詢</a></div>
 <div class="box" id="box"><iframe id="f" title="補傳面相照片"></iframe><div class="load" id="load">照片上傳頁載入中，請稍候…</div></div>
+<script src="/js/dz-api.js"></script>
 <script>
 // 大正 11/11：預約成功信「補傳面相照片」按鈕連到這裡（?o=訂單編號&t=訂單憑證），頁面本身在預約系統（?page=photos），這裡只負責嵌進來
 (function () {
-  var API = 'https://script.google.com/macros/s/AKfycbx3aDlFDBayTKgvGtQMrWrpDMx3WuU5Yd3Uh4c6BJK5kmKpZnBsXH7fK97yrkQkgx9fkQ/exec';
+  var API = DZ_API.url;   // 共用 /js/dz-api.js（精簡 C）
   var q = new URLSearchParams(location.search), o = q.get('o') || '', t = q.get('t') || '';
   if (!/^GRW?\d{8}-\d{2}$/.test(o) || !/^[0-9a-f]{24}$/.test(t)) {
     document.getElementById('box').outerHTML = '<div class="bad"><h1>連結不完整</h1><p>請從預約成功的 Email 再點一次「補傳面相照片」，或直接在 LINE 把照片傳給大正。</p></div>';

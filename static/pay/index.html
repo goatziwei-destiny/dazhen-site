@@ -84,10 +84,10 @@ p,li,small,.note,.pay-bank,.method-note,.notice-box{text-wrap:pretty}
   </div>
 </div>
 
+<script src="/js/dz-api.js"></script>
 <script src="/pay/qrcode.min.js" defer></script><!-- QRCode.js（MIT，davidshimjs）放在自己網站，不從外部載入：這頁網址帶訂單憑證（Fable P2） -->
 <script>
 (function () {
-  var API = 'https://script.google.com/macros/s/AKfycbx3aDlFDBayTKgvGtQMrWrpDMx3WuU5Yd3Uh4c6BJK5kmKpZnBsXH7fK97yrkQkgx9fkQ/exec';
   var qs = new URLSearchParams(location.search), O = (qs.get('o') || '').toUpperCase(), T = qs.get('t') || '';
   var $ = function (id) { return document.getElementById(id); };
   var info = null, busy = false;
@@ -110,18 +110,7 @@ p,li,small,.note,.pay-bank,.method-note,.notice-box{text-wrap:pretty}
   function fatal(msg) { show('loading', false); show('main', false); $('fatal').textContent = msg; show('fatal', true); }
 
   // JSONP：頁面在別的網域，用 script 標籤呼叫預約系統
-  function jsonp(params) {
-    return new Promise(function (resolve, reject) {
-      var cb = '__pay' + Date.now() + Math.floor(Math.random() * 100000), s = document.createElement('script');
-      var timer = setTimeout(function () { clean(); reject(new Error('timeout')); }, 60000);
-      function clean() { clearTimeout(timer); try { delete window[cb]; } catch (e) { window[cb] = undefined; } if (s.parentNode) s.parentNode.removeChild(s); }
-      window[cb] = function (d) { clean(); resolve(d); };
-      s.onerror = function () { clean(); reject(new Error('network')); };
-      var q = Object.keys(params).map(function (k) { return k + '=' + encodeURIComponent(params[k]); }).join('&');
-      s.src = API + '?page=payApi&callback=' + cb + '&' + q;
-      document.body.appendChild(s);
-    });
-  }
+  function jsonp(params) { return DZ_API.jsonp('payApi', params, 60000); }   // 共用 /js/dz-api.js（精簡 C）
 
   function render() {
     show('loading', false); show('main', true);
@@ -164,7 +153,7 @@ p,li,small,.note,.pay-bank,.method-note,.notice-box{text-wrap:pretty}
     show('main', false); show('done', true);
     var bound = !!((r && r.lineBound) || (info && info.lineBound));   // 大正 11/11：已綁定 LINE 的客人不再顯示加 LINE 的 QR Code
     $('doneText').textContent = info && info.isText
-      ? '請靜待 7-10 工作天，文字版回覆會使用 Email 通知' + (bound ? '，LINE 也會同時通知。' : '，綁定 LINE@ 帳號會同步使用 LINE 訊息通知。')
+      ? '請靜待 ' + ((info && info.replyText) || '7-10 個工作天') + '，文字版回覆會使用 Email 通知' + (bound ? '，LINE 也會同時通知。' : '，綁定 LINE@ 帳號會同步使用 LINE 訊息通知。')
       : (bound ? '大正確認收款後，會用 LINE 和 Email 通知你「預約成功」。' : '匯款後 24 小時內，你會收到「預約成功」的通知信\n請留意 Email 信箱。');
     var ex = $('doneExtra'); ex.innerHTML = '';
     if (!bound && info && info.isLineVoice && !info.isText) {   // 大正 11/11：LINE 語音還沒綁定 LINE → 醒目提醒，不然諮詢時大正打不了 LINE

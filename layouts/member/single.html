@@ -132,6 +132,7 @@ body.mb-lock{overflow:hidden}
 </div>
 <div id="layer"></div>
 <script src="/booking-bridge.js?v=20261108"></script>
+<script src="/js/dz-api.js"></script>
 <script>
 (function(){
 var API={{ .Site.Params.bookingFormUrl }}, LIFF_ID={{ .Site.Params.liffMemberId | default "" }}, GCID={{ .Site.Params.googleLoginClientId | default "" }};
@@ -145,10 +146,7 @@ var $=function(s){return document.querySelector(s)};
 var esc=function(x){return String(x==null?"":x).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
 var LINEICO='<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M12 3C6.5 3 2 6.6 2 11c0 3.9 3.5 7.2 8.3 7.9.3.1.8.2.9.5.1.3.1.7 0 1l-.1.8c0 .3-.2 1 .9.5s5.9-3.5 8-6C21.4 14.2 22 12.7 22 11c0-4.4-4.5-8-10-8z"/></svg>';
 function toast(t){var d=document.createElement("div");d.className="toast";d.setAttribute("role","status");d.textContent=t;document.body.appendChild(d);setTimeout(function(){d.remove()},3200)}
-function jsonp(params){return new Promise(function(res,rej){var cb="mbcb"+Date.now()+Math.floor(Math.random()*1e4),sc=document.createElement("script"),t=setTimeout(function(){done();rej(new Error("timeout"))},40000);
-  function done(){clearTimeout(t);try{delete window[cb]}catch(e){window[cb]=undefined}sc.remove()}
-  window[cb]=function(d){done();res(d)};var u=new URL(API);u.searchParams.set("page","member");Object.keys(params).forEach(function(k){u.searchParams.set(k,params[k])});u.searchParams.set("callback",cb);
-  sc.src=u.toString();sc.onerror=function(){done();rej(new Error("load"))};document.head.appendChild(sc);});}
+function jsonp(params){return DZ_API.jsonp("member",params,40000)}   // 共用 /js/dz-api.js（精簡 C）
 function loadScript(src){return new Promise(function(res,rej){var s=document.createElement("script");s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
 function loading(msg){$("#appBottom").innerHTML="";$("#app").innerHTML='<div class="loading"><div class="spinner"></div><p>'+esc(msg)+'</p></div>'}
 
@@ -193,10 +191,10 @@ function renderHome(stale){var d=S.data,m=d.member,up=d.upcoming,name=m.name||"�
     top+='<section class="card next" aria-labelledby="nh"><div class="next-top"><div><div class="eyebrow" id="nh">下一次諮詢</div><div class="when mono">'+esc(up.when)+'</div></div><span class="pill '+pillOf(up.status)+'">'+esc(up.status)+'</span></div>'+
      '<dl class="kv"><dt>訂單編號</dt><dd class="mono">'+esc(up.id)+'</dd><dt>方案</dt><dd>'+esc(up.title)+'</dd><dt>金額</dt><dd class="mono">'+money(up.amount)+(up.off?' <span class="muted">（專屬優惠已折抵 '+money(up.off)+'）</span>':'')+'</dd>'+
      (up.isLine?'<dt>進行方式</dt><dd>時間到了，大正會用 LINE 撥給你</dd>':'<dt>Google Meet</dt><dd>'+(up.meet?'<span class="mono">'+esc(up.meet)+'</span>':'<span class="muted">確認收到匯款後會出現在這裡</span>')+'</dd>')+'</dl>'+
-     (paid?'':'<div class="notice" style="margin-bottom:12px">請在訂單成立後 24 小時內完成匯款，匯款後按下面的按鈕回報末五碼。</div>')+
+     (paid?'':'<div class="notice" style="margin-bottom:12px">請在訂單成立後 '+((d.rules&&d.rules.payHours)||24)+' 小時內完成匯款，匯款後按下面的按鈕回報末五碼。</div>')+
      '<div class="actions">'+(up.meet?'<a class="btn btn-main btn-sm" href="'+esc(up.meet)+'" target="_blank" rel="noopener">進入 Google Meet</a>':'')+(up.cal?'<a class="btn btn-sm" href="'+esc(up.cal)+'" target="_blank" rel="noopener">加到行事曆</a>':'')+
      (up.pay?'<a class="btn btn-main btn-sm" href="'+esc(up.pay)+'">回報匯款</a>':'')+(up.resched?'<a class="btn btn-sm" href="'+esc(up.resched)+'">改期</a>':'')+'</div>'+
-     '<p class="muted" style="margin:10px 0 0">改期要在諮詢開始 24 小時前提出。</p></section>';}
+     '<p class="muted" style="margin:10px 0 0">改期要在諮詢開始 '+((d.rules&&d.rules.reschedHours)||24)+' 小時前提出。</p></section>';}
   top+='<button class="btn btn-main" id="rebook">'+(d.orders.length?'再預約一次（自動帶入上次資料）':'預約諮詢')+'</button></div>';
   var bottom='<div class="stack"><section class="card" aria-labelledby="oh"><div class="sec-h"><h2 id="oh">購買紀錄</h2><span class="muted">'+d.orders.length+' 筆</span></div>'+
    (d.orders.length?d.orders.map(function(o){return '<div class="order"><div style="min-width:0"><div class="id"><span class="mono">'+esc(o.id)+'</span><button type="button" data-copy="'+esc(o.id)+'">複製</button></div><div class="title">'+esc(o.title)+'</div><div class="muted mono">'+esc(o.when)+'</div></div>'+
