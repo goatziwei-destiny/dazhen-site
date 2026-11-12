@@ -253,7 +253,7 @@ function bindOnly(token){S.kind="line";S.token=token;loading("正在綁定訂單
     $("#app").innerHTML='<div class="card stack" style="text-align:center"><div style="font-size:44px;line-height:1">'+(ok?"✅":"⚠️")+'</div>'+
       '<h1 style="font-size:22px;margin:0">'+(ok?'訂單 <span style="white-space:nowrap">'+esc(b.id)+'</span> 已綁定你的 LINE':(b.status==="retry"?"暫時無法確認綁定結果":"沒有完成綁定"))+'</h1><p class="muted" style="margin:0">'+esc(msg)+'</p>'+
       '<div id="bindFriend"></div>'+
-      '<button class="btn btn-line" id="bClose">'+LINEICO+'回到 LINE</button>'+
+      '<button class="btn btn-line" id="bClose">'+LINEICO+'打開大正的 LINE 聊天室</button>'+
       (ok?'<p class="muted" id="bBack" style="margin:0;font-size:13px">完成了！可以直接關閉這個畫面，回到 LINE 聊天室。</p>':'')+
       '<button class="btn btn-ghost" id="bMine">查看我的預約</button>'+
       '<p class="muted" style="margin:0;font-size:13px">之後也可以在大正 LINE 的選單點「我的訂單」查看。</p></div>';
@@ -266,13 +266,12 @@ function bindOnly(token){S.kind="line";S.token=token;loading("正在綁定訂單
       $("#bindFriend").innerHTML='<a class="btn btn-line" href="'+esc(LINE_ADD)+'">'+LINEICO+'加入大正的 LINE 好友（才收得到通知）</a>'}).catch(function(){});
   }).catch(function(){useToken("line",token)});}   // 快速綁定逾時／網路錯：同樣交給完整會員中心再綁一次（GPT #9 11/8）
 
-// 回到大正的 LINE 聊天室（大正 11/12）：一律先開官方帳號連結（LINE 會直接打開跟大正的聊天室），再關掉這個畫面。
+// 回到大正的 LINE 聊天室（大正 11/12）：一律開官方帳號連結，LINE 會直接打開跟大正的聊天室。
 // 只用 closeWindow 的話，用相機掃 QR 打開的人會回到 LINE 首頁，不是聊天室。
 function backToLine(){var inClient=false;try{inClient=!!(window.liff&&liff.isInClient&&liff.isInClient())}catch(e){}
   var bb=$("#bBack");if(bb)bb.textContent="正在打開大正的 LINE 聊天室…";
-  location.href=LINE_ADD;
-  if(inClient)setTimeout(function(){try{liff.closeWindow()}catch(e){}},1500);
-  setTimeout(function(){if(document.visibilityState==="visible"&&bb)bb.textContent="如果沒有自動跳過去，請直接打開 LINE，訂單確認會出現在大正的聊天室。"},2500);}
+  location.href=LINE_ADD;   // 不再計時關閉畫面（GPT #46 P1：跳轉慢的話會先被關掉）；沒跳過去就按上面的按鈕再開一次
+  setTimeout(function(){if(document.visibilityState==="visible"&&bb)bb.textContent="如果沒有自動跳過去，請按上面的「打開大正的 LINE 聊天室」，訂單確認會出現在聊天室。"},2500);}
 
 // ---------- 開始 ----------
 var gt="";try{gt=sessionStorage.getItem("mb_gt")||""}catch(e){}
