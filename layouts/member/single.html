@@ -266,10 +266,13 @@ function bindOnly(token){S.kind="line";S.token=token;loading("正在綁定訂單
       $("#bindFriend").innerHTML='<a class="btn btn-line" href="'+esc(LINE_ADD)+'">'+LINEICO+'加入大正的 LINE 好友（才收得到通知）</a>'}).catch(function(){});
   }).catch(function(){useToken("line",token)});}   // 快速綁定逾時／網路錯：同樣交給完整會員中心再綁一次（GPT #9 11/8）
 
+// 回到大正的 LINE 聊天室（大正 11/12）：一律先開官方帳號連結（LINE 會直接打開跟大正的聊天室），再關掉這個畫面。
+// 只用 closeWindow 的話，用相機掃 QR 打開的人會回到 LINE 首頁，不是聊天室。
 function backToLine(){var inClient=false;try{inClient=!!(window.liff&&liff.isInClient&&liff.isInClient())}catch(e){}
-  if(inClient){try{liff.closeWindow()}catch(e){}}
-  // 1 秒後還在這一頁＝沒關掉（例如用相機掃 QR、在一般瀏覽器打開）：直接開大正的 LINE 官方帳號
-  setTimeout(function(){if(document.visibilityState==="visible"){var bb=$("#bBack");if(bb)bb.textContent="如果沒有自動跳回去，請直接打開 LINE，訂單確認會出現在大正的聊天室。";location.href=LINE_ADD}},1000);}
+  var bb=$("#bBack");if(bb)bb.textContent="正在打開大正的 LINE 聊天室…";
+  location.href=LINE_ADD;
+  if(inClient)setTimeout(function(){try{liff.closeWindow()}catch(e){}},1500);
+  setTimeout(function(){if(document.visibilityState==="visible"&&bb)bb.textContent="如果沒有自動跳過去，請直接打開 LINE，訂單確認會出現在大正的聊天室。"},2500);}
 
 // ---------- 開始 ----------
 var gt="";try{gt=sessionStorage.getItem("mb_gt")||""}catch(e){}
