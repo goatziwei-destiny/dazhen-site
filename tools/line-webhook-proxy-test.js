@@ -62,6 +62,13 @@ const crypto = require('crypto');
 
   reply = { status: 200, text: 'OK' }; const n0 = sent.length;
   r = await h(mk(null), ctx); t(r.status === 401 && sent.length === n0, '沒簽章：401、不存、不送');
+  { const st2 = { events: mkStore(), failed: mkStore() }, old = Date.now() - 31 * 86400000;
+    await st2.failed.set('old-ok', JSON.stringify({ why: 'rejected', alerted: true, at: old }));
+    await st2.failed.set('old-unalerted', JSON.stringify({ why: 'gave-up', alerted: false, at: old, sig: 's', raw: '' }));
+    await st2.failed.set('new', JSON.stringify({ why: 'rejected', alerted: true, at: Date.now() }));
+    const o2 = await runRetry(st2, 'https://script.google.com/macros/s/X/exec', async () => ({ status: 500, text: async () => 'ERR' }), Date.now());
+    const left = (await st2.failed.list()).blobs.map(b => b.key).sort().join(',');
+    t(o2.purged === 1 && left === 'new,old-unalerted', '失敗區超過 30 天、已提醒過的刪掉；還沒提醒成功的留著（' + left + '）'); }
   r = await h(mk(undefined, 'GET'), ctx); t(r.status === 405, 'GET：405');
   process.env.LINE_CHANNEL_SECRET = 's3cret'; r = await h(mk('bad'), ctx); t(r.status === 401, '有設 secret：簽章錯直接擋');
   delete process.env.LINE_CHANNEL_SECRET;

@@ -16,7 +16,11 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){ dataLayer.push(arguments); }
   gtag('js', new Date());
-  gtag('config', {{ . }});
+  // 網址只送路徑和 utm_ 參數（Fable P2）：改約、問卷、會員綁定、回頭客、優惠碼連結裡的憑證不要進 Google Analytics
+  (function () {
+    var keep = (location.search.slice(1).split('&').filter(function (kv) { return /^utm_/.test(kv); })).join('&');
+    gtag('config', {{ . }}, { page_location: location.origin + location.pathname + (keep ? '?' + keep : '') });
+  })();
   // 記錄事件；done（選填）會在事件送出後、或最多 1.3 秒後被呼叫一次
   window.dzTrack = function (name, params, done) {
     var called = false;
