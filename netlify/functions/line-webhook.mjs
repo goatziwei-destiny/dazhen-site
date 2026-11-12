@@ -10,7 +10,7 @@ import { DEFAULT_GAS, deliver, makeKey } from '../lib/line-relay.mjs';
 export function makeHandler(getStores, fetchFn) {
   return async (req, context) => {
     if (req.method !== 'POST') return new Response('Method Not Allowed', { status: 405 });
-    const gas = process.env.LINE_GAS_URL || DEFAULT_GAS, secret = process.env.LINE_CHANNEL_SECRET || '';
+    const gas = process.env.LINE_GAS_URL || DEFAULT_GAS, secret = process.env.LINE_CHANNEL_SECRET_ON === '1' ? (process.env.LINE_CHANNEL_SECRET || '') : '';   // 11/12 緊急：設好的密鑰對不上、真的 LINE 訊息也被擋，先關掉門口驗簽（Apps Script 那邊照樣必驗）；確認密鑰正確後在 Netlify 加 LINE_CHANNEL_SECRET_ON=1 再開
     const raw = Buffer.from(await req.arrayBuffer());
     const sig = String(req.headers.get('x-line-signature') || '');
     if (!sig) return new Response('no signature', { status: 401 });
