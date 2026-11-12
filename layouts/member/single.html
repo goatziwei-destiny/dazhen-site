@@ -146,7 +146,7 @@ var $=function(s){return document.querySelector(s)};
 var esc=function(x){return String(x==null?"":x).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
 var LINEICO='<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M12 3C6.5 3 2 6.6 2 11c0 3.9 3.5 7.2 8.3 7.9.3.1.8.2.9.5.1.3.1.7 0 1l-.1.8c0 .3-.2 1 .9.5s5.9-3.5 8-6C21.4 14.2 22 12.7 22 11c0-4.4-4.5-8-10-8z"/></svg>';
 function toast(t){var d=document.createElement("div");d.className="toast";d.setAttribute("role","status");d.textContent=t;document.body.appendChild(d);setTimeout(function(){d.remove()},3200)}
-function jsonp(params){return DZ_API.jsonp("member",params,40000)}   // 共用 /js/dz-api.js（精簡 C）
+function jsonp(params){var q=Object.assign({},params),pg=q.page||"member";delete q.page;return DZ_API.jsonp(pg,q,40000)}   // 共用 /js/dz-api.js；綁定時呼叫的是 lineBind／lineBindKick，不是 member（11/12 修：之前 page 被固定成 member，綁定後 LINE 確認要等背景排程）
 function loadScript(src){return new Promise(function(res,rej){var s=document.createElement("script");s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
 function loading(msg){$("#appBottom").innerHTML="";$("#app").innerHTML='<div class="loading"><div class="spinner"></div><p>'+esc(msg)+'</p></div>'}
 
