@@ -12,10 +12,12 @@ export async function runRetry(stores, gas, fetchFn, now) {
     const d = await deliver(stores, b.key, rec, gas, fetchFn); out[d]++; if (d === 'failed') justMoved.add(b.key);
   }
   // 放棄重送、但提醒還沒成功的（GPT 6787629598）：每次排程都再提醒，直到 Apps Script 收下
-  out.alerted = 0; out.alertPending = 0;
+  out.alerted = 0; out.alertPending = 0; out.purged = 0;
   const failed = await stores.failed.list();
   for (const b of failed.blobs) {
     const f = await stores.failed.get(b.key, { type: 'json' });
+    // 失敗區只留 30 天（Fable P2：LINE 訊息內容不要永久放在 Netlify）。提醒還沒成功的照樣留著，等大正收到
+    if (f && (f.alerted || f.why !== 'gave-up') && now - (f.at || 0) > 30 * 86400000) { await stores.failed.delete(b.key); out.purged++; continue; }
     if (!f || f.alerted || f.why !== 'gave-up' || justMoved.has(b.key)) continue;   // 這次剛移過去的已經提醒過一次
     if (now - (f.alertLast || 0) < 60 * 1000) { out.alertPending++; continue; }
     if (await retryAlert(stores, b.key, f, gas, fetchFn)) out.alerted++; else out.alertPending++;
