@@ -1,6 +1,6 @@
 // LINE Webhook 轉送（Codex #7；11/11 GPT 6787473251 改成先存再回）
 // 流程寫在 netlify/lib/line-relay.mjs 開頭。Netlify 的環境變數見下面。
-//   LINE_CHANNEL_SECRET：11/12 已在 Netlify 設定，門口先驗一次簽章，不對直接 401（假的請求不會進暫存、也不會吵大正）。
+//   LINE_CHANNEL_SECRET：11/12 已在 Netlify 設定（21:52 換成 Messaging API 頻道的 Channel secret），門口先驗一次簽章，不對直接 401。
 //   （選用）LINE_GAS_URL：改轉送目標。
 // Apps Script 已開啟必驗（LINE_SIG_REQUIRED），直接打 Apps Script、沒有簽章的請求一律不處理。
 // 要退回直連：Apps Script 指令碼屬性刪掉 LINE_SIG_REQUIRED，再把 LINE Webhook URL 改回 Apps Script 網址。
