@@ -70,7 +70,7 @@ const crypto = require('crypto');
     const left = (await st2.failed.list()).blobs.map(b => b.key).sort().join(',');
     t(o2.purged === 1 && left === 'new,old-unalerted', '失敗區超過 30 天、已提醒過的刪掉；還沒提醒成功的留著（' + left + '）'); }
   r = await h(mk(undefined, 'GET'), ctx); t(r.status === 405, 'GET：405');
-  process.env.LINE_CHANNEL_SECRET = 's3cret'; r = await h(mk('bad'), ctx); t(r.status === 401, '有設 secret：簽章錯直接擋');
+  process.env.LINE_CHANNEL_SECRET = 's3cret'; r = await h(mk('bad'), ctx); t(r.status !== 401, '只設 secret、沒開 LINE_CHANNEL_SECRET_ON：門口不擋（11/12 緊急關閉）'); process.env.LINE_CHANNEL_SECRET_ON = '1'; r = await h(mk('bad'), ctx); t(r.status === 401, '開了 LINE_CHANNEL_SECRET_ON：簽章錯直接擋'); delete process.env.LINE_CHANNEL_SECRET_ON;
   delete process.env.LINE_CHANNEL_SECRET;
   console.log(f ? '有 ' + f + ' 項沒過' : '全部通過'); process.exitCode = f ? 1 : 0;
 })();
