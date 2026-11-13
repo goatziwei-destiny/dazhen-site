@@ -93,6 +93,8 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 .svc-card.svc-card-v{grid-template-columns:minmax(0,480px) 300px;justify-content:space-between;gap:48px;align-items:center;padding-top:32px}
 .svc-card-v .price{font-size:30px}
 .svc-paper .svc-card.svc-card-v{padding-top:32px}
+.svc-card-v .svc-sub{font-size:14px;margin:0 0 14px}
+.yt-soon{cursor:default;display:flex;align-items:center;justify-content:center}.yt-soon img{object-fit:contain;padding:18px 18px 46px}.yt-soon span{position:absolute;left:0;right:0;bottom:16px;text-align:center;color:#e3c38f;font-size:13px;letter-spacing:2px}
 .svc-line{display:block;text-align:center;margin-top:12px;font-size:14px;font-weight:700;color:var(--warm);text-decoration:none}
 @media(max-width:768px){.svc-card.svc-card-v{grid-template-columns:1fr;gap:20px}.svc-card-v .svc-vid{max-width:300px;width:100%;margin:0 auto;order:-1}}
 /* 預約流程：影片＋一條直線 1～5 點 */
@@ -130,6 +132,12 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 .more{display:inline-block;margin-top:22px;font-weight:700;color:var(--accent-d);border-bottom:2px solid currentColor;padding-bottom:1px}
 @media(max-width:768px){.about-inner{grid-template-columns:1fr;gap:20px}.about-photo{display:flex;align-items:center;gap:14px;text-align:left}.about-photo img,.about-photo .ph{width:84px;height:84px;margin:0;font-size:36px}.dd,.fit{grid-template-columns:1fr}}
 .first-intro{color:var(--body);max-width:40em;margin-bottom:30px}
+.first-wrap{display:grid;grid-template-columns:minmax(0,640px) 300px;justify-content:space-between;gap:48px;align-items:start}
+.first-prep{background:#fff;border-radius:16px;padding:22px 22px 20px;box-shadow:0 2px 12px rgba(0,0,0,.05);position:sticky;top:96px}
+.fp-title{font-size:16px;font-weight:700;margin-bottom:10px}.first-prep ul{list-style:none;margin:0 0 18px;padding:0;display:grid;gap:10px}
+.first-prep li{font-size:14px;line-height:1.7;color:var(--body);padding-left:22px;position:relative}.first-prep li::before{content:"✓";position:absolute;left:0;color:var(--warm);font-weight:700}
+.first-prep .btn{display:block;text-align:center}
+@media(max-width:768px){.first-wrap{grid-template-columns:1fr;gap:20px}.first-prep{position:static}}
 .first-list{list-style:none;max-width:760px;position:relative;display:grid;gap:22px}
 .first-list::before{content:"";position:absolute;left:19px;top:20px;bottom:20px;width:2px;background:rgba(27,40,69,.12)}
 .first-item{display:grid;grid-template-columns:40px 1fr;gap:16px;position:relative}
@@ -359,14 +367,14 @@ const SITE = {
   servicePriceUnit: "每次 60 分鐘",
   serviceDetail: "⏱ 60 分鐘，時間內不限題數<br>💻 語音通話：Google Meet 或 LINE（選 LINE，時間到由大正撥給你）<br>📷 想一起看面相：事先傳一張正面、兩張側面照片（露出額頭和左右耳朵，可以素顏最好）；不傳也可以",
 
-  // ── 文字版諮詢（先做好、暫不顯示；要上線時把 config.toml 的 showTextService 改成 true）──
+  // ── 文字版諮詢（config.toml 的 showTextService 控制是否顯示）──
   textServiceLabel: "文字版諮詢",
   textServiceTitle: "用文字慢慢問，回覆可以反覆看",
   textServiceDesc: "適合不方便通話、講話會緊張，或想把回答留下來慢慢看的人。你用文字寫下想問的事，我看完命盤後，用文字一題一題回覆。",
-  textServicePrice: "價格待定",
-  textServicePriceUnit: "上線前公布",
-  textServiceDetail: "✍️ 文字提問、文字回覆<br>💬 透過 LINE 傳訊息進行，不用另外約時段",
-  textServiceBtn: "用 LINE 詢問文字版諮詢",
+  textServicePrice: "NT$990",
+  textServicePriceUnit: "每次最多 2 題，每題 500 字內",
+  textServiceDetail: "✍️ 在預約表單寫下問題（最多 2 題，每題 500 字內），不用約時段、不通話<br>⏳ 確認收款後 7-10 個工作天內，用文字回覆到你的 Email<br>📲 預約後掃描 QR Code 綁定 LINE，匯款末五碼在網頁或 LINE 都能回報，完成會同步通知<br>🕐 要填確定的出生時間（文字版不核對過去發生的事）<br>↩️ 付款後 7 天內、我還沒開始撰寫，可以退款；沒有改約、遲到的問題",
+  textServiceBtn: "預約文字版諮詢",
 
   // ── 第一次諮詢怎麼進行 ──
   firstIntro: "第一次找人算命，會緊張很正常。這一小時大概是這樣進行的，你不用先做任何功課。",
@@ -377,6 +385,8 @@ const SITE = {
     { when: "快結束時", title: "整理重點和下一步", desc: "整理今天的重點、你的選項，和下一步可以先做的事。" },
     { when: "諮詢後", title: "一份簡短的回饋問卷", desc: "會收到一份簡短問卷，要不要公開感想由你決定。" },
   ],
+
+  firstPrep: ["西元出生年月日和時間（要到分鐘）", "最在意的一兩件事（想不清楚也沒關係，當天一起整理）", "想看面相：一張正面、兩張側面照片（選填，不另收費）"],
 
   firstAgenda: "你最想問的事\n目前的大限\n今年流年\n本命盤",
   firstAgendaStep: 3,
@@ -411,6 +421,8 @@ const SITE = {
     { q: "可以問家人或伴侶的事嗎？", a: "可以，表單最多填 5 位。問別人的事，從你的觀察和你們的互動談起；非本人的盤請先取得同意（家人、伴侶除外）。" },
     { q: "我在國外出生，或是雙胞胎，可以諮詢嗎？", a: "可以。國外出生請填出生國家和城市（要換算時區）；雙胞胎請勾選並寫出生順序。" },
     { q: "我說的事會保密嗎？", a: "會。資料只用在這次諮詢，不公開、不給別人；未經你同意，不會把你的例子寫進文章。詳見隱私權政策。" },
+    { q: "文字版諮詢跟一對一有什麼差別？", a: "文字版不通話：你在預約表單寫下最多 2 個問題（每題 500 字內），我看完命盤後用文字回覆，確認收款後 7-10 個工作天內寄到你的 Email。適合不方便講話、想把回答留下來慢慢看的人。因為不核對過去發生的事，要填確定的出生時間。" },
+    { q: "文字版諮詢可以退款嗎？", a: "付款後 7 天內、而且我還沒開始撰寫，可以申請退款。文字版沒有指定時段，所以沒有改約和遲到的問題；已經開始撰寫或已回覆，就無法退款。" },
     { q: "你能保證結果嗎？", a: "不能。命盤幫你看清傾向、時機和選項；健康、法律、財務的事，請同時找專業協助。" },
   ],
 
@@ -485,6 +497,7 @@ function lines_(t) { return String(t || '').split(/\n|<br\s*\/?>/i).map(function
 var LINE_ATTR = ' target="_blank" rel="noopener" data-line';
 // 介紹影片（大正 11/10 上傳到 YouTube「大正-紫微命理」頻道）
 var VIDEO_VOICE = 'WTGYqHe9-nA', VIDEO_LINE_BOOK = '7ism5VDFHRo';
+var VIDEO_TEXT = '';   // 文字版介紹影片：之後貼上 YouTube 影片 ID，這裡就會換成影片（空的時候顯示「製作中」圖）
 function ytLite(id, ratio, label) {
   // 11/11 大正：手機上原本要點兩次（第一次載入播放器、第二次才播），改成直接放 YouTube 播放器（捲到附近才載入），點一次就播。
   // 影片從 YouTube 播，不吃網站流量；用 youtube-nocookie 網域。
@@ -561,9 +574,11 @@ function renderSite(S) {
     '<a href="/booking/" class="btn btn-primary">預約一對一語音諮詢</a><a class="svc-line" href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + '>或加 LINE 預約／先問問題 →</a></div>' +
     '<div class="svc-vid">' + ytLite(VIDEO_VOICE, 'r916', '30 秒看懂一對一語音諮詢') + '</div></div>' +
     (SHOW_TEXT_SERVICE ?
-    '<div class="svc-card"><div><div class="svc-label">' + esc(S.textServiceLabel||'') + '</div><h3>' + esc(S.textServiceTitle||'') + '</h3><p>' + esc(S.textServiceDesc||'') + '</p></div>' +
-    '<div><div class="price">' + esc(S.textServicePrice||'') + '</div><div class="price-unit">' + esc(S.textServicePriceUnit||'') + '</div>' + renderServiceDetail(S.textServiceDetail||'') +
-    '<a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-warm">' + esc(S.textServiceBtn||'用 LINE 詢問') + '</a></div></div>' : '') +
+    '<div class="svc-card svc-card-v"><div style="min-width:0"><div class="svc-label">' + esc(S.textServiceLabel||'') + '</div><h3>' + esc(S.textServiceTitle||'') + '</h3>' +
+    '<p class="svc-sub">' + esc(S.textServiceDesc||'') + '</p>' +
+    '<div class="price">' + esc(S.textServicePrice||'') + '</div><div class="price-unit">' + esc(S.textServicePriceUnit||'') + '</div>' + renderServiceDetail(S.textServiceDetail||'') +
+    '<a href="/booking/" class="btn btn-warm">' + esc(S.textServiceBtn||'預約文字版諮詢') + '</a><a class="svc-line" href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + '>或加 LINE 先問問題 →</a></div>' +
+    '<div class="svc-vid">' + (VIDEO_TEXT ? ytLite(VIDEO_TEXT, 'r916', '看懂文字版諮詢') : '<div class="yt r916 yt-soon"><img src="/images/mingshu/book-closed.webp" alt=""><span>介紹影片製作中</span></div>') + '</div></div>' : '') +
   '</div>' +
 '</div></section>' +
 
@@ -571,12 +586,14 @@ function renderSite(S) {
 '<section id="first-time" class="sec section-light" style="padding-top:0"><div class="container">' +
   '<div class="eyebrow">FIRST TIME</div><h2 class="section-title">第一次諮詢怎麼進行</h2>' +
   (S.firstIntro ? '<p class="first-intro"' + dk('firstIntro') + '>' + esc(S.firstIntro) + '</p>' : '') +
-  '<ol class="first-list">' + S.firstSteps.map(function (f, i) {
+  '<div class="first-wrap"><ol class="first-list">' + S.firstSteps.map(function (f, i) {
     return '<li class="first-item"><div class="first-num">' + (i + 1) + '</div><div class="first-body">' + (f.when ? '<div class="first-when"' + dk(f.n && 'first' + f.n + 'When') + '>' + esc(f.when) + '</div>' : '') +
       '<div class="first-title"' + dk(f.n && 'first' + f.n + 'Title') + '>' + esc(f.title) + '</div>' + (f.desc ? '<div class="first-desc"' + dk(f.n && 'first' + f.n + 'Desc') + '>' + esc(f.desc) + '</div>' : '') +
       (agenda.length && i + 1 === agendaStep ? '<ol class="agenda"' + dk('firstAgenda') + '>' + agenda.map(function (a, j) { return '<li><b>' + (j + 1) + '</b>' + esc(a) + '</li>'; }).join('') + '</ol>' : '') +
       '</div></li>';
   }).join('') + '</ol>' +
+  '<aside class="first-prep"><div class="fp-title">第一次來，先準備這幾樣</div><ul>' + (S.firstPrep||[]).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' +
+  '<a href="/booking/" class="btn btn-primary">預約諮詢</a></aside></div>' +
 '</div></section>' : '') +
 
 '<section id="process" class="sec section-white"><div class="container">' +
