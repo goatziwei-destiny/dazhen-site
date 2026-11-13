@@ -153,7 +153,7 @@ p,li,small,.note,.pay-bank,.method-note,.notice-box{text-wrap:pretty}
     show('main', false); show('done', true);
     var bound = !!((r && r.lineBound) || (info && info.lineBound));   // 大正 11/11：已綁定 LINE 的客人不再顯示加 LINE 的 QR Code
     $('doneText').textContent = info && info.isText
-      ? '請靜待 ' + ((info && info.replyText) || '7-10 個工作天') + '，文字版回覆會使用 Email 通知' + (bound ? '，LINE 也會同時通知。' : '，綁定 LINE@ 帳號會同步使用 LINE 訊息通知。')
+      ? '請靜待 ' + ((info && info.replyText) || '7-10 個工作天') + '，文字版回覆會使用 Email 通知' + (bound ? '，LINE 也會同時通知。' : '，綁定 LINE 帳號會同步使用 LINE 訊息通知。')
       : (bound ? '大正確認收款後，會用 LINE 和 Email 通知你「預約成功」。' : '匯款後 24 小時內，你會收到「預約成功」的通知信\n請留意 Email 信箱。');
     var ex = $('doneExtra'); ex.innerHTML = '';
     if (!bound && info && info.isLineVoice && !info.isText) {   // 大正 11/11：LINE 語音還沒綁定 LINE → 醒目提醒，不然諮詢時大正打不了 LINE
@@ -181,7 +181,7 @@ p,li,small,.note,.pay-bank,.method-note,.notice-box{text-wrap:pretty}
   function lineScreen() {
     // 不依裝置判斷：綠色「開啟 LINE」按鈕、QR Code、複製訂單編號鈕，一律同時顯示（手機點按鈕，電腦掃 QR Code 或複製）
     var box = document.createElement('div'); box.className = 'invite';
-    var h = document.createElement('p'); h.innerHTML = '<b></b>'; h.querySelector('b').textContent = '加入 LINE@ 綁定訂單編號\n透過 LINE 修改訂單資訊更便利'; box.appendChild(h);
+    var h = document.createElement('p'); h.innerHTML = '<b></b>'; h.querySelector('b').textContent = '加入 LINE 綁定訂單編號\n透過 LINE 修改訂單資訊更便利'; box.appendChild(h);
     var copy = '大正，我的訂單編號是' + O;
     var wrap = document.createElement('div'); wrap.className = 'qrwrap';
     var qr = document.createElement('div'); qr.id = 'qrBox'; wrap.appendChild(qr); box.appendChild(wrap);

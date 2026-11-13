@@ -193,8 +193,8 @@ function renderHome(stale){var d=S.data,m=d.member,up=d.upcoming,name=m.name||"�
      (up.isLine?'<dt>進行方式</dt><dd>時間到了，大正會用 LINE 撥給你</dd>':'<dt>Google Meet</dt><dd>'+(up.meet?'<span class="mono">'+esc(up.meet)+'</span>':'<span class="muted">確認收到匯款後會出現在這裡</span>')+'</dd>')+'</dl>'+
      (paid?'':'<div class="notice" style="margin-bottom:12px">請在訂單成立後 '+((d.rules&&d.rules.payHours)||24)+' 小時內完成匯款，匯款後按下面的按鈕回報末五碼。</div>')+
      '<div class="actions">'+(up.meet?'<a class="btn btn-main btn-sm" href="'+esc(up.meet)+'" target="_blank" rel="noopener">進入 Google Meet</a>':'')+(up.cal?'<a class="btn btn-sm" href="'+esc(up.cal)+'" target="_blank" rel="noopener">加到行事曆</a>':'')+
-     (up.pay?'<a class="btn btn-main btn-sm" href="'+esc(up.pay)+'">回報匯款</a>':'')+(up.resched?'<a class="btn btn-sm" href="'+esc(up.resched)+'">改期</a>':'')+'</div>'+
-     '<p class="muted" style="margin:10px 0 0">改期要在諮詢開始 '+((d.rules&&d.rules.reschedHours)||24)+' 小時前提出。</p></section>';}
+     (up.pay?'<a class="btn btn-main btn-sm" href="'+esc(up.pay)+'">回報匯款</a>':'')+(up.resched?'<a class="btn btn-sm" href="'+esc(up.resched)+'">改約</a>':'')+'</div>'+
+     '<p class="muted" style="margin:10px 0 0">改約要在諮詢開始 '+((d.rules&&d.rules.reschedHours)||24)+' 小時前提出。</p></section>';}
   top+='<button class="btn btn-main" id="rebook">'+(d.orders.length?'再預約一次（自動帶入上次資料）':'預約諮詢')+'</button></div>';
   var bottom='<div class="stack"><section class="card" aria-labelledby="oh"><div class="sec-h"><h2 id="oh">購買紀錄</h2><span class="muted">'+d.orders.length+' 筆</span></div>'+
    (d.orders.length?d.orders.map(function(o){return '<div class="order"><div style="min-width:0"><div class="id"><span class="mono">'+esc(o.id)+'</span><button type="button" data-copy="'+esc(o.id)+'">複製</button></div><div class="title">'+esc(o.title)+'</div><div class="muted mono">'+esc(o.when)+'</div></div>'+
