@@ -132,11 +132,20 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 .more{display:inline-block;margin-top:22px;font-weight:700;color:var(--accent-d);border-bottom:2px solid currentColor;padding-bottom:1px}
 @media(max-width:768px){.about-inner{grid-template-columns:1fr;gap:20px}.about-photo{display:flex;align-items:center;gap:14px;text-align:left}.about-photo img,.about-photo .ph{width:84px;height:84px;margin:0;font-size:36px}.dd,.fit{grid-template-columns:1fr}}
 .first-intro{color:var(--body);max-width:40em;margin-bottom:30px}
+.first-label{display:inline-block;background:var(--navy);color:#fff;font-size:12px;font-weight:700;letter-spacing:2px;padding:3px 12px;border-radius:999px;margin:6px 0 16px}.first-hr{border:0;border-top:1px dashed rgba(27,40,69,.25);margin:44px 0 28px}
+/* A 橫向五格 */.first-h{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;position:relative}
+.first-h::before{content:"";position:absolute;left:20px;right:20px;top:19px;height:2px;background:rgba(27,40,69,.14)}
+.fh-item{position:relative}.fh-item .first-num{margin-bottom:12px}
+.fh-body{background:#fff;border-radius:14px;padding:12px 14px 14px;box-shadow:0 2px 10px rgba(0,0,0,.04);height:calc(100% - 52px)}
+.fh-body .first-desc{font-size:13.5px;line-height:1.7}.fh-body .agenda{grid-template-columns:1fr;margin-top:10px}.fh-body .agenda li{white-space:normal}
+@media(max-width:900px){.first-h{grid-template-columns:1fr;gap:12px}.first-h::before{display:none}.fh-item{display:grid;grid-template-columns:40px 1fr;gap:14px}.fh-item .first-num{margin:0}.fh-body{height:auto}}
+/* B 時間軸＋右圖 */.first-fig{margin:0;position:sticky;top:96px}.first-fig img{width:100%;border-radius:16px;display:block;box-shadow:0 2px 14px rgba(0,0,0,.08)}.first-fig figcaption{font-size:13px;color:var(--text-muted);text-align:center;margin-top:8px}
+/* C 收合清單 */.first-acc{max-width:760px;display:grid;gap:8px}.fa-item{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.fa-item summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:10px 16px}.fa-item summary::-webkit-details-marker{display:none}
+.fa-item summary::after{content:"+";margin-left:auto;font-size:20px;color:var(--accent)}.fa-item[open] summary::after{content:"–"}
+.fa-item .first-num{width:30px;height:30px;font-size:14px;flex:0 0 30px}.fa-when{font-size:12px;font-weight:700;color:var(--warm);letter-spacing:1px;min-width:4.5em}.fa-t{font-weight:700;font-size:16px}
+.fa-body{padding:0 16px 14px 58px}
 .first-wrap{display:grid;grid-template-columns:minmax(0,640px) 300px;justify-content:space-between;gap:48px;align-items:start}
-.first-prep{background:#fff;border-radius:16px;padding:22px 22px 20px;box-shadow:0 2px 12px rgba(0,0,0,.05);position:sticky;top:96px}
-.fp-title{font-size:16px;font-weight:700;margin-bottom:10px}.first-prep ul{list-style:none;margin:0 0 18px;padding:0;display:grid;gap:10px}
-.first-prep li{font-size:14px;line-height:1.7;color:var(--body);padding-left:22px;position:relative}.first-prep li::before{content:"✓";position:absolute;left:0;color:var(--warm);font-weight:700}
-.first-prep .btn{display:block;text-align:center}
 @media(max-width:768px){.first-wrap{grid-template-columns:1fr;gap:20px}.first-prep{position:static}}
 .first-list{list-style:none;max-width:760px;position:relative;display:grid;gap:22px}
 .first-list::before{content:"";position:absolute;left:19px;top:20px;bottom:20px;width:2px;background:rgba(27,40,69,.12)}
@@ -386,7 +395,6 @@ const SITE = {
     { when: "諮詢後", title: "一份簡短的回饋問卷", desc: "會收到一份簡短問卷，要不要公開感想由你決定。" },
   ],
 
-  firstPrep: ["西元出生年月日和時間（要到分鐘）", "最在意的一兩件事（想不清楚也沒關係，當天一起整理）", "想看面相：一張正面、兩張側面照片（選填，不另收費）"],
 
   firstAgenda: "你最想問的事\n目前的大限\n今年流年\n本命盤",
   firstAgendaStep: 3,
@@ -497,7 +505,7 @@ function lines_(t) { return String(t || '').split(/\n|<br\s*\/?>/i).map(function
 var LINE_ATTR = ' target="_blank" rel="noopener" data-line';
 // 介紹影片（大正 11/10 上傳到 YouTube「大正-紫微命理」頻道）
 var VIDEO_VOICE = 'WTGYqHe9-nA', VIDEO_LINE_BOOK = '7ism5VDFHRo';
-var VIDEO_TEXT = '';   // 文字版介紹影片：之後貼上 YouTube 影片 ID，這裡就會換成影片（空的時候顯示「製作中」圖）
+var VIDEO_TEXT = 'Ea43vqiVgf0';   // 文字版介紹影片（Shorts）；空的時候會顯示「製作中」圖
 function ytLite(id, ratio, label) {
   // 11/11 大正：手機上原本要點兩次（第一次載入播放器、第二次才播），改成直接放 YouTube 播放器（捲到附近才載入），點一次就播。
   // 影片從 YouTube 播，不吃網站流量；用 youtube-nocookie 網域。
@@ -514,6 +522,42 @@ if (typeof document !== 'undefined' && document.addEventListener) document.addEv
   }
 });
 
+
+// ── 第一次諮詢：三種排法（?first=a／b／c／all 預覽；沒帶參數用 FIRST_DEFAULT）──
+var FIRST_DEFAULT = 'a';
+function firstStepBody_(S, f, agenda, agendaStep, i) {
+  return (f.when ? '<div class="first-when"' + dk(f.n && 'first' + f.n + 'When') + '>' + esc(f.when) + '</div>' : '') +
+    '<div class="first-title"' + dk(f.n && 'first' + f.n + 'Title') + '>' + esc(f.title) + '</div>' + (f.desc ? '<div class="first-desc"' + dk(f.n && 'first' + f.n + 'Desc') + '>' + esc(f.desc) + '</div>' : '') +
+    (agenda.length && i + 1 === agendaStep ? '<ol class="agenda"' + dk('firstAgenda') + '>' + agenda.map(function (a, j) { return '<li><b>' + (j + 1) + '</b>' + esc(a) + '</li>'; }).join('') + '</ol>' : '');
+}
+function firstVariant_(v, S, agenda, agendaStep) {
+  var st = S.firstSteps || [];
+  if (v === 'b') {   // B：直式時間軸＋右邊一張圖（沒有按鈕、沒有重複的準備清單）
+    return '<div class="first-wrap"><ol class="first-list">' + st.map(function (f, i) {
+      return '<li class="first-item"><div class="first-num">' + (i + 1) + '</div><div class="first-body">' + firstStepBody_(S, f, agenda, agendaStep, i) + '</div></li>';
+    }).join('') + '</ol><figure class="first-fig"><img src="/images/uploads/birth-chart-habits-and-change-watercolor-v6.png" alt="" loading="lazy"><figcaption>先把命盤排好，當天直接進入重點</figcaption></figure></div>';
+  }
+  if (v === 'c') {   // C：收合清單，點一下展開；第一項預設打開
+    return '<div class="first-acc">' + st.map(function (f, i) {
+      return '<details class="fa-item"' + (i === 0 ? ' open' : '') + '><summary><span class="first-num">' + (i + 1) + '</span><span class="fa-when">' + esc(f.when || '') + '</span><span class="fa-t">' + esc(f.title) + '</span></summary><div class="fa-body">' +
+        (f.desc ? '<div class="first-desc">' + esc(f.desc) + '</div>' : '') + (agenda.length && i + 1 === agendaStep ? '<ol class="agenda">' + agenda.map(function (a, j) { return '<li><b>' + (j + 1) + '</b>' + esc(a) + '</li>'; }).join('') + '</ol>' : '') + '</div></details>';
+    }).join('') + '</div>';
+  }
+  // A：橫向五格
+  return '<ol class="first-h">' + st.map(function (f, i) {
+    return '<li class="fh-item"><div class="first-num">' + (i + 1) + '</div><div class="fh-body">' + firstStepBody_(S, f, agenda, agendaStep, i) + '</div></li>';
+  }).join('') + '</ol>';
+}
+function firstBlock_(S, agenda, agendaStep) {
+  if (!(S.firstSteps || []).length) return '';
+  var q = ''; try { q = new URLSearchParams(location.search).get('first') || ''; } catch (e) {}
+  var head = '<div class="eyebrow">FIRST TIME</div><h2 class="section-title">第一次諮詢怎麼進行</h2>' + (S.firstIntro ? '<p class="first-intro"' + dk('firstIntro') + '>' + esc(S.firstIntro) + '</p>' : '');
+  var body;
+  if (q === 'all') {
+    body = ['a', 'b', 'c'].map(function (v) { return '<div class="first-label">方案 ' + v.toUpperCase() + '</div>' + firstVariant_(v, S, agenda, agendaStep); }).join('<hr class="first-hr">');
+  } else body = firstVariant_(/^[abc]$/.test(q) ? q : FIRST_DEFAULT, S, agenda, agendaStep);
+  return '<section id="first-time" class="sec section-light"><div class="container">' + head + body + '</div></section>';
+}
 function renderSite(S) {
   document.title = S.siteTitle || '';
   try { document.querySelector('meta[name="description"]').content = S.siteDescription || ''; } catch(e){}
@@ -582,19 +626,7 @@ function renderSite(S) {
   '</div>' +
 '</div></section>' +
 
-((S.firstSteps||[]).length ?
-'<section id="first-time" class="sec section-light"><div class="container">' +
-  '<div class="eyebrow">FIRST TIME</div><h2 class="section-title">第一次諮詢怎麼進行</h2>' +
-  (S.firstIntro ? '<p class="first-intro"' + dk('firstIntro') + '>' + esc(S.firstIntro) + '</p>' : '') +
-  '<div class="first-wrap"><ol class="first-list">' + S.firstSteps.map(function (f, i) {
-    return '<li class="first-item"><div class="first-num">' + (i + 1) + '</div><div class="first-body">' + (f.when ? '<div class="first-when"' + dk(f.n && 'first' + f.n + 'When') + '>' + esc(f.when) + '</div>' : '') +
-      '<div class="first-title"' + dk(f.n && 'first' + f.n + 'Title') + '>' + esc(f.title) + '</div>' + (f.desc ? '<div class="first-desc"' + dk(f.n && 'first' + f.n + 'Desc') + '>' + esc(f.desc) + '</div>' : '') +
-      (agenda.length && i + 1 === agendaStep ? '<ol class="agenda"' + dk('firstAgenda') + '>' + agenda.map(function (a, j) { return '<li><b>' + (j + 1) + '</b>' + esc(a) + '</li>'; }).join('') + '</ol>' : '') +
-      '</div></li>';
-  }).join('') + '</ol>' +
-  '<aside class="first-prep"><div class="fp-title">第一次來，先準備這幾樣</div><ul>' + (S.firstPrep||[]).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' +
-  '<a href="/booking/" class="btn btn-primary">預約諮詢</a></aside></div>' +
-'</div></section>' : '') +
+firstBlock_(S, agenda, agendaStep) +
 
 '<section id="process" class="sec section-white"><div class="container">' +
   '<div class="eyebrow">PROCESS</div><h2 class="section-title">預約流程</h2>' +
