@@ -359,14 +359,14 @@ const SITE = {
   servicePriceUnit: "每次 60 分鐘",
   serviceDetail: "⏱ 60 分鐘，時間內不限題數<br>💻 語音通話：Google Meet 或 LINE（選 LINE，時間到由大正撥給你）<br>📷 想一起看面相：事先傳一張正面、兩張側面照片（露出額頭和左右耳朵，可以素顏最好）；不傳也可以",
 
-  // ── 文字版諮詢（先做好、暫不顯示；要上線時把 config.toml 的 showTextService 改成 true）──
+  // ── 文字版諮詢（config.toml 的 showTextService 控制是否顯示）──
   textServiceLabel: "文字版諮詢",
   textServiceTitle: "用文字慢慢問，回覆可以反覆看",
   textServiceDesc: "適合不方便通話、講話會緊張，或想把回答留下來慢慢看的人。你用文字寫下想問的事，我看完命盤後，用文字一題一題回覆。",
-  textServicePrice: "價格待定",
-  textServicePriceUnit: "上線前公布",
-  textServiceDetail: "✍️ 文字提問、文字回覆<br>💬 透過 LINE 傳訊息進行，不用另外約時段",
-  textServiceBtn: "用 LINE 詢問文字版諮詢",
+  textServicePrice: "NT$990",
+  textServicePriceUnit: "每次最多 2 題，每題 500 字內",
+  textServiceDetail: "✍️ 在預約表單寫下問題（最多 2 題，每題 500 字內），不用約時段、不通話<br>⏳ 確認收款後 7-10 個工作天內，用文字回覆到你的 Email<br>📩 加入 LINE 並傳訂單編號，會同步收到完成通知<br>🕐 要填確定的出生時間（文字版不核對過去發生的事）<br>↩️ 付款後 7 天內、我還沒開始撰寫，可以退款；沒有改約、遲到的問題",
+  textServiceBtn: "預約文字版諮詢",
 
   // ── 第一次諮詢怎麼進行 ──
   firstIntro: "第一次找人算命，會緊張很正常。這一小時大概是這樣進行的，你不用先做任何功課。",
@@ -411,6 +411,8 @@ const SITE = {
     { q: "可以問家人或伴侶的事嗎？", a: "可以，表單最多填 5 位。問別人的事，從你的觀察和你們的互動談起；非本人的盤請先取得同意（家人、伴侶除外）。" },
     { q: "我在國外出生，或是雙胞胎，可以諮詢嗎？", a: "可以。國外出生請填出生國家和城市（要換算時區）；雙胞胎請勾選並寫出生順序。" },
     { q: "我說的事會保密嗎？", a: "會。資料只用在這次諮詢，不公開、不給別人；未經你同意，不會把你的例子寫進文章。詳見隱私權政策。" },
+    { q: "文字版諮詢跟一對一有什麼差別？", a: "文字版不通話：你在預約表單寫下最多 2 個問題（每題 500 字內），我看完命盤後用文字回覆，確認收款後 7-10 個工作天內寄到你的 Email。適合不方便講話、想把回答留下來慢慢看的人。因為不核對過去發生的事，要填確定的出生時間。" },
+    { q: "文字版諮詢可以退款嗎？", a: "付款後 7 天內、而且我還沒開始撰寫，可以申請退款。文字版沒有指定時段，所以沒有改約和遲到的問題；已經開始撰寫或已回覆，就無法退款。" },
     { q: "你能保證結果嗎？", a: "不能。命盤幫你看清傾向、時機和選項；健康、法律、財務的事，請同時找專業協助。" },
   ],
 
@@ -563,7 +565,7 @@ function renderSite(S) {
     (SHOW_TEXT_SERVICE ?
     '<div class="svc-card"><div><div class="svc-label">' + esc(S.textServiceLabel||'') + '</div><h3>' + esc(S.textServiceTitle||'') + '</h3><p>' + esc(S.textServiceDesc||'') + '</p></div>' +
     '<div><div class="price">' + esc(S.textServicePrice||'') + '</div><div class="price-unit">' + esc(S.textServicePriceUnit||'') + '</div>' + renderServiceDetail(S.textServiceDetail||'') +
-    '<a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-warm">' + esc(S.textServiceBtn||'用 LINE 詢問') + '</a></div></div>' : '') +
+    '<a href="/booking/" class="btn btn-warm">' + esc(S.textServiceBtn||'預約文字版諮詢') + '</a><a class="svc-line" href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + '>或加 LINE 先問問題 →</a></div></div>' : '') +
   '</div>' +
 '</div></section>' +
 
