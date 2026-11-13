@@ -583,7 +583,7 @@ function renderSite(S) {
 '</div></section>' +
 
 ((S.firstSteps||[]).length ?
-'<section id="first-time" class="sec section-light" style="padding-top:0"><div class="container">' +
+'<section id="first-time" class="sec section-light"><div class="container">' +
   '<div class="eyebrow">FIRST TIME</div><h2 class="section-title">第一次諮詢怎麼進行</h2>' +
   (S.firstIntro ? '<p class="first-intro"' + dk('firstIntro') + '>' + esc(S.firstIntro) + '</p>' : '') +
   '<div class="first-wrap"><ol class="first-list">' + S.firstSteps.map(function (f, i) {
