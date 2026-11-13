@@ -119,7 +119,7 @@
     var origin;
     try { origin = new URL(event.origin); } catch (_) { return; }
     if (origin.protocol !== 'https:' || !/^(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(origin.hostname)) return;
-    if (!/^GR\d{8}-\d{2}$/.test(data.batchId) || !/^@[a-zA-Z0-9._-]+$/.test(data.basicId)) return;
+    if (!/^GRW?\d{8}-\d{2}$/.test(data.batchId) || !/^@[a-zA-Z0-9._-]+$/.test(data.basicId)) return;
     redirected = true;
     try { sessionStorage.removeItem('dz_code'); } catch (_) {}   // 優惠碼用掉了，這個分頁之後再預約不再自動帶
     busyOv_(false);
@@ -131,7 +131,7 @@
     // 選 Google Meet／文字版（flow=email）：客人留在預約成功頁，在網頁回報匯款，不用加 LINE。
     // 選 LINE 語音：手機直接開 LINE 綁定這筆訂單；電腦不跳轉，成功頁上就有 QR Code。
     // 有「LINE 登入綁定」連結（表單 11/8 起會帶）就用它：開 LINE → 登入 → 這筆訂單直接綁定，順便問要不要加好友，客人不用再傳訂單編號。
-    var bind = (typeof data.bindUrl === 'string' && /^https:\/\/liff\.line\.me\/[0-9A-Za-z-]+\?bind=GR\d{8}-\d{2}&bt=[0-9a-f]{24}$/.test(data.bindUrl) && data.bindUrl.indexOf('bind=' + data.batchId + '&') > 0) ? data.bindUrl : '';
+    var bind = (typeof data.bindUrl === 'string' && /^https:\/\/liff\.line\.me\/[0-9A-Za-z-]+\?bind=GRW?\d{8}-\d{2}&bt=[0-9a-f]{24}$/.test(data.bindUrl) && data.bindUrl.indexOf('bind=' + data.batchId + '&') > 0) ? data.bindUrl : '';
     // 沒有可用的綁定連結（舊版表單、格式不對）：不自動跳走，讓客人留在成功頁，那裡有訂單編號、複製鈕、LINE 按鈕和 QR（GPT #9 11/8）
     var go = (data.flow === 'line' && mobile) ? bind : '';
     // 先把「送出成功」送到 GA（最多等 1.3 秒）；需要跳轉才跳轉，沒有 GA 就立刻跳
