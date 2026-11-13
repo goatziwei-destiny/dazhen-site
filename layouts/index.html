@@ -132,11 +132,12 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 .more{display:inline-block;margin-top:22px;font-weight:700;color:var(--accent-d);border-bottom:2px solid currentColor;padding-bottom:1px}
 @media(max-width:768px){.about-inner{grid-template-columns:1fr;gap:20px}.about-photo{display:flex;align-items:center;gap:14px;text-align:left}.about-photo img,.about-photo .ph{width:84px;height:84px;margin:0;font-size:36px}.dd,.fit{grid-template-columns:1fr}}
 .first-intro{color:var(--body);max-width:40em;margin-bottom:30px}
+/* 第一次諮詢（收合清單） */.first-acc{max-width:760px;display:grid;gap:8px}.fa-item{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.fa-item summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:10px 16px}.fa-item summary::-webkit-details-marker{display:none}
+.fa-item summary::after{content:"+";margin-left:auto;font-size:20px;color:var(--accent)}.fa-item[open] summary::after{content:"–"}
+.fa-item .first-num{width:30px;height:30px;font-size:14px;flex:0 0 30px}.fa-when{font-size:12px;font-weight:700;color:var(--warm);letter-spacing:1px;min-width:4.5em}.fa-t{font-weight:700;font-size:16px}
+.fa-body{padding:0 16px 14px 58px}
 .first-wrap{display:grid;grid-template-columns:minmax(0,640px) 300px;justify-content:space-between;gap:48px;align-items:start}
-.first-prep{background:#fff;border-radius:16px;padding:22px 22px 20px;box-shadow:0 2px 12px rgba(0,0,0,.05);position:sticky;top:96px}
-.fp-title{font-size:16px;font-weight:700;margin-bottom:10px}.first-prep ul{list-style:none;margin:0 0 18px;padding:0;display:grid;gap:10px}
-.first-prep li{font-size:14px;line-height:1.7;color:var(--body);padding-left:22px;position:relative}.first-prep li::before{content:"✓";position:absolute;left:0;color:var(--warm);font-weight:700}
-.first-prep .btn{display:block;text-align:center}
 @media(max-width:768px){.first-wrap{grid-template-columns:1fr;gap:20px}.first-prep{position:static}}
 .first-list{list-style:none;max-width:760px;position:relative;display:grid;gap:22px}
 .first-list::before{content:"";position:absolute;left:19px;top:20px;bottom:20px;width:2px;background:rgba(27,40,69,.12)}
@@ -386,7 +387,6 @@ const SITE = {
     { when: "諮詢後", title: "一份簡短的回饋問卷", desc: "會收到一份簡短問卷，要不要公開感想由你決定。" },
   ],
 
-  firstPrep: ["西元出生年月日和時間（要到分鐘）", "最在意的一兩件事（想不清楚也沒關係，當天一起整理）", "想看面相：一張正面、兩張側面照片（選填，不另收費）"],
 
   firstAgenda: "你最想問的事\n目前的大限\n今年流年\n本命盤",
   firstAgendaStep: 3,
@@ -421,8 +421,6 @@ const SITE = {
     { q: "可以問家人或伴侶的事嗎？", a: "可以，表單最多填 5 位。問別人的事，從你的觀察和你們的互動談起；非本人的盤請先取得同意（家人、伴侶除外）。" },
     { q: "我在國外出生，或是雙胞胎，可以諮詢嗎？", a: "可以。國外出生請填出生國家和城市（要換算時區）；雙胞胎請勾選並寫出生順序。" },
     { q: "我說的事會保密嗎？", a: "會。資料只用在這次諮詢，不公開、不給別人；未經你同意，不會把你的例子寫進文章。詳見隱私權政策。" },
-    { q: "文字版諮詢跟一對一有什麼差別？", a: "文字版不通話：你在預約表單寫下最多 2 個問題（每題 500 字內），我看完命盤後用文字回覆，確認收款後 7-10 個工作天內寄到你的 Email。適合不方便講話、想把回答留下來慢慢看的人。因為不核對過去發生的事，要填確定的出生時間。" },
-    { q: "文字版諮詢可以退款嗎？", a: "付款後 7 天內、而且我還沒開始撰寫，可以申請退款。文字版沒有指定時段，所以沒有改約和遲到的問題；已經開始撰寫或已回覆，就無法退款。" },
     { q: "你能保證結果嗎？", a: "不能。命盤幫你看清傾向、時機和選項；健康、法律、財務的事，請同時找專業協助。" },
   ],
 
@@ -497,7 +495,7 @@ function lines_(t) { return String(t || '').split(/\n|<br\s*\/?>/i).map(function
 var LINE_ATTR = ' target="_blank" rel="noopener" data-line';
 // 介紹影片（大正 11/10 上傳到 YouTube「大正-紫微命理」頻道）
 var VIDEO_VOICE = 'WTGYqHe9-nA', VIDEO_LINE_BOOK = '7ism5VDFHRo';
-var VIDEO_TEXT = '';   // 文字版介紹影片：之後貼上 YouTube 影片 ID，這裡就會換成影片（空的時候顯示「製作中」圖）
+var VIDEO_TEXT = 'Ea43vqiVgf0';   // 文字版介紹影片（Shorts）；空的時候會顯示「製作中」圖
 function ytLite(id, ratio, label) {
   // 11/11 大正：手機上原本要點兩次（第一次載入播放器、第二次才播），改成直接放 YouTube 播放器（捲到附近才載入），點一次就播。
   // 影片從 YouTube 播，不吃網站流量；用 youtube-nocookie 網域。
@@ -514,6 +512,19 @@ if (typeof document !== 'undefined' && document.addEventListener) document.addEv
   }
 });
 
+
+// ── 第一次諮詢：收合清單（大正 11/13 選 C；點一下展開，第一項預設打開）──
+function firstBlock_(S, agenda, agendaStep) {
+  var st = S.firstSteps || [];
+  if (!st.length) return '';
+  var head = '<div class="eyebrow">FIRST TIME</div><h2 class="section-title">第一次諮詢怎麼進行</h2>' + (S.firstIntro ? '<p class="first-intro"' + dk('firstIntro') + '>' + esc(S.firstIntro) + '</p>' : '');
+  var body = '<div class="first-acc">' + st.map(function (f, i) {
+    return '<details class="fa-item"' + (i === 0 ? ' open' : '') + '><summary><span class="first-num">' + (i + 1) + '</span><span class="fa-when"' + dk(f.n && 'first' + f.n + 'When') + '>' + esc(f.when || '') + '</span><span class="fa-t"' + dk(f.n && 'first' + f.n + 'Title') + '>' + esc(f.title) + '</span></summary><div class="fa-body">' +
+      (f.desc ? '<div class="first-desc"' + dk(f.n && 'first' + f.n + 'Desc') + '>' + esc(f.desc) + '</div>' : '') +
+      (agenda.length && i + 1 === agendaStep ? '<ol class="agenda"' + dk('firstAgenda') + '>' + agenda.map(function (a, j) { return '<li><b>' + (j + 1) + '</b>' + esc(a) + '</li>'; }).join('') + '</ol>' : '') + '</div></details>';
+  }).join('') + '</div>';
+  return '<section id="first-time" class="sec section-light"><div class="container">' + head + body + '</div></section>';
+}
 function renderSite(S) {
   document.title = S.siteTitle || '';
   try { document.querySelector('meta[name="description"]').content = S.siteDescription || ''; } catch(e){}
@@ -582,19 +593,7 @@ function renderSite(S) {
   '</div>' +
 '</div></section>' +
 
-((S.firstSteps||[]).length ?
-'<section id="first-time" class="sec section-light" style="padding-top:0"><div class="container">' +
-  '<div class="eyebrow">FIRST TIME</div><h2 class="section-title">第一次諮詢怎麼進行</h2>' +
-  (S.firstIntro ? '<p class="first-intro"' + dk('firstIntro') + '>' + esc(S.firstIntro) + '</p>' : '') +
-  '<div class="first-wrap"><ol class="first-list">' + S.firstSteps.map(function (f, i) {
-    return '<li class="first-item"><div class="first-num">' + (i + 1) + '</div><div class="first-body">' + (f.when ? '<div class="first-when"' + dk(f.n && 'first' + f.n + 'When') + '>' + esc(f.when) + '</div>' : '') +
-      '<div class="first-title"' + dk(f.n && 'first' + f.n + 'Title') + '>' + esc(f.title) + '</div>' + (f.desc ? '<div class="first-desc"' + dk(f.n && 'first' + f.n + 'Desc') + '>' + esc(f.desc) + '</div>' : '') +
-      (agenda.length && i + 1 === agendaStep ? '<ol class="agenda"' + dk('firstAgenda') + '>' + agenda.map(function (a, j) { return '<li><b>' + (j + 1) + '</b>' + esc(a) + '</li>'; }).join('') + '</ol>' : '') +
-      '</div></li>';
-  }).join('') + '</ol>' +
-  '<aside class="first-prep"><div class="fp-title">第一次來，先準備這幾樣</div><ul>' + (S.firstPrep||[]).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' +
-  '<a href="/booking/" class="btn btn-primary">預約諮詢</a></aside></div>' +
-'</div></section>' : '') +
+firstBlock_(S, agenda, agendaStep) +
 
 '<section id="process" class="sec section-white"><div class="container">' +
   '<div class="eyebrow">PROCESS</div><h2 class="section-title">預約流程</h2>' +
