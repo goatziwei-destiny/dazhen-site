@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>紫微斗數文字諮詢｜大正命理諮詢</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#0f1a17}
+body{padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+.box{position:relative;height:100%}
+iframe{display:block;width:100%;height:100%;border:0;background:#0f1a17}
+.load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;color:#cfc6b2;font:15px/1.8 "PingFang TC","Microsoft JhengHei",sans-serif;background:#0f1a17}
+.load i{width:36px;height:36px;border:3px solid #2b3d38;border-top-color:#c9a15a;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.load i{animation:none}}
+.bad{max-width:440px;margin:60px auto;padding:0 20px;color:#e8e1cf;font:15px/1.8 "PingFang TC","Microsoft JhengHei",sans-serif;text-align:center}
+.bad h1{font-size:20px;margin:0 0 8px}
+</style>
+</head>
+<body>
+<div class="box" id="box"><iframe id="f" title="紫微斗數文字諮詢" allow="autoplay"></iframe><div class="load" id="load"><i></i>文字諮詢載入中，請稍候…</div></div>
+<script src="/js/dz-api.js"></script>
+<script>
+// 大正 11/15：文字諮詢閱讀頁的連結（Email、LINE、會員中心）都指到這裡，頁面本身在預約系統（?page=reply），
+// 這裡只負責包進來，客人就不會看到 Google Apps Script 的提示列。t＝永久簽章（Email／LINE），k＝會員中心發的 10 分鐘通行證
+(function () {
+  var q = new URLSearchParams(location.search), b = q.get('b') || '', t = q.get('t') || '', k = q.get('k') || '';
+  var okId = /^GRW?\d{8}-\d{2}$/.test(b), okKey = /^[0-9a-f]{32}$/.test(k ? k : t);
+  if (!okId || !okKey) {
+    document.getElementById('box').outerHTML = '<div class="bad"><h1>這個連結打不開</h1><p>連結可能不完整。請回到 LINE、Email 或會員中心，重新按一次「打開你的紫微斗數文字諮詢」。還是打不開的話，直接在 LINE 跟大正說一聲。</p></div>';
+    return;
+  }
+  var f = document.getElementById('f');
+  f.addEventListener('load', function () { var l = document.getElementById('load'); if (l) l.remove(); });
+  f.src = DZ_API.url + '?page=reply&b=' + encodeURIComponent(b) + (k ? '&k=' + encodeURIComponent(k) : '&t=' + encodeURIComponent(t));
+})();
+</script>
+</body>
+</html>
