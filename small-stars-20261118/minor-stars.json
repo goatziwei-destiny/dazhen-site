@@ -1,0 +1,31 @@
+{
+  "stars": [
+    "寡宿",
+    "華蓋",
+    "年解",
+    "天喜",
+    "台輔",
+    "紅鸞",
+    "天馬",
+    "鳳閣",
+    "三台",
+    "八座",
+    "白虎",
+    "封誥",
+    "天巫",
+    "天虛",
+    "孤辰"
+  ],
+  "largerStars": [
+    "寡宿",
+    "天巫",
+    "鳳閣",
+    "孤辰"
+  ],
+  "weight": 600,
+  "referenceChartWidthPx": 1311,
+  "smallFontSizePx": 18.7,
+  "largerFontSizePx": 20.5,
+  "strokePx": 0.18,
+  "largerStrokePx": 0.26
+}

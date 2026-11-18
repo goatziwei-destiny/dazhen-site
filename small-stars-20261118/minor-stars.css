@@ -1,0 +1,21 @@
+@font-face {
+  font-family: "Taisho Chart Minor 20261118";
+  src: url("TaishoChartMinor-Semibold-20261118.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Set these attributes on the existing vertical glyph row and each single-character element. */
+[data-taisho-minor] > [data-taisho-minor-glyph] {
+  font-family: "Taisho Chart Minor 20261118", "Taisho Chart Final", serif;
+  font-weight: 600;
+  font-synthesis: none;
+  font-size: calc(18.7px * var(--taisho-minor-scale, 1));
+  -webkit-text-stroke: calc(0.18px * var(--taisho-minor-scale, 1)) currentColor;
+}
+
+[data-taisho-minor]:is([data-taisho-minor="寡宿"], [data-taisho-minor="天巫"], [data-taisho-minor="鳳閣"], [data-taisho-minor="孤辰"]) > [data-taisho-minor-glyph] {
+  font-size: calc(20.5px * var(--taisho-minor-scale, 1));
+  -webkit-text-stroke: calc(0.26px * var(--taisho-minor-scale, 1)) currentColor;
+}
