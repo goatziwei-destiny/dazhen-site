@@ -199,12 +199,13 @@ function renderHome(stale){var d=S.data,m=d.member,up=d.upcoming,name=m.name||"�
   var bottom='<div class="stack"><section class="card" aria-labelledby="oh"><div class="sec-h"><h2 id="oh">購買紀錄</h2><span class="muted">'+d.orders.length+' 筆</span></div>'+
    (d.orders.length?d.orders.map(function(o){return '<div class="order"><div style="min-width:0"><div class="id"><span class="mono">'+esc(o.id)+'</span><button type="button" data-copy="'+esc(o.id)+'">複製</button></div><div class="title">'+esc(o.title)+'</div><div class="muted mono">'+esc(o.when)+'</div></div>'+
      '<div><div class="amt">'+money(o.amount)+'</div>'+(o.off?'<div class="muted" style="text-align:right;font-size:12.5px">專屬優惠 −'+money(o.off)+'</div>':'')+'<div style="text-align:right"><span class="pill '+pillOf(o.status)+'">'+esc(o.status)+'</span></div></div>'+
-     replyRow(o)+(o.survey?'<div class="sub"><a class="btn btn-sm" href="'+esc(o.survey)+'">填寫諮詢回饋問卷</a></div>':'')+'</div>'}).join(""):(m.kind==="line"?'<p class="muted">這裡還沒有訂單。以前預約過的話，打開大正寄給你的任何一封信，點最下面的「用 LINE 開啟」，訂單就會自動接上。</p>':'<p class="muted">還沒有購買紀錄。如果你以前用別的 Email 預約，那幾筆訂單不會出現在這裡。</p>'))+
+     replyRow(o)+refundRow(o)+(o.survey?'<div class="sub"><a class="btn btn-sm" href="'+esc(o.survey)+'">填寫諮詢回饋問卷</a></div>':'')+'</div>'}).join(""):(m.kind==="line"?'<p class="muted">這裡還沒有訂單。以前預約過的話，打開大正寄給你的任何一封信，點最下面的「用 LINE 開啟」，訂單就會自動接上。</p>':'<p class="muted">還沒有購買紀錄。如果你以前用別的 Email 預約，那幾筆訂單不會出現在這裡。</p>'))+
    '</section><section class="card stack"><div class="sec-h"><h2>登入方式</h2></div><div><span class="pill ok">'+(m.kind==="line"?"LINE":"Google（"+esc(m.email)+"）")+'</span></div>'+
    (inLine?'':'<button class="btn btn-ghost" id="logout">登出</button>')+'</section></div>';
   $("#app").innerHTML=top;$("#appBottom").innerHTML=bottom;
   $("#rebook").onclick=openBooking;var lo=$("#logout");if(lo)lo.onclick=logout;
   document.querySelectorAll("[data-reply]").forEach(function(b){b.onclick=function(){openReply(b)}});
+  document.querySelectorAll("[data-refund]").forEach(function(b){b.onclick=function(){askRefund(b)}});
   document.querySelectorAll("[data-copy]").forEach(function(b){b.onclick=function(){var t=b.dataset.copy;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){toast("已複製訂單編號 "+t)},function(){toast("訂單編號："+t)})}});}
 
 // ---------- 文字版：回看提問與回覆（2026-11-15）----------
@@ -214,6 +215,20 @@ function replyRow(o){
   if(o.reply==="writing")return '<div class="sub"><span class="muted">大正撰寫中'+(o.replyDue?'，預計 '+esc(o.replyDue)+' 前回覆':'')+'。寫好會用 Email 和 LINE 通知你。</span></div>';
   if(o.reply==="gone")return '<div class="sub"><span class="muted">已過保存期限，提問與回覆已經刪除。</span></div>';
   return "";}
+// ---------- 文字版：申請退款（2026-11-18）----------
+// 能不能申請由後台判斷（o.refund.can），這裡只顯示文字和按鈕；按下去後台會再判斷一次。申請後要大正確認，不是馬上退款
+function refundRow(o){var r=o.refund;if(!r||!r.state||r.state==="sent"||r.state==="ended"||r.state==="unpaid")return "";
+  if(r.can)return '<div class="sub" style="align-items:center"><span class="muted">'+esc(r.text)+'</span><button class="btn btn-ghost btn-sm" type="button" data-refund="'+esc(o.id)+'">申請退款</button></div>';
+  return '<div class="sub"><span class="muted">'+esc(r.text)+'</span></div>';}
+function askRefund(b){if(b.disabled)return;
+  if(!window.confirm("確定要申請退款嗎？\n申請後大正會確認，確認後會匯回款項並通知你。"))return;
+  var t=b.textContent;b.disabled=true;b.textContent="送出中…";
+  var q=S.kind==="line"?{lt:S.token}:{gt:S.token};q.refund=b.dataset.refund;
+  jsonp(q).then(function(d){
+    if(d&&d.ok){toast(d.message||"已送出申請，大正確認後會通知你");try{sessionStorage.removeItem("mb_data")}catch(e){}useToken(S.kind,S.token);return}
+    b.disabled=false;b.textContent=t;
+    toast(d&&d.reason==="auth"?"登入逾時，請重新整理頁面再試一次。":(d&&d.message)||"暫時無法申請，請稍後再試，或在 LINE 跟大正說一聲。")
+  }).catch(function(){b.disabled=false;b.textContent=t;toast("網路不穩，請稍後再試一次。")});}
 function openReply(b){if(b.disabled)return;var t=b.textContent;b.disabled=true;b.textContent="開啟中…";
   var q=S.kind==="line"?{lt:S.token}:{gt:S.token};q.open=b.dataset.reply;
   jsonp(q).then(function(d){
