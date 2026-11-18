@@ -1,0 +1,11 @@
+/* Load after chart styling. Attach role classes to text values. */
+.taisho-chart-star,
+.taisho-chart-label,
+[data-taisho-font-role="star"],
+[data-taisho-font-role="palace"],
+[data-taisho-font-role="stem-branch"],
+[data-taisho-font-role="direction"]{
+  font-family:"Taisho Chart Final","Taisho Chart Names","GenRyu TC Name Fallback","Noto Serif TC","PMingLiU",serif !important;
+  font-weight:600 !important;
+  font-synthesis:none !important;
+}
