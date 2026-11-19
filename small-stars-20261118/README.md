@@ -2,7 +2,13 @@
 
 將這個追加包匯入現有命盤 HTML，套用在 15 組小星，共 26 個單字。名單以 minor-stars.json 為準。此包與現有命盤主字型及姓名字型共同使用。
 
-## 套用
+## 追加單字「之」｜2026-11-19
+
+「早安美之城」校樣中手繪的「之」已附在同一個 ZIP。先載入 [zhi-font.css](zhi-font.css) 與 [TaishoZhi-Semibold.woff2](TaishoZhi-Semibold.woff2)，再於需要顯示這個字的文字區塊，把 `"Taisho Zhi"` 加到原有字族清單的最前面。該字型使用 600 字重，字碼為 U+4E4B，其他字照原字族清單顯示。若匯入姓名欄，在原姓名字族清單前加入即可。單檔 HTML 可將 WOFF2 轉成 data URI，沿用 zhi-font.css 內的字族宣告。OTF 供桌面軟體使用。[查看「之」的單字校樣](之_校樣.png)
+
+小星仍用同包原有的 26 字小星字型及 minor-stars.css。「之」使用自己的 WOFF2 與字族。
+
+## 套用小星字型
 
 1. 將 WOFF2 與 minor-stars.css 放在同一個靜態資產目錄。單檔 HTML 專案可以用 data URI 內嵌該 WOFF2 並匯入等效 CSS。
 2. 在既有星曜元件中，確認角色是小星且星名在 minor-stars.json 的 stars 清單，才在直排字列加上 data-taisho-minor="完整星名"，每個漢字節點加上 data-taisho-minor-glyph。若現行版用 JSX，可參考下方結構並保留原元件的字級縮放、顏色、排列及功能。光學調整 CSS 應與現有字型規則整合，必要時修正舊的行內字族、字級覆寫。

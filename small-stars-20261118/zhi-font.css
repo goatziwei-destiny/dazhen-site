@@ -1,0 +1,8 @@
+@font-face {
+  font-family: "Taisho Zhi";
+  src: url("TaishoZhi-Semibold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+4E4B;
+}
