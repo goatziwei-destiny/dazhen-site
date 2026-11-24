@@ -35,7 +35,7 @@ html='''<!DOCTYPE html>
   <button class="skip" id="skip" type="button">略過</button>
 </section>
 <div class="rise">
-<main class="book" id="book"><div class="page" id="page"><div class="ld"><i></i>文字諮詢載入中，請稍候…</div></div></main>
+<main class="book" id="book"><div class="page" id="page"><div class="ld"><i></i>載入中，請稍候…</div></div></main>
 </div></div>
 <script src="/js/dz-api.js"></script>
 <script>
@@ -58,7 +58,7 @@ html='''<!DOCTYPE html>
     at(1250, function () { show([2, 3]); }); at(1500, function () { show([2, 4]); }); at(1760, function () { show([2, 5]); }); at(2040, function () { show([2]); });
     at(1350, function () { stage.classList.add('under'); at(2000, done); });   // 翻頁的同時，內容直接淡入
   };
-  if (!/^GRW?\\d{8}-\\d{2}$/.test(b) || !/^[0-9a-f]{32}$/.test(k || t)) { msg('這個連結打不開', '連結可能不完整。請回到 LINE、Email 或會員中心，重新按一次「打開你的紫微斗數文字諮詢」。<br>還是打不開的話，直接在 LINE 跟大正說一聲。'); return; }
+  if (!/^GRW?\\d{8}-\\d{2}$/.test(b) || !/^[0-9a-f]{32}$/.test(k || t)) { msg('這個連結打不開', '連結可能不完整。請回到 LINE、Email 或會員中心，重新按一次打開的按鈕。<br>還是打不開的話，直接在 LINE 跟大正說一聲。'); return; }
   var seen = false; try { seen = localStorage.getItem('ms-seen-' + b) === '1'; } catch (e) { }
   if (seen) done();   // 看過的：不再播開場，內容拿到就直接顯示
   else {
@@ -74,9 +74,9 @@ html='''<!DOCTYPE html>
     afterBody();
     if (!d.intro) { timers.forEach(clearTimeout); done(); return; }   // 連結不對、已取消、已刪除、還在寫：直接顯示說明
     key = d.seenKey || '';
-    if (d.name) document.getElementById('ttlName').innerHTML = esc(d.name) + '<br>紫微斗數文字諮詢';
+    if (d.name) document.getElementById('ttlName').innerHTML = esc(d.name) + '<br>' + esc(d.book || '紫微斗數文字諮詢');   // 一對一的「諮詢重點」書名不同（預約系統給）
     if (wantOpen) play(); else if (hint.classList.contains('wait')) { hint.textContent = '點一下，翻開'; hint.classList.remove('wait'); }
-  }).catch(function () { msg('網路有點慢', '文字諮詢沒有載入成功，請按下面的按鈕再試一次。', true); });
+  }).catch(function () { msg('網路有點慢', '內容沒有載入成功，請按下面的按鈕再試一次。', true); });
 
   function afterBody() {
   '''+js+'''

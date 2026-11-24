@@ -211,9 +211,10 @@ function renderHome(stale){var d=S.data,m=d.member,up=d.upcoming,name=m.name||"�
 // ---------- 文字版：回看提問與回覆（2026-11-15）----------
 // 清單裡不放回覆連結；按下去才向後台要一張 10 分鐘內有效的通行證，確認是本人的訂單才給
 function replyRow(o){
-  if(o.reply==="ready")return '<div class="sub" style="align-items:center"><button class="btn btn-main btn-sm" type="button" data-reply="'+esc(o.id)+'">查看文字回覆</button><span class="muted">保存到 '+esc(o.replyKeep)+'</span></div>';
+  var lb=o.replyKind==="voice"?"查看諮詢重點":"查看文字回覆";   // 一對一的「諮詢重點」（2026-11-25）跟文字版用同一套
+  if(o.reply==="ready")return '<div class="sub" style="align-items:center"><button class="btn btn-main btn-sm" type="button" data-reply="'+esc(o.id)+'" data-label="'+lb+'">'+lb+'</button><span class="muted">保存到 '+esc(o.replyKeep)+(o.replyKind==="voice"?'，請自行備份':'')+'</span></div>';
   if(o.reply==="writing")return '<div class="sub"><span class="muted">大正撰寫中'+(o.replyDue?'，預計 '+esc(o.replyDue)+' 前回覆':'')+'。寫好會用 Email 和 LINE 通知你。</span></div>';
-  if(o.reply==="gone")return '<div class="sub"><span class="muted">已過保存期限，提問與回覆已經刪除。</span></div>';
+  if(o.reply==="gone")return '<div class="sub"><span class="muted">'+(o.replyKind==="voice"?'已過保存期限，諮詢重點已經刪除。':'已過保存期限，提問與回覆已經刪除。')+'</span></div>';
   return "";}
 // ---------- 文字版：申請退款（2026-11-18）----------
 // 能不能申請由後台判斷（o.refund.can），這裡只顯示文字和按鈕；按下去後台會再判斷一次。申請後要大正確認，不是馬上退款
@@ -237,7 +238,7 @@ function openReply(b){if(b.disabled)return;var t=b.textContent;b.disabled=true;b
     toast(d&&d.reason==="auth"?"登入逾時，請重新整理頁面再試一次。":d&&d.reason==="gone"?"這筆已過保存期限，內容已經刪除。":d&&d.reason==="writing"?"大正還在撰寫中，寫好會通知你。":"暫時打不開，請稍後再試，或在 LINE 跟大正說一聲。")
   }).catch(function(){b.disabled=false;b.textContent=t;toast("網路不穩，請稍後再試一次。")});}
 
-window.addEventListener("pageshow",function(e){if(e.persisted)document.querySelectorAll("[data-reply]").forEach(function(b){b.disabled=false;b.textContent="查看文字回覆"})});   // 從回覆頁按「上一頁」回來，按鈕要能再按
+window.addEventListener("pageshow",function(e){if(e.persisted)document.querySelectorAll("[data-reply]").forEach(function(b){b.disabled=false;b.textContent=b.dataset.label||"查看文字回覆"})});   // 從回覆頁按「上一頁」回來，按鈕要能再按
 
 // ---------- 再預約：同一份預約表單 ----------
 var bkLoaded=false;
