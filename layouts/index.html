@@ -25,19 +25,13 @@
  {"@type":"Service","@id":{{ printf "%s#consultation" $base }},"name":"一對一線上紫微斗數諮詢","serviceType":"紫微斗數命理諮詢","description":{{ site.Params.description }},"provider":{"@id":{{ printf "%s#person" $about }}},"areaServed":{"@type":"Country","name":"台灣"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":{{ "/booking/" | absURL }},"name":"Google Meet 或 LINE 語音（只用語音）"}}
 ]}
 </script>
-<link rel="preload" href="/fonts/dazhen-wenkai-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/fonts/dazhen-wenkai-700.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/fonts/huninn.css?v=20261125">
 <style>
-@font-face{font-family:"Dazhen WenKai";src:url("/fonts/dazhen-wenkai-400.woff2") format("woff2");font-weight:400;font-display:swap}
-@font-face{font-family:"Dazhen WenKai";src:url("/fonts/dazhen-wenkai-700.woff2") format("woff2");font-weight:700;font-display:swap}
 /* 2026-10-11 首頁改版：開場 → 服務與價格 → 關於大正（精簡）→ 第一次諮詢 → 預約流程 → 預約規則 → 常見問題 → 最新文章 → 結尾 */
 :root{--navy:#1b2845;--navy-2:#21304c;--navy-3:#3d5467;--cream:#f5f3ef;--accent:#6292ab;--accent-d:#4f7d94;--warm:#cc8854;--warm-d:#b07545;--text-light:#c8cdd4;--text-muted:#8a95a5;--body:#57534e;--line:#e5e8ec}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;line-break:strict;word-break:auto-phrase;text-autospace:normal;overflow-wrap:break-word}
-body{font-family:"Dazhen WenKai","LXGW WenKai TC","PingFang TC","Microsoft JhengHei",sans-serif;color:var(--navy);background:var(--cream);line-height:1.8;-webkit-font-smoothing:antialiased}
+body{font-family:"Dazhen Round","PingFang TC","Microsoft JhengHei",sans-serif;color:var(--navy);background:var(--cream);line-height:1.8;-webkit-font-smoothing:antialiased}
 img{max-width:100%;display:block}a{color:inherit;text-decoration:none}
 h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 .container{max-width:1100px;margin:0 auto;padding:0 24px}
@@ -275,6 +269,50 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 /* 底部預約列（手機）：細一點、不做滑入動畫，出現後就固定在原位 */
 @media(max-width:767px){.sticky-cta{transition:none;padding:7px 12px calc(7px + env(safe-area-inset-bottom,0px))}.sticky-cta:not(.show){display:none}.cta-night .btn-gold{padding:9px 16px;font-size:14px}.cta-night .when b{font-size:14px}body{padding-bottom:58px}}
 @media(prefers-reduced-motion:reduce){.btn:hover{transform:none}}
+/* ===== 2026-11-25 風格改版（粉圓字體＋問題卡片＋STEP 虛線時間線＋打勾卡片＋螢光筆底線）（圓潤風格） ===== */
+body{letter-spacing:.02em}
+.hero-paper .hero-desc{font-size:18px}.about-lead{font-size:17.5px}.fit ul,.dd ul{font-size:15.5px}.first-desc{font-size:15.5px;line-height:1.8}.first-title{font-size:17px}
+.step-desc,.rule dd{font-size:16px}.faq-q{font-size:16.5px}.faq-a{font-size:16px}.post-desc{font-size:15px}.post-title{font-size:18px}.rule dt{font-size:16px}
+.hl{background:linear-gradient(transparent 62%,rgba(201,154,69,.42) 62%);padding:0 .08em;color:inherit}
+/* 問題卡片「你是不是也卡在這邊？」 */
+.stuck{padding:64px 0 56px}.stuck .section-title{margin-bottom:26px}
+.pains{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.pain{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px 20px 64px;position:relative;font-size:17px;font-weight:700;line-height:1.6;color:var(--navy)}
+.pain::before{content:"";position:absolute;left:22px;top:23px;width:24px;height:24px;border-radius:50%;border:2px solid var(--brass)}
+.pain::after{content:"?";position:absolute;left:22px;top:23px;width:24px;line-height:24px;text-align:center;color:var(--brass-d);font-weight:700;font-size:14px}
+.pain small{display:block;margin-top:4px;font-size:15px;font-weight:400;color:#6b635b;line-height:1.75}
+.stuck-line{margin-top:28px;font-size:clamp(19px,2.6vw,24px);font-weight:700;color:var(--navy);border-left:4px solid var(--brass);padding-left:16px;line-height:1.6}
+@media(max-width:768px){.pains{grid-template-columns:1fr;gap:12px}.stuck{padding:44px 0 40px}.pain{font-size:16.5px;padding:18px 18px 18px 58px}.pain::before,.pain::after{left:18px}}
+/* 打勾卡片（我會做／我不會做、適合／不適合） */
+.dd>div,.fit>div{background:#fff!important;border:1px solid var(--line)!important;border-radius:16px!important;padding:20px 22px!important}
+.dd ul,.fit ul{list-style:none;padding:0}
+.dd li,.fit li{position:relative;padding:9px 0 9px 30px;border-top:1px dashed var(--line)}.dd li:first-child,.fit li:first-child{border-top:0}
+.dd .do li::before,.fit>div:first-child li::before{content:"";position:absolute;left:3px;top:17px;width:13px;height:7px;border-left:2.5px solid var(--navy);border-bottom:2.5px solid var(--navy);transform:rotate(-45deg)}
+.dd .dont li::before,.fit>div:last-child li::before{content:"×";position:absolute;left:3px;top:7px;color:#9a8f84;font-size:19px;font-weight:400;line-height:1.6;transform:none;width:auto;height:auto;border:0}
+.dd .dont li,.fit>div:last-child li{color:#6b635b}
+.dd .dont h4,.fit>div:last-child h4{color:#7a7068!important}
+.dd h4,.fit h4{font-size:17px;margin-bottom:6px}
+/* 預約流程：STEP 圓圈＋虛線 */
+.proc-line{gap:0}
+.proc-line li{grid-template-columns:68px minmax(0,1fr);gap:18px;padding-bottom:28px}
+.proc-line li:last-child{padding-bottom:0}
+.proc-line li:not(:last-child)::after{left:33px;top:72px;bottom:6px;width:0;background:none;border-left:2px dashed rgba(27,40,69,.3)}
+.proc-num{width:68px;height:68px;background:#fff;color:var(--navy);border:2px solid var(--navy);flex-direction:column;gap:0;line-height:1}
+.proc-num small{font-size:10px;letter-spacing:.2em;font-weight:400;margin-bottom:3px}.proc-num b{font-size:26px;font-weight:700}
+.proc-line .step-title{font-size:18px;margin:8px 0 2px}.proc-line .step-desc{font-size:16px;color:var(--body)}
+@media(max-width:480px){.proc-line li{grid-template-columns:56px minmax(0,1fr);gap:14px}.proc-num{width:56px;height:56px}.proc-num b{font-size:22px}.proc-line li:not(:last-child)::after{left:27px;top:60px}}
+/* ── 圓潤卡片（暖色＋柔和陰影） ── */
+.stuck{background:var(--paper)}
+.pain{border:0;border-radius:20px;box-shadow:0 12px 30px -20px rgba(27,40,69,.4)}
+.pain::before{background:var(--brass);border-color:var(--brass);width:26px;height:26px}.pain::after{color:#fff;width:26px;line-height:26px}
+.stuck-line{border-left-color:var(--brass);background:#fff;border-radius:0 14px 14px 0;padding:16px 20px;box-shadow:0 12px 30px -22px rgba(27,40,69,.4)}
+.dd>div,.fit>div{border:0!important;border-radius:20px!important;box-shadow:0 12px 30px -20px rgba(27,40,69,.4)}
+.fit>div:first-child{outline:2px solid var(--navy)}
+.proc-num{border-color:var(--brass);background:var(--paper);color:var(--navy)}.proc-num small{color:var(--brass-d)}
+.proc-line li:not(:last-child)::after{border-left-color:rgba(201,154,69,.7)}
+.proc-line li>div:last-child{background:#fff;border-radius:16px;padding:14px 18px;box-shadow:0 10px 26px -20px rgba(27,40,69,.4)}
+.proc-line .step-title{margin-top:0}
+.section-white{background:#fff}.section-light{background:var(--paper)}
 </style>
 {{ partial "analytics.html" . }}
 </head>
@@ -525,6 +563,27 @@ function firstBlock_(S, agenda, agendaStep) {
   }).join('') + '</div>';
   return '<section id="first-time" class="sec section-light"><div class="container">' + head + body + '</div></section>';
 }
+// ── 「你是不是也卡在這邊？」問題卡片（2026-11-25 大正：參考別人網站的問題卡片）──
+// 文字在後台「首頁：你是不是也卡在這邊」改；後台沒送來時用下面的預設
+var STUCK_DEFAULT = [
+  ['想問感情，又怕被貼標籤', '「命不好」「沒正緣」這種話，聽完只會更慌。'],
+  ['看過別人的命盤解說，還是不知道自己怎麼辦', '網路上的說法很多，但沒有一句是對著你的處境說的。'],
+  ['想知道今年適不適合動一動，又不想只聽一句好或不好', '你要的是選項和代價，不是一句結論。'],
+  ['事情很多想問，又怕時間不夠', '60 分鐘不限題數，一件一件慢慢問。']
+];
+function stuckBlock_(S) {
+  var hasCfg = false, cards = [], i;
+  for (i = 1; i <= 6; i++) if (S['stuck' + i + 'Q'] !== undefined) hasCfg = true;
+  if (hasCfg) { for (i = 1; i <= 6; i++) { var q = String(S['stuck' + i + 'Q'] || '').trim(); if (q) cards.push({ n: i, q: q, a: String(S['stuck' + i + 'A'] || '').trim() }); } }
+  else cards = STUCK_DEFAULT.map(function (c, j) { return { n: j + 1, q: c[0], a: c[1] }; });
+  if (!cards.length) return '';
+  var title = S.stuckTitle === undefined ? '你是不是也卡在這邊？' : S.stuckTitle;
+  var line = S.stuckLine === undefined ? '這些，都可以好好聊。' : S.stuckLine;
+  return '<section id="stuck" class="sec section-white stuck"><div class="container">' +
+    (title ? '<h2 class="section-title"' + dk('stuckTitle') + '><span class="hl">' + esc(title) + '</span></h2>' : '') +
+    '<div class="pains">' + cards.map(function (c) { return '<div class="pain"' + dk('stuck' + c.n + 'Q') + '>' + esc(c.q) + (c.a ? '<small' + dk('stuck' + c.n + 'A') + '>' + esc(c.a) + '</small>' : '') + '</div>'; }).join('') + '</div>' +
+    (line ? '<p class="stuck-line"' + dk('stuckLine') + '>' + esc(line) + '</p>' : '') + '</div></section>';
+}
 function renderSite(S) {
   document.title = S.siteTitle || '';
   try { document.querySelector('meta[name="description"]').content = S.siteDescription || ''; } catch(e){}
@@ -558,6 +617,8 @@ function renderSite(S) {
 '</div></section>' +
 '<section class="stats-row" aria-label="大正的諮詢經驗"><div class="container">' + stats + '<a class="stat-lib stat-lib-row" href="/library/"><img src="/images/library-book-icon.png" alt="" width="18" height="25">' + (LIB_SEEN ? '回命運書庫逛逛' : '逛逛命運書庫') + '</a></div></section>' +
 
+stuckBlock_(S) +
+
 /* 命運書庫（11/11 大正）：首頁不放大卡片（主要放在 LINE），數字列最後留一個小連結 */
 
 
@@ -577,7 +638,7 @@ function renderSite(S) {
 '</div></section>' +
 
 '<section id="service" class="svc-wrap svc-paper"><div class="container">' +
-  '<div class="eyebrow">SERVICE</div><h2 class="section-title">諮詢服務</h2>' +
+  '<div class="eyebrow">SERVICE</div><h2 class="section-title"><span class="hl">諮詢服務</span></h2>' +
   '<div class="svc-cards">' +
     // 11/10 大正：影片放卡片左邊、標題和價格放右邊；服務說明那段小字不顯示（後台的字還在，影片取代它）
     '<div class="svc-card svc-card-v"><div style="min-width:0"><div class="svc-label"' + dk('serviceLabel') + '>' + esc(S.serviceLabel||'') + '</div><h3' + dk('serviceTitle') + '>' + esc(S.serviceTitle||'') + '</h3>' +
@@ -596,10 +657,10 @@ function renderSite(S) {
 firstBlock_(S, agenda, agendaStep) +
 
 '<section id="process" class="sec section-white"><div class="container">' +
-  '<div class="eyebrow">PROCESS</div><h2 class="section-title">預約流程</h2>' +
+  '<div class="eyebrow">PROCESS</div><h2 class="section-title"><span class="hl">預約流程</span></h2>' +
   '<div class="proc-wrap">' +
   '<ol class="proc-line">' + steps.map(function (s, i) {
-    return '<li><span class="proc-num">' + (i + 1) + '</span><div><div class="step-title"' + dk(s.n && 'processStep' + s.n + 'Title') + '>' + esc(s.title) + '</div><div class="step-desc"' + dk(s.n && 'processStep' + s.n + 'Desc') + '>' + esc(s.desc || '') + '</div></div></li>';
+    return '<li><span class="proc-num"><small>STEP</small><b>' + (i + 1) + '</b></span><div><div class="step-title"' + dk(s.n && 'processStep' + s.n + 'Title') + '>' + esc(s.title) + '</div><div class="step-desc"' + dk(s.n && 'processStep' + s.n + 'Desc') + '>' + esc(s.desc || '') + '</div></div></li>';
   }).join('') + '</ol>' +
   '<div class="proc-vid">' + ytLite(VIDEO_LINE_BOOK, 'r916', '25 秒看懂怎麼用 LINE 預約') + '</div></div>' +
 '</div></section>' +

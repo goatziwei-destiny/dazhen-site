@@ -9,12 +9,12 @@
 <!-- 大正 11/18：文字諮詢閱讀頁改成網站自己畫。書和開場在這裡立刻出現，回覆內容在背景向預約系統拿（page=replyData，檢查跟以前一樣）。
      樣式與內頁照預約系統 src/Mingshu.html（tools/gen-reply-page.py 產生，改 Mingshu.html 後要重跑）。 -->
 <link rel="preload" as="image" href="/images/mingshu/book2-closed.webp">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600;900&display=swap">
+<link rel="stylesheet" href="/fonts/huninn.css?v=20261125">
 <style>
 :root{--teal:#1b4d44;--teal-l:#3d6b61;--ink:#2e2a24;--ink-2:#6a6256;--paper:#f6f2ea;color-scheme:light}
 *{box-sizing:border-box}[hidden]{display:none!important}
 html,body{margin:0}
-body{background:#0f1a17;color:var(--ink);font-family:"Noto Serif TC","Songti TC","PMingLiU",serif;-webkit-font-smoothing:antialiased}
+body{background:#0f1a17;color:var(--ink);font-family:"Dazhen Round","PingFang TC","Microsoft JhengHei",sans-serif;-webkit-font-smoothing:antialiased}
 .stage{position:relative;height:100vh;height:100svh;overflow:hidden;background:var(--paper)}
 .intro{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;background:radial-gradient(ellipse at 50% 45%,#1f3530 0%,#12201c 55%,#0a120f 100%)}
 .bookwrap{position:relative;width:min(84vw,460px);aspect-ratio:1/1;border:0;background:none;padding:0;cursor:pointer;opacity:0;transform:scale(.92);transition:opacity .8s,transform .9s cubic-bezier(.2,.8,.2,1)}
@@ -43,13 +43,13 @@ h1{text-align:center;font-size:clamp(24px,7.2vw,44px);font-weight:900;letter-spa
 .dv.small{margin:34px auto 38px}
 .voice{display:flex;gap:12px;align-items:center;padding:20px 22px;margin:0 0 26px;background:#e8ede0;border-radius:22px 30px 24px 32px / 26px 20px 30px 22px;box-shadow:0 0 12px 6px #e8ede0}
 .voice .av{width:50px;height:50px;border-radius:50%;flex:none;background:#fff8e8 url("/images/avatar-goat.webp") center/cover;box-shadow:0 0 0 2px #b8862b}
-.voice .t{flex:1;min-width:0}.voice .t b{display:block;font-size:15.5px;color:var(--teal)}.voice .t span{font-family:sans-serif;font-size:12px;color:var(--ink-2)}
+.voice .t{flex:1;min-width:0}.voice .t b{display:block;font-size:15.5px;color:var(--teal)}.voice .t span{font-family:"Dazhen Round","PingFang TC","Microsoft JhengHei",sans-serif;font-size:12px;color:var(--ink-2)}
 .voice audio{width:100%;margin-top:8px;height:36px}
 .greet{font-size:17px;line-height:2;margin:0 0 14px}
 .ch-h{display:flex;align-items:center;gap:14px;margin:6px 0 16px}
 .ch-n{width:58px;height:58px;flex:none;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:var(--teal);background:url("/images/mingshu/ring.webp") center/contain no-repeat}
 .ch-t{flex:1;min-width:0;font-size:12px;letter-spacing:4px;color:var(--ink-2);padding-bottom:10px;background:url("/images/mingshu/line-long.webp") left bottom/100% 4px no-repeat}
-.ch-t b{display:block;font-family:"Noto Serif TC","Songti TC",serif;font-size:20px;letter-spacing:1px;color:var(--teal);margin-top:2px}
+.ch-t b{display:block;font-family:"Dazhen Round","PingFang TC","Microsoft JhengHei",sans-serif;font-size:20px;letter-spacing:1px;color:var(--teal);margin-top:2px}
 .q{position:relative;margin:4px 0 20px;padding:4px 10px 2px 16px;border-style:solid;border-width:22px 26px 22px 28px;border-image:url("/images/mingshu/qwash.webp") 60 90 fill / 22px 26px 22px 28px stretch;font-size:15.5px;line-height:1.9;color:#4d3a22;white-space:pre-wrap}
 .q::before{content:"問";position:absolute;left:-30px;top:-27px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;color:#f7e6d6;background:url("/images/mingshu/qseal.webp") center/contain no-repeat}
 /* 客人的問題太長：超過約 7 行先摺起來、下面淡出；整塊橘色都能點，點一下展開、再點收起 */
@@ -71,11 +71,11 @@ h1{text-align:center;font-size:clamp(24px,7.2vw,44px);font-weight:900;letter-spa
 .sign .dt{display:block;letter-spacing:2px}
 .sign .tx b,.sign .dt{position:relative;z-index:1;text-shadow:0 0 2px var(--paper),0 0 4px var(--paper)}
 .seal{position:absolute;right:-40px;top:6px;width:86px;height:auto;transform:rotate(-6deg);mix-blend-mode:multiply;opacity:.78;pointer-events:none;z-index:0}
-.acts{display:grid;gap:10px;font-family:sans-serif}
+.acts{display:grid;gap:10px;font-family:"Dazhen Round","PingFang TC","Microsoft JhengHei",sans-serif}
 .acts a,.acts button{display:block;text-align:center;font:inherit;font-weight:700;font-size:15px;text-decoration:none;padding:13px;border-radius:999px;cursor:pointer}
 .acts .s{background:rgba(255,255,255,.6);color:var(--teal);border:1px solid rgba(27,77,68,.35)}
-.fine{font-family:sans-serif;font-size:13px;color:var(--ink-2);text-align:center;line-height:1.8;margin-top:22px}
-.hint{font-family:sans-serif;font-size:13px;color:var(--ink-2);text-align:center;margin:4px 0 0}
+.fine{font-family:"Dazhen Round","PingFang TC","Microsoft JhengHei",sans-serif;font-size:13px;color:var(--ink-2);text-align:center;line-height:1.8;margin-top:22px}
+.hint{font-family:"Dazhen Round","PingFang TC","Microsoft JhengHei",sans-serif;font-size:13px;color:var(--ink-2);text-align:center;margin:4px 0 0}
 .msg{text-align:center;padding-top:30px}.msg p{font-size:16px;line-height:2}
 @media print{body{background:#fff}.stage,.stage.done{height:auto;overflow:visible;background:none}.intro,.acts,.fine,.hint,.skip,.voice audio{display:none!important}.rise{position:static;height:auto;opacity:1;visibility:visible}.book{background:#fff}.page{padding-bottom:20px}}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
