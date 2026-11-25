@@ -7,7 +7,7 @@
 <meta name="referrer" content="no-referrer">
 <title>紫微斗數文字諮詢｜大正命理諮詢</title>
 <!-- 大正 11/18：文字諮詢閱讀頁改成網站自己畫。書和開場在這裡立刻出現，回覆內容在背景向預約系統拿（page=replyData，檢查跟以前一樣）。
-     樣式與內頁照預約系統 src/Mingshu.html（tools/gen-reply-page.py 產生，改 Mingshu.html 後要重跑）。 -->
+     11/25 起這份檔案直接改（原本的產生器已和線上不同步，已刪除）；內頁 HTML 由預約系統 LineCards.gs／VoiceNotes.gs 產生。 -->
 <link rel="preload" as="image" href="/images/mingshu/book2-closed.webp">
 <link rel="stylesheet" href="/fonts/huninn.css?v=20261125">
 <style>
@@ -56,7 +56,6 @@ h1{text-align:center;font-size:clamp(24px,7.2vw,44px);font-weight:900;letter-spa
 .q .qt{display:block}.q.fold .qt{max-height:11.4em;overflow:hidden;-webkit-mask-image:linear-gradient(#000 55%,transparent);mask-image:linear-gradient(#000 55%,transparent)}
 .q.tog{cursor:pointer;-webkit-tap-highlight-color:transparent}.q.tog:focus-visible{outline:2px solid var(--teal-l);outline-offset:2px}
 .qmore{display:block;margin:-10px 0 22px auto;font:600 14px sans-serif;color:var(--teal);background:rgba(255,252,246,.8);border:1px solid rgba(27,77,68,.3);border-radius:999px;cursor:pointer;padding:5px 14px}
-@media print{.q.fold .qt{max-height:none;-webkit-mask-image:none;mask-image:none}.qmore{display:none!important}}
 .ch p{font-size:17px;line-height:2;margin:0 0 14px}
 .ch .q+p,.ch .qmore+p{font-weight:600;color:var(--teal)}
 .ch-n,.ch-t b,.sign b{font-weight:700}h1{font-weight:900}
@@ -77,7 +76,6 @@ h1{text-align:center;font-size:clamp(24px,7.2vw,44px);font-weight:900;letter-spa
 .fine{font-family:"Dazhen Round","PingFang TC","Microsoft JhengHei",sans-serif;font-size:13px;color:var(--ink-2);text-align:center;line-height:1.8;margin-top:22px}
 .hint{font-family:"Dazhen Round","PingFang TC","Microsoft JhengHei",sans-serif;font-size:13px;color:var(--ink-2);text-align:center;margin:4px 0 0}
 .msg{text-align:center;padding-top:30px}.msg p{font-size:16px;line-height:2}
-@media print{body{background:#fff}.stage,.stage.done{height:auto;overflow:visible;background:none}.intro,.acts,.fine,.hint,.skip,.voice audio{display:none!important}.rise{position:static;height:auto;opacity:1;visibility:visible}.book{background:#fff}.page{padding-bottom:20px}}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 
 .ttl span.wait{opacity:.75}
@@ -98,6 +96,7 @@ h1{text-align:center;font-size:clamp(24px,7.2vw,44px);font-weight:900;letter-spa
 <main class="book" id="book"><div class="page" id="page"><div class="ld"><i></i>載入中，請稍候…</div></div></main>
 </div></div>
 <script src="/js/dz-api.js"></script>
+<script src="/js/dz-pdf.js?v=20261125"></script>
 <script>
 (function () {
   var q = new URLSearchParams(location.search), b = q.get('b') || '', t = q.get('t') || '', k = q.get('k') || '';
@@ -153,13 +152,37 @@ h1{text-align:center;font-size:clamp(24px,7.2vw,44px);font-weight:900;letter-spa
     b.onclick = tg;
     q.parentNode.insertBefore(b, q.nextSibling);
   })(qs[i]);
-  // 存成 PDF：用瀏覽器的列印。LINE 內建瀏覽器多半沒有列印功能，就提示用瀏覽器打開
-  var pb = document.getElementById('pdfBtn'), ph = document.getElementById('pdfHint');
-  if (pb) pb.onclick = function () {
+  // 下載 PDF（大正 11/25：諮詢重點、文字版都有，讓客人自己備份）。版面和這一頁一樣，由 /js/dz-pdf.js 做
+  var acts = page.querySelector('.acts');
+  if (acts && data && data.intro && window.DZ_PDF) {
+    var fname = String((data.name || '') + '的' + (data.book || '諮詢')).replace(/[\\/:*?"<>|\s]+/g, '') + '.pdf';
+    var tip = document.createElement('p'); tip.className = 'hint'; tip.hidden = true;
     var inLine = /\bLine\//i.test(navigator.userAgent || '');
-    if (inLine || typeof window.print !== 'function') { if (ph) ph.hidden = false; return; }
-    window.print();
-  };
+    if (inLine) {   // LINE 裡面不能下載檔案：改用手機的瀏覽器打開同一頁
+      var a = document.createElement('a'); a.className = 's'; a.textContent = '用瀏覽器打開，下載 PDF 備份';
+      a.href = location.href + (location.search ? '&' : '?') + 'openExternalBrowser=1';
+      acts.insertBefore(a, acts.firstChild);
+    } else {
+      var pb = document.createElement('button'); pb.type = 'button'; pb.className = 's'; pb.textContent = '下載 PDF 備份';
+      var blob = null, busy = false;
+      var mobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent || '') || (/Macintosh/.test(navigator.userAgent || '') && navigator.maxTouchPoints > 1);
+      pb.onclick = function () {
+        if (busy) return;
+        if (blob) { DZ_PDF.save(blob, fname); return; }
+        busy = true; pb.disabled = true; pb.textContent = '正在做 PDF，請稍候…'; tip.hidden = true;
+        DZ_PDF.make(page, { title: document.title }).then(function (b) {
+          blob = b; busy = false; pb.disabled = false;
+          if (mobile) pb.textContent = 'PDF 做好了，按這裡儲存';   // 手機要再按一下才能存（瀏覽器規定）
+          else { pb.textContent = '再下載一次 PDF'; DZ_PDF.save(blob, fname); }
+        }, function () {
+          busy = false; pb.disabled = false; pb.textContent = '下載 PDF 備份';
+          tip.textContent = 'PDF 沒有做成功，請再按一次。還是不行的話，可以先用截圖保存。'; tip.hidden = false;
+        });
+      };
+      acts.insertBefore(pb, acts.firstChild);
+    }
+    acts.parentNode.insertBefore(tip, acts.nextSibling);
+  }
 
   }
 })();
