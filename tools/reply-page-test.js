@@ -1,7 +1,7 @@
 // 網站 /reply/（11/18 改版）：書和開場網站自己畫，內容用 JSONP 向預約系統 page=replyData 拿。要先 hugo -d 並在 8768 開靜態伺服器
 const { chromium, devices } = require('/opt/npm-tools/node_modules/playwright');
 let fails = 0; const ok = (c, m) => { console.log(c ? '✓' : '✗', m); if (!c) fails++; };
-const BODY = '<div class="ch"><div class="q"><span class="qt">【測試】問題一</span></div><p>回覆內容測試</p></div><button id="pdfBtn" type="button">存成 PDF</button><p id="pdfHint" hidden>x</p>';
+const BODY = '<div class="ch"><div class="q"><span class="qt">【測試】問題一</span></div><p>回覆內容測試</p></div><div class="acts"><a class="s" href="#">LINE</a></div>';
 (async () => {
   const b = await chromium.launch(); const T = 'a'.repeat(32);
   const run = async (q, reply, opts = {}) => {
@@ -41,5 +41,17 @@ const BODY = '<div class="ch"><div class="q"><span class="qt">【測試】問題
   // 5. 連不上：顯示再試一次
   r = await run('?b=GRW26111800-00&t=' + T, 'fail'); await r.p.waitForTimeout(1000);
   ok(/再試一次/.test(await r.p.textContent('#page')), '連不上預約系統：顯示「再試一次」'); await r.ctx.close();
+  // 6. 下載 PDF：內容有開才有按鈕；手機按一下做 PDF、做好再按一下存；LINE 裡改成「用瀏覽器打開」
+  r = await run('?b=GR26112500-00&t=' + T, { ok: true, intro: true, name: '測試羊', book: '諮詢重點', body: BODY }, { seen: 'GR26112500-00' });
+  await r.p.waitForSelector('.acts button', { timeout: 5000 }); ok(/下載 PDF/.test(await r.p.textContent('.acts button')), '有內容：出現「下載 PDF 備份」');
+  await r.p.click('.acts button'); await r.p.waitForFunction(() => /做好了/.test(document.querySelector('.acts button').textContent), null, { timeout: 30000 });
+  ok(!(await r.p.$('.dzpdf-host')), '手機：PDF 做好，提示再按一下儲存，暫存的排版已清掉'); ok(!r.errs.length, '沒有頁面錯誤 ' + r.errs.join(';')); await r.ctx.close();
+  r = await run('?b=GR26112500-00&t=' + T, { ok: true, intro: false, body: '<div class="msg"><h1>內容已經刪除</h1></div><div class="acts"></div>' });
+  await r.p.waitForTimeout(800); ok(!(await r.p.$('.acts button')), '已刪除／還在寫：沒有下載按鈕'); await r.ctx.close();
+  { const ctx = await b.newContext({ ...devices['iPhone 13'], userAgent: devices['iPhone 13'].userAgent + ' Line/14.0.0' }); const p = await ctx.newPage();
+    await p.route('**/*', async rr => { const u = rr.request().url(); if (u.startsWith('http://localhost:8768')) return rr.continue(); const cb = new URL(u).searchParams.get('callback'); return rr.fulfill({ contentType: 'application/javascript', body: cb + '(' + JSON.stringify({ ok: true, intro: true, name: '測試羊', body: BODY }) + ')' }); });
+    await p.addInitScript(() => localStorage.setItem('ms-seen-GR26112500-00', '1'));
+    await p.goto('http://localhost:8768/reply/?b=GR26112500-00&t=' + T); await p.waitForSelector('.acts a', { timeout: 5000 });
+    ok(/openExternalBrowser=1/.test(await p.getAttribute('.acts a', 'href')), 'LINE 內建瀏覽器：按鈕改成用瀏覽器打開'); await ctx.close(); }
   await b.close(); console.log(fails ? '有 ' + fails + ' 項沒過' : '全部通過'); if (fails) process.exitCode = 1;
 })();
