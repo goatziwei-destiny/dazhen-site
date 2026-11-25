@@ -26,7 +26,6 @@
 ]}
 </script>
 <link rel="stylesheet" href="/fonts/huninn.css?v=20261125">
-<script>try{var m=/[?&]style=([abc])/.exec(location.search);document.documentElement.setAttribute("data-st",m?m[1]:"a")}catch(e){}</script>
 <style>
 /* 2026-10-11 首頁改版：開場 → 服務與價格 → 關於大正（精簡）→ 第一次諮詢 → 預約流程 → 預約規則 → 常見問題 → 最新文章 → 結尾 */
 :root{--navy:#1b2845;--navy-2:#21304c;--navy-3:#3d5467;--cream:#f5f3ef;--accent:#6292ab;--accent-d:#4f7d94;--warm:#cc8854;--warm-d:#b07545;--text-light:#c8cdd4;--text-muted:#8a95a5;--body:#57534e;--line:#e5e8ec}
@@ -270,7 +269,7 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 /* 底部預約列（手機）：細一點、不做滑入動畫，出現後就固定在原位 */
 @media(max-width:767px){.sticky-cta{transition:none;padding:7px 12px calc(7px + env(safe-area-inset-bottom,0px))}.sticky-cta:not(.show){display:none}.cta-night .btn-gold{padding:9px 16px;font-size:14px}.cta-night .when b{font-size:14px}body{padding-bottom:58px}}
 @media(prefers-reduced-motion:reduce){.btn:hover{transform:none}}
-/* ===== 2026-11-25 風格改版（粉圓字體＋問題卡片＋STEP 虛線時間線＋打勾卡片＋螢光筆底線）預覽 A／B／C：html[data-st] ===== */
+/* ===== 2026-11-25 風格改版（粉圓字體＋問題卡片＋STEP 虛線時間線＋打勾卡片＋螢光筆底線）（圓潤風格） ===== */
 body{letter-spacing:.02em}
 .hero-paper .hero-desc{font-size:18px}.about-lead{font-size:17.5px}.fit ul,.dd ul{font-size:15.5px}.first-desc{font-size:15.5px;line-height:1.8}.first-title{font-size:17px}
 .step-desc,.rule dd{font-size:16px}.faq-q{font-size:16.5px}.faq-a{font-size:16px}.post-desc{font-size:15px}.post-title{font-size:18px}.rule dt{font-size:16px}
@@ -302,33 +301,18 @@ body{letter-spacing:.02em}
 .proc-num small{font-size:10px;letter-spacing:.2em;font-weight:400;margin-bottom:3px}.proc-num b{font-size:26px;font-weight:700}
 .proc-line .step-title{font-size:18px;margin:8px 0 2px}.proc-line .step-desc{font-size:16px;color:var(--body)}
 @media(max-width:480px){.proc-line li{grid-template-columns:56px minmax(0,1fr);gap:14px}.proc-num{width:56px;height:56px}.proc-num b{font-size:22px}.proc-line li:not(:last-child)::after{left:27px;top:60px}}
-/* ── 款式 B：圓潤卡片（暖色＋柔和陰影，最接近範例） ── */
-[data-st=b] .stuck{background:var(--paper)}
-[data-st=b] .pain{border:0;border-radius:20px;box-shadow:0 12px 30px -20px rgba(27,40,69,.4)}
-[data-st=b] .pain::before{background:var(--brass);border-color:var(--brass);width:26px;height:26px}[data-st=b] .pain::after{color:#fff;width:26px;line-height:26px}
-[data-st=b] .stuck-line{border-left-color:var(--brass);background:#fff;border-radius:0 14px 14px 0;padding:16px 20px;box-shadow:0 12px 30px -22px rgba(27,40,69,.4)}
-[data-st=b] .dd>div,[data-st=b] .fit>div{border:0!important;border-radius:20px!important;box-shadow:0 12px 30px -20px rgba(27,40,69,.4)}
-[data-st=b] .fit>div:first-child{outline:2px solid var(--navy)}
-[data-st=b] .proc-num{border-color:var(--brass);background:var(--paper);color:var(--navy)}[data-st=b] .proc-num small{color:var(--brass-d)}
-[data-st=b] .proc-line li:not(:last-child)::after{border-left-color:rgba(201,154,69,.7)}
-[data-st=b] .proc-line li>div:last-child{background:#fff;border-radius:16px;padding:14px 18px;box-shadow:0 10px 26px -20px rgba(27,40,69,.4)}
-[data-st=b] .proc-line .step-title{margin-top:0}
-[data-st=b] .section-white{background:#fff}[data-st=b] .section-light{background:var(--paper)}
-/* ── 款式 C：編號標籤＋橫向時間線 ── */
-[data-st=c] .pains{counter-reset:p}
-[data-st=c] .pain{counter-increment:p;background:var(--paper-2);border:0;border-radius:10px;padding:22px 22px 20px 22px}
-[data-st=c] .pain::before{content:"0" counter(p);position:static;display:block;width:auto;height:auto;border:0;border-radius:0;font-size:13px;letter-spacing:.2em;color:var(--brass-ink);margin-bottom:4px}
-[data-st=c] .pain::after{content:"?";left:auto;right:18px;top:6px;width:auto;font-size:64px;line-height:1;color:rgba(168,125,51,.25);font-weight:700}
-[data-st=c] .stuck-line{border-left:0;padding-left:0;text-align:center}
-[data-st=c] .dd>div,[data-st=c] .fit>div{border-radius:10px!important;background:var(--paper)!important;border:0!important}
-[data-st=c] .fit>div:first-child{background:var(--navy)!important}[data-st=c] .fit>div:first-child *{color:#fff!important}[data-st=c] .fit>div:first-child li{border-top-color:rgba(255,255,255,.25)}[data-st=c] .fit>div:first-child li::before{border-color:var(--gold)}
-@media(min-width:861px){
-[data-st=c] .proc-wrap{grid-template-columns:1fr;gap:34px}
-[data-st=c] .proc-line{grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;align-items:start}
-[data-st=c] .proc-line li{grid-template-columns:1fr;justify-items:center;align-content:start;text-align:center;padding-bottom:0;gap:10px}
-[data-st=c] .proc-line li:not(:last-child)::after{left:calc(50% + 40px);right:calc(-50% + 40px);top:34px;bottom:auto;height:0;border-left:0;border-top:2px dashed rgba(27,40,69,.3);width:auto}
-[data-st=c] .proc-wrap .proc-vid{max-width:300px;margin:0 auto}
-}
+/* ── 圓潤卡片（暖色＋柔和陰影） ── */
+.stuck{background:var(--paper)}
+.pain{border:0;border-radius:20px;box-shadow:0 12px 30px -20px rgba(27,40,69,.4)}
+.pain::before{background:var(--brass);border-color:var(--brass);width:26px;height:26px}.pain::after{color:#fff;width:26px;line-height:26px}
+.stuck-line{border-left-color:var(--brass);background:#fff;border-radius:0 14px 14px 0;padding:16px 20px;box-shadow:0 12px 30px -22px rgba(27,40,69,.4)}
+.dd>div,.fit>div{border:0!important;border-radius:20px!important;box-shadow:0 12px 30px -20px rgba(27,40,69,.4)}
+.fit>div:first-child{outline:2px solid var(--navy)}
+.proc-num{border-color:var(--brass);background:var(--paper);color:var(--navy)}.proc-num small{color:var(--brass-d)}
+.proc-line li:not(:last-child)::after{border-left-color:rgba(201,154,69,.7)}
+.proc-line li>div:last-child{background:#fff;border-radius:16px;padding:14px 18px;box-shadow:0 10px 26px -20px rgba(27,40,69,.4)}
+.proc-line .step-title{margin-top:0}
+.section-white{background:#fff}.section-light{background:var(--paper)}
 </style>
 {{ partial "analytics.html" . }}
 </head>
@@ -580,7 +564,7 @@ function firstBlock_(S, agenda, agendaStep) {
   return '<section id="first-time" class="sec section-light"><div class="container">' + head + body + '</div></section>';
 }
 // ── 「你是不是也卡在這邊？」問題卡片（2026-11-25 大正：參考別人網站的問題卡片）──
-// 文字先寫在這裡當預設；之後要在後台改，再加 S.stuckTitle／S.stuckCards（每行「問題｜補一句」）
+// 文字在後台「首頁：你是不是也卡在這邊」改；後台沒送來時用下面的預設
 var STUCK_DEFAULT = [
   ['想問感情，又怕被貼標籤', '「命不好」「沒正緣」這種話，聽完只會更慌。'],
   ['看過別人的命盤解說，還是不知道自己怎麼辦', '網路上的說法很多，但沒有一句是對著你的處境說的。'],
@@ -588,12 +572,17 @@ var STUCK_DEFAULT = [
   ['事情很多想問，又怕時間不夠', '60 分鐘不限題數，一件一件慢慢問。']
 ];
 function stuckBlock_(S) {
-  var cards = lines_(S.stuckCards).map(function (l) { return l.split('｜'); });
-  if (!cards.length) cards = STUCK_DEFAULT;
+  var hasCfg = false, cards = [], i;
+  for (i = 1; i <= 6; i++) if (S['stuck' + i + 'Q'] !== undefined) hasCfg = true;
+  if (hasCfg) { for (i = 1; i <= 6; i++) { var q = String(S['stuck' + i + 'Q'] || '').trim(); if (q) cards.push({ n: i, q: q, a: String(S['stuck' + i + 'A'] || '').trim() }); } }
+  else cards = STUCK_DEFAULT.map(function (c, j) { return { n: j + 1, q: c[0], a: c[1] }; });
+  if (!cards.length) return '';
+  var title = S.stuckTitle === undefined ? '你是不是也卡在這邊？' : S.stuckTitle;
+  var line = S.stuckLine === undefined ? '這些，都可以好好聊。' : S.stuckLine;
   return '<section id="stuck" class="sec section-white stuck"><div class="container">' +
-    '<h2 class="section-title"><span class="hl">' + esc(S.stuckTitle || '你是不是也卡在這邊？') + '</span></h2>' +
-    '<div class="pains">' + cards.map(function (c) { return '<div class="pain">' + esc(c[0]) + (c[1] ? '<small>' + esc(c[1]) + '</small>' : '') + '</div>'; }).join('') + '</div>' +
-    '<p class="stuck-line">' + esc(S.stuckLine || '這些，都可以好好聊。') + '</p></div></section>';
+    (title ? '<h2 class="section-title"' + dk('stuckTitle') + '><span class="hl">' + esc(title) + '</span></h2>' : '') +
+    '<div class="pains">' + cards.map(function (c) { return '<div class="pain"' + dk('stuck' + c.n + 'Q') + '>' + esc(c.q) + (c.a ? '<small' + dk('stuck' + c.n + 'A') + '>' + esc(c.a) + '</small>' : '') + '</div>'; }).join('') + '</div>' +
+    (line ? '<p class="stuck-line"' + dk('stuckLine') + '>' + esc(line) + '</p>' : '') + '</div></section>';
 }
 function renderSite(S) {
   document.title = S.siteTitle || '';
