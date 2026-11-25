@@ -63,6 +63,7 @@ h1{text-align:center;font-size:clamp(24px,7.2vw,44px);font-weight:900;letter-spa
 .keys{list-style:none;margin:0;padding:0}
 .keys li{padding:8px 0 14px;font-size:16.5px;line-height:1.95}
 .keys li b{color:var(--teal);font-weight:700}
+.keys.dots li{position:relative;padding-left:20px}.keys.dots li::before{content:"";position:absolute;left:3px;top:calc(8px + .975em - 3px);width:6px;height:6px;border-radius:50%;background:var(--teal)}
 .take{margin:6px 8px 0;padding:22px 20px 14px;background:#e8ede0;border-radius:22px 30px 24px 32px / 26px 20px 30px 22px;box-shadow:0 0 12px 8px #e8ede0;font-size:17px;line-height:1.95;color:var(--ink)}
 .take p{margin:0 0 10px}.take p:last-child{margin:0}
 .sign{display:flex;justify-content:flex-end;margin:44px 30px 60px 0}
@@ -94,7 +95,7 @@ h1{text-align:center;font-size:clamp(24px,7.2vw,44px);font-weight:900;letter-spa
   <button class="skip" id="skip" type="button">略過</button>
 </section>
 <div class="rise">
-<main class="book" id="book"><div class="page" id="page"><div class="ld"><i></i>文字諮詢載入中，請稍候…</div></div></main>
+<main class="book" id="book"><div class="page" id="page"><div class="ld"><i></i>載入中，請稍候…</div></div></main>
 </div></div>
 <script src="/js/dz-api.js"></script>
 <script>
@@ -117,7 +118,7 @@ h1{text-align:center;font-size:clamp(24px,7.2vw,44px);font-weight:900;letter-spa
     at(1250, function () { show([2, 3]); }); at(1500, function () { show([2, 4]); }); at(1760, function () { show([2, 5]); }); at(2040, function () { show([2]); });
     at(1350, function () { stage.classList.add('under'); at(2000, done); });   // 翻頁的同時，內容直接淡入
   };
-  if (!/^GRW?\d{8}-\d{2}$/.test(b) || !/^[0-9a-f]{32}$/.test(k || t)) { msg('這個連結打不開', '連結可能不完整。請回到 LINE、Email 或會員中心，重新按一次「打開你的紫微斗數文字諮詢」。<br>還是打不開的話，直接在 LINE 跟大正說一聲。'); return; }
+  if (!/^GRW?\d{8}-\d{2}$/.test(b) || !/^[0-9a-f]{32}$/.test(k || t)) { msg('這個連結打不開', '連結可能不完整。請回到 LINE、Email 或會員中心，重新按一次打開的按鈕。<br>還是打不開的話，直接在 LINE 跟大正說一聲。'); return; }
   var seen = false; try { seen = localStorage.getItem('ms-seen-' + b) === '1'; } catch (e) { }
   if (seen) done();   // 看過的：不再播開場，內容拿到就直接顯示
   else {
@@ -133,9 +134,9 @@ h1{text-align:center;font-size:clamp(24px,7.2vw,44px);font-weight:900;letter-spa
     afterBody();
     if (!d.intro) { timers.forEach(clearTimeout); done(); return; }   // 連結不對、已取消、已刪除、還在寫：直接顯示說明
     key = d.seenKey || '';
-    if (d.name) document.getElementById('ttlName').innerHTML = esc(d.name) + '<br>紫微斗數文字諮詢';
+    if (d.name) document.getElementById('ttlName').innerHTML = esc(d.name) + '<br>' + esc(d.book || '紫微斗數文字諮詢');   // 一對一的「諮詢重點」書名不同（預約系統給）
     if (wantOpen) play(); else if (hint.classList.contains('wait')) { hint.textContent = '點一下，翻開'; hint.classList.remove('wait'); }
-  }).catch(function () { msg('網路有點慢', '文字諮詢沒有載入成功，請按下面的按鈕再試一次。', true); });
+  }).catch(function () { msg('網路有點慢', '內容沒有載入成功，請按下面的按鈕再試一次。', true); });
 
   function afterBody() {
   // 問題太長就先摺起來（量的是實際高度，手機、電腦都準）
