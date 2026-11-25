@@ -7,9 +7,21 @@
   var W = 560, H = Math.round(W * 297 / 210);   // A4 直式，用閱讀頁同樣的寬度排版
   var ATOM = 'li,p,.q,.ch-h,.dv,h1,.who,.run,img.head,.sign,.fine,.voice,.msg,.hint';
   var loaded = null;
-  function load(src) { return new Promise(function (ok, no) { var s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = function () { no(new Error('載入失敗')); }; document.head.appendChild(s); }); }
+  // 載入一個程式庫；已經載好就不再載。失敗時把那個 <script> 拿掉，下一次按按鈕會重新載
+  function load(src, ready) {
+    if (ready()) return Promise.resolve();
+    return new Promise(function (ok, no) {
+      var s = document.createElement('script'); s.src = src;
+      s.onload = function () { ready() ? ok() : (s.remove(), no(new Error('載入失敗'))); };
+      s.onerror = function () { s.remove(); no(new Error('載入失敗')); };
+      document.head.appendChild(s);
+    });
+  }
   function libs() {
-    if (!loaded) loaded = Promise.all([load('/js/vendor/html2canvas.min.js?v=1.4.1'), load('/js/vendor/jspdf.umd.min.js?v=2.5.2')]);
+    if (!loaded) loaded = Promise.all([
+      load('/js/vendor/html2canvas.min.js?v=1.4.1', function () { return typeof window.html2canvas === 'function'; }),
+      load('/js/vendor/jspdf.umd.min.js?v=2.5.2', function () { return !!(window.jspdf && window.jspdf.jsPDF); })
+    ]).catch(function (e) { loaded = null; throw e; });   // 失敗不留快取，客人再按一次會重新載入
     return loaded;
   }
   function css() {
@@ -24,6 +36,7 @@
       // html2canvas 不支援 border-image：問題卡的橘色水彩改成拉伸的底圖，看起來一樣
       '.dzpdf-pg .q{border:0;padding:26px 30px 24px 44px;background:url("/images/mingshu/qwash.webp") center/100% 100% no-repeat}' +
       '.dzpdf-pg .q::before{left:2px;top:-6px}' +
+      '.dzpdf-pg .dzpdf-cont::before{display:none}.dzpdf-pg .dzpdf-cont{margin-top:0}' +
       '.dzpdf-pg .sign .tx{z-index:0}.dzpdf-pg .seal{mix-blend-mode:normal;z-index:-1}' +
       '.dzpdf-pg .dzpdf-no{position:absolute;left:0;right:0;bottom:16px;text-align:center;font-size:11px;letter-spacing:2px;color:#6a6256}';
     document.head.appendChild(st);
@@ -68,18 +81,49 @@
       q.remove();
     });
   }
-  function paginate(src, host) {
-    var pages = [], inner = newPage(host);
-    inner.innerHTML = src.innerHTML; pages.push(inner);
-    splitTallCards(inner);
-    for (var guard = 0; guard < 200; guard++) {
+  // 把 el 從第一個「底部超過 limit 的字」那一行切成兩塊：前半留在原地，後半是新的一塊接在後面（字一個都不少）
+  function splitAtLine(el, limit) {
+    var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), tn, r = document.createRange(), at = null;
+    var lh = parseFloat(getComputedStyle(el.querySelector('.qt') || el).lineHeight) || 0;   // 行高比字高，字的下面還有半行空白要算進去
+    var cs = getComputedStyle(el), pad = (parseFloat(cs.paddingBottom) || 0) + (parseFloat(cs.borderBottomWidth) || 0);   // 問題卡下面還有內距
+    while (!at && (tn = walker.nextNode())) {
+      for (var i = 0; i < tn.data.length; i++) {
+        r.setStart(tn, i); r.setEnd(tn, i + 1);
+        var rc = r.getClientRects(); if (!rc.length || !rc[0].height) continue;   // 換行字元這類沒有位置的字跳過
+        if (rc[0].bottom + Math.max(0, (lh - rc[0].height) / 2) + pad > limit - 0.5) { at = { node: tn, off: i }; break; }
+      }
+    }
+    if (!at) return null;
+    var tail = document.createRange(); tail.setStart(at.node, at.off); tail.setEnd(el, el.childNodes.length);
+    if (tail.toString() === el.textContent) return null;   // 第一行就放不下：整塊搬到下一頁就好
+    var frag = tail.extractContents(), rest = el.cloneNode(false);
+    rest.appendChild(frag); rest.classList.add('dzpdf-cont');
+    // 前半段結尾、後半段開頭的換行和空白拿掉，不然會多一行空的
+    var q = el.querySelector('.qt') || el; if (q.lastChild && q.lastChild.nodeType === 3) q.lastChild.data = q.lastChild.data.replace(/\s+$/, '');
+    var q2 = rest.querySelector('.qt') || rest; if (q2.firstChild && q2.firstChild.nodeType === 3) q2.firstChild.data = q2.firstChild.data.replace(/^\s+/, '');
+    el.parentNode.insertBefore(rest, el.nextSibling);
+    return rest;
+  }
+  function paginate(host, inner) {
+    var pages = [inner];
+    var contentH = inner.clientHeight - parseFloat(getComputedStyle(inner).paddingTop) - parseFloat(getComputedStyle(inner).paddingBottom);
+    for (var guard = 0; guard < 400; guard++) {
       var limit = inner.getBoundingClientRect().bottom - parseFloat(getComputedStyle(inner).paddingBottom);
       var list = atoms(inner), cut = -1;
       for (var i = 0; i < list.length; i++) if (list[i].getBoundingClientRect().bottom > limit + 0.5) { cut = i; break; }
       if (cut < 0) break;
-      if (cut === 0) cut = 1;   // 一塊就比一頁高（很少見）：讓它自己一頁，超出的部分會被裁掉
+      var big = list[cut], bt = big.getBoundingClientRect();
+      // 這一塊比一整頁還高（很長的一段話、一個條列、一題）：不能整塊搬，照行切開，放得下的留在這頁
+      if (bt.height > contentH - 2 || cut === 0) {
+        var lh = parseFloat(getComputedStyle(big).lineHeight) || 30;
+        if (limit - Math.max(bt.top, inner.getBoundingClientRect().top) >= lh * 2 || cut === 0) {
+          if (splitAtLine(big, limit)) { list = atoms(inner); cut = list.indexOf(big) + 1; }
+          else if (cut === 0) throw new Error('排版失敗');   // 連一行都放不下（不應該發生）：不做出缺字的 PDF
+        }
+      }
       while (cut > 1 && list[cut - 1].matches('.ch-h,.dv')) cut--;   // 小標、分隔線不要單獨留在頁尾
       if (cut >= list.length) break;
+      if (cut === 0) throw new Error('排版失敗');
       var next = newPage(host);
       moveFrom(list[cut], inner, next);
       // 新頁開頭的分隔線拿掉；搬空的外框拿掉
@@ -93,6 +137,18 @@
   function waitImages(host) {
     return Promise.all([].slice.call(host.querySelectorAll('img')).map(function (im) { return im.complete ? 0 : new Promise(function (ok) { im.onload = im.onerror = ok; }); }));
   }
+  // 做成圖片之前最後檢查：每一頁的內容都在頁面範圍內，而且所有頁面的字加起來和原頁面一樣（PDF 是圖片，事後沒辦法補）
+  function check(pgs, src) {
+    var norm = function (t) { return t.replace(/\s+/g, ''); }, all = '';
+    var skip = '.acts,audio,.qmore,button,.dzpdf-no,.voice .t span';
+    pgs.forEach(function (pg) {
+      var inner = pg.querySelector('.page'), lim = inner.getBoundingClientRect().bottom - parseFloat(getComputedStyle(inner).paddingBottom) + 1;
+      atoms(inner).forEach(function (a) { if (!a.closest(skip) && a.getBoundingClientRect().bottom > lim) throw new Error('排版超出頁面：' + (a.className || a.tagName)); });
+      all += textOf(inner, skip);
+    });
+    if (norm(all) !== norm(textOf(src, skip))) throw new Error('排版後內容不一致');
+  }
+  function textOf(root, skip) { var c = root.cloneNode(true); [].slice.call(c.querySelectorAll(skip)).forEach(function (x) { x.remove(); }); return c.textContent; }
   /** 把閱讀頁（.page 元素）做成 PDF，回傳 Blob */
   window.DZ_PDF = {
     make: function (pageEl, opt) {
@@ -100,8 +156,10 @@
       return libs().then(function () { return document.fonts && document.fonts.ready; }).then(function () {
         css();
         var host = document.createElement('div'); host.className = 'dzpdf-host'; host.setAttribute('aria-hidden', 'true'); document.body.appendChild(host);
-        var pgs = paginate(pageEl, host);
+        var first = newPage(host); first.innerHTML = pageEl.innerHTML;
+        var pgs;
         return waitImages(host).then(function () { return document.fonts && document.fonts.ready; }).then(function () {
+          try { splitTallCards(first); pgs = paginate(host, first); check(pgs, pageEl); } catch (e) { host.remove(); throw e; }
           var JsPDF = window.jspdf.jsPDF, doc = new JsPDF({ unit: 'mm', format: 'a4', compress: true });
           var chain = Promise.resolve();
           pgs.forEach(function (pg, i) {

@@ -9,6 +9,7 @@ const BODY = '<div class="ch"><div class="q"><span class="qt">【測試】問題
     p.on('pageerror', e => errs.push(e.message));
     if (opts.seen) await ctx.addInitScript(id => localStorage.setItem('ms-seen-' + id, '1'), opts.seen);
     await p.route('**/*', async r => { const u = r.request().url();
+      if (opts.failLibOnce && /html2canvas/.test(u) && !opts.failed) { opts.failed = true; return r.fulfill({ status: 500, body: '' }); }
       if (u.startsWith('http://localhost:8768')) return r.continue();
       if (/script\.google\.com/.test(u)) { asked.push(u); if (reply === 'fail') return r.abort(); const cb = new URL(u).searchParams.get('callback');
         if (opts.delay) await new Promise(res => setTimeout(res, opts.delay));
@@ -48,6 +49,21 @@ const BODY = '<div class="ch"><div class="q"><span class="qt">【測試】問題
   ok(!(await r.p.$('.dzpdf-host')), '手機：PDF 做好，提示再按一下儲存，暫存的排版已清掉'); ok(!r.errs.length, '沒有頁面錯誤 ' + r.errs.join(';')); await r.ctx.close();
   r = await run('?b=GR26112500-00&t=' + T, { ok: true, intro: false, body: '<div class="msg"><h1>內容已經刪除</h1></div><div class="acts"></div>' });
   await r.p.waitForTimeout(800); ok(!(await r.p.$('.acts button')), '已刪除／還在寫：沒有下載按鈕'); await r.ctx.close();
+  // 7. 比一頁還高的單一段落、單一條列、單一題：PDF 照行接到下一頁，排版後的字和原頁一樣（不一樣就不出 PDF）
+  { const F = '這是一段很長的回覆文字，用來測試超過一頁的段落會不會被裁掉，';
+    const HUGE = "<h1>諮詢重點</h1><section class='ch'><p>" + F.repeat(40) + "段落結尾必須保留</p></section><section class='ch'><ul class='keys dots'><li>短</li><li><b>標題：</b>" + F.repeat(45) + "條列結尾必須保留</li></ul></section><section class='ch'><div class='q'><span class='qt'>第一題\n" + F.repeat(42) + "問題結尾必須保留\n第三題</span></div></section><div class='acts'><a class='s' href='#'>LINE</a></div>";
+    r = await run('?b=GR26112500-00&t=' + T, { ok: true, intro: true, name: '測試羊', body: HUGE }, { seen: 'GR26112500-00' });
+    await r.p.waitForSelector('.acts button', { timeout: 5000 });
+    const res = await r.p.evaluate(async () => { try { const bl = await DZ_PDF.make(document.getElementById('page')); return 'ok ' + bl.size; } catch (e) { return 'err ' + e.message; } });
+    ok(/^ok \d+/.test(res) && +res.split(' ')[1] > 100000, '超長段落／條列／問題：PDF 做得出來，而且通過「每頁不超出、字和原頁一樣」檢查 ' + res); await r.ctx.close(); }
+  // 8. 程式庫第一次載入失敗：提示再按一次；同一頁再按就重新載入、做得出來
+  { const o = { seen: 'GR26112500-00', failLibOnce: true };
+    r = await run('?b=GR26112500-00&t=' + T, { ok: true, intro: true, name: '測試羊', body: BODY }, o);
+    await r.p.waitForSelector('.acts button', { timeout: 5000 }); await r.p.click('.acts button');
+    await r.p.waitForFunction(() => { const h = document.querySelector('.hint'); return h && !h.hidden && /再按一次/.test(h.textContent); }, null, { timeout: 15000 });
+    ok(o.failed, '第一次載入失敗後出現「請再按一次」');
+    await r.p.click('.acts button'); await r.p.waitForFunction(() => /做好了/.test(document.querySelector('.acts button').textContent), null, { timeout: 30000 });
+    ok(true, '同一頁再按一次：重新載入程式庫，PDF 做好'); await r.ctx.close(); }
   { const ctx = await b.newContext({ ...devices['iPhone 13'], userAgent: devices['iPhone 13'].userAgent + ' Line/14.0.0' }); const p = await ctx.newPage();
     await p.route('**/*', async rr => { const u = rr.request().url(); if (u.startsWith('http://localhost:8768')) return rr.continue(); const cb = new URL(u).searchParams.get('callback'); return rr.fulfill({ contentType: 'application/javascript', body: cb + '(' + JSON.stringify({ ok: true, intro: true, name: '測試羊', body: BODY }) + ')' }); });
     await p.addInitScript(() => localStorage.setItem('ms-seen-GR26112500-00', '1'));
