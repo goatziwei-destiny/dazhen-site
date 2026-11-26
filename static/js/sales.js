@@ -276,7 +276,8 @@ function sceneP(i) {
  if (i == 2) return '<div class="sc"><div class="fh">回報末五碼</div><div class="fb"><div class="lbl">帳號末五碼</div><div class="fld five" data-type="0.4,1.8" data-ok="1.9">81206</div>' +
   '<div class="pbub" data-in="2.8"><img src="' + AV + '" alt=""><div class="bb"><b>LINE 通知</b>收到你的匯款，預約成功！到時候見。</div></div></div></div>';
  return '<div class="sc"><div class="call"><img src="' + AV + '" alt=""><div class="nm">大正命理諮詢</div><div class="st" data-timer>語音通話中　00:00</div><div class="wave">' + Array.from({ length: 15 }, function (_, k) { return '<b data-wv="' + k + '"></b>'; }).join('') + '</div></div>' +
-  '<div class="cds"><div class="cd" data-in="0.5"><i>' + ICON.msg + '</i><div><b>前一天會收到提醒</b><span>Email 或 LINE</span></div></div><div class="cd" data-in="1.2"><i>' + ICON.call + '</i><div><b>時間到，開始通話</b><span>Google Meet 或 LINE 語音</span></div></div></div></div>';
+  '<div class="cds"><div class="cd" data-in="0.5"><i>' + ICON.msg + '</i><div><b>前一天會收到提醒</b><span>Email 或 LINE</span></div></div><div class="cd" data-in="1.2"><i>' + ICON.call + '</i><div><b>時間到，開始通話</b><span>Google Meet 或 LINE 語音</span></div></div>' +
+  '<div class="cd" data-in="1.9"><i>' + ICON.msg + '</i><div><b>文字版諮詢</b><span>請等待，7–10 個工作天內收件</span></div></div></div></div>';
 }
 if (CFG.mode === 'home') {
  var homeMount = function () {
