@@ -298,3 +298,17 @@ html.pg .tp{scroll-snap-stop:always}
 .sp-home .sp-hint{font-size:15px;color:var(--muted);margin-top:4px}
 .sp-home .story{padding-top:8px}
 @media (max-width:900px){.sp-home{padding:44px 0 8px}}
+/* 首頁「預約流程」動畫（2026-11-26） */
+.sp .sc .chip.inl{position:static;transform:none;display:inline-block;margin-top:1.6em}
+.sp .okbig{margin-top:1.8em;display:flex;align-items:center;justify-content:center;gap:.5em;background:#e6f1ec;color:var(--green);border-radius:1em;padding:.9em;font-size:1.8em;font-weight:700}
+.sp .okbig i{font-style:normal;display:inline-grid;place-items:center;width:1.4em;height:1.4em;border-radius:50%;background:var(--green);color:#fff;font-size:.8em}
+.sp .fld.five{letter-spacing:.5em;font-size:2.3em;text-align:center;min-height:2.4em}
+.sp .pbub{display:flex;gap:.8em;align-items:flex-start;margin-top:2.2em}
+.sp .pbub img{width:3.8em;height:3.8em;border-radius:50%;flex:none}
+.sp .pbub .bb{background:#fff;border:.12em solid #e5e1d8;border-radius:1.2em;padding:.9em 1.1em;font-size:1.45em;line-height:1.55;color:#333}
+.sp .pbub .bb b{display:block;color:var(--green);font-size:.85em;margin-bottom:.2em}
+.sp .pstep{margin:0}.sp .pstep li{padding-bottom:0}.sp .pstep li::before,.sp .pstep li::after{display:none}
+.sp-proc .ssec{min-height:52vh}
+.sp-proc .pgo{text-align:center;padding:10px 24px 24px}
+.sp-proc .pgo .btn{display:inline-flex;padding:14px 34px;font-size:16px}
+@media (max-width:900px){.sp-proc .ssec{min-height:0}}

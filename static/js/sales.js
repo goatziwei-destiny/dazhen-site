@@ -38,7 +38,12 @@ var card = function (icon, kt, kd, cls) { return '<div class="card gcard' + (cls
 var title = function (k) { return '<h2 class="sec-title"><span class="hl">' + T(k) + '</span></h2>'; };
 var lead = function (k) { return T(k, 'p').replace('<p ', '<p class="lead" '); };
 var steps = function (pre) { return '<ol class="steps">' + [1, 2, 3, 4].map(function (n) { return '<li><div class="sn"><small>STEP</small><b>' + n + '</b></div><div class="bx">' + T(pre + n + 'T', 'b') + T(pre + n + 'D') + '</div></li>'; }).join('') + '</ol>'; };
-var rules = function () { return '<ul class="rules" style="margin-top:18px;max-width:720px">' + [1, 2, 3].map(function (n) { return '<li>' + T(P + 'Rule' + n + 'L', 'b') + T(P + 'Rule' + n + 'D') + '</li>'; }).join('') + '</ul><a class="more" href="/#rules" style="display:inline-block;margin-top:16px;font-weight:700;color:var(--clay);border-bottom:2px solid currentColor">看完整預約規則 →</a>'; };
+var NOTES = (CFG.rules || []).map(function (r, i) { return { t: r[0], d: r[1], n: i + 1 }; });   // 語音頁完整預約規則（後台「預約須知」note1~6）
+var rules = function () {
+ var list = KIND === 'text' ? [1, 2, 3].map(function (n) { return '<li>' + T(P + 'Rule' + n + 'L', 'b') + T(P + 'Rule' + n + 'D') + '</li>'; })
+  : NOTES.map(function (r) { return '<li><b data-k="note' + r.n + 'Title">' + esc(r.t) + '</b><span data-k="note' + r.n + 'Desc">' + br(r.d) + '</span></li>'; });
+ return '<ul class="rules" style="margin-top:18px;max-width:760px">' + list.join('') + '</ul><a class="more" href="/services/#faq" style="display:inline-block;margin-top:16px;font-weight:700;color:var(--clay);border-bottom:2px solid currentColor">還有其他問題？看常見問題 →</a>';
+};
 var memtip = function (kt, kd) { return '<div class="memtip">' + T(kt, 'b') + T(kd) + '</div>'; };
 var ctaBand = function () { return '<section class="cta-band"><div class="wrap">' + T(P + 'CtaTitle', 'h2') + '<p>' + T(P + 'CtaName') + '　' + price() + '／' + (KIND === 'text' ? T('txPriceUnit') : '60 分鐘') + '</p><div class="cta-row">' + BOOK('btn btn-brass', P + 'BookBtn') + '<div class="qr"><img src="' + QR + '" alt="LINE QR Code" width="84" height="84"><div><small>或掃 QR Code 加 LINE</small><small>LINE 搜尋 ID</small><b>' + esc(CFG.lineId || '') + '</b></div></div></div></div></section>'; };
 var ctaBtns = function () { return '<div class="cta-btns">' + BOOK('btn btn-brass', P + 'BookBtn') + LINE('btn btn-navy', P + 'LineBtn') + '</div>'; };
@@ -65,11 +70,11 @@ function sceneV(i) {
   '<div class="rf-br"><div class="rf-b ok" data-in="1.5"><i>✓</i><div><b>定盤成功</b><span>開始計時，進入 60 分鐘</span></div></div><div class="rf-b no" data-in="2.6"><i>✗</i><div><b>若無法定盤<br>即結束論命<br>並全額退費</b></div></div></div></div>';
  return '<div class="sc cta-sc"><img src="' + AV + '" alt="" data-pop><div class="t" data-in="0.3">想好好聊一次？</div><div class="s" data-in="0.6">一對一語音諮詢</div><a class="b1" href="' + esc(CFG.bookUrl) + '" data-in="0.9">預約一對一語音諮詢</a><a class="b2" href="' + esc(CFG.lineUrl) + '" target="_blank" rel="noopener" data-line data-in="1.3">加 LINE 先問問題</a></div>';
 }
-function phoneHTML(only, bare) { var n = only == null ? [0, 1, 2, 3, 4] : [only]; return '<div class="phone' + (bare ? ' bare' : '') + '"><div class="scr"><div class="notch"></div>' + n.map(sceneV).join('') + '</div></div>'; }
+function phoneHTML(only, bare, scene, count) { scene = scene || sceneV; var n = only == null ? Array.from({ length: count || 5 }, function (_, k) { return k; }) : [only]; return '<div class="phone' + (bare ? ' bare' : '') + '"><div class="scr"><div class="notch"></div>' + n.map(function (k) { return scene(k); }).join('') + '</div></div>'; }
 
 function Stage(root, o) {
  var self = this; this.root = root; this.o = Object.assign({ advance: true, only: null, autostart: true, pw: 300 }, o || {});
- root.style.setProperty('--pw', this.o.pw + 'px'); root.innerHTML = phoneHTML(this.o.only, this.o.bare);
+ root.style.setProperty('--pw', this.o.pw + 'px'); this.chs = this.o.chs || CH_V; root.innerHTML = phoneHTML(this.o.only, this.o.bare, this.o.scene, this.chs.length);
  this.scenes = $$('.sc', root).map(function (el, k) {
   return { el: el, ch: self.o.only == null ? k : self.o.only, types: $$('[data-type]', el).map(function (t) { var ab = t.dataset.type.split(','); return { el: t, txt: t.textContent, a: +ab[0], b: +ab[1] }; }), ins: $$('[data-in]', el), oks: $$('[data-ok]', el), ons: $$('[data-on]', el), sts: $$('[data-st]', el), wv: $$('[data-wv]', el), timer: $('[data-timer]', el), pop: $('[data-pop]', el) };
  });
@@ -83,7 +88,7 @@ Stage.prototype.go = function (i) { var s = this; this.cur = i; this.lt = RM ? 9
 Stage.prototype.tick = function (now) {
  var s = this; if (!this.alive || !this.root.isConnected) { this.alive = false; this.io.disconnect(); return; }
  var dt = Math.min(.1, (now - this.last) / 1000); this.last = now;
- if (this.cur >= 0 && this.vis && this.playing && !RM && !document.hidden) { var d = CH_V[this.cur].dur; if (this.lt < d + .6) { this.lt += dt; this.render(); } else if (this.o.advance && this.cur < CH_V.length - 1) this.go(this.cur + 1); }
+ if (this.cur >= 0 && this.vis && this.playing && !RM && !document.hidden) { var d = this.chs[this.cur].dur; if (this.lt < d + .6) { this.lt += dt; this.render(); } else if (this.o.advance && this.cur < this.chs.length - 1) this.go(this.cur + 1); }
  requestAnimationFrame(function (t) { s.tick(t); });
 };
 Stage.prototype.render = function () {
@@ -101,11 +106,9 @@ var SV = {
  get: function () { return '<section class="sec"><div class="wrap">' + title('svGetTitle') + lead('svGetLead') + '<div class="stack">' + card('call', 'svGet1T', 'svGet1D') + card('chart', 'svGet2T', 'svGet2D') + card('face', 'svGet3T', 'svGet3D') + '</div></div></section>'; },
  prep: function () { return '<section class="sec paper"><div class="wrap">' + title('svPrepTitle') + lead('svPrepLead') + '<div class="grid2"><div class="card"><ul class="prep" data-k="svPrepList">' + lines('svPrepList').map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div><div class="card"><ul class="note" style="list-style:disc" data-k="svPrepNotes">' + lines('svPrepNotes').map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div></div></div></section>'; },
  call: function () { return '<section class="sec"><div class="wrap">' + title('svCallTitle') + lead('svCallLead') + '<div class="grid2">' + card('call', 'svCall1T', 'svCall1D') + card('line', 'svCall2T', 'svCall2D') + '</div></div></section>'; },
- how: function () { return '<section class="sec"><div class="wrap">' + title('svHowTitle') + lead('svHowLead') + '<ol class="steps flow">' + [1, 2, 3, 4, 5].map(function (n) { return V['svFlow' + n + 'T'] ? '<li><div class="sn"><small>STEP</small><b>' + n + '</b></div><div class="bx">' + T('svFlow' + n + 'W', 'small') + T('svFlow' + n + 'T', 'b') + T('svFlow' + n + 'D') + '</div></li>' : ''; }).join('') + '</ol></div></section>'; },
- notes: function () { return '<section class="sec paper"><div class="wrap">' + title('svNotesTitle') + lead('svNotesLead') + '<div class="stack">' + card('doc', 'svNotes1T', 'svNotes1D') + card('line', 'svNotes2T', 'svNotes2D') + '</div>' + memtip('svNotesTipT', 'svNotesTipD') + '</div></section>'; },
+ how: function () { return '<section class="sec"><div class="wrap">' + title('svHowTitle') + lead('svHowLead') + '<ol class="steps flow">' + [1, 2, 3, 4, 5].map(function (n) { return V['svFlow' + n + 'T'] ? '<li><div class="sn"><small>STEP</small><b>' + n + '</b></div><div class="bx">' + T('svFlow' + n + 'W', 'small') + T('svFlow' + n + 'T', 'b') + T('svFlow' + n + 'D') + '</div></li>' : ''; }).join('') + '</ol>' + memtip('svFlowTipT', 'svFlowTipD') + '</div></section>'; },
  refund: function () { return '<section class="sec paper"><div class="wrap">' + title('svRefundTitle') + '<div class="refund" style="margin-top:18px">' + T('svRefundBadge', 'div').replace('<div ', '<div class="badge" ') + '<div class="card"><p style="font-size:16.5px;color:var(--body)" data-k="svRefundBody">' + br(V.svRefundBody) + '</p></div></div></div></section>'; },
- rules: function () { return '<section class="sec"><div class="wrap">' + title('svRulesTitle') + rules() + '</div></section>'; },
- faq: function () { return '<section class="sec paper"><div class="wrap" style="max-width:760px"><h2 class="sec-title"><span class="hl">常見問題</span></h2><div style="margin-top:18px">' + [1, 2, 3].map(function (n) { return V['svFaq' + n + 'Q'] ? '<details class="fa"><summary>' + T('svFaq' + n + 'Q') + '</summary>' + T('svFaq' + n + 'A', 'p') + '</details>' : ''; }).join('') + '</div></div></section>'; },
+ rules: function () { return '<section class="sec" id="rules"><div class="wrap">' + title('svRulesTitle') + rules() + '</div></section>'; },
  cta: ctaBand
 };
 var heroV = function (mob) {
@@ -118,7 +121,7 @@ function renderVM() {
  var D = function (i) { return '<span class="dts">' + [0, 1, 2, 3].map(function (k) { return '<i class="' + (k === i ? 'on' : '') + '"></i>'; }).join('') + '</span>'; };
  return heroV(true) + [0, 1, 2, 3].map(function (i) { return '<section class="sm" data-ch="' + i + '"><div class="smtop"><span>' + (i + 1) + '／4</span>' + D(i) + '</div><h2>' + CH_V[i].title + '</h2><p class="sh">' + CH_V[i].short + '</p><div class="mini" data-mini="' + i + '"></div><div class="nxt">繼續往下滑<span style="font-weight:400">下一段：' + CH_V[i + 1].tab + '</span>' + CHEV + '</div></section>'; }).join('') +
   '<section class="sm" data-ch="4"><div class="smtop"><span>準備好了</span></div><h2>' + CH_V[4].title + '</h2><p class="sh">' + price() + '／60 分鐘</p><div class="mini" data-mini="4"></div><div class="nxt" style="margin-top:12px">想看完整的文字說明，繼續往下' + CHEV + '</div></section><div class="sm-end"></div>' +
-  '<div class="divider">完整說明</div>' + ['get', 'call', 'prep', 'how', 'notes', 'refund', 'rules', 'faq', 'cta'].map(function (k) { return SV[k](); }).join('');
+  '<div class="divider">完整說明</div>' + ['get', 'call', 'prep', 'how', 'refund', 'rules', 'cta'].map(function (k) { return SV[k](); }).join('');
 }
 var strip = function (h) { return h.replace(/^<section[^>]*>/, '').replace(/<\/section>$/, '').replace('<div class="wrap">', '').replace(/<\/div>$/, ''); };
 var SS = function (ch, html, noMini) { return '<div class="ssec" data-ch="' + ch + '">' + (noMini ? '' : '<div class="mini" data-mini="' + ch + '"></div>') + html + '</div>'; };
@@ -129,16 +132,16 @@ function storyCols(withReady) {
 }
 var storyHTML = function (withReady) { return '<div class="wrap"><div class="story"><div class="stick" id="stC"><div class="ph"></div><div class="cap2"></div></div><div class="col">' + storyCols(withReady) + '</div></div></div>'; };
 function renderVD() {
- return heroV(false) + storyHTML(true) + ['notes', 'rules', 'faq', 'cta'].map(function (k) { return SV[k](); }).join('');
+ return heroV(false) + storyHTML(true) + ['rules', 'cta'].map(function (k) { return SV[k](); }).join('');
 }
 var stages = [];
 /* 掛上動畫：scope＝畫面上的那一塊；sm＝銷售頁手機版（一段一個畫面），否則是邊捲邊播的段落 */
-function mountV(mob, scope) {
- scope = scope || document;
+function mountV(mob, scope, so) {
+ scope = scope || document; so = so || {}; var chs = so.chs || CH_V;
  if (!mob) {
   var root = $('#stC', scope); if (!root) return;
-  var st = new Stage($('.ph', root), { pw: 320, advance: false }); stages.push(st);
-  st.on(function (ch) { var c = $('.cap2', root); if (c.dataset.cur != ch) { c.dataset.cur = ch; c.innerHTML = '<b>' + CH_V[ch].title + '</b>'; } });
+  var st = new Stage($('.ph', root), Object.assign({ pw: 320, advance: false }, so)); stages.push(st);
+  st.on(function (ch) { var c = $('.cap2', root); if (c.dataset.cur != ch) { c.dataset.cur = ch; c.innerHTML = '<b>' + chs[ch].title + '</b>'; } });
   /* 動畫永遠對準「最靠近畫面中間」的那一段字（捲太快也不會錯位；不用 IntersectionObserver 的入場事件） */
   var ss = $$('.ssec', scope), raf = 0;
   var pick = function () {
@@ -149,7 +152,7 @@ function mountV(mob, scope) {
   var onS = function () { if (!raf) raf = requestAnimationFrame(pick); };
   addEventListener('scroll', onS, { passive: true }); addEventListener('resize', onS);
   stages.push({ set alive(v) { if (!v) { removeEventListener('scroll', onS); removeEventListener('resize', onS); } } }); pick();
- } else $$('.sm .mini, .ssec .mini', scope).forEach(function (m) { stages.push(new Stage(m, { pw: 290, bare: true, advance: false, only: +m.dataset.mini, restartOnView: true })); });
+ } else $$('.sm .mini, .ssec .mini', scope).forEach(function (m) { stages.push(new Stage(m, Object.assign({ pw: 290, bare: true, advance: false, only: +m.dataset.mini, restartOnView: true }, so))); });
 }
 
 /* ================= 文字版：真實閱讀頁的三個動畫（示範內容固定） ================= */
@@ -197,8 +200,7 @@ function mountScene(box) {
 var TP = function (n, t, s, k, nx) { return '<section class="tp" data-pg="' + k + '"><div class="tpin"><div class="tx"><div class="step">' + n + '／3</div><h2>' + t + '</h2><p>' + s + '</p><div class="nxt">' + CHEV.replace('class="chev"', 'class="chev" style="width:20px;height:22px"') + nx + '</div></div><div class="tcol"><div class="tfw"><div class="tfs" data-sc="' + k + '"></div></div><div class="tpg"><div class="tpb"><i></i></div><span>動畫播放中…</span></div></div></div></section>'; };
 var ST = {
  how: function () { return '<section class="sec"><div class="wrap">' + title('txHowTitle') + lead('txHowLead') + steps('txStep') + '</div></section>'; },
- deliver: function () { return '<section class="sec paper"><div class="wrap">' + title('txDelTitle') + lead('txDelLead') + '<div class="stack">' + card('msg', 'txDel1T', 'txDel1D') + card('line', 'txDel2T', 'txDel2D') + card('dl', 'txDel3T', 'txDel3D') + '</div></div></section>'; },
- notes: function () { return '<section class="sec paper"><div class="wrap">' + title('txMemTitle') + lead('txMemLead') + '<div class="stack">' + card('line', 'txMem1T', 'txMem1D') + card('msg', 'txMem2T', 'txMem2D') + '</div>' + memtip('txMemTipT', 'txMemTipD') + '</div></section>'; },
+ notes: function () { return '<section class="sec paper"><div class="wrap">' + title('txMemTitle') + lead('txMemLead') + '<div class="stack">' + card('line', 'txMem1T', 'txMem1D') + card('msg', 'txMem2T', 'txMem2D') + card('dl', 'txMem3T', 'txMem3D') + '</div>' + memtip('txMemTipT', 'txMemTipD') + '</div></section>'; },
  refund: function () { return '<section class="sec paper"><div class="wrap">' + title('txRefundTitle') + '<div class="refund" style="margin-top:18px">' + [1, 2].map(function (n) { return '<div class="card"><b style="font-size:19px" data-k="txRefund' + n + 'T">' + br(V['txRefund' + n + 'T']) + '</b><p style="font-size:16.5px;color:var(--body);margin-top:6px" data-k="txRefund' + n + 'D">' + br(V['txRefund' + n + 'D']) + '</p></div>'; }).join('') + '</div><p class="lead" style="margin:18px 0 0" data-k="txRefundHow">' + br(V.txRefundHow) + '</p></div></section>'; },
  rules: function () { return '<section class="sec"><div class="wrap">' + title('txRulesTitle') + rules() + '</div></section>'; },
  cta: ctaBand
@@ -211,7 +213,7 @@ function renderT() {
   TP(1, '你的問題、我的回覆', '你寫下兩個問題，我對著你的命盤，一題一題寫給你。', 'A', '下一頁：重點整理') +
   TP(2, '重點整理', '命盤裡的你、給你的建議，整理成幾個重點，一眼就看懂。', 'B', '下一頁：多久會收到') +
   TP(3, '多久會收到看盤', '確認收款後 7–10 個工作天，寫好會通知你，到 LINE 或 Email 收信就能讀。', 'C', '下面是完整說明') + '<div class="sm-end"></div>' +
-  ['how', 'deliver', 'notes', 'refund', 'rules', 'cta'].map(function (k) { return ST[k](); }).join('');
+  ['how', 'notes', 'refund', 'rules', 'cta'].map(function (k) { return ST[k](); }).join('');
 }
 function mountT() {
  var ms = new Map(), tm = new Map();
@@ -231,18 +233,39 @@ function apply(d) {
  var ch = false;
  KEYS.forEach(function (k) { if (typeof d[k] === 'string' && d[k].trim() && d[k] !== V[k]) { V[k] = d[k]; ch = true; } });
  var f = Number(KIND === 'text' ? d.feeText : d.feeVoice); if (f > 0 && f !== FEE) { FEE = f; ch = true; }
+ if (KIND === 'voice' && CFG.mode !== 'home') {   // 語音頁的完整預約規則：後台「預約須知」note1~6，標題留空的那格不顯示
+  var nl = []; for (var i = 1; i <= 6; i++) { var t = d['note' + i + 'Title']; if (typeof t === 'string' && t.trim()) nl.push({ t: t, d: String(d['note' + i + 'Desc'] || ''), n: i }); }
+  if (nl.length && JSON.stringify(nl) !== JSON.stringify(NOTES)) { NOTES = nl; ch = true; }
+ }
  return ch;
 }
 var mq = matchMedia('(max-width: 900px)'), lastMob = null;
 
 /* ===== 首頁模式：只畫「第一次諮詢怎麼進行」那一段（首頁的程式畫完首頁後呼叫 DZStory.mount）===== */
+/* ===== 首頁模式：「預約流程」四步動畫（2026-11-26 大正：首頁的第一次諮詢拿掉，改成預約流程動畫；字在後台「首頁：預約流程」）===== */
+var CH_P = [{ title: '填寫預約表單', dur: 7 }, { title: '完成匯款', dur: 5 }, { title: '回報末五碼', dur: 5.5 }, { title: '準時上線', dur: 6 }];
+function sceneP(i) {
+ if (i == 0) return sceneV(1);
+ if (i == 1) return '<div class="sc"><div class="fh">轉帳</div><div class="fb"><div class="lbl">轉入</div><div class="fld ok">大正命理諮詢</div>' +
+  '<div class="lbl">金額</div><div class="fld" data-type="0.5,1.4" data-ok="1.5">' + price() + '</div>' +
+  '<div class="chip inl" data-in="1.9">⏱ 預約成立後 24 小時內</div>' +
+  '<div class="okbig" data-in="3.1"><i>✓</i>轉帳完成</div></div></div>';
+ if (i == 2) return '<div class="sc"><div class="fh">回報末五碼</div><div class="fb"><div class="lbl">帳號末五碼</div><div class="fld five" data-type="0.4,1.8" data-ok="1.9">81206</div>' +
+  '<div class="pbub" data-in="2.8"><img src="' + AV + '" alt=""><div class="bb"><b>LINE 通知</b>收到你的匯款，預約成功！到時候見。</div></div></div></div>';
+ return '<div class="sc"><div class="call"><img src="' + AV + '" alt=""><div class="nm">大正命理諮詢</div><div class="st" data-timer>語音通話中　00:00</div><div class="wave">' + Array.from({ length: 15 }, function (_, k) { return '<b data-wv="' + k + '"></b>'; }).join('') + '</div></div>' +
+  '<div class="cds"><div class="cd" data-in="0.5"><i>' + ICON.msg + '</i><div><b>前一天會收到提醒</b><span>Email 或 LINE</span></div></div><div class="cd" data-in="1.2"><i>' + ICON.call + '</i><div><b>時間到，開始通話</b><span>Google Meet 或 LINE 語音</span></div></div></div></div>';
+}
 if (CFG.mode === 'home') {
  var homeMount = function () {
-  var el = document.getElementById('dzStory'); if (!el) return;
+  var el = document.getElementById('dzProcess'); if (!el) return;
   stages.forEach(function (s) { s.alive = false; }); stages = [];
   var mob = mq.matches; lastMob = mob;
-  el.innerHTML = '<div class="sp sp-home"><div class="wrap">' + T('svStoryTitle', 'h2').replace('<h2 ', '<h2 class="section-title" ') + T('svStoryLead', 'p').replace('<p ', '<p class="lead" ') + (mob ? '' : '<p class="sp-hint">往下捲，左邊的手機會跟著播。</p>') + '</div>' + storyHTML(false) + '</div>';
-  mountV(mob, el);
+  el.innerHTML = '<div class="sp sp-home sp-proc"><div class="wrap">' + T('hpProcTitle', 'h2').replace('<h2 ', '<h2 class="section-title" ') + T('hpProcLead', 'p').replace('<p ', '<p class="lead" ') + (mob ? '' : '<p class="sp-hint">往下捲，左邊的手機會跟著播。</p>') + '</div>' +
+   '<div class="wrap"><div class="story"><div class="stick" id="stC"><div class="ph"></div><div class="cap2"></div></div><div class="col">' +
+   [1, 2, 3, 4].map(function (n) { return '<div class="ssec" data-ch="' + (n - 1) + '"><div class="mini" data-mini="' + (n - 1) + '"></div><ol class="steps pstep"><li><div class="sn"><small>STEP</small><b>' + n + '</b></div><div class="bx">' + T('hpStep' + n + 'T', 'b') + T('hpStep' + n + 'D') + '</div></li></ol></div>'; }).join('') +
+   '</div></div></div>' +
+   '<div class="wrap pgo"><a class="btn btn-brass" href="/services/">立即預約服務諮詢</a></div></div>';
+  mountV(mob, el, { scene: sceneP, chs: CH_P });
  };
  window.DZStory = {
   mount: homeMount,
@@ -284,8 +307,8 @@ if (DZ_PREVIEW) {
   var m = e.data; if (!m || typeof m !== 'object' || m.type !== 'dz-preview') return;
   parentO = e.origin;
   if (m.data && typeof m.data === 'object' && !Array.isArray(m.data)) {
-   var d = {}; KEYS.concat(['feeVoice', 'feeText']).forEach(function (k) { var v = m.data[k]; if ((typeof v === 'string' && v.length <= 4000) || typeof v === 'number') d[k] = v; });
-   V = Object.assign({}, CFG.defaults); apply(d); render();
+   var d = {}; KEYS.concat(['feeVoice', 'feeText'], [1, 2, 3, 4, 5, 6].reduce(function (a, i) { return a.concat(['note' + i + 'Title', 'note' + i + 'Desc']); }, [])).forEach(function (k) { var v = m.data[k]; if ((typeof v === 'string' && v.length <= 4000) || typeof v === 'number') d[k] = v; });
+   V = Object.assign({}, CFG.defaults); NOTES = (CFG.rules || []).map(function (r, i) { return { t: r[0], d: r[1], n: i + 1 }; }); apply(d); render();
   }
   if (typeof m.lit === 'string') {
    $$('.dz-lit').forEach(function (x) { x.classList.remove('dz-lit'); });
