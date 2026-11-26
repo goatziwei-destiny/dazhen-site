@@ -215,9 +215,9 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 .svc-paper .svc-card h3{color:var(--navy)}.svc-paper .svc-card p{color:#4a443e}
 .svc-paper .svc-label{color:var(--clay)}
 .svc-paper .price{color:var(--navy);margin-top:18px}.svc-paper .price-unit{color:#6b635b}
-.svc-paper .svc-list{gap:0;color:var(--body);border-top:1px solid var(--rule);font-size:15px}
-.svc-paper .svc-list li{padding:12px 0;border-bottom:1px solid var(--rule)}
-.svc-paper .svc-list svg{stroke:var(--navy)}
+.svc-paper .svc-list,.ch-card .svc-list{gap:0;color:var(--body);border-top:1px solid var(--rule);font-size:15px;margin-bottom:0}
+.svc-paper .svc-list li,.ch-card .svc-list li{padding:12px 0;border-bottom:1px solid var(--rule)}
+.svc-paper .svc-list svg,.ch-card .svc-list svg{stroke:var(--navy)}
 .svc-paper .btn-primary{background:var(--navy)}
 .sticky-cta.cta-night{background:var(--night);border-top:1px solid rgba(227,195,143,.3)}
 .cta-night .when{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;font-size:12px;line-height:1.45;color:#9aa3b5}
@@ -319,11 +319,35 @@ body{letter-spacing:.02em}
 .hero-paper .btn-ghost{background:var(--navy);color:#fff;border-color:var(--navy)}.hero-paper .btn-ghost:hover{background:var(--navy-2)}
 .cta-night .btn-gold{background:var(--brass);color:var(--navy)}
 .svc-more{display:block;text-align:center;margin-top:10px;font-size:14px;font-weight:700;color:var(--navy);text-decoration:underline;text-underline-offset:3px}
+/* 選擇服務（2026-11-26）：整張卡都可以點（金色按鈕撐滿卡片），「先看完整介紹」和影片在上面一層 */
+.choose .ch-lead{color:var(--body);font-size:17px;margin:-4px 0 26px}
+.ch-card{position:relative;background:#fff;border:1px solid var(--line);border-radius:20px;padding:26px 26px 22px;box-shadow:0 12px 30px -22px rgba(27,40,69,.5);transition:transform .15s,box-shadow .15s;min-width:0}
+.ch-card:hover{transform:translateY(-2px);box-shadow:0 18px 36px -22px rgba(27,40,69,.6)}
+.ch-card .ch-go{display:flex;width:100%;margin-top:18px;font-size:16px;padding:14px}
+.ch-card .ch-go::after{content:"";position:absolute;inset:0;border-radius:20px}
+.ch-card .ch-more,.ch-card .ch-vid{position:relative;z-index:1}
+.ch-more{display:block;text-align:center;margin-top:12px;font-size:14px;font-weight:700;color:var(--navy);text-decoration:underline;text-underline-offset:3px}
+.ch-label{font-size:13px;letter-spacing:2px;font-weight:700;color:var(--clay);margin-bottom:6px}
+.ch-card h3{font-size:21px;line-height:1.4;color:var(--navy);margin-bottom:10px}
+.ch-price{font-size:34px;font-weight:700;color:var(--navy);line-height:1.15;margin:4px 0 12px}.ch-price small{font-size:14px;font-weight:400;color:#6b635b;margin-left:8px}
+.ch-unit{font-size:14px;color:#6b635b;margin:-8px 0 12px}
+.ch-pv{display:inline-block;font-size:12px;font-weight:700;color:#8f3a4a;border:1.5px dashed #8f3a4a;border-radius:20px;padding:2px 10px;margin-bottom:10px}
+.ch-grid{display:grid;gap:20px}.ch-grid.ch-n2{grid-template-columns:repeat(2,minmax(0,1fr))}.ch-grid.ch-n1{max-width:560px}
+.ch-rowlist{display:grid;gap:20px}
+.ch-h{display:grid;grid-template-columns:220px minmax(0,1fr);gap:28px;align-items:start}.ch-h .ch-vid .yt{border-radius:14px}
+.ch-cmp{display:grid;gap:20px}.ch-cmp.ch-n2{grid-template-columns:repeat(2,minmax(0,1fr))}.ch-cmp.ch-n1{max-width:460px}
+.ch-rows{list-style:none;padding:0;margin:4px 0 0}.ch-rows li{position:relative;padding:10px 0 10px 30px;border-top:1px dashed var(--line);font-size:16px}.ch-rows li:first-child{border-top:0}
+.ch-rows li::before{content:"";position:absolute;left:3px;top:18px;width:13px;height:7px;border-left:2.5px solid var(--navy);border-bottom:2.5px solid var(--navy);transform:rotate(-45deg)}
+@media(max-width:760px){.ch-grid.ch-n2,.ch-cmp.ch-n2{grid-template-columns:1fr}.ch-h{grid-template-columns:1fr;gap:14px}.ch-h .ch-vid{max-width:220px;margin:0 auto}.ch-card{padding:22px 20px 18px}}
 </style>
+<link rel="stylesheet" href="/css/sales.css?v=20261126b">
 {{ partial "analytics.html" . }}
 </head>
 <body>
 <div id="app"></div>
+{{- $defs := dict -}}{{- range index site.Data.sales "voice" }}{{ $defs = merge $defs (dict (index . 0) (index . 3)) }}{{ end }}
+<script>window.SALES = { mode: "home", kind: "voice", defaults: {{ $defs | jsonify | safeJS }}, fee: 3600, lineUrl: {{ site.Params.lineUrl }}, lineId: {{ site.Params.lineBasicId }}, bookUrl: "/booking/" };</script>
+<script src="/js/sales.js?v=20261126b"></script>
 <script src="/booking-bridge.js?v=20261108"></script>
 <script src="/line-qr.js?v=20261011" defer></script>
 <script>
@@ -421,19 +445,6 @@ const SITE = {
   textServiceDetail: "✍️ 在預約表單寫下問題（最多 2 題，每題 500 字內），不用約時段、不通話<br>⏳ 確認收款後 7-10 個工作天內，用文字回覆到你的 Email<br>📲 預約後掃描 QR Code 綁定 LINE，匯款末五碼在網頁或 LINE 都能回報，完成會同步通知<br>🕐 要填確定的出生時間（文字版不核對過去發生的事）<br>↩️ 付款後 7 天內、我還沒開始撰寫，可以退款；沒有改約、遲到的問題",
   textServiceBtn: "預約文字版諮詢",
 
-  // ── 第一次諮詢怎麼進行 ──
-  firstIntro: "第一次找人算命，會緊張很正常。這一小時大概是這樣進行的，你不用先做任何功課。",
-  firstSteps: [
-    { when: "諮詢前", title: "我先排好你的命盤", desc: "收到出生資料後，我會先把命盤排好、看過一遍。你只要想想最在意的一兩件事；想不清楚也沒關係，當天可以一起整理。" },
-    { when: "剛開始", title: "確認資料，聽你說", desc: "先核對幾件過去的事確認命盤，確認完才開始計時 60 分鐘。接著聽你說近況和最想弄清楚的事。" },
-    { when: "主要時間", title: "一起看盤，一問一答", desc: "一問一答、互相討論，聽不懂隨時打斷我。大致的順序：" },
-    { when: "快結束時", title: "整理重點和下一步", desc: "整理今天的重點、你的選項，和下一步可以先做的事。" },
-    { when: "諮詢後", title: "一份簡短的回饋問卷", desc: "會收到一份簡短問卷，要不要公開感想由你決定。" },
-  ],
-
-
-  firstAgenda: "你最想問的事\n目前的大限\n今年流年\n本命盤",
-  firstAgendaStep: 3,
 
   // ── 排盤體驗（iframe 嵌入）──
   // chartToolUrl 已移除（排盤體驗區塊暫時不使用）
@@ -557,17 +568,40 @@ if (typeof document !== 'undefined' && document.addEventListener) document.addEv
 });
 
 
-// ── 第一次諮詢：收合清單（大正 11/13 選 C；點一下展開，第一項預設打開）──
-function firstBlock_(S, agenda, agendaStep) {
-  var st = S.firstSteps || [];
-  if (!st.length) return '';
-  var head = '<div class="eyebrow">FIRST TIME</div><h2 class="section-title">第一次諮詢怎麼進行</h2>' + (S.firstIntro ? '<p class="first-intro"' + dk('firstIntro') + '>' + esc(S.firstIntro) + '</p>' : '');
-  var body = '<div class="first-acc">' + st.map(function (f, i) {
-    return '<details class="fa-item"' + (i === 0 ? ' open' : '') + '><summary><span class="first-num">' + (i + 1) + '</span><span class="fa-when"' + dk(f.n && 'first' + f.n + 'When') + '>' + esc(f.when || '') + '</span><span class="fa-t"' + dk(f.n && 'first' + f.n + 'Title') + '>' + esc(f.title) + '</span></summary><div class="fa-body">' +
-      (f.desc ? '<div class="first-desc"' + dk(f.n && 'first' + f.n + 'Desc') + '>' + esc(f.desc) + '</div>' : '') +
-      (agenda.length && i + 1 === agendaStep ? '<ol class="agenda"' + dk('firstAgenda') + '>' + agenda.map(function (a, j) { return '<li><b>' + (j + 1) + '</b>' + esc(a) + '</li>'; }).join('') + '</ol>' : '') + '</div></details>';
-  }).join('') + '</div>';
-  return '<section id="first-time" class="sec section-light"><div class="container">' + head + body + '</div></section>';
+// ── 選擇服務（2026-11-26 大正：取代「諮詢服務」，放在常見問題下面；點卡片直接進表單，文字版會先選好）──
+// 預覽期間用 ?choose=a|b|c 切三款版型；Netlify 預覽網址上文字版卡片也先顯示，正式網站照 showTextService
+var CHOOSE_V = (function () { try { var m = /[?&]choose=([abc])/.exec(location.search); return m ? m[1] : 'a'; } catch (e) { return 'a'; } })();
+var PV_TEXT = (function () { try { return /^deploy-preview-/.test(location.hostname); } catch (e) { return false; } })();
+function chooseBlock_(S) {
+  var showText = SHOW_TEXT_SERVICE || PV_TEXT;
+  var V1 = { k: 'voice', label: S.serviceLabel || '', lk: 'serviceLabel', title: S.serviceTitle || '', tk: 'serviceTitle', price: S.servicePrice || '', unit: S.servicePriceUnit || '', detail: S.serviceDetail || '', dkk: 'serviceDetail', go: '/booking/', more: '/voice/', btn: '預約一對一語音諮詢', vid: ytLite(VIDEO_VOICE, 'r916', '30 秒看懂一對一語音諮詢'),
+    rows: ['60 分鐘語音通話（Google Meet 或 LINE）', '約好時段，當天一起看盤', '想一次問清楚、可以來回討論的人'] };
+  var V2 = { k: 'text', label: S.textServiceLabel || '', title: S.textServiceTitle || '', price: S.textServicePrice || '', unit: S.textServicePriceUnit || '', detail: S.textServiceDetail || '', go: '/booking/?svc=text', more: '/text/', btn: S.textServiceBtn || '預約文字版諮詢', vid: VIDEO_TEXT ? ytLite(VIDEO_TEXT, 'r916', '看懂文字版諮詢') : '',
+    rows: ['寫下 2 個問題，我用文字回覆', '不用約時間，確認收款後 7–10 個工作天', '不方便通話、想留下回覆反覆看的人'], pv: !SHOW_TEXT_SERVICE };
+  var list = showText ? [V1, V2] : [V1];
+  var tag = function (c) { return c.pv ? '<div class="ch-pv">預覽：文字版開放後才會出現</div>' : ''; };
+  var more = function (c) { return '<a class="ch-more" href="' + c.more + '">先看完整介紹 →</a>'; };
+  var go = function (c) { return '<a class="btn btn-primary ch-go" href="' + c.go + '">' + esc(c.btn) + '</a>'; };
+  var body;
+  if (CHOOSE_V === 'c') {
+    body = '<div class="ch-cmp ch-n' + list.length + '">' + list.map(function (c) {
+      return '<div class="ch-card">' + tag(c) + '<div class="ch-label"' + dk(c.lk) + '>' + esc(c.label) + '</div><div class="ch-price">' + esc(c.price) + '</div><div class="ch-unit">' + esc(c.unit) + '</div>' +
+        '<ul class="ch-rows">' + c.rows.map(function (r) { return '<li>' + esc(r) + '</li>'; }).join('') + '</ul>' + go(c) + more(c) + '</div>';
+    }).join('') + '</div>';
+  } else if (CHOOSE_V === 'b') {
+    body = '<div class="ch-rowlist">' + list.map(function (c) {
+      return '<div class="ch-card ch-h">' + (c.vid ? '<div class="ch-vid">' + c.vid + '</div>' : '') + '<div class="ch-main">' + tag(c) + '<div class="ch-label"' + dk(c.lk) + '>' + esc(c.label) + '</div><h3' + dk(c.tk) + '>' + esc(c.title) + '</h3>' +
+        '<div class="ch-price">' + esc(c.price) + '<small>' + esc(c.unit) + '</small></div><div' + dk(c.dkk) + '>' + renderServiceDetail(c.detail) + '</div>' + go(c) + more(c) + '</div></div>';
+    }).join('') + '</div>';
+  } else {
+    body = '<div class="ch-grid ch-n' + list.length + '">' + list.map(function (c) {
+      return '<div class="ch-card">' + tag(c) + '<div class="ch-label"' + dk(c.lk) + '>' + esc(c.label) + '</div><h3' + dk(c.tk) + '>' + esc(c.title) + '</h3>' +
+        '<div class="ch-price">' + esc(c.price) + '<small>' + esc(c.unit) + '</small></div><div' + dk(c.dkk) + '>' + renderServiceDetail(c.detail) + '</div>' + go(c) + more(c) + '</div>';
+    }).join('') + '</div>';
+  }
+  return '<section id="choose" class="sec section-light choose"><div class="container">' +
+    '<h2 class="section-title"><span class="hl">' + (list.length > 1 ? '選擇你要的服務' : '預約諮詢') + '</span></h2>' +
+    '<p class="ch-lead">' + (list.length > 1 ? '點一下就直接填預約表單，表單會先幫你選好這個服務。' : '點一下就直接填預約表單。') + '</p>' + body + '</div></section>';
 }
 // ── 「你是不是也卡在這邊？」問題卡片（2026-11-25 大正：參考別人網站的問題卡片）──
 // 文字在後台「首頁：你是不是也卡在這邊」改；後台沒送來時用下面的預設
@@ -596,7 +630,7 @@ function renderSite(S) {
   if (S.siteUrl) { try { document.querySelector('link[rel="canonical"]').href = S.siteUrl; } catch(e){} }
   var heroDesc = (S.heroDesc || '').replace(/\\n/g, '\n').replace(/<br\s*\/?>/gi, '\n').split('\n').map(esc).join('<br>');
   var aboutDo = S.aboutDo || [], aboutDont = S.aboutDont || [];
-  var fitYes = lines_(S.fitYes), fitNo = lines_(S.fitNo), agenda = lines_(S.firstAgenda), agendaStep = Number(S.firstAgendaStep) || 3;
+  var fitYes = lines_(S.fitYes), fitNo = lines_(S.fitNo);
   var lead = S.aboutLead || (S.aboutParagraphs || [])[0] || '';
   var photo = S.aboutPhoto || '';
   var STAT_ICONS = ['<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', '<rect x="3" y="3" width="18" height="18"/><path d="M7.5 3v18M16.5 3v18M3 7.5h18M3 16.5h18"/>', '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4.6A8 8 0 1 1 21 12z"/>'];
@@ -607,9 +641,9 @@ function renderSite(S) {
   document.getElementById('app').innerHTML =
 '<nav class="nav"><div class="container nav-inner">' +
   '<a class="nav-brand" href="/">' + esc(S.brandName||'') + '<i>·</i>命理諮詢</a>' +
-  '<div class="nav-links"><a href="/about/">關於大正</a><a href="#service">服務與價格</a><a href="#first-time">第一次諮詢</a><a href="#rules">預約規則</a><a href="#faq">常見問題</a><a href="/blog/">命理文章</a><a href="/member/">會員中心</a>' +
+  '<div class="nav-links"><a href="/about/">關於大正</a><a href="#choose">服務與價格</a><a href="#first-time">第一次諮詢</a><a href="#rules">預約規則</a><a href="#faq">常見問題</a><a href="/blog/">命理文章</a><a href="/member/">會員中心</a>' +
     (TESTIMONIALS_URL ? '<a href="' + TESTIMONIALS_URL + '">顧客好評</a>' : '') + '</div>' +
-  '<a href="/booking/" class="nav-cta">立即預約諮詢</a>' +
+  '<a href="#choose" class="nav-cta">立即預約諮詢</a>' +
 '</div></nav>' +
 
 '<main>' +
@@ -618,7 +652,7 @@ function renderSite(S) {
   '<h1><span class="hero-eyebrow"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20"/><path d="M7 2v20M17 2v20M2 7h20M2 17h20"/></svg>' + '<span' + dk('brandTitle') + '>' + esc(S.brandTitle||'') + '</span></span><span' + dk(S.brandTagline ? 'brandTagline' : 'brandTitle') + '>' + esc(S.brandTagline||S.brandTitle||'') + '</span></h1>' +
   '<p class="hero-desc"' + dk('heroDesc') + '>' + heroDesc + '</p>' +
   (photo ? '<div class="hero-me"><img src="' + esc(photo) + '" alt="" width="60" height="60">' + esc(S.heroMeLine || '我是大正，一隻會算命的羊。') + '</div>' : '') +
-  '<div class="btns"><a href="/booking/" class="btn btn-primary">預約一對一諮詢</a><a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-ghost">先加入 LINE 聊聊</a></div>' +
+  '<div class="btns"><a href="#choose" class="btn btn-primary">預約諮詢</a><a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-ghost">先加入 LINE 聊聊</a></div>' +
   '</div>' + (photo ? '<div class="hero-goat"><img src="' + esc(photo) + '" alt="' + esc(S.aboutName||'大正') + '的頭像" width="280" height="280"></div>' : '') +
 '</div></section>' +
 '<section class="stats-row" aria-label="大正的諮詢經驗"><div class="container">' + stats + '<a class="stat-lib stat-lib-row" href="/library/"><img src="/images/library-book-icon.png" alt="" width="18" height="25">' + (LIB_SEEN ? '回命運書庫逛逛' : '逛逛命運書庫') + '</a></div></section>' +
@@ -643,24 +677,10 @@ stuckBlock_(S) +
   '</div>' +
 '</div></section>' +
 
-'<section id="service" class="svc-wrap svc-paper"><div class="container">' +
-  '<div class="eyebrow">SERVICE</div><h2 class="section-title"><span class="hl">諮詢服務</span></h2>' +
-  '<div class="svc-cards">' +
-    // 11/10 大正：影片放卡片左邊、標題和價格放右邊；服務說明那段小字不顯示（後台的字還在，影片取代它）
-    '<div class="svc-card svc-card-v"><div style="min-width:0"><div class="svc-label"' + dk('serviceLabel') + '>' + esc(S.serviceLabel||'') + '</div><h3' + dk('serviceTitle') + '>' + esc(S.serviceTitle||'') + '</h3>' +
-    '<div class="price"' + dk('servicePrice') + '>' + esc(S.servicePrice||'') + '</div><div class="price-unit"' + dk('servicePriceUnit') + '>' + esc(S.servicePriceUnit||'') + '</div><div' + dk('serviceDetail') + '>' + renderServiceDetail(S.serviceDetail||'') + '</div>' +
-    '<a href="/booking/" class="btn btn-primary">預約一對一語音諮詢</a><a class="svc-more" href="/voice/">先看諮詢怎麼進行 →</a><a class="svc-line" href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + '>或加 LINE 預約／先問問題 →</a></div>' +
-    '<div class="svc-vid">' + ytLite(VIDEO_VOICE, 'r916', '30 秒看懂一對一語音諮詢') + '</div></div>' +
-    (SHOW_TEXT_SERVICE ?
-    '<div class="svc-card svc-card-v"><div style="min-width:0"><div class="svc-label">' + esc(S.textServiceLabel||'') + '</div><h3>' + esc(S.textServiceTitle||'') + '</h3>' +
-    '<p class="svc-sub">' + esc(S.textServiceDesc||'') + '</p>' +
-    '<div class="price">' + esc(S.textServicePrice||'') + '</div><div class="price-unit">' + esc(S.textServicePriceUnit||'') + '</div>' + renderServiceDetail(S.textServiceDetail||'') +
-    '<a href="/booking/" class="btn btn-warm">' + esc(S.textServiceBtn||'預約文字版諮詢') + '</a><a class="svc-more" href="/text/">先看回覆長什麼樣子 →</a><a class="svc-line" href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + '>或加 LINE 先問問題 →</a></div>' +
-    '<div class="svc-vid">' + (VIDEO_TEXT ? ytLite(VIDEO_TEXT, 'r916', '看懂文字版諮詢') : '<div class="yt r916 yt-soon"><img src="/images/mingshu/book-closed.webp" alt=""><span>介紹影片製作中</span></div>') + '</div></div>' : '') +
-  '</div>' +
-'</div></section>' +
+/* 11/26 大正：「諮詢服務」拿掉，改成常見問題下面的「選擇服務」（chooseBlock_），點了直接進表單 */
 
-firstBlock_(S, agenda, agendaStep) +
+/* 11/26 大正：「第一次諮詢怎麼進行」換成銷售頁的邊捲邊播（static/js/sales.js 畫，文字在後台「銷售頁：一對一語音諮詢」） */
+'<section id="first-time"><div id="dzStory"></div></section>' +
 
 '<section id="process" class="sec section-white"><div class="container">' +
   '<div class="eyebrow">PROCESS</div><h2 class="section-title"><span class="hl">預約流程</span></h2>' +
@@ -684,6 +704,8 @@ firstBlock_(S, agenda, agendaStep) +
   }).join('') + '</div>' +
 '</div></section>' +
 
+chooseBlock_(S) +
+
 (LATEST_POSTS.length ?
 '<section id="latest" class="sec section-light"><div class="container">' +
   '<div class="eyebrow">ARTICLES</div><h2 class="section-title">最新文章</h2>' +
@@ -696,7 +718,7 @@ firstBlock_(S, agenda, agendaStep) +
 
 '<section class="sec cta section-dark"><div class="container">' +
   '<h2 class="section-title"' + dk('ctaTitle') + '>' + esc(S.ctaTitle||'') + '</h2><p' + dk('ctaDesc') + '>' + esc(S.ctaDesc||'') + '</p>' +
-  '<div class="btns"><a href="/booking/" class="btn btn-primary">預約一對一諮詢</a><a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-warm">先加入 LINE 聊聊</a></div>' +
+  '<div class="btns"><a href="#choose" class="btn btn-primary">選擇服務、預約</a><a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-warm">先加入 LINE 聊聊</a></div>' +
 '</div></section>' +
 '</main>' +
 
@@ -704,8 +726,9 @@ firstBlock_(S, agenda, agendaStep) +
   '<p><span' + dk('footerText') + '>' + (DZ_PREVIEW ? esc(S.footerText||'') : (S.footerText||'')) + '</span>　·　<a href="/privacy-policy/" style="color:inherit">隱私權政策</a></p>' +
 '</div></footer>' +
 
-'<div class="sticky-cta cta-night" id="stickyCta"><div class="when" id="ctaWhen"><span>最快可約時間</span><b>查詢中…</b></div><a href="/booking/" class="btn btn-gold">預約諮詢</a><button type="button" class="x" id="stickyClose" aria-label="關閉預約列">×</button></div>';
+'<div class="sticky-cta cta-night" id="stickyCta"><div class="when" id="ctaWhen"><span>最快可約時間</span><b>查詢中…</b></div><a href="/voice/" class="btn btn-gold">預約諮詢</a><button type="button" class="x" id="stickyClose" aria-label="關閉預約列">×</button></div>';
   setupStickyCta_();
+  if (typeof window !== 'undefined' && window.DZStory) window.DZStory.mount();   // 「第一次諮詢怎麼進行」的動畫（sales.js）
 }
 
 // 底部固定預約列（手機貼底、電腦置中浮動）：捲過開場才出現，按 × 關掉後這次瀏覽不再出現
@@ -743,7 +766,7 @@ function setupStickyCta_() {
 }
 
 // 先用 SITE 預設值立即渲染（SEO + 快速顯示）；建置時已預先寫好內容的話（scripts/prerender-home.js），就先沿用，只接上互動功能
-if (document.getElementById('app').children && document.getElementById('app').children.length) setupStickyCta_(); else renderSite(SITE);
+if (document.getElementById('app').children && document.getElementById('app').children.length) { setupStickyCta_(); if (window.DZStory) window.DZStory.mount(); } else renderSite(SITE);
 
 // 後台資料（攤平的欄位）→ 首頁用的格式。正式頁面和預覽模式共用
 function mergeSiteConfig_(data) {
@@ -778,13 +801,6 @@ function mergeSiteConfig_(data) {
     }
     if (heroCards.length) merged.heroInfoCard = heroCards;
 
-    // 第一次諮詢怎麼進行（後台開了 6 格 first1When/Title/Desc ~ first6…，標題留空代表這格不使用）
-    var firsts = [];
-    for (var fi = 1; fi <= 6; fi++) {
-      var ft = data['first' + fi + 'Title'];
-      if (ft) firsts.push({ when: data['first' + fi + 'When'] || '', title: ft, desc: data['first' + fi + 'Desc'] || '', n: fi });
-    }
-    if (firsts.length) merged.firstSteps = firsts;
 
     // 預約流程（後台開了 6 格，標題留空代表這格不使用）
     var steps = [];
@@ -831,7 +847,7 @@ if (DZ_PREVIEW) {
   var DZ_ADMIN_ORIGINS = ['https://n-zsa5kblf6utdjampxzvdtwmrj3x3y4uiblx5uwq-0lu-script.googleusercontent.com'];
   var dzTrusted = function (o) { return DZ_ADMIN_ORIGINS.indexOf(o) >= 0 || (/^(127\.0\.0\.1|localhost)$/.test(location.hostname) && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(o)); };
   // 只收網站設定會用到的欄位名稱、每欄最多 4000 字、整包最多 400 欄
-  var DZ_KEY_RE = /^(aboutP[1-3]|aboutDo[1-4]|aboutDont[1-4]|style[1-3](Title|Sub|Desc)|heroCard[1-5](Label|Value)|first[1-6](When|Title|Desc)|processStep[1-6](Title|Desc|Done)|note[1-6](Title|Desc)|faq[1-8][QA]|social_[a-z]{1,20})$/;
+  var DZ_KEY_RE = /^(aboutP[1-3]|aboutDo[1-4]|aboutDont[1-4]|style[1-3](Title|Sub|Desc)|heroCard[1-5](Label|Value)|sv[A-Za-z0-9]{2,20}|processStep[1-6](Title|Desc|Done)|note[1-6](Title|Desc)|faq[1-8][QA]|social_[a-z]{1,20})$/;
   var dzKeyOk = function (k) { return typeof k === 'string' && k.length <= 40 && (DZ_KEY_RE.test(k) || (Object.prototype.hasOwnProperty.call(SITE, k) && typeof SITE[k] !== 'object') || !!document.querySelector('[data-k="' + k.replace(/[^\w]/g, '') + '"]')); };
   var dzValOk = function (v) { return typeof v === 'boolean' || (typeof v === 'number' && isFinite(v)) || (typeof v === 'string' && v.length <= 4000); };
   var dzParent = null;   // 第一次收到合格資料的來源；點字只回傳給它
@@ -842,6 +858,7 @@ if (DZ_PREVIEW) {
     dzParent = e.origin;
     if (m.data && typeof m.data === 'object' && !Array.isArray(m.data) && Object.keys(m.data).length <= 400 && JSON.stringify(m.data).length < 200000) {
       var d = {}; Object.keys(m.data).forEach(function (k) { if (dzKeyOk(k) && dzValOk(m.data[k])) d[k] = m.data[k]; });
+      if (window.DZStory) window.DZStory.preview(d);
       renderSite(mergeSiteConfig_(d));
     }
     if (typeof m.lit === 'string') {
@@ -870,6 +887,7 @@ if (DZ_PREVIEW) {
   s.src = apiBase + '?page=siteConfig&callback=_siteConfigCb';
   window._siteConfigCb = function(data) {
     if (!data) return;
+    if (window.DZStory) window.DZStory.apply(data);
     renderSite(mergeSiteConfig_(data));
   };
   document.body.appendChild(s);

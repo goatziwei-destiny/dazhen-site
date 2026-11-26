@@ -99,9 +99,9 @@ Stage.prototype.render = function () {
 /* ================= 語音版：頁面 ================= */
 var SV = {
  get: function () { return '<section class="sec"><div class="wrap">' + title('svGetTitle') + lead('svGetLead') + '<div class="stack">' + card('call', 'svGet1T', 'svGet1D') + card('chart', 'svGet2T', 'svGet2D') + card('face', 'svGet3T', 'svGet3D') + '</div></div></section>'; },
- prep: function () { return '<section class="sec paper"><div class="wrap">' + title('svPrepTitle') + '<div class="grid2" style="margin-top:18px"><div class="card"><ul class="prep" data-k="svPrepList">' + lines('svPrepList').map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div><div class="card"><ul class="note" style="list-style:disc" data-k="svPrepNotes">' + lines('svPrepNotes').map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div></div></div></section>'; },
- how: function () { return '<section class="sec"><div class="wrap">' + title('svHowTitle') + lead('svHowLead') + steps('svStep') + '</div></section>'; },
- howD: function () { return '<section class="sec"><div class="wrap">' + title('svHowTitle') + lead('svHowLead') + '<div class="stack">' + card('chart', 'svHow1T', 'svHow1D') + card('call', 'svHow2T', 'svHow2D') + card('face', 'svHow3T', 'svHow3D') + card('doc', 'svHow4T', 'svHow4D') + '</div></div></section>'; },
+ prep: function () { return '<section class="sec paper"><div class="wrap">' + title('svPrepTitle') + lead('svPrepLead') + '<div class="grid2"><div class="card"><ul class="prep" data-k="svPrepList">' + lines('svPrepList').map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div><div class="card"><ul class="note" style="list-style:disc" data-k="svPrepNotes">' + lines('svPrepNotes').map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div></div></div></section>'; },
+ call: function () { return '<section class="sec"><div class="wrap">' + title('svCallTitle') + lead('svCallLead') + '<div class="grid2">' + card('call', 'svCall1T', 'svCall1D') + card('line', 'svCall2T', 'svCall2D') + '</div></div></section>'; },
+ how: function () { return '<section class="sec"><div class="wrap">' + title('svHowTitle') + lead('svHowLead') + '<ol class="steps flow">' + [1, 2, 3, 4, 5].map(function (n) { return V['svFlow' + n + 'T'] ? '<li><div class="sn"><small>STEP</small><b>' + n + '</b></div><div class="bx">' + T('svFlow' + n + 'W', 'small') + T('svFlow' + n + 'T', 'b') + T('svFlow' + n + 'D') + '</div></li>' : ''; }).join('') + '</ol></div></section>'; },
  notes: function () { return '<section class="sec paper"><div class="wrap">' + title('svNotesTitle') + lead('svNotesLead') + '<div class="stack">' + card('doc', 'svNotes1T', 'svNotes1D') + card('line', 'svNotes2T', 'svNotes2D') + '</div>' + memtip('svNotesTipT', 'svNotesTipD') + '</div></section>'; },
  refund: function () { return '<section class="sec paper"><div class="wrap">' + title('svRefundTitle') + '<div class="refund" style="margin-top:18px">' + T('svRefundBadge', 'div').replace('<div ', '<div class="badge" ') + '<div class="card"><p style="font-size:16.5px;color:var(--body)" data-k="svRefundBody">' + br(V.svRefundBody) + '</p></div></div></div></section>'; },
  rules: function () { return '<section class="sec"><div class="wrap">' + title('svRulesTitle') + rules() + '</div></section>'; },
@@ -118,23 +118,29 @@ function renderVM() {
  var D = function (i) { return '<span class="dts">' + [0, 1, 2, 3].map(function (k) { return '<i class="' + (k === i ? 'on' : '') + '"></i>'; }).join('') + '</span>'; };
  return heroV(true) + [0, 1, 2, 3].map(function (i) { return '<section class="sm" data-ch="' + i + '"><div class="smtop"><span>' + (i + 1) + '／4</span>' + D(i) + '</div><h2>' + CH_V[i].title + '</h2><p class="sh">' + CH_V[i].short + '</p><div class="mini" data-mini="' + i + '"></div><div class="nxt">繼續往下滑<span style="font-weight:400">下一段：' + CH_V[i + 1].tab + '</span>' + CHEV + '</div></section>'; }).join('') +
   '<section class="sm" data-ch="4"><div class="smtop"><span>準備好了</span></div><h2>' + CH_V[4].title + '</h2><p class="sh">' + price() + '／60 分鐘</p><div class="mini" data-mini="4"></div><div class="nxt" style="margin-top:12px">想看完整的文字說明，繼續往下' + CHEV + '</div></section><div class="sm-end"></div>' +
-  '<div class="divider">完整說明</div>' + ['get', 'prep', 'how', 'notes', 'refund', 'rules', 'faq', 'cta'].map(function (k) { return SV[k](); }).join('');
+  '<div class="divider">完整說明</div>' + ['get', 'call', 'prep', 'how', 'notes', 'refund', 'rules', 'faq', 'cta'].map(function (k) { return SV[k](); }).join('');
 }
 var strip = function (h) { return h.replace(/^<section[^>]*>/, '').replace(/<\/section>$/, '').replace('<div class="wrap">', '').replace(/<\/div>$/, ''); };
-var SS = function (ch, html) { return '<div class="ssec" data-ch="' + ch + '">' + html + '</div>'; };
+var SS = function (ch, html, noMini) { return '<div class="ssec" data-ch="' + ch + '">' + (noMini ? '' : '<div class="mini" data-mini="' + ch + '"></div>') + html + '</div>'; };
+/* 邊捲邊播的段落（電腦：左邊手機跟著換；手機：每段上面一支小動畫）。首頁「第一次諮詢怎麼進行」也用這一份 */
+function storyCols(withReady) {
+ return SS(0, strip(SV.get())) + SS(0, strip(SV.call()), true) + SS(1, strip(SV.prep())) + SS(2, strip(SV.how())) + SS(3, strip(SV.refund())) +
+  (withReady ? SS(4, '<h2 class="sec-title"><span class="hl">' + T('svReadyTitle') + '</span></h2><p class="lead">' + price() + '／60 分鐘</p><div class="cta-mini" style="margin-top:18px"><div class="price">' + price() + '<small>' + T('svPriceUnit') + '</small></div>' + ctaBtns() + '</div>') : '');
+}
+var storyHTML = function (withReady) { return '<div class="wrap"><div class="story"><div class="stick" id="stC"><div class="ph"></div><div class="cap2"></div></div><div class="col">' + storyCols(withReady) + '</div></div></div>'; };
 function renderVD() {
- return heroV(false) + '<div class="wrap"><div class="story"><div class="stick" id="stC"><div class="ph"></div><div class="cap2"></div></div><div class="col">' +
-  SS(0, strip(SV.get())) + SS(1, strip(SV.prep())) + SS(2, strip(SV.howD())) + SS(3, strip(SV.refund())) +
-  SS(4, '<h2 class="sec-title"><span class="hl">' + T('svReadyTitle') + '</span></h2><p class="lead">' + price() + '／60 分鐘</p><div class="cta-mini" style="margin-top:18px"><div class="price">' + price() + '<small>' + T('svPriceUnit') + '</small></div>' + ctaBtns() + '</div>') +
-  '</div></div></div>' + ['notes', 'rules', 'faq', 'cta'].map(function (k) { return SV[k](); }).join('');
+ return heroV(false) + storyHTML(true) + ['notes', 'rules', 'faq', 'cta'].map(function (k) { return SV[k](); }).join('');
 }
 var stages = [];
-function mountV(mob) {
+/* 掛上動畫：scope＝畫面上的那一塊；sm＝銷售頁手機版（一段一個畫面），否則是邊捲邊播的段落 */
+function mountV(mob, scope) {
+ scope = scope || document;
  if (!mob) {
-  var root = $('#stC'), st = new Stage($('.ph', root), { pw: 320, advance: false }); stages.push(st);
+  var root = $('#stC', scope); if (!root) return;
+  var st = new Stage($('.ph', root), { pw: 320, advance: false }); stages.push(st);
   st.on(function (ch) { var c = $('.cap2', root); if (c.dataset.cur != ch) { c.dataset.cur = ch; c.innerHTML = '<b>' + CH_V[ch].title + '</b>'; } });
   /* 動畫永遠對準「最靠近畫面中間」的那一段字（捲太快也不會錯位；不用 IntersectionObserver 的入場事件） */
-  var ss = $$('.ssec'), raf = 0;
+  var ss = $$('.ssec', scope), raf = 0;
   var pick = function () {
    raf = 0; if (!st.alive) return; var m = innerHeight * .5, best = null, bd = 1e9;
    ss.forEach(function (e) { var r = e.getBoundingClientRect(), c = (r.top + r.bottom) / 2, d = (r.top <= m && r.bottom >= m) ? 0 : Math.min(Math.abs(r.top - m), Math.abs(r.bottom - m)), dd = d * 1000 + Math.abs(c - m); if (dd < bd) { bd = dd; best = e; } });
@@ -143,7 +149,7 @@ function mountV(mob) {
   var onS = function () { if (!raf) raf = requestAnimationFrame(pick); };
   addEventListener('scroll', onS, { passive: true }); addEventListener('resize', onS);
   stages.push({ set alive(v) { if (!v) { removeEventListener('scroll', onS); removeEventListener('resize', onS); } } }); pick();
- } else $$('.sm .mini').forEach(function (m) { stages.push(new Stage(m, { pw: 290, bare: true, advance: false, only: +m.dataset.mini, restartOnView: true })); });
+ } else $$('.sm .mini, .ssec .mini', scope).forEach(function (m) { stages.push(new Stage(m, { pw: 290, bare: true, advance: false, only: +m.dataset.mini, restartOnView: true })); });
 }
 
 /* ================= 文字版：真實閱讀頁的三個動畫（示範內容固定） ================= */
@@ -220,7 +226,36 @@ function mountT() {
 }
 
 /* ================= 畫頁面 ================= */
-var app = $('#sp'), sbar = $('#sbar'), mq = matchMedia('(max-width: 900px)'), lastMob = null;
+var KEYS = Object.keys(CFG.defaults || {});
+function apply(d) {
+ var ch = false;
+ KEYS.forEach(function (k) { if (typeof d[k] === 'string' && d[k].trim() && d[k] !== V[k]) { V[k] = d[k]; ch = true; } });
+ var f = Number(KIND === 'text' ? d.feeText : d.feeVoice); if (f > 0 && f !== FEE) { FEE = f; ch = true; }
+ return ch;
+}
+var mq = matchMedia('(max-width: 900px)'), lastMob = null;
+
+/* ===== 首頁模式：只畫「第一次諮詢怎麼進行」那一段（首頁的程式畫完首頁後呼叫 DZStory.mount）===== */
+if (CFG.mode === 'home') {
+ var homeMount = function () {
+  var el = document.getElementById('dzStory'); if (!el) return;
+  stages.forEach(function (s) { s.alive = false; }); stages = [];
+  var mob = mq.matches; lastMob = mob;
+  el.innerHTML = '<div class="sp sp-home"><div class="wrap">' + T('svStoryTitle', 'h2').replace('<h2 ', '<h2 class="section-title" ') + T('svStoryLead', 'p').replace('<p ', '<p class="lead" ') + (mob ? '' : '<p class="sp-hint">往下捲，左邊的手機會跟著播。</p>') + '</div>' + storyHTML(false) + '</div>';
+  mountV(mob, el);
+ };
+ window.DZStory = {
+  mount: homeMount,
+  /* 首頁拿到後台資料時先呼叫這個，再重畫首頁（首頁畫完會呼叫 mount） */
+  apply: function (d) { if (d && typeof d === 'object') apply(d); },
+  preview: function (d) { V = Object.assign({}, CFG.defaults); FEE = CFG.fee; if (d && typeof d === 'object') apply(d); }
+ };
+ var onHomeMq = function () { if (mq.matches !== lastMob) homeMount(); };
+ if (mq.addEventListener) mq.addEventListener('change', onHomeMq); else mq.addListener(onHomeMq);
+ return;
+}
+
+var app = $('#sp'), sbar = $('#sbar');
 if (KIND === 'text') document.documentElement.classList.add('pg');   // 文字版：整頁吸附，一頁一頁滑
 function render() {
  stages.forEach(function (s) { s.alive = false; }); stages = [];
@@ -235,13 +270,6 @@ addEventListener('scroll', onScroll, { passive: true });
 var onMq = function () { if (KIND !== 'text' && mq.matches !== lastMob) render(); };
 if (mq.addEventListener) mq.addEventListener('change', onMq); else mq.addListener(onMq);
 
-var KEYS = Object.keys(CFG.defaults || {});
-function apply(d) {
- var ch = false;
- KEYS.forEach(function (k) { if (typeof d[k] === 'string' && d[k].trim() && d[k] !== V[k]) { V[k] = d[k]; ch = true; } });
- var f = Number(KIND === 'text' ? d.feeText : d.feeVoice); if (f > 0 && f !== FEE) { FEE = f; ch = true; }
- return ch;
-}
 render();
 
 var DZ_PREVIEW = /[?&]dzpreview=1(&|$)/.test(location.search) && window.parent !== window;
