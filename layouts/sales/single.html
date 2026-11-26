@@ -1,0 +1,27 @@
+{{ define "head" }}
+{{- $kind := .Params.salesKind | default "voice" -}}
+{{ if and (eq $kind "text") (not site.Params.showTextService) }}<meta name="robots" content="noindex,nofollow">{{ end }}
+<link rel="stylesheet" href="/css/sales.css?v=20261126">
+{{ end }}
+
+{{ define "main" }}
+{{- $kind := .Params.salesKind | default "voice" -}}
+{{- $defs := dict -}}
+{{- range index site.Data.sales $kind }}{{ $defs = merge $defs (dict (index . 0) (index . 3)) }}{{ end -}}
+<div class="sp" id="sp"></div>
+<div class="sbar" id="sbar"></div>
+<noscript><div style="max-width:720px;margin:40px auto;padding:0 24px"><h1>{{ .Title }}</h1><p>{{ .Description }}</p><p><a href="/booking/">前往預約</a></p></div></noscript>
+<script>
+window.SALES = {
+  kind: {{ $kind }},
+  defaults: {{ $defs | jsonify | safeJS }},
+  /* 價格在網站拿到後台資料前先顯示這個；正式數字讀後台「營運設定」的費用（siteConfig 的 feeVoice／feeText） */
+  fee: {{ if eq $kind "text" }}990{{ else }}3600{{ end }},
+  lineUrl: {{ site.Params.lineUrl }},
+  lineId: {{ site.Params.lineBasicId }},
+  api: {{ site.Params.webAppUrl }},
+  bookUrl: {{ if eq $kind "text" }}"/booking/?svc=text"{{ else }}"/booking/"{{ end }}
+};
+</script>
+<script src="/js/sales.js?v=20261126"></script>
+{{ end }}

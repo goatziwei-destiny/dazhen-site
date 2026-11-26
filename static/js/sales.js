@@ -1,0 +1,281 @@
+/* 銷售頁（/voice/、/text/）
+ * 2026-11-26 從對話裡的預覽搬過來（交接：claude/handoff/銷售頁_語音與文字版定案交接_2026-11-26.md）。
+ * - 頁面上的字（data-k）預設寫在 data/sales.json，後台「設定 → 網站 → 銷售頁」改過的會蓋掉（?page=siteConfig）。
+ * - 動畫裡的示範內容（小安、表單範例、STEP 動畫）固定寫在這裡，不開放後台改（大正 11/26：改了容易跑版）。
+ * - 價格讀後台的實際費用（feeVoice／feeText）。
+ * - 後台預覽（?dzpreview=1）：用還沒存的草稿畫頁面，點字會跳到那一格（跟首頁同一套做法）。
+ */
+(function () {
+'use strict';
+var CFG = window.SALES || {}, KIND = CFG.kind === 'text' ? 'text' : 'voice';
+var V = Object.assign({}, CFG.defaults || {}), FEE = CFG.fee;
+var $ = function (s, r) { return (r || document).querySelector(s); }, $$ = function (s, r) { return [].slice.call((r || document).querySelectorAll(s)); };
+var RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+var cl = function (x, a, b) { a = a == null ? 0 : a; b = b == null ? 1 : b; return Math.max(a, Math.min(b, x)); }, eo = function (x) { return 1 - Math.pow(1 - cl(x), 3); };
+var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+var br = function (s) { return esc(s).replace(/\r?\n/g, '<br>'); };
+/* 後台可改的字：外面包一層 data-k，後台預覽點得到 */
+var T = function (k, tag) { tag = tag || 'span'; return '<' + tag + ' data-k="' + k + '">' + br(V[k]) + '</' + tag + '>'; };
+var lines = function (k) { return String(V[k] || '').split(/\r?\n/).map(function (x) { return x.trim(); }).filter(Boolean); };
+var price = function () { return 'NT$' + Number(FEE || 0).toLocaleString('en-US'); };
+var AV = '/images/avatar-goat.webp', QR = '/images/line-qr.png', IM = function (n) { return '/images/mingshu/' + n + '.webp'; };
+var LINE = function (cls, k) { return '<a class="' + cls + '" href="' + esc(CFG.lineUrl || '') + '" target="_blank" rel="noopener" data-line>' + T(k) + '</a>'; };
+var BOOK = function (cls, k) { return '<a class="' + cls + '" href="' + esc(CFG.bookUrl || '/booking/') + '">' + T(k) + '</a>'; };
+var P = KIND === 'text' ? 'tx' : 'sv';
+var CHEV = '<svg class="chev" viewBox="0 0 26 28" aria-hidden="true"><path d="M5 5l8 8 8-8"/><path d="M5 14l8 8 8-8"/></svg>';
+var ICON = {
+ call: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>',
+ chart: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>',
+ face: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01M8.5 14.5c1 1.2 2.1 1.8 3.5 1.8s2.5-.6 3.5-1.8"/></svg>',
+ doc: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7"/></svg>',
+ msg: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>',
+ dl: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>',
+ nocal: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16M6 4l12 17"/></svg>',
+ nophone: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h4l2 5-2.5 1.5a11 11 0 0 0 5 5L16 12l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2zM3 3l18 18"/></svg>',
+ line: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg>'
+};
+var card = function (icon, kt, kd, cls) { return '<div class="card gcard' + (cls ? ' ' + cls : '') + '"><i>' + ICON[icon] + '</i><div>' + T(kt, 'b') + T(kd) + '</div></div>'; };
+var title = function (k) { return '<h2 class="sec-title"><span class="hl">' + T(k) + '</span></h2>'; };
+var lead = function (k) { return T(k, 'p').replace('<p ', '<p class="lead" '); };
+var steps = function (pre) { return '<ol class="steps">' + [1, 2, 3, 4].map(function (n) { return '<li><div class="sn"><small>STEP</small><b>' + n + '</b></div><div class="bx">' + T(pre + n + 'T', 'b') + T(pre + n + 'D') + '</div></li>'; }).join('') + '</ol>'; };
+var rules = function () { return '<ul class="rules" style="margin-top:18px;max-width:720px">' + [1, 2, 3].map(function (n) { return '<li>' + T(P + 'Rule' + n + 'L', 'b') + T(P + 'Rule' + n + 'D') + '</li>'; }).join('') + '</ul><a class="more" href="/#rules" style="display:inline-block;margin-top:16px;font-weight:700;color:var(--clay);border-bottom:2px solid currentColor">看完整預約規則 →</a>'; };
+var memtip = function (kt, kd) { return '<div class="memtip">' + T(kt, 'b') + T(kd) + '</div>'; };
+var ctaBand = function () { return '<section class="cta-band"><div class="wrap">' + T(P + 'CtaTitle', 'h2') + '<p>' + T(P + 'CtaName') + '　' + price() + '／' + (KIND === 'text' ? T('txPriceUnit') : '60 分鐘') + '</p><div class="cta-row">' + BOOK('btn btn-brass', P + 'BookBtn') + '<div class="qr"><img src="' + QR + '" alt="LINE QR Code" width="84" height="84"><div><small>或掃 QR Code 加 LINE</small><small>LINE 搜尋 ID</small><b>' + esc(CFG.lineId || '') + '</b></div></div></div></div></section>'; };
+var ctaBtns = function () { return '<div class="cta-btns">' + BOOK('btn btn-brass', P + 'BookBtn') + LINE('btn btn-navy', P + 'LineBtn') + '</div>'; };
+
+/* ================= 語音版：手機動畫（字固定，不開放後台改） ================= */
+var CH_V = [
+ { tab: '你會得到', title: '陪你把命盤看清楚', short: '60 分鐘語音，面相不另收費', dur: 9 },
+ { tab: '要準備的', title: '出生資料和想問的事', short: '性別、西元生日、出生時間、想問的事', dur: 8 },
+ { tab: '怎麼進行', title: '60 分鐘這樣聊', short: '先定盤，確認完才開始計時', dur: 9 },
+ { tab: '定盤與退費', title: '無法定盤，全額退費', short: '若無法定盤，即結束論命並全額退費', dur: 6.5 },
+ { tab: '預約', title: '想好好聊一次？', dur: 3 }];
+var STEPS_V = [['先定盤', '核對幾件過去的事，確認完才計時'], ['聽你說近況', '最想弄清楚的是什麼'], ['一起看盤', '一問一答，互相討論'], ['整理重點', '今天的結論和下一步']];
+function sceneV(i) {
+ if (i == 0) return '<div class="sc"><div class="call"><img src="' + AV + '" alt=""><div class="nm">大正命理諮詢</div><div class="st" data-timer>語音通話中　00:00</div><div class="wave">' + Array.from({ length: 15 }, function (_, k) { return '<b data-wv="' + k + '"></b>'; }).join('') + '</div></div>' +
+  '<div class="cds"><div class="cd" data-in="0.5"><i>' + ICON.call + '</i><div><b>60 分鐘一對一</b><span>語音通話，不開鏡頭</span></div></div><div class="cd" data-in="1.3"><i>' + ICON.chart + '</i><div><b>一起看你的命盤</b><span>聽不懂隨時問，一問一答</span></div></div><div class="cd" data-in="2.1"><i>' + ICON.face + '</i><div><b>加看面相</b><span>不另收費</span></div></div></div></div>';
+ if (i == 1) return '<div class="sc"><div class="fh">預約表單</div><div class="fb">' +
+  '<div class="lbl">性別</div><div class="seg"><div data-on="0.6">男</div><div>女</div></div>' +
+  '<div class="lbl">西元出生日期</div><div class="fld" data-type="1.0,2.0" data-ok="2.1">1990 年 5 月 12 日</div>' +
+  '<div class="lbl">出生時間</div><div class="fld" data-type="2.3,3.0" data-ok="3.1">早上 8:30</div>' +
+  '<div class="lbl">想問的事（想不清楚也沒關係）</div><div class="fld ta" data-type="3.5,6.0">最近在考慮換工作，想知道方向對不對。</div></div></div>';
+ if (i == 2) return '<div class="sc"><div class="chip" data-in="0.2">⏱ 60 分鐘</div><div class="tl">' + STEPS_V.map(function (s, k) { return '<div class="st4" data-st="' + (0.6 + k * 1.6) + '"><div class="dot">' + (k + 1) + '</div>' + (k < 3 ? '<div class="ln"></div>' : '') + '<b>' + s[0] + '</b><span>' + s[1] + '</span></div>'; }).join('') + '</div></div>';
+ if (i == 3) return '<div class="sc"><div class="rf-top" data-in="0.1"><span class="pill">放心預約</span></div>' +
+  '<div class="rf-step" data-in="0.5"><div class="dot"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/></svg></div><div><b>先定盤</b><span>核對幾件過去的事</span></div></div>' +
+  '<div class="rf-br"><div class="rf-b ok" data-in="1.5"><i>✓</i><div><b>定盤成功</b><span>開始計時，進入 60 分鐘</span></div></div><div class="rf-b no" data-in="2.6"><i>✗</i><div><b>若無法定盤<br>即結束論命<br>並全額退費</b></div></div></div></div>';
+ return '<div class="sc cta-sc"><img src="' + AV + '" alt="" data-pop><div class="t" data-in="0.3">想好好聊一次？</div><div class="s" data-in="0.6">一對一語音諮詢</div><a class="b1" href="' + esc(CFG.bookUrl) + '" data-in="0.9">預約一對一語音諮詢</a><a class="b2" href="' + esc(CFG.lineUrl) + '" target="_blank" rel="noopener" data-line data-in="1.3">加 LINE 先問問題</a></div>';
+}
+function phoneHTML(only, bare) { var n = only == null ? [0, 1, 2, 3, 4] : [only]; return '<div class="phone' + (bare ? ' bare' : '') + '"><div class="scr"><div class="notch"></div>' + n.map(sceneV).join('') + '</div></div>'; }
+
+function Stage(root, o) {
+ var self = this; this.root = root; this.o = Object.assign({ advance: true, only: null, autostart: true, pw: 300 }, o || {});
+ root.style.setProperty('--pw', this.o.pw + 'px'); root.innerHTML = phoneHTML(this.o.only, this.o.bare);
+ this.scenes = $$('.sc', root).map(function (el, k) {
+  return { el: el, ch: self.o.only == null ? k : self.o.only, types: $$('[data-type]', el).map(function (t) { var ab = t.dataset.type.split(','); return { el: t, txt: t.textContent, a: +ab[0], b: +ab[1] }; }), ins: $$('[data-in]', el), oks: $$('[data-ok]', el), ons: $$('[data-on]', el), sts: $$('[data-st]', el), wv: $$('[data-wv]', el), timer: $('[data-timer]', el), pop: $('[data-pop]', el) };
+ });
+ this.cur = -1; this.lt = 0; this.playing = true; this.vis = false; this.listeners = [];
+ this.io = new IntersectionObserver(function (e) { var v = e[0].isIntersecting; if (v && !self.vis && self.o.restartOnView && self.cur >= 0) self.go(self.cur); self.vis = v; if (v && self.cur < 0 && self.o.autostart) self.go(self.o.only == null ? 0 : self.o.only); }, { threshold: .35 });
+ this.io.observe(root); this.alive = true; this.last = performance.now(); requestAnimationFrame(function (t) { self.tick(t); });
+}
+Stage.prototype.on = function (fn) { this.listeners.push(fn); };
+Stage.prototype.emit = function () { var s = this; this.listeners.forEach(function (f) { f(s.cur); }); };
+Stage.prototype.go = function (i) { var s = this; this.cur = i; this.lt = RM ? 99 : 0; this.scenes.forEach(function (x) { x.el.classList.toggle('on', x.ch === i); }); this.render(); this.emit(); };
+Stage.prototype.tick = function (now) {
+ var s = this; if (!this.alive || !this.root.isConnected) { this.alive = false; this.io.disconnect(); return; }
+ var dt = Math.min(.1, (now - this.last) / 1000); this.last = now;
+ if (this.cur >= 0 && this.vis && this.playing && !RM && !document.hidden) { var d = CH_V[this.cur].dur; if (this.lt < d + .6) { this.lt += dt; this.render(); } else if (this.o.advance && this.cur < CH_V.length - 1) this.go(this.cur + 1); }
+ requestAnimationFrame(function (t) { s.tick(t); });
+};
+Stage.prototype.render = function () {
+ var cur = this.cur, s = this.scenes.filter(function (x) { return x.ch === cur; })[0]; if (!s) return; var lt = this.lt;
+ s.ins.forEach(function (el) { var k = eo((lt - (+el.dataset.in)) / .45); el.style.opacity = k; el.style.transform = 'translateY(calc(var(--u) * ' + ((1 - k) * 18) + '))'; });
+ s.types.forEach(function (t) { var n = Math.round(cl((lt - t.a) / (t.b - t.a)) * t.txt.length); t.el.textContent = t.txt.slice(0, n) + (lt >= t.a && lt < t.b + .2 && Math.floor(lt * 3) % 2 == 0 ? '｜' : ''); });
+ s.oks.forEach(function (e) { e.classList.toggle('ok', lt >= +e.dataset.ok); }); s.ons.forEach(function (e) { e.classList.toggle('on', lt >= +e.dataset.on); }); s.sts.forEach(function (e) { e.classList.toggle('on', lt >= +e.dataset.st); });
+ s.wv.forEach(function (b, k) { b.style.height = 'calc(var(--u) * ' + (10 + 46 * Math.abs(Math.sin(lt * 6 + k * .8) * Math.sin(lt * 2.3 + k * .3))) + ')'; });
+ if (s.timer) { var x = Math.floor(Math.max(0, lt) * 7 + 754); s.timer.textContent = '語音通話中　' + String(Math.floor(x / 60)).padStart(2, '0') + ':' + String(x % 60).padStart(2, '0'); }
+ if (s.pop) { var k = eo((lt - .1) / .4); s.pop.style.opacity = k; s.pop.style.transform = 'scale(' + (.6 + .4 * k) + ')'; }
+};
+
+/* ================= 語音版：頁面 ================= */
+var SV = {
+ get: function () { return '<section class="sec"><div class="wrap">' + title('svGetTitle') + lead('svGetLead') + '<div class="stack">' + card('call', 'svGet1T', 'svGet1D') + card('chart', 'svGet2T', 'svGet2D') + card('face', 'svGet3T', 'svGet3D') + '</div></div></section>'; },
+ prep: function () { return '<section class="sec paper"><div class="wrap">' + title('svPrepTitle') + '<div class="grid2" style="margin-top:18px"><div class="card"><ul class="prep" data-k="svPrepList">' + lines('svPrepList').map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div><div class="card"><ul class="note" style="list-style:disc" data-k="svPrepNotes">' + lines('svPrepNotes').map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div></div></div></section>'; },
+ how: function () { return '<section class="sec"><div class="wrap">' + title('svHowTitle') + lead('svHowLead') + steps('svStep') + '</div></section>'; },
+ howD: function () { return '<section class="sec"><div class="wrap">' + title('svHowTitle') + lead('svHowLead') + '<div class="stack">' + card('chart', 'svHow1T', 'svHow1D') + card('call', 'svHow2T', 'svHow2D') + card('face', 'svHow3T', 'svHow3D') + card('doc', 'svHow4T', 'svHow4D') + '</div></div></section>'; },
+ notes: function () { return '<section class="sec paper"><div class="wrap">' + title('svNotesTitle') + lead('svNotesLead') + '<div class="stack">' + card('doc', 'svNotes1T', 'svNotes1D') + card('line', 'svNotes2T', 'svNotes2D') + '</div>' + memtip('svNotesTipT', 'svNotesTipD') + '</div></section>'; },
+ refund: function () { return '<section class="sec paper"><div class="wrap">' + title('svRefundTitle') + '<div class="refund" style="margin-top:18px">' + T('svRefundBadge', 'div').replace('<div ', '<div class="badge" ') + '<div class="card"><p style="font-size:16.5px;color:var(--body)" data-k="svRefundBody">' + br(V.svRefundBody) + '</p></div></div></div></section>'; },
+ rules: function () { return '<section class="sec"><div class="wrap">' + title('svRulesTitle') + rules() + '</div></section>'; },
+ faq: function () { return '<section class="sec paper"><div class="wrap" style="max-width:760px"><h2 class="sec-title"><span class="hl">常見問題</span></h2><div style="margin-top:18px">' + [1, 2, 3].map(function (n) { return V['svFaq' + n + 'Q'] ? '<details class="fa"><summary>' + T('svFaq' + n + 'Q') + '</summary>' + T('svFaq' + n + 'A', 'p') + '</details>' : ''; }).join('') + '</div></div></section>'; },
+ cta: ctaBand
+};
+var heroV = function (mob) {
+ return '<section class="hero"><div class="wrap">' + T('svEyebrow', 'div').replace('<div ', '<div class="eyebrow" ') + '<h1>' + T('svTitle') + '<span class="hl">' + T('svTitleHl') + '</span></h1>' + T('svLead', 'p') +
+  (mob ? '<div class="hint"><b>往下慢慢滑，30 秒看完這趟諮詢會怎麼聊</b><ol class="chips">' + CH_V.slice(0, 4).map(function (c, i) { return '<li><span>' + (i + 1) + '</span>' + c.tab + '</li>'; }).join('') + '</ol>' + CHEV + '</div>'
+   : '<p style="font-size:15px;color:var(--muted);margin-top:4px">往下捲，左邊的動畫會跟著播。</p><div class="cta-mini" style="margin-top:20px"><div class="price">' + price() + '<small>' + T('svPriceUnit') + '</small></div>' + ctaBtns() + '</div>') +
+  '</div></section>';
+};
+function renderVM() {
+ var D = function (i) { return '<span class="dts">' + [0, 1, 2, 3].map(function (k) { return '<i class="' + (k === i ? 'on' : '') + '"></i>'; }).join('') + '</span>'; };
+ return heroV(true) + [0, 1, 2, 3].map(function (i) { return '<section class="sm" data-ch="' + i + '"><div class="smtop"><span>' + (i + 1) + '／4</span>' + D(i) + '</div><h2>' + CH_V[i].title + '</h2><p class="sh">' + CH_V[i].short + '</p><div class="mini" data-mini="' + i + '"></div><div class="nxt">繼續往下滑<span style="font-weight:400">下一段：' + CH_V[i + 1].tab + '</span>' + CHEV + '</div></section>'; }).join('') +
+  '<section class="sm" data-ch="4"><div class="smtop"><span>準備好了</span></div><h2>' + CH_V[4].title + '</h2><p class="sh">' + price() + '／60 分鐘</p><div class="mini" data-mini="4"></div><div class="nxt" style="margin-top:12px">想看完整的文字說明，繼續往下' + CHEV + '</div></section><div class="sm-end"></div>' +
+  '<div class="divider">完整說明</div>' + ['get', 'prep', 'how', 'notes', 'refund', 'rules', 'faq', 'cta'].map(function (k) { return SV[k](); }).join('');
+}
+var strip = function (h) { return h.replace(/^<section[^>]*>/, '').replace(/<\/section>$/, '').replace('<div class="wrap">', '').replace(/<\/div>$/, ''); };
+var SS = function (ch, html) { return '<div class="ssec" data-ch="' + ch + '">' + html + '</div>'; };
+function renderVD() {
+ return heroV(false) + '<div class="wrap"><div class="story"><div class="stick" id="stC"><div class="ph"></div><div class="cap2"></div></div><div class="col">' +
+  SS(0, strip(SV.get())) + SS(1, strip(SV.prep())) + SS(2, strip(SV.howD())) + SS(3, strip(SV.refund())) +
+  SS(4, '<h2 class="sec-title"><span class="hl">' + T('svReadyTitle') + '</span></h2><p class="lead">' + price() + '／60 分鐘</p><div class="cta-mini" style="margin-top:18px"><div class="price">' + price() + '<small>' + T('svPriceUnit') + '</small></div>' + ctaBtns() + '</div>') +
+  '</div></div></div>' + ['notes', 'rules', 'faq', 'cta'].map(function (k) { return SV[k](); }).join('');
+}
+var stages = [];
+function mountV(mob) {
+ if (!mob) {
+  var root = $('#stC'), st = new Stage($('.ph', root), { pw: 320, advance: false }); stages.push(st);
+  st.on(function (ch) { var c = $('.cap2', root); if (c.dataset.cur != ch) { c.dataset.cur = ch; c.innerHTML = '<b>' + CH_V[ch].title + '</b>'; } });
+  /* 動畫永遠對準「最靠近畫面中間」的那一段字（捲太快也不會錯位；不用 IntersectionObserver 的入場事件） */
+  var ss = $$('.ssec'), raf = 0;
+  var pick = function () {
+   raf = 0; if (!st.alive) return; var m = innerHeight * .5, best = null, bd = 1e9;
+   ss.forEach(function (e) { var r = e.getBoundingClientRect(), c = (r.top + r.bottom) / 2, d = (r.top <= m && r.bottom >= m) ? 0 : Math.min(Math.abs(r.top - m), Math.abs(r.bottom - m)), dd = d * 1000 + Math.abs(c - m); if (dd < bd) { bd = dd; best = e; } });
+   if (!best) return; var ch = +best.dataset.ch; ss.forEach(function (s) { s.classList.toggle('act', s === best); }); if (st.cur !== ch) st.go(ch);
+  };
+  var onS = function () { if (!raf) raf = requestAnimationFrame(pick); };
+  addEventListener('scroll', onS, { passive: true }); addEventListener('resize', onS);
+  stages.push({ set alive(v) { if (!v) { removeEventListener('scroll', onS); removeEventListener('resize', onS); } } }); pick();
+ } else $$('.sm .mini').forEach(function (m) { stages.push(new Stage(m, { pw: 290, bare: true, advance: false, only: +m.dataset.mini, restartOnView: true })); });
+}
+
+/* ================= 文字版：真實閱讀頁的三個動畫（示範內容固定） ================= */
+var NM = '小安', DT = '二〇二六年十一月二十六日';
+var chH = function (n, sub, t) { return '<div class="ch-h"><div class="ch-n">' + n + '</div><div class="ch-t">' + sub + '<b>' + t + '</b></div></div>'; };
+var CH1 = '<section class="ch">' + chH('壹', '你問的第一件事', '換工作的方向') + '<div class="q"><span class="qt">最近在考慮換工作，想知道現在這個方向對不對？</span></div><p>先說結論：方向沒有錯，只是時間還沒到。</p><p>你的命盤事業宮很穩，適合在原本的領域往上走，不適合大幅轉行。今年上半年的運勢偏收斂，下半年才開始打開。</p></section>';
+var CH2 = '<section class="ch">' + chH('貳', '你問的第二件事', '感情的進展') + '<div class="q"><span class="qt">今年感情有機會往前走嗎？</span></div><p>有機會，但要等到下半年。</p><p>你的感情宮今年被點亮，會遇到談得來的人，重點是先把工作的事放一放。</p></section>';
+var CH3 = '<section class="ch">' + chH('參', '命盤裡的你', '三個重點') + '<ul class="keys"><li class="fade"><b>命宮：</b>做事穩，想清楚才動，缺點是想太久，機會容易從旁邊溜走。</li><li class="fade"><b>事業宮：</b>適合在原本的領域往上走，有人帶的環境最能發揮。</li><li class="fade"><b>今年流年：</b>下半年工作和感情，都有一個明顯的轉折點。</li></ul></section>';
+var CH4 = '<section class="ch fade">' + chH('肆', '帶走一件事', '給你的建議') + '<div class="take"><p>先把手上的案子收尾，年中前不急著遞辭呈。</p><p>下半年再動，成功率比現在高很多。</p></div></section>';
+var HEADP = '<div class="run">' + NM + '文字諮詢</div><img class="head" alt="" src="' + IM('emblem2') + '"><h1>紫微斗數文字諮詢</h1><div class="who">' + NM + '　' + DT + '</div><span class="dv" aria-hidden="true"></span><p class="greet">' + NM + ' 你好：<br>謝謝你的耐心等待。你問的事，我都對著你的命盤看過了，下面一題一題跟你說。</p>';
+var SIGN = '<div class="sign"><div class="tx"><b>大正</b><span class="dt">' + DT + '</span><img class="seal pre" alt="" src="' + IM('seal-goat') + '"></div></div>';
+var TSC = {
+ A: function () { return '<div class="rise"><main class="book"><div class="scroll"><div class="page">' + HEADP + CH1 + '<span class="dv small"></span>' + CH2 + '</div></div></main></div>' +
+  '<section class="intro"><div class="bw">' + ['closed', 'half', 'open', 't1', 't2', 't3'].map(function (n, i) { return '<img alt="" class="' + (i > 2 ? 'fast ' : '') + (i == 0 ? 'on' : '') + '" src="' + IM('book2-' + n) + '">'; }).join('') + '</div><div class="ttl"><b>' + NM + '<br>紫微斗數文字諮詢</b><span>點一下，翻開</span></div></section><div class="tap"></div>'; },
+ B: function () { return '<div class="rise under" style="transition:none"><main class="book"><div class="scroll"><div class="page" style="padding-top:34px">' + CH3 + '<span class="dv small"></span>' + CH4 + SIGN + '</div></div></main></div>'; },
+ C: function () { return '<div class="chat" style="opacity:1"><div class="bar"><img src="' + AV + '" alt="" style="width:30px;height:30px;border-radius:50%"> 大正命理諮詢</div><div class="msgs"><div class="wait fade"><small>確認收款後</small><b>7–10 個工作天</b><span>寫好就通知你</span></div><div class="bub fade" style="margin-top:20px"><img src="' + AV + '" alt=""><div class="bb"><b>LINE 通知</b>你的紫微斗數文字諮詢寫好了，點開就能讀。<span class="go">打開你的紫微斗數文字諮詢</span></div></div><div class="mail fade"><div class="mh">✉ Email 也會收到</div><b>你的紫微斗數文字諮詢寫好了</b><span>寄件人：大正命理諮詢</span></div><div class="mnote fade">到 LINE、Email 收信，或打開手機的會員中心</div></div></div>'; }
+};
+function mountScene(box) {
+ var k = box.dataset.sc; box.innerHTML = '<div class="rp">' + TSC[k]() + '</div>'; var rp = $('.rp', box), T2 = [];
+ var at = function (ms, fn) { T2.push(setTimeout(fn, ms)); }, sc = $('.scroll', rp);
+ var fit = function () { var s = box.clientWidth / 390; rp.style.setProperty('--s', s); rp.style.height = (box.clientHeight / s) + 'px'; };
+ new ResizeObserver(fit).observe(box); fit();
+ var goY = function (y) { if (sc) sc.style.transform = 'translateY(' + (-y) + 'px)'; };
+ var yOf = function (i) { return Math.max(0, $$('.ch', rp)[i].offsetTop - 28); };
+ var reset = function () {
+  T2.forEach(clearTimeout); T2 = []; if (sc) { sc.style.transition = 'none'; goY(0); void sc.offsetWidth; sc.style.transition = ''; }
+  $$('.fade', rp).forEach(function (e) { e.classList.remove('in'); }); var sl = $('.seal', rp); if (sl) { sl.classList.remove('in'); sl.classList.add('pre'); }
+  if (k === 'A') { $('.intro', rp).classList.remove('go', 'opened'); $('.rise', rp).classList.remove('under'); $$('.bw img', rp).forEach(function (m, i) { m.classList.toggle('on', i == 0); }); }
+ };
+ var play = function () {
+  reset();
+  if (k === 'A') {
+   var it = $('.intro', rp), ru = $('.rise', rp), fr = $$('.bw img', rp), show = function (l) { fr.forEach(function (m, i) { m.classList.toggle('on', l.indexOf(i) >= 0); }); };
+   at(60, function () { it.classList.add('go'); });
+   at(1500, function () { var tp = $('.tap', rp); tp.classList.remove('go'); void rp.offsetWidth; tp.classList.add('go'); });
+   at(1700, function () { it.classList.add('opened'); show([1]); at(500, function () { show([2]); }); at(1250, function () { show([2, 3]); }); at(1500, function () { show([2, 4]); }); at(1760, function () { show([2, 5]); }); at(2040, function () { show([2]); }); at(1350, function () { ru.classList.add('under'); }); });
+   at(5600, function () { goY(yOf(0)); }); at(9200, function () { goY(yOf(1)); });
+  }
+  if (k === 'B') { $$('.keys li', rp).forEach(function (e, i) { at(500 + i * 1100, function () { e.classList.add('in'); }); }); at(4300, function () { goY($('.take', rp).closest('.ch').offsetTop - 30); }); at(5000, function () { $('.ch.fade', rp).classList.add('in'); }); at(7000, function () { goY($('.sign', rp).offsetTop - 330); }); at(8300, function () { var sl = $('.seal', rp); sl.classList.remove('pre'); sl.classList.add('in'); }); }
+  if (k === 'C') { at(300, function () { $('.wait', rp).classList.add('in'); }); at(1700, function () { $('.bub', rp).classList.add('in'); }); at(3300, function () { $('.mail', rp).classList.add('in'); }); at(4800, function () { $('.mnote', rp).classList.add('in'); }); }
+ };
+ if (RM) { play(); T2.forEach(clearTimeout); $$('.fade', rp).forEach(function (e) { e.classList.add('in'); }); return { play: function () {}, reset: function () {}, dur: 0 }; }
+ return { play: play, reset: reset, dur: { A: 14500, B: 10500, C: 7000 }[k] };
+}
+var TP = function (n, t, s, k, nx) { return '<section class="tp" data-pg="' + k + '"><div class="tpin"><div class="tx"><div class="step">' + n + '／3</div><h2>' + t + '</h2><p>' + s + '</p><div class="nxt">' + CHEV.replace('class="chev"', 'class="chev" style="width:20px;height:22px"') + nx + '</div></div><div class="tcol"><div class="tfw"><div class="tfs" data-sc="' + k + '"></div></div><div class="tpg"><div class="tpb"><i></i></div><span>動畫播放中…</span></div></div></div></section>'; };
+var ST = {
+ how: function () { return '<section class="sec"><div class="wrap">' + title('txHowTitle') + lead('txHowLead') + steps('txStep') + '</div></section>'; },
+ deliver: function () { return '<section class="sec paper"><div class="wrap">' + title('txDelTitle') + lead('txDelLead') + '<div class="stack">' + card('msg', 'txDel1T', 'txDel1D') + card('line', 'txDel2T', 'txDel2D') + card('dl', 'txDel3T', 'txDel3D') + '</div></div></section>'; },
+ notes: function () { return '<section class="sec paper"><div class="wrap">' + title('txMemTitle') + lead('txMemLead') + '<div class="stack">' + card('line', 'txMem1T', 'txMem1D') + card('msg', 'txMem2T', 'txMem2D') + '</div>' + memtip('txMemTipT', 'txMemTipD') + '</div></section>'; },
+ refund: function () { return '<section class="sec paper"><div class="wrap">' + title('txRefundTitle') + '<div class="refund" style="margin-top:18px">' + [1, 2].map(function (n) { return '<div class="card"><b style="font-size:19px" data-k="txRefund' + n + 'T">' + br(V['txRefund' + n + 'T']) + '</b><p style="font-size:16.5px;color:var(--body);margin-top:6px" data-k="txRefund' + n + 'D">' + br(V['txRefund' + n + 'D']) + '</p></div>'; }).join('') + '</div><p class="lead" style="margin:18px 0 0" data-k="txRefundHow">' + br(V.txRefundHow) + '</p></div></section>'; },
+ rules: function () { return '<section class="sec"><div class="wrap">' + title('txRulesTitle') + rules() + '</div></section>'; },
+ cta: ctaBand
+};
+function renderT() {
+ return '<section class="thero"><div class="wrap">' + T('txEyebrow', 'div').replace('<div ', '<div class="eyebrow" ') +
+  '<div class="pr"><b>' + price() + '</b><small data-k="txPriceUnit">' + br(V.txPriceUnit) + '</small>' + (V.txPriceTag ? '<em data-k="txPriceTag">' + br(V.txPriceTag) + '</em>' : '') + '</div><h1>' + T('txTitle') + '<span class="hl">' + T('txTitleHl') + '</span></h1>' +
+  '<div class="cta-mini">' + ctaBtns() + '</div>' +
+  '<div class="feat">' + card('nocal', 'txFeat1T', 'txFeat1D', 'star') + card('nophone', 'txFeat2T', 'txFeat2D') + card('line', 'txFeat3T', 'txFeat3D') + '</div></div></section>' +
+  TP(1, '你的問題、我的回覆', '你寫下兩個問題，我對著你的命盤，一題一題寫給你。', 'A', '下一頁：重點整理') +
+  TP(2, '重點整理', '命盤裡的你、給你的建議，整理成幾個重點，一眼就看懂。', 'B', '下一頁：多久會收到') +
+  TP(3, '多久會收到看盤', '確認收款後 7–10 個工作天，寫好會通知你，到 LINE 或 Email 收信就能讀。', 'C', '下面是完整說明') + '<div class="sm-end"></div>' +
+  ['how', 'deliver', 'notes', 'refund', 'rules', 'cta'].map(function (k) { return ST[k](); }).join('');
+}
+function mountT() {
+ var ms = new Map(), tm = new Map();
+ $$('.tfs[data-sc]').forEach(function (b) { ms.set(b.closest('.tp'), mountScene(b)); });
+ var bar = function (el, on) {
+  var pg = $('.tpg', el), i = $('i', pg), sp = $('span', pg), m = ms.get(el); clearTimeout(tm.get(el)); pg.classList.remove('done'); i.style.transition = 'none'; i.style.width = '0'; void i.offsetWidth; sp.textContent = '動畫播放中…';
+  if (on) { i.style.transition = 'width ' + m.dur + 'ms linear'; i.style.width = '100%'; tm.set(el, setTimeout(function () { pg.classList.add('done'); sp.textContent = el.dataset.pg === 'C' ? '看完了，往下滑看完整說明 ↓' : '看完了，往下滑 ↓'; }, m.dur + 300)); }
+ };
+ var io = new IntersectionObserver(function (es) { es.forEach(function (e) { var m = ms.get(e.target); if (!m) return; if (e.isIntersecting && e.intersectionRatio >= .55) { if (!e.target._on) { e.target._on = 1; m.play(); bar(e.target, 1); } } else if (e.intersectionRatio < .15) { if (e.target._on) { e.target._on = 0; m.reset(); bar(e.target, 0); } } }); }, { threshold: [0, .15, .55, .8] });
+ ms.forEach(function (m, el) { io.observe(el); });
+ stages.push({ set alive(v) { if (!v) io.disconnect(); } });
+}
+
+/* ================= 畫頁面 ================= */
+var app = $('#sp'), sbar = $('#sbar'), mq = matchMedia('(max-width: 900px)'), lastMob = null;
+if (KIND === 'text') document.documentElement.classList.add('pg');   // 文字版：整頁吸附，一頁一頁滑
+function render() {
+ stages.forEach(function (s) { s.alive = false; }); stages = [];
+ var mob = mq.matches; lastMob = mob;
+ app.innerHTML = KIND === 'text' ? renderT() : (mob ? renderVM() : renderVD());
+ if (KIND === 'text') mountT(); else mountV(mob);
+ sbar.innerHTML = '<div class="p">' + price() + '<small>' + esc(KIND === 'text' ? V.txPriceUnit : V.svPriceUnit) + '</small></div>' + BOOK('btn btn-brass', P + 'BookBtn');
+ onScroll();
+}
+function onScroll() { var e = $('.sm-end'); sbar.classList.toggle('show', e ? e.getBoundingClientRect().top < innerHeight * .5 : scrollY > 420); }
+addEventListener('scroll', onScroll, { passive: true });
+var onMq = function () { if (KIND !== 'text' && mq.matches !== lastMob) render(); };
+if (mq.addEventListener) mq.addEventListener('change', onMq); else mq.addListener(onMq);
+
+var KEYS = Object.keys(CFG.defaults || {});
+function apply(d) {
+ var ch = false;
+ KEYS.forEach(function (k) { if (typeof d[k] === 'string' && d[k].trim() && d[k] !== V[k]) { V[k] = d[k]; ch = true; } });
+ var f = Number(KIND === 'text' ? d.feeText : d.feeVoice); if (f > 0 && f !== FEE) { FEE = f; ch = true; }
+ return ch;
+}
+render();
+
+var DZ_PREVIEW = /[?&]dzpreview=1(&|$)/.test(location.search) && window.parent !== window;
+if (DZ_PREVIEW) {
+ /* 後台預覽：只接受大正預約系統後台的網頁來源（跟首頁同一個）；本機測試另外允許 127.0.0.1／localhost */
+ document.documentElement.classList.add('dz-preview');
+ var ORIGINS = ['https://n-zsa5kblf6utdjampxzvdtwmrj3x3y4uiblx5uwq-0lu-script.googleusercontent.com'];
+ var trusted = function (o) { return ORIGINS.indexOf(o) >= 0 || (/^(127\.0\.0\.1|localhost)$/.test(location.hostname) && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(o)); };
+ var parentO = null;
+ addEventListener('message', function (e) {
+  if (e.source !== window.parent || !trusted(e.origin)) return;
+  var m = e.data; if (!m || typeof m !== 'object' || m.type !== 'dz-preview') return;
+  parentO = e.origin;
+  if (m.data && typeof m.data === 'object' && !Array.isArray(m.data)) {
+   var d = {}; KEYS.concat(['feeVoice', 'feeText']).forEach(function (k) { var v = m.data[k]; if ((typeof v === 'string' && v.length <= 4000) || typeof v === 'number') d[k] = v; });
+   V = Object.assign({}, CFG.defaults); apply(d); render();
+  }
+  if (typeof m.lit === 'string') {
+   $$('.dz-lit').forEach(function (x) { x.classList.remove('dz-lit'); });
+   var t = $('[data-k="' + m.lit.replace(/[^\w]/g, '') + '"]');
+   if (t) { var dt = t.closest('details'); if (dt) dt.open = true; t.classList.add('dz-lit'); if (m.scroll) t.scrollIntoView({ block: 'center' }); }
+  }
+ });
+ document.addEventListener('click', function (e) {
+  var a = e.target.closest && e.target.closest('a'); if (a) e.preventDefault();
+  var el = e.target.closest && e.target.closest('[data-k]');
+  if (el && parentO) { e.preventDefault(); window.parent.postMessage({ type: 'dz-pick', k: el.getAttribute('data-k') }, parentO); }
+ }, true);
+ window.parent.postMessage({ type: 'dz-ready' }, '*');
+} else if (CFG.api) {
+ /* 讀後台存的文字和價格；有不一樣才重畫 */
+ var s = document.createElement('script');
+ window._salesCfgCb = function (d) { if (d && typeof d === 'object' && apply(d)) render(); };
+ s.src = CFG.api + '?page=siteConfig&callback=_salesCfgCb';
+ document.body.appendChild(s);
+}
+})();

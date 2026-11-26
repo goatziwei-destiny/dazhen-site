@@ -44,6 +44,7 @@
     var cd = new URLSearchParams(location.search).get('code');
     try { if (cd) sessionStorage.setItem('dz_code', cd); else cd = sessionStorage.getItem('dz_code'); } catch (_) {}
     if (cd && /^[A-Za-z0-9]{4,12}$/.test(cd)) url.searchParams.set('code', cd);   // 專屬優惠連結（/booking/?code=XXXXXX）：表單自動套用優惠
+    if (new URLSearchParams(location.search).get('svc') === 'text') url.searchParams.set('svc', 'text');   // 從文字版銷售頁（/text/）來的：表單先選好文字版（2026-11-26）
     var rb = new URLSearchParams(location.search).get('rb'); if (rb && /^[A-Za-z0-9.\-]{8,80}$/.test(rb)) url.searchParams.set('rb', rb);   // 信裡「下次預約點這裡」：沿用上次的命盤資料
     return url.href;
   };

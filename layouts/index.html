@@ -313,6 +313,12 @@ body{letter-spacing:.02em}
 .proc-line li>div:last-child{background:#fff;border-radius:16px;padding:14px 18px;box-shadow:0 10px 26px -20px rgba(27,40,69,.4)}
 .proc-line .step-title{margin-top:0}
 .section-white{background:#fff}.section-light{background:var(--paper)}
+/* ===== 2026-11-26 按鈕統一（大正：首頁的預約按鈕一律品牌金，跟銷售頁一致；「先加 LINE」在淺色底用深藍、深色底維持白框） ===== */
+.btn-primary,.hero-paper .btn-primary,.svc-paper .btn-primary{background:var(--brass);color:var(--navy)}
+.btn-primary:hover,.hero-paper .btn-primary:hover,.svc-paper .btn-primary:hover{background:#d6aa5a}
+.hero-paper .btn-ghost{background:var(--navy);color:#fff;border-color:var(--navy)}.hero-paper .btn-ghost:hover{background:var(--navy-2)}
+.cta-night .btn-gold{background:var(--brass);color:var(--navy)}
+.svc-more{display:block;text-align:center;margin-top:10px;font-size:14px;font-weight:700;color:var(--navy);text-decoration:underline;text-underline-offset:3px}
 </style>
 {{ partial "analytics.html" . }}
 </head>
@@ -643,13 +649,13 @@ stuckBlock_(S) +
     // 11/10 大正：影片放卡片左邊、標題和價格放右邊；服務說明那段小字不顯示（後台的字還在，影片取代它）
     '<div class="svc-card svc-card-v"><div style="min-width:0"><div class="svc-label"' + dk('serviceLabel') + '>' + esc(S.serviceLabel||'') + '</div><h3' + dk('serviceTitle') + '>' + esc(S.serviceTitle||'') + '</h3>' +
     '<div class="price"' + dk('servicePrice') + '>' + esc(S.servicePrice||'') + '</div><div class="price-unit"' + dk('servicePriceUnit') + '>' + esc(S.servicePriceUnit||'') + '</div><div' + dk('serviceDetail') + '>' + renderServiceDetail(S.serviceDetail||'') + '</div>' +
-    '<a href="/booking/" class="btn btn-primary">預約一對一語音諮詢</a><a class="svc-line" href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + '>或加 LINE 預約／先問問題 →</a></div>' +
+    '<a href="/booking/" class="btn btn-primary">預約一對一語音諮詢</a><a class="svc-more" href="/voice/">先看諮詢怎麼進行 →</a><a class="svc-line" href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + '>或加 LINE 預約／先問問題 →</a></div>' +
     '<div class="svc-vid">' + ytLite(VIDEO_VOICE, 'r916', '30 秒看懂一對一語音諮詢') + '</div></div>' +
     (SHOW_TEXT_SERVICE ?
     '<div class="svc-card svc-card-v"><div style="min-width:0"><div class="svc-label">' + esc(S.textServiceLabel||'') + '</div><h3>' + esc(S.textServiceTitle||'') + '</h3>' +
     '<p class="svc-sub">' + esc(S.textServiceDesc||'') + '</p>' +
     '<div class="price">' + esc(S.textServicePrice||'') + '</div><div class="price-unit">' + esc(S.textServicePriceUnit||'') + '</div>' + renderServiceDetail(S.textServiceDetail||'') +
-    '<a href="/booking/" class="btn btn-warm">' + esc(S.textServiceBtn||'預約文字版諮詢') + '</a><a class="svc-line" href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + '>或加 LINE 先問問題 →</a></div>' +
+    '<a href="/booking/" class="btn btn-warm">' + esc(S.textServiceBtn||'預約文字版諮詢') + '</a><a class="svc-more" href="/text/">先看回覆長什麼樣子 →</a><a class="svc-line" href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + '>或加 LINE 先問問題 →</a></div>' +
     '<div class="svc-vid">' + (VIDEO_TEXT ? ytLite(VIDEO_TEXT, 'r916', '看懂文字版諮詢') : '<div class="yt r916 yt-soon"><img src="/images/mingshu/book-closed.webp" alt=""><span>介紹影片製作中</span></div>') + '</div></div>' : '') +
   '</div>' +
 '</div></section>' +
