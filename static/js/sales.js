@@ -152,6 +152,7 @@ function mountV(mob, scope, so) {
     raf = 0; if (!st.alive) return; var r = col.getBoundingClientRect(), top = parseFloat(getComputedStyle(pin).top) || 0;
     var y = top - r.top, ch = y < 0 ? 0 : Math.min(ss.length - 1, Math.floor(y / seg)), shown = r.top < innerHeight * .78;
     ss.forEach(function (e, i) { e.classList.toggle('in', shown && i <= ch); e.classList.toggle('act', shown && i === ch); });
+    $$('.pseg i', col).forEach(function (e, i) { e.classList.toggle('on', i <= ch); }); var pn = $('.pnum', col); if (pn) pn.textContent = (ch + 1) + '／' + ss.length;
     if (st.cur !== ch) st.go(ch);
    };
    var onS2 = function () { if (!raf) raf = requestAnimationFrame(pickS); }, onR2 = function () { fit(); onS2(); };
@@ -282,8 +283,8 @@ if (CFG.mode === 'home') {
   var el = document.getElementById('dzProcess'); if (!el) return;
   stages.forEach(function (s) { s.alive = false; }); stages = [];
   var mob = mq.matches; lastMob = mob;
-  el.innerHTML = '<div class="sp sp-home sp-proc"><div class="wrap">' + '<h2 class="section-title"><span class="hl">' + T('hpProcTitle') + '</span></h2>' + T('hpProcLead', 'p').replace('<p ', '<p class="lead" ') + (mob ? '' : '<p class="sp-hint">往下捲，左邊的手機會跟著播。</p>') + '</div>' +
-   '<div class="wrap"><div class="story"><div class="stick" id="stC"><div class="ph"></div><div class="cap2"></div></div><div class="col pcol"><div class="pin">' +
+  el.innerHTML = '<div class="sp sp-home sp-proc"><div class="wrap">' + '<h2 class="section-title"><span class="hl">' + T('hpProcTitle') + '</span></h2>' + T('hpProcLead', 'p').replace('<p ', '<p class="lead" ') + '</div>' +
+   '<div class="wrap"><div class="story"><div class="stick" id="stC"><div class="ph"></div><div class="cap2"></div></div><div class="col pcol"><div class="pin">' + (mob ? '' : '<div class="pbar"><span>往下捲，左邊的手機會跟著播</span><div class="pseg">' + [0, 1, 2, 3].map(function () { return '<i></i>'; }).join('') + '</div><b class="pnum">1／4</b></div>') +
    [1, 2, 3, 4].map(function (n) { return '<div class="ssec" data-ch="' + (n - 1) + '"><div class="mini" data-mini="' + (n - 1) + '"></div><ol class="steps pstep"><li><div class="sn"><small>STEP</small><b>' + n + '</b></div><div class="bx">' + T('hpStep' + n + 'T', 'b') + T('hpStep' + n + 'D') + '</div></li></ol></div>'; }).join('') +
    '</div></div></div></div>' +
    '<div class="wrap pgo"><a class="btn btn-brass" href="/services/">立即預約服務諮詢</a></div></div>';

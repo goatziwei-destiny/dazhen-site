@@ -359,14 +359,14 @@ body{letter-spacing:.02em}
   .cp-ai{border-left-color:#d8d3c8;color:#8b8579}.cp-ai em{color:#a09a8e}
 }
 </style>
-{{ if eq $.page "home" }}<link rel="stylesheet" href="/css/sales.css?v=20261126e">{{ end }}
+{{ if eq $.page "home" }}<link rel="stylesheet" href="/css/sales.css?v=20261126f">{{ end }}
 {{ partial "analytics.html" $.ctx }}
 </head>
 <body>
 <div id="app"></div>
 {{- if eq $.page "home" }}{{- $defs := dict -}}{{- range index site.Data.sales "home" }}{{ $defs = merge $defs (dict (index . 0) (index . 3)) }}{{ end }}
 <script>window.SALES = { mode: "home", kind: "voice", defaults: {{ $defs | jsonify | safeJS }}, fee: 3600, lineUrl: {{ site.Params.lineUrl }}, lineId: {{ site.Params.lineBasicId }}, bookUrl: "/booking/" };</script>
-<script src="/js/sales.js?v=20261126e"></script>{{ end }}
+<script src="/js/sales.js?v=20261126f"></script>{{ end }}
 <script src="/booking-bridge.js?v=20261108"></script>
 <script src="/line-qr.js?v=20261011" defer></script>
 <script>
@@ -674,7 +674,7 @@ chooseBlock_(S) +
   '<h1><span class="hero-eyebrow"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20"/><path d="M7 2v20M17 2v20M2 7h20M2 17h20"/></svg>' + '<span' + dk('brandTitle') + '>' + esc(S.brandTitle||'') + '</span></span><span' + dk(S.brandTagline ? 'brandTagline' : 'brandTitle') + '>' + esc(S.brandTagline||S.brandTitle||'') + '</span></h1>' +
   '<p class="hero-desc"' + dk('heroDesc') + '>' + heroDesc + '</p>' +
   (photo ? '<div class="hero-me"><img src="' + esc(photo) + '" alt="" width="60" height="60">' + esc(S.heroMeLine || '我是大正，一隻會算命的羊。') + '</div>' : '') +
-  '<div class="btns"><a href="/services/" class="btn btn-primary">預約諮詢</a><a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-ghost">先加入 LINE 聊聊</a></div>' +
+  '<div class="btns"><a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-primary">先加入 LINE 聊聊</a></div>' +
   '</div>' + (photo ? '<div class="hero-goat"><img src="' + esc(photo) + '" alt="' + esc(S.aboutName||'大正') + '的頭像" width="280" height="280"></div>' : '') +
 '</div></section>' +
 '<section class="stats-row" aria-label="大正的諮詢經驗"><div class="container">' + stats + '<a class="stat-lib stat-lib-row" href="/library/"><img src="/images/library-book-icon.png" alt="" width="18" height="25">' + (LIB_SEEN ? '回命運書庫逛逛' : '逛逛命運書庫') + '</a></div></section>' +
