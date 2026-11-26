@@ -328,8 +328,11 @@ html.pg .tp{scroll-snap-stop:always}
 .sp .mrow i svg{width:26px;height:26px}
 .sp .mrow b{display:block;font-size:18px;color:var(--navy);margin:0}.sp .mrow span{display:block;font-size:15.5px;color:var(--body);line-height:1.7}
 /* 2026-11-26 首頁預約流程：進度條（釘在四步上方，1／4～4／4） */
-.sp-proc .pbar{display:flex;align-items:center;gap:14px;font-size:15px;color:var(--muted);margin-bottom:4px}
-.sp-proc .pseg{display:flex;gap:6px;flex:1;max-width:220px}
-.sp-proc .pseg i{flex:1;height:0;border-top:3px dashed #d8d3c8;transition:border-color .3s}
-.sp-proc .pseg i.on{border-top-style:solid;border-color:var(--brass)}
-.sp-proc .pnum{font-size:15px;color:var(--navy);min-width:3em}
+.sp .pbar{display:flex;align-items:center;gap:14px;font-size:15px;color:var(--muted);margin-bottom:4px}
+.sp .pseg{display:flex;gap:6px;flex:1;max-width:220px}
+.sp .pseg i{flex:1;height:0;border-top:3px dashed #d8d3c8;transition:border-color .3s}
+.sp .pseg i.on{border-top-style:solid;border-color:var(--brass)}
+.sp .pnum{font-size:15px;color:var(--navy);min-width:3em}
+.sp .story .stick .cap2 .pbar2{justify-content:center;margin:10px auto 0;max-width:300px}
+.sp .story .stick .cap2 .pbar2 .pnum{display:inline;font-size:15px;min-width:0}
+.sp .story .stick .cap2 .ptip{display:block;font-size:13px;color:var(--muted);margin-top:4px}

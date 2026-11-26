@@ -113,7 +113,7 @@ var SV = {
 var heroV = function (mob) {
  return '<section class="hero"><div class="wrap">' + T('svEyebrow', 'div').replace('<div ', '<div class="eyebrow" ') + '<h1>' + T('svTitle') + '<span class="hl">' + T('svTitleHl') + '</span></h1>' + T('svLead', 'p') +
   (mob ? '<div class="hint"><b>往下慢慢滑，30 秒看完這趟諮詢會怎麼聊</b><ol class="chips">' + CH_V.slice(0, 4).map(function (c, i) { return '<li><span>' + (i + 1) + '</span>' + c.tab + '</li>'; }).join('') + '</ol>' + CHEV + '</div>'
-   : '<p style="font-size:15px;color:var(--muted);margin-top:4px">往下捲，左邊的動畫會跟著播。</p><div class="cta-mini" style="margin-top:20px"><div class="price">' + price() + '<small>' + T('svPriceUnit') + '</small></div>' + ctaBtns() + '</div>') +
+   : '<p style="font-size:15px;color:var(--muted);margin-top:4px">請捲動滑鼠，左邊的動畫會跟著播。</p><div class="cta-mini" style="margin-top:20px"><div class="price">' + price() + '<small>' + T('svPriceUnit') + '</small></div>' + ctaBtns() + '</div>') +
   '</div></section>';
 };
 function renderVM() {
@@ -140,7 +140,7 @@ function mountV(mob, scope, so) {
  if (!mob) {
   var root = $('#stC', scope); if (!root) return;
   var st = new Stage($('.ph', root), Object.assign({ pw: 320, advance: false }, so)); stages.push(st);
-  st.on(function (ch) { var c = $('.cap2', root); if (c.dataset.cur != ch) { c.dataset.cur = ch; c.innerHTML = '<b>' + chs[ch].title + '</b>'; } });
+  st.on(function (ch) { var c = $('.cap2', root); if (c.dataset.cur != ch) { c.dataset.cur = ch; c.innerHTML = '<b>' + chs[ch].title + '</b>' + (so.stack ? '' : '<div class="pbar pbar2"><div class="pseg">' + chs.map(function (_, i) { return '<i class="' + (i <= ch ? 'on' : '') + '"></i>'; }).join('') + '</div><b class="pnum">' + (ch + 1) + '／' + chs.length + '</b></div><span class="ptip">請捲動滑鼠往下看</span>'); } });   /* 語音頁：動畫標題下面加進度條（11/26 大正） */
   /* 動畫永遠對準「最靠近畫面中間」的那一段字（捲太快也不會錯位；不用 IntersectionObserver 的入場事件） */
   var ss = $$('.ssec', scope), raf = 0;
   /* 首頁預約流程（2026-11-26 大正）：四步像疊積木，一步滑上來定在原本的位置，下一步再疊上去；捲動距離短一點 */
@@ -284,7 +284,7 @@ if (CFG.mode === 'home') {
   stages.forEach(function (s) { s.alive = false; }); stages = [];
   var mob = mq.matches; lastMob = mob;
   el.innerHTML = '<div class="sp sp-home sp-proc"><div class="wrap">' + '<h2 class="section-title"><span class="hl">' + T('hpProcTitle') + '</span></h2>' + T('hpProcLead', 'p').replace('<p ', '<p class="lead" ') + '</div>' +
-   '<div class="wrap"><div class="story"><div class="stick" id="stC"><div class="ph"></div><div class="cap2"></div></div><div class="col pcol"><div class="pin">' + (mob ? '' : '<div class="pbar"><span>往下捲，左邊的手機會跟著播</span><div class="pseg">' + [0, 1, 2, 3].map(function () { return '<i></i>'; }).join('') + '</div><b class="pnum">1／4</b></div>') +
+   '<div class="wrap"><div class="story"><div class="stick" id="stC"><div class="ph"></div><div class="cap2"></div></div><div class="col pcol"><div class="pin">' + (mob ? '' : '<div class="pbar"><span>請捲動滑鼠</span><div class="pseg">' + [0, 1, 2, 3].map(function () { return '<i></i>'; }).join('') + '</div><b class="pnum">1／4</b></div>') +
    [1, 2, 3, 4].map(function (n) { return '<div class="ssec" data-ch="' + (n - 1) + '"><div class="mini" data-mini="' + (n - 1) + '"></div><ol class="steps pstep"><li><div class="sn"><small>STEP</small><b>' + n + '</b></div><div class="bx">' + T('hpStep' + n + 'T', 'b') + T('hpStep' + n + 'D') + '</div></li></ol></div>'; }).join('') +
    '</div></div></div></div>' +
    '<div class="wrap pgo"><a class="btn btn-brass" href="/services/">立即預約服務諮詢</a></div></div>';

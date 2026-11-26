@@ -51,9 +51,10 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 .nav{position:sticky;top:0;z-index:100;background:rgba(27,40,69,.96);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08)}
 .nav-inner{display:flex;justify-content:space-between;align-items:center;height:56px;gap:16px}
 .nav-brand{font-weight:700;color:#fff;letter-spacing:1px}.nav-brand i{font-style:normal;color:var(--warm)}
-.nav-links{display:flex;gap:22px}.nav-links a{font-size:13px;color:var(--text-light)}.nav-links a:hover{color:#fff}
+.nav-links{display:flex;gap:22px;margin-left:auto;margin-right:28px}.nav-links a{font-size:13px;color:var(--text-light)}.nav-links a:hover{color:#fff}
 .nav-cta{background:var(--accent);color:#fff;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:700;white-space:nowrap}
 @media(max-width:900px){.nav-inner{flex-wrap:wrap;height:auto;padding-top:10px;row-gap:6px}.nav-links{order:3;width:100%;display:flex;gap:18px;overflow-x:auto;white-space:nowrap;padding:2px 0 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.nav-links::-webkit-scrollbar{display:none}.nav-links a{padding:8px 0}.nav-links{padding-bottom:2px;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}[id]{scroll-margin-top:112px}}/* 手機：選單放第二行，可以左右滑（以前直接隱藏，手機看不到「關於大正」等項目） */
+@media(max-width:900px){.nav-links{margin:0}}
 .hero{padding:64px 0 56px}
 .hero-inner{display:grid;grid-template-columns:1.25fr .75fr;gap:48px;align-items:center}
 .hero h1{font-size:clamp(36px,6vw,56px);line-height:1.2;color:#fff;margin-bottom:12px}.hero h1 i{font-style:normal;color:var(--warm)}
@@ -359,14 +360,14 @@ body{letter-spacing:.02em}
   .cp-ai{border-left-color:#d8d3c8;color:#8b8579}.cp-ai em{color:#a09a8e}
 }
 </style>
-{{ if eq $.page "home" }}<link rel="stylesheet" href="/css/sales.css?v=20261126f">{{ end }}
+{{ if eq $.page "home" }}<link rel="stylesheet" href="/css/sales.css?v=20261126g">{{ end }}
 {{ partial "analytics.html" $.ctx }}
 </head>
 <body>
 <div id="app"></div>
 {{- if eq $.page "home" }}{{- $defs := dict -}}{{- range index site.Data.sales "home" }}{{ $defs = merge $defs (dict (index . 0) (index . 3)) }}{{ end }}
 <script>window.SALES = { mode: "home", kind: "voice", defaults: {{ $defs | jsonify | safeJS }}, fee: 3600, lineUrl: {{ site.Params.lineUrl }}, lineId: {{ site.Params.lineBasicId }}, bookUrl: "/booking/" };</script>
-<script src="/js/sales.js?v=20261126f"></script>{{ end }}
+<script src="/js/sales.js?v=20261126g"></script>{{ end }}
 <script src="/booking-bridge.js?v=20261108"></script>
 <script src="/line-qr.js?v=20261011" defer></script>
 <script>
@@ -579,8 +580,8 @@ if (typeof document !== 'undefined' && document.addEventListener) document.addEv
 
 // ── 預約服務諮詢（2026-11-26 大正：取代「諮詢服務」，放在常見問題下面；選精簡款 C，每張卡三行重點；點卡片先到 /voice/、/text/ 動畫介紹頁，那裡的預約按鈕才進表單；下面一張比較表）──
 // 三行重點在後台「設定 → 網站 → 預約服務諮詢」改（serviceRows／textServiceRows，一行一項）。Netlify 預覽網址上文字版卡片先顯示，正式網站照 showTextService
-// 舊連結的錨點搬家了（11/26 首頁改版）：#choose／#service／#faq → /services/，#rules／#first-time → /voice/
-(function () { try { if (PAGE !== 'home') return; var h = location.hash; var m = { '#choose': '/services/', '#service': '/services/', '#faq': '/services/#faq', '#rules': '/voice/#rules', '#first-time': '/voice/' }; if (m[h]) location.replace(m[h]); } catch (e) {} })();
+// 舊連結的錨點搬家了（11/26 首頁改版）：#choose／#service → /services/（#faq 首頁又有了），#rules／#first-time → /voice/
+(function () { try { if (PAGE !== 'home') return; var h = location.hash; var m = { '#choose': '/services/', '#service': '/services/', '#rules': '/voice/#rules', '#first-time': '/voice/' }; if (m[h]) location.replace(m[h]); } catch (e) {} })();
 var PV_TEXT = (function () { try { return /^deploy-preview-/.test(location.hostname); } catch (e) { return false; } })();
 function chooseBlock_(S) {
   var list = [{ label: S.serviceLabel || '', lk: 'serviceLabel', price: S.servicePrice || '', unit: S.servicePriceUnit || '', rows: lines_(S.serviceRows), rk: 'serviceRows', go: '/voice/', btn: '預約一對一語音諮詢' }];
@@ -594,6 +595,15 @@ function chooseBlock_(S) {
         '<ul class="ch-rows"' + dk(c.rk) + '>' + c.rows.map(function (r) { return '<li>' + esc(r) + '</li>'; }).join('') + '</ul>' +
         '<a class="btn btn-primary ch-go" href="' + c.go + '">' + esc(c.btn) + '</a></div>';
     }).join('') + '</div>' + compareBlock_(S, list.length > 1) + '</div></section>';
+}
+// 常見問題：首頁和 /services/ 都放（後台「常見問題」）
+function faqBlock_(S) {
+  return '<section id="faq" class="sec section-white"><div class="container">' +
+  '<div class="eyebrow" style="text-align:center">FAQ</div><h2 class="section-title" style="text-align:center">常見問題</h2>' +
+  '<div class="faq-list">' + (S.faqItems||[]).map(function (f, i) {
+    return '<div class="faq-item"><button type="button" class="faq-q" aria-expanded="false" onclick="var o=this.parentElement.classList.toggle(\'open\');this.setAttribute(\'aria-expanded\',o)"' + dk(f.n && 'faq' + f.n + 'Q') + '>' + esc(f.q) + '</button><div class="faq-a"' + dk(f.n && 'faq' + f.n + 'A') + '>' + esc(f.a) + '</div></div>';
+  }).join('') + '</div>' +
+'</div></section>';
 }
 // 比較表：後台 compareRows 一行一列，用「｜」分成：項目｜一對一語音｜文字版｜AI 算命。文字版沒開放時那一欄不顯示
 function compareBlock_(S, withText) {
@@ -656,12 +666,7 @@ function renderSite(S) {
 (PAGE === 'services' ?
 /* 預約服務諮詢頁（/services/）：卡片＋比較表 → 常見問題 → 還在猶豫 */
 chooseBlock_(S) +
-'<section id="faq" class="sec section-white"><div class="container">' +
-  '<div class="eyebrow" style="text-align:center">FAQ</div><h2 class="section-title" style="text-align:center">常見問題</h2>' +
-  '<div class="faq-list">' + (S.faqItems||[]).map(function (f, i) {
-    return '<div class="faq-item"><button type="button" class="faq-q" aria-expanded="false" onclick="var o=this.parentElement.classList.toggle(\'open\');this.setAttribute(\'aria-expanded\',o)"' + dk(f.n && 'faq' + f.n + 'Q') + '>' + esc(f.q) + '</button><div class="faq-a"' + dk(f.n && 'faq' + f.n + 'A') + '>' + esc(f.a) + '</div></div>';
-  }).join('') + '</div>' +
-'</div></section>' +
+faqBlock_(S) +
 
 '<section class="sec cta section-dark"><div class="container">' +
   '<h2 class="section-title"' + dk('ctaTitle') + '>' + esc(S.ctaTitle||'') + '</h2><p' + dk('ctaDesc') + '>' + esc(S.ctaDesc||'') + '</p>' +
@@ -701,15 +706,8 @@ stuckBlock_(S) +
 
 '<section id="process"><div id="dzProcess"></div></section>' +
 
-(LATEST_POSTS.length ?
-'<section id="latest" class="sec section-light"><div class="container">' +
-  '<div class="eyebrow">ARTICLES</div><h2 class="section-title">最新文章</h2>' +
-  '<div class="posts">' + LATEST_POSTS.map(function (p) {
-    return '<a class="post" href="' + p.url + '"><div class="post-img">' + (p.image ? '<img src="' + p.image + '" alt="' + esc(p.title).replace(/"/g, '&quot;') + '" loading="lazy">' : '') + '</div><div class="post-body">' +
-      (p.cat ? '<div class="post-cat">' + esc(p.cat) + '</div>' : '') + '<div class="post-title">' + esc(p.title) + '</div><div class="post-desc">' + esc(p.desc || '') + '</div></div></a>';
-  }).join('') + '</div>' +
-  '<div style="text-align:center;margin-top:22px"><a href="/blog/" class="more">看所有文章 →</a></div>' +
-'</div></section>' : '') +
+/* 11/26 大正：首頁不放最新文章（只在命理文章頁），這裡改放常見問題 */
+faqBlock_(S) +
 
 '<section class="sec cta section-dark"><div class="container">' +
   '<h2 class="section-title"' + dk('ctaTitle') + '>' + esc(S.ctaTitle||'') + '</h2><p' + dk('ctaDesc') + '>' + esc(S.ctaDesc||'') + '</p>' +
