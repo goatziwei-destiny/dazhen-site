@@ -325,21 +325,15 @@ body{letter-spacing:.02em}
 .ch-card:hover{transform:translateY(-2px);box-shadow:0 18px 36px -22px rgba(27,40,69,.6)}
 .ch-card .ch-go{display:flex;width:100%;margin-top:18px;font-size:16px;padding:14px}
 .ch-card .ch-go::after{content:"";position:absolute;inset:0;border-radius:20px}
-.ch-card .ch-more,.ch-card .ch-vid{position:relative;z-index:1}
-.ch-more{display:block;text-align:center;margin-top:12px;font-size:14px;font-weight:700;color:var(--navy);text-decoration:underline;text-underline-offset:3px}
 .ch-label{font-size:13px;letter-spacing:2px;font-weight:700;color:var(--clay);margin-bottom:6px}
-.ch-card h3{font-size:21px;line-height:1.4;color:var(--navy);margin-bottom:10px}
-.ch-price{font-size:34px;font-weight:700;color:var(--navy);line-height:1.15;margin:4px 0 12px}.ch-price small{font-size:14px;font-weight:400;color:#6b635b;margin-left:8px}
+.ch-price{font-size:34px;font-weight:700;color:var(--navy);line-height:1.15;margin:4px 0 12px}
 .ch-unit{font-size:14px;color:#6b635b;margin:-8px 0 12px}
 .ch-pv{display:inline-block;align-self:flex-start;font-size:12px;font-weight:700;color:#8f3a4a;border:1.5px dashed #8f3a4a;border-radius:20px;padding:2px 10px;margin-bottom:10px}
-.ch-grid{display:grid;gap:20px}.ch-grid.ch-n2{grid-template-columns:repeat(2,minmax(0,1fr))}.ch-grid.ch-n1{max-width:560px}
-.ch-grid .ch-card,.ch-cmp .ch-card{display:flex;flex-direction:column}.ch-grid .ch-card .ch-go,.ch-cmp .ch-card .ch-go{margin-top:auto}.ch-grid .ch-card>div[data-k],.ch-cmp .ch-rows{margin-bottom:18px}
-.ch-rowlist{display:grid;gap:20px}
-.ch-h{display:grid;grid-template-columns:220px minmax(0,1fr);gap:28px;align-items:start}.ch-h .ch-vid .yt{border-radius:14px}
+.ch-cmp .ch-card{display:flex;flex-direction:column}.ch-cmp .ch-card .ch-go{margin-top:auto}.ch-cmp .ch-rows{margin-bottom:18px}
 .ch-cmp{display:grid;gap:20px}.ch-cmp.ch-n2{grid-template-columns:repeat(2,minmax(0,1fr))}.ch-cmp.ch-n1{max-width:460px}
 .ch-rows{list-style:none;padding:0;margin:4px 0 0}.ch-rows li{position:relative;padding:10px 0 10px 30px;border-top:1px dashed var(--line);font-size:16px}.ch-rows li:first-child{border-top:0}
 .ch-rows li::before{content:"";position:absolute;left:3px;top:18px;width:13px;height:7px;border-left:2.5px solid var(--navy);border-bottom:2.5px solid var(--navy);transform:rotate(-45deg)}
-@media(max-width:760px){.ch-grid.ch-n2,.ch-cmp.ch-n2{grid-template-columns:1fr}.ch-h{grid-template-columns:1fr;gap:14px}.ch-h .ch-vid{max-width:220px;margin:0 auto}.ch-card{padding:22px 20px 18px}}
+@media(max-width:760px){.ch-cmp.ch-n2{grid-template-columns:1fr}.ch-card{padding:22px 20px 18px}}
 </style>
 <link rel="stylesheet" href="/css/sales.css?v=20261126b">
 {{ partial "analytics.html" . }}
@@ -443,6 +437,8 @@ const SITE = {
   textServiceDesc: "適合不方便通話、講話會緊張，或想把回答留下來慢慢看的人。你用文字寫下想問的事，我看完命盤後，用文字一題一題回覆。",
   textServicePrice: "NT$990",
   textServicePriceUnit: "每次最多 2 題，每題 500 字內",
+  serviceRows: '60 分鐘語音通話（Google Meet 或 LINE）\n約好時段當天一起看盤，可加看面相（不另收費）\n想一次問清楚、可以來回討論的人',
+  textServiceRows: '寫下 2 個問題，我用文字回覆\n不用約時間，確認收款後 7–10 個工作天\n不方便通話、想留下回覆反覆看的人',
   textServiceDetail: "✍️ 在預約表單寫下問題（最多 2 題，每題 500 字內），不用約時段、不通話<br>⏳ 確認收款後 7-10 個工作天內，用文字回覆到你的 Email<br>📲 預約後掃描 QR Code 綁定 LINE，匯款末五碼在網頁或 LINE 都能回報，完成會同步通知<br>🕐 要填確定的出生時間（文字版不核對過去發生的事）<br>↩️ 付款後 7 天內、我還沒開始撰寫，可以退款；沒有改約、遲到的問題",
   textServiceBtn: "預約文字版諮詢",
 
@@ -569,40 +565,21 @@ if (typeof document !== 'undefined' && document.addEventListener) document.addEv
 });
 
 
-// ── 選擇服務（2026-11-26 大正：取代「諮詢服務」，放在常見問題下面；點卡片直接進表單，文字版會先選好）──
-// 預覽期間用 ?choose=a|b|c 切三款版型；Netlify 預覽網址上文字版卡片也先顯示，正式網站照 showTextService
-var CHOOSE_V = (function () { try { var m = /[?&]choose=([abc])/.exec(location.search); return m ? m[1] : 'a'; } catch (e) { return 'a'; } })();
+// ── 預約服務諮詢（2026-11-26 大正：取代「諮詢服務」，放在常見問題下面；選精簡款 C，每張卡三行重點，點卡片直接進表單，文字版會先選好）──
+// 三行重點在後台「設定 → 網站 → 預約服務諮詢」改（serviceRows／textServiceRows，一行一項）。Netlify 預覽網址上文字版卡片先顯示，正式網站照 showTextService
 var PV_TEXT = (function () { try { return /^deploy-preview-/.test(location.hostname); } catch (e) { return false; } })();
 function chooseBlock_(S) {
-  var showText = SHOW_TEXT_SERVICE || PV_TEXT;
-  var V1 = { k: 'voice', label: S.serviceLabel || '', lk: 'serviceLabel', title: S.serviceTitle || '', tk: 'serviceTitle', price: S.servicePrice || '', unit: S.servicePriceUnit || '', detail: S.serviceDetail || '', dkk: 'serviceDetail', go: '/booking/', more: '/voice/', btn: '預約一對一語音諮詢', vid: ytLite(VIDEO_VOICE, 'r916', '30 秒看懂一對一語音諮詢'),
-    rows: ['60 分鐘語音通話（Google Meet 或 LINE）', '約好時段，當天一起看盤', '想一次問清楚、可以來回討論的人'] };
-  var V2 = { k: 'text', label: S.textServiceLabel || '', title: S.textServiceTitle || '', price: S.textServicePrice || '', unit: S.textServicePriceUnit || '', detail: S.textServiceDetail || '', go: '/booking/?svc=text', more: '/text/', btn: S.textServiceBtn || '預約文字版諮詢', vid: VIDEO_TEXT ? ytLite(VIDEO_TEXT, 'r916', '看懂文字版諮詢') : '',
-    rows: ['寫下 2 個問題，我用文字回覆', '不用約時間，確認收款後 7–10 個工作天', '不方便通話、想留下回覆反覆看的人'], pv: !SHOW_TEXT_SERVICE };
-  var list = showText ? [V1, V2] : [V1];
-  var tag = function (c) { return c.pv ? '<div class="ch-pv">預覽：文字版開放後才會出現</div>' : ''; };
-  var more = function (c) { return '<a class="ch-more" href="' + c.more + '">先看完整介紹 →</a>'; };
-  var go = function (c) { return '<a class="btn btn-primary ch-go" href="' + c.go + '">' + esc(c.btn) + '</a>'; };
-  var body;
-  if (CHOOSE_V === 'c') {
-    body = '<div class="ch-cmp ch-n' + list.length + '">' + list.map(function (c) {
-      return '<div class="ch-card">' + tag(c) + '<div class="ch-label"' + dk(c.lk) + '>' + esc(c.label) + '</div><div class="ch-price">' + esc(c.price) + '</div><div class="ch-unit">' + esc(c.unit) + '</div>' +
-        '<ul class="ch-rows">' + c.rows.map(function (r) { return '<li>' + esc(r) + '</li>'; }).join('') + '</ul>' + go(c) + more(c) + '</div>';
-    }).join('') + '</div>';
-  } else if (CHOOSE_V === 'b') {
-    body = '<div class="ch-rowlist">' + list.map(function (c) {
-      return '<div class="ch-card ch-h">' + (c.vid ? '<div class="ch-vid">' + c.vid + '</div>' : '') + '<div class="ch-main">' + tag(c) + '<div class="ch-label"' + dk(c.lk) + '>' + esc(c.label) + '</div><h3' + dk(c.tk) + '>' + esc(c.title) + '</h3>' +
-        '<div class="ch-price">' + esc(c.price) + '<small>' + esc(c.unit) + '</small></div><div' + dk(c.dkk) + '>' + renderServiceDetail(c.detail) + '</div>' + go(c) + more(c) + '</div></div>';
-    }).join('') + '</div>';
-  } else {
-    body = '<div class="ch-grid ch-n' + list.length + '">' + list.map(function (c) {
-      return '<div class="ch-card">' + tag(c) + '<div class="ch-label"' + dk(c.lk) + '>' + esc(c.label) + '</div><h3' + dk(c.tk) + '>' + esc(c.title) + '</h3>' +
-        '<div class="ch-price">' + esc(c.price) + '<small>' + esc(c.unit) + '</small></div><div' + dk(c.dkk) + '>' + renderServiceDetail(c.detail) + '</div>' + go(c) + more(c) + '</div>';
-    }).join('') + '</div>';
-  }
+  var list = [{ label: S.serviceLabel || '', lk: 'serviceLabel', price: S.servicePrice || '', unit: S.servicePriceUnit || '', rows: lines_(S.serviceRows), rk: 'serviceRows', go: '/booking/', btn: '預約一對一語音諮詢' }];
+  if (SHOW_TEXT_SERVICE || PV_TEXT) list.push({ label: S.textServiceLabel || '', price: S.textServicePrice || '', unit: S.textServicePriceUnit || '', rows: lines_(S.textServiceRows), rk: 'textServiceRows', go: '/booking/?svc=text', btn: S.textServiceBtn || '預約文字版諮詢', pv: !SHOW_TEXT_SERVICE });
   return '<section id="choose" class="sec section-light choose"><div class="container">' +
-    '<h2 class="section-title"><span class="hl">' + (list.length > 1 ? '選擇你要的服務' : '預約諮詢') + '</span></h2>' +
-    '<p class="ch-lead">' + (list.length > 1 ? '點一下就直接填預約表單，表單會先幫你選好這個服務。' : '點一下就直接填預約表單。') + '</p>' + body + '</div></section>';
+    '<h2 class="section-title"><span class="hl">預約服務諮詢</span></h2>' +
+    '<p class="ch-lead">' + (list.length > 1 ? '點一下就直接填預約表單，表單會先幫你選好這個服務。' : '點一下就直接填預約表單。') + '</p>' +
+    '<div class="ch-cmp ch-n' + list.length + '">' + list.map(function (c) {
+      return '<div class="ch-card">' + (c.pv ? '<div class="ch-pv">預覽：文字版開放後才會出現</div>' : '') +
+        '<div class="ch-label"' + (c.lk ? dk(c.lk) : '') + '>' + esc(c.label) + '</div><div class="ch-price">' + esc(c.price) + '</div><div class="ch-unit">' + esc(c.unit) + '</div>' +
+        '<ul class="ch-rows"' + dk(c.rk) + '>' + c.rows.map(function (r) { return '<li>' + esc(r) + '</li>'; }).join('') + '</ul>' +
+        '<a class="btn btn-primary ch-go" href="' + c.go + '">' + esc(c.btn) + '</a></div>';
+    }).join('') + '</div></div></section>';
 }
 // ── 「你是不是也卡在這邊？」問題卡片（2026-11-25 大正：參考別人網站的問題卡片）──
 // 文字在後台「首頁：你是不是也卡在這邊」改；後台沒送來時用下面的預設
@@ -719,7 +696,7 @@ chooseBlock_(S) +
 
 '<section class="sec cta section-dark"><div class="container">' +
   '<h2 class="section-title"' + dk('ctaTitle') + '>' + esc(S.ctaTitle||'') + '</h2><p' + dk('ctaDesc') + '>' + esc(S.ctaDesc||'') + '</p>' +
-  '<div class="btns"><a href="#choose" class="btn btn-primary">選擇服務、預約</a><a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-warm">先加入 LINE 聊聊</a></div>' +
+  '<div class="btns"><a href="#choose" class="btn btn-primary">預約服務諮詢</a><a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-warm">先加入 LINE 聊聊</a></div>' +
 '</div></section>' +
 '</main>' +
 
