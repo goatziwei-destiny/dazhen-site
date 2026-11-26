@@ -334,6 +334,30 @@ body{letter-spacing:.02em}
 .ch-rows{list-style:none;padding:0;margin:4px 0 0}.ch-rows li{position:relative;padding:10px 0 10px 30px;border-top:1px dashed var(--line);font-size:16px}.ch-rows li:first-child{border-top:0}
 .ch-rows li::before{content:"";position:absolute;left:3px;top:18px;width:13px;height:7px;border-left:2.5px solid var(--navy);border-bottom:2.5px solid var(--navy);transform:rotate(-45deg)}
 @media(max-width:760px){.ch-cmp.ch-n2{grid-template-columns:1fr}.ch-card{padding:22px 20px 18px}}
+/* 比較表（2026-11-26）：電腦是表格（左邊項目、大正兩欄深色字、AI 一欄淡色）；手機每個項目一塊，三種方式往下排 */
+.cp{margin-top:44px}
+.cp-title{font-size:22px;color:var(--navy);margin:0 0 14px;line-height:1.4}
+.cp-tbl{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 12px 30px -24px rgba(27,40,69,.5)}
+.cp-row{display:grid;grid-template-columns:150px repeat(3,minmax(0,1fr));border-top:1px dashed var(--line)}
+.cp-n2 .cp-row{grid-template-columns:150px repeat(2,minmax(0,1fr))}
+.cp-row:first-child{border-top:0}
+.cp-k{padding:16px 18px;font-weight:700;font-size:15px;color:var(--navy);background:#f6f1e6}
+.cp-c{padding:16px 18px;font-size:15px;line-height:1.7;color:var(--body);text-wrap:pretty}
+.cp-c em{display:none}
+.cp-ai{color:#8b8579;background:#fbfaf7}
+.cp-head .cp-k{background:var(--navy)}
+.cp-head .cp-c{background:var(--navy);color:#fff;padding:16px 18px 14px}
+.cp-head .cp-c b{display:block;font-size:16px}
+.cp-head .cp-c small{display:block;font-size:14px;color:#e3c38f;font-weight:700;margin-top:2px}
+.cp-head .cp-ai{background:#3a4560;color:#cfd4de}.cp-head .cp-ai small{color:#cfd4de;font-weight:400}
+@media(max-width:760px){
+  .cp-head{display:none}
+  .cp-row,.cp-n2 .cp-row{grid-template-columns:1fr;padding:14px 16px 12px}
+  .cp-k{background:none;padding:0 0 6px;font-size:16px}
+  .cp-c{padding:6px 0 6px 12px;border-left:3px solid var(--brass);margin:4px 0;font-size:15px;background:none}
+  .cp-c em{display:block;font-style:normal;font-size:13px;font-weight:700;color:var(--clay)}
+  .cp-ai{border-left-color:#d8d3c8;color:#8b8579}.cp-ai em{color:#a09a8e}
+}
 </style>
 <link rel="stylesheet" href="/css/sales.css?v=20261126b">
 {{ partial "analytics.html" . }}
@@ -438,6 +462,8 @@ const SITE = {
   textServicePrice: "NT$990",
   textServicePriceUnit: "每次最多 2 題，每題 500 字內",
   serviceRows: '60 分鐘語音通話（Google Meet 或 LINE）\n約好時段當天一起看盤，可加看面相（不另收費）\n想一次問清楚、可以來回討論的人',
+  compareTitle: '三種方式，差在哪裡',
+  compareRows: '誰幫你看盤｜大正本人｜大正本人｜程式自動產生\n怎麼進行｜60 分鐘語音通話，不開鏡頭｜寫下 2 個問題，收到文字回覆｜輸入生日，馬上出結果\n多久拿到｜約好的時段當天｜確認收款後 7–10 個工作天｜幾秒鐘\n先核對命盤｜會，先核對過去幾件事，對上才計時｜不核對，要填確定的出生時間｜不核對\n能不能來回問｜聽不懂隨時問，一問一答｜兩個問題一次寫清楚｜看網站設計\n事後回看｜重點整理成文字，會員中心可讀｜會員中心可讀，可下載 PDF｜看各網站\n退費｜無法定盤全額退；開始前 24 小時取消全額退｜付款 7 天內還沒開始寫，或超過 10 個工作天沒寄出｜看各網站\n適合誰｜想一次問清楚、來回討論的人｜不方便講電話、想留一份回覆反覆看的人｜好奇，想先玩玩看',
   textServiceRows: '寫下 2 個問題，我用文字回覆\n不用約時間，確認收款後 7–10 個工作天\n不方便通話、想留下回覆反覆看的人',
   textServiceDetail: "✍️ 在預約表單寫下問題（最多 2 題，每題 500 字內），不用約時段、不通話<br>⏳ 確認收款後 7-10 個工作天內，用文字回覆到你的 Email<br>📲 預約後掃描 QR Code 綁定 LINE，匯款末五碼在網頁或 LINE 都能回報，完成會同步通知<br>🕐 要填確定的出生時間（文字版不核對過去發生的事）<br>↩️ 付款後 7 天內、我還沒開始撰寫，可以退款；沒有改約、遲到的問題",
   textServiceBtn: "預約文字版諮詢",
@@ -565,21 +591,34 @@ if (typeof document !== 'undefined' && document.addEventListener) document.addEv
 });
 
 
-// ── 預約服務諮詢（2026-11-26 大正：取代「諮詢服務」，放在常見問題下面；選精簡款 C，每張卡三行重點，點卡片直接進表單，文字版會先選好）──
+// ── 預約服務諮詢（2026-11-26 大正：取代「諮詢服務」，放在常見問題下面；選精簡款 C，每張卡三行重點；點卡片先到 /voice/、/text/ 動畫介紹頁，那裡的預約按鈕才進表單；下面一張比較表）──
 // 三行重點在後台「設定 → 網站 → 預約服務諮詢」改（serviceRows／textServiceRows，一行一項）。Netlify 預覽網址上文字版卡片先顯示，正式網站照 showTextService
 var PV_TEXT = (function () { try { return /^deploy-preview-/.test(location.hostname); } catch (e) { return false; } })();
 function chooseBlock_(S) {
-  var list = [{ label: S.serviceLabel || '', lk: 'serviceLabel', price: S.servicePrice || '', unit: S.servicePriceUnit || '', rows: lines_(S.serviceRows), rk: 'serviceRows', go: '/booking/', btn: '預約一對一語音諮詢' }];
-  if (SHOW_TEXT_SERVICE || PV_TEXT) list.push({ label: S.textServiceLabel || '', price: S.textServicePrice || '', unit: S.textServicePriceUnit || '', rows: lines_(S.textServiceRows), rk: 'textServiceRows', go: '/booking/?svc=text', btn: S.textServiceBtn || '預約文字版諮詢', pv: !SHOW_TEXT_SERVICE });
+  var list = [{ label: S.serviceLabel || '', lk: 'serviceLabel', price: S.servicePrice || '', unit: S.servicePriceUnit || '', rows: lines_(S.serviceRows), rk: 'serviceRows', go: '/voice/', btn: '預約一對一語音諮詢' }];
+  if (SHOW_TEXT_SERVICE || PV_TEXT) list.push({ label: S.textServiceLabel || '', price: S.textServicePrice || '', unit: S.textServicePriceUnit || '', rows: lines_(S.textServiceRows), rk: 'textServiceRows', go: '/text/', btn: S.textServiceBtn || '預約文字版諮詢', pv: !SHOW_TEXT_SERVICE });
   return '<section id="choose" class="sec section-light choose"><div class="container">' +
     '<h2 class="section-title"><span class="hl">預約服務諮詢</span></h2>' +
-    '<p class="ch-lead">' + (list.length > 1 ? '點一下就直接填預約表單，表單會先幫你選好這個服務。' : '點一下就直接填預約表單。') + '</p>' +
+    '<p class="ch-lead">' + '點一下，先看這個服務怎麼進行，看完就能直接預約。' + '</p>' +
     '<div class="ch-cmp ch-n' + list.length + '">' + list.map(function (c) {
       return '<div class="ch-card">' + (c.pv ? '<div class="ch-pv">預覽：文字版開放後才會出現</div>' : '') +
         '<div class="ch-label"' + (c.lk ? dk(c.lk) : '') + '>' + esc(c.label) + '</div><div class="ch-price">' + esc(c.price) + '</div><div class="ch-unit">' + esc(c.unit) + '</div>' +
         '<ul class="ch-rows"' + dk(c.rk) + '>' + c.rows.map(function (r) { return '<li>' + esc(r) + '</li>'; }).join('') + '</ul>' +
         '<a class="btn btn-primary ch-go" href="' + c.go + '">' + esc(c.btn) + '</a></div>';
-    }).join('') + '</div></div></section>';
+    }).join('') + '</div>' + compareBlock_(S, list.length > 1) + '</div></section>';
+}
+// 比較表：後台 compareRows 一行一列，用「｜」分成：項目｜一對一語音｜文字版｜AI 算命。文字版沒開放時那一欄不顯示
+function compareBlock_(S, withText) {
+  var rows = lines_(S.compareRows).map(function (l) { return l.split(/[｜|]/).map(function (x) { return x.trim(); }); }).filter(function (r) { return r.length >= 4 && r[0]; });
+  if (!rows.length) return '';
+  var cols = [{ i: 1, name: '一對一語音諮詢', sub: S.servicePrice || '', me: true }];
+  if (withText) cols.push({ i: 2, name: '文字版諮詢', sub: S.textServicePrice || '', me: true });
+  cols.push({ i: 3, name: 'AI 算命網站', sub: '各網站不同', ai: true });
+  var head = '<div class="cp-row cp-head"><div class="cp-k"></div>' + cols.map(function (c) { return '<div class="cp-c' + (c.ai ? ' cp-ai' : '') + '"><b>' + esc(c.name) + '</b><small>' + esc(c.sub) + '</small></div>'; }).join('') + '</div>';
+  var body = rows.map(function (r) {
+    return '<div class="cp-row"><div class="cp-k">' + esc(r[0]) + '</div>' + cols.map(function (c) { return '<div class="cp-c' + (c.ai ? ' cp-ai' : '') + '"><em>' + esc(c.name) + '</em>' + esc(r[c.i] || '—') + '</div>'; }).join('') + '</div>';
+  }).join('');
+  return '<div class="cp"' + dk('compareRows') + '><h3 class="cp-title"' + dk('compareTitle') + '>' + esc(S.compareTitle || '') + '</h3><div class="cp-tbl cp-n' + cols.length + '">' + head + body + '</div></div>';
 }
 // ── 「你是不是也卡在這邊？」問題卡片（2026-11-25 大正：參考別人網站的問題卡片）──
 // 文字在後台「首頁：你是不是也卡在這邊」改；後台沒送來時用下面的預設
