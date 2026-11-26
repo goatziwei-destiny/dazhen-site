@@ -37,7 +37,7 @@ var ICON = {
 var card = function (icon, kt, kd, cls) { return '<div class="card gcard' + (cls ? ' ' + cls : '') + '"><i>' + ICON[icon] + '</i><div>' + T(kt, 'b') + T(kd) + '</div></div>'; };
 var title = function (k) { return '<h2 class="sec-title"><span class="hl">' + T(k) + '</span></h2>'; };
 var lead = function (k) { return T(k, 'p').replace('<p ', '<p class="lead" '); };
-var steps = function (pre) { return '<ol class="steps">' + [1, 2, 3, 4].map(function (n) { return '<li><div class="sn"><small>STEP</small><b>' + n + '</b></div><div class="bx">' + T(pre + n + 'T', 'b') + T(pre + n + 'D') + '</div></li>'; }).join('') + '</ol>'; };
+var steps = function (pre) { return '<ol class="steps hsteps">' + [1, 2, 3, 4].map(function (n) { return '<li><div class="sn"><small>STEP</small><b>' + n + '</b></div><div class="bx">' + T(pre + n + 'T', 'b') + T(pre + n + 'D') + '</div></li>'; }).join('') + '</ol>'; };
 var NOTES = (CFG.rules || []).map(function (r, i) { return { t: r[0], d: r[1], n: i + 1 }; });   // 語音頁完整預約規則（後台「預約須知」note1~6）
 var rules = function () {
  var list = NOTES.map(function (r) { return '<li><b data-k="note' + r.n + 'Title">' + esc(r.t) + '</b><span data-k="note' + r.n + 'Desc">' + br(r.d) + '</span></li>'; });
@@ -107,7 +107,7 @@ var SV = {
  call: function () { return '<section class="sec"><div class="wrap">' + title('svCallTitle') + lead('svCallLead') + '<div class="stack">' + card('call', 'svCall1T', 'svCall1D') + card('line', 'svCall2T', 'svCall2D') + '</div></div></section>'; },
  how: function () { return '<section class="sec"><div class="wrap">' + title('svHowTitle') + lead('svHowLead') + '<ol class="steps flow">' + [1, 2, 3, 4, 5].map(function (n) { return V['svFlow' + n + 'T'] ? '<li><div class="sn"><small>STEP</small><b>' + n + '</b></div><div class="bx">' + T('svFlow' + n + 'W', 'small') + T('svFlow' + n + 'T', 'b') + T('svFlow' + n + 'D') + '</div></li>' : ''; }).join('') + '</ol>' + memtip('svFlowTipT', 'svFlowTipD') + '</div></section>'; },
  refund: function () { return '<section class="sec paper"><div class="wrap">' + title('svRefundTitle') + '<div class="refund" style="margin-top:18px">' + T('svRefundBadge', 'div').replace('<div ', '<div class="badge" ') + '<div class="card"><p style="font-size:16.5px;color:var(--body)" data-k="svRefundBody">' + br(V.svRefundBody) + '</p></div></div></div></section>'; },
- rules: function () { return '<section class="sec" id="rules"><div class="wrap">' + title('svRulesTitle') + rules() + '</div></section>'; },
+ rules: function () { return '<section class="sec srules" id="rules"><div class="wrap">' + title('svRulesTitle') + rules() + '</div></section>'; },
  cta: ctaBand
 };
 var heroV = function (mob) {
@@ -224,8 +224,8 @@ var TP = function (n, t, s, k, nx) { return '<section class="tp" data-pg="' + k 
 var ST = {
  how: function () { return '<section class="sec"><div class="wrap">' + title('txHowTitle') + lead('txHowLead') + steps('txStep') + '</div></section>'; },
  /* 2026-11-26 大正：金框取代「到會員中心回看」標題；LINE 會員那張卡重複拿掉；「預約前先知道」整段拿掉（付款期限併進 STEP 1，保存 3 年在這裡） */
- notes: function () { return '<section class="sec paper"><div class="wrap"><div class="memtip membox">' + T('txMemTitle', 'b') + T('txMemLead') + '<div class="mrows">' + [['msg', 1], ['dl', 2]].map(function (x) { return '<div class="mrow"><i>' + ICON[x[0]] + '</i><div>' + T('txMem' + x[1] + 'T', 'b') + T('txMem' + x[1] + 'D') + '</div></div>'; }).join('') + '</div></div></div></section>'; },
- refund: function () { return '<section class="sec paper"><div class="wrap">' + title('txRefundTitle') + '<div class="refund" style="margin-top:18px">' + [1, 2].map(function (n) { return '<div class="card"><b style="font-size:19px" data-k="txRefund' + n + 'T">' + br(V['txRefund' + n + 'T']) + '</b><p style="font-size:16.5px;color:var(--body);margin-top:6px" data-k="txRefund' + n + 'D">' + br(V['txRefund' + n + 'D']) + '</p></div>'; }).join('') + '</div><p class="lead" style="margin:18px 0 0" data-k="txRefundHow">' + br(V.txRefundHow) + '</p></div></section>'; },
+ notes: function () { return '<section class="sec paper tnotes"><div class="wrap"><div class="memtip membox">' + T('txMemTitle', 'b') + T('txMemLead') + '<div class="mrows">' + [['msg', 1], ['dl', 2]].map(function (x) { return '<div class="mrow"><i>' + ICON[x[0]] + '</i><div>' + T('txMem' + x[1] + 'T', 'b') + T('txMem' + x[1] + 'D') + '</div></div>'; }).join('') + '</div></div></div></section>'; },
+ refund: function () { return '<section class="sec paper tref"><div class="wrap">' + title('txRefundTitle') + '<div class="refund" style="margin-top:18px">' + [1, 2].map(function (n) { return '<div class="card"><b style="font-size:19px" data-k="txRefund' + n + 'T">' + br(V['txRefund' + n + 'T']) + '</b><p style="font-size:16.5px;color:var(--body);margin-top:6px" data-k="txRefund' + n + 'D">' + br(V['txRefund' + n + 'D']) + '</p></div>'; }).join('') + '</div><p class="lead" style="margin:18px 0 0" data-k="txRefundHow">' + br(V.txRefundHow) + '</p></div></section>'; },
  cta: ctaBand
 };
 function renderT() {

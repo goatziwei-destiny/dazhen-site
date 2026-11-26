@@ -123,6 +123,9 @@ h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
 .fit{margin-top:16px}.fit>div{border:1px solid var(--line);background:#fff;border-radius:12px;padding:16px 20px}
 .fit ul{padding-left:1.2em;font-size:14px;color:var(--body);line-height:1.9}
 .about-inner.about-solo{grid-template-columns:1fr}.about-solo>div{max-width:900px}
+/* 11/26 晚：首頁「我會做／我不會做／適合／不適合」四個方框往中間放（上面的字不動）；最下面「還在猶豫」縮成短短一條 */
+.about-solo>div{max-width:none}.about-solo .dd,.about-solo .fit{max-width:900px;margin-left:auto;margin-right:auto}.about-solo .dd{margin-top:0}
+.sec.cta.section-dark{padding:40px 0}.sec.cta.section-dark p:last-child{margin-bottom:0}
 @media(max-width:768px){.about-title{display:none}}
 .more{display:inline-block;margin-top:22px;font-weight:700;color:var(--accent-d);border-bottom:2px solid currentColor;padding-bottom:1px}
 @media(max-width:768px){.about-inner{grid-template-columns:1fr;gap:20px}.about-photo{display:flex;align-items:center;gap:14px;text-align:left}.about-photo img,.about-photo .ph{width:84px;height:84px;margin:0;font-size:36px}.dd,.fit{grid-template-columns:1fr}}
@@ -360,14 +363,14 @@ body{letter-spacing:.02em}
   .cp-ai{border-left-color:#d8d3c8;color:#8b8579}.cp-ai em{color:#a09a8e}
 }
 </style>
-{{ if eq $.page "home" }}<link rel="stylesheet" href="/css/sales.css?v=20261126g">{{ end }}
+{{ if eq $.page "home" }}<link rel="stylesheet" href="/css/sales.css?v=20261126j">{{ end }}
 {{ partial "analytics.html" $.ctx }}
 </head>
 <body>
 <div id="app"></div>
 {{- if eq $.page "home" }}{{- $defs := dict -}}{{- range index site.Data.sales "home" }}{{ $defs = merge $defs (dict (index . 0) (index . 3)) }}{{ end }}
 <script>window.SALES = { mode: "home", kind: "voice", defaults: {{ $defs | jsonify | safeJS }}, fee: 3600, lineUrl: {{ site.Params.lineUrl }}, lineId: {{ site.Params.lineBasicId }}, bookUrl: "/booking/" };</script>
-<script src="/js/sales.js?v=20261126g"></script>{{ end }}
+<script src="/js/sales.js?v=20261126j"></script>{{ end }}
 <script src="/booking-bridge.js?v=20261108"></script>
 <script src="/line-qr.js?v=20261011" defer></script>
 <script>
@@ -711,7 +714,6 @@ faqBlock_(S) +
 
 '<section class="sec cta section-dark"><div class="container">' +
   '<h2 class="section-title"' + dk('ctaTitle') + '>' + esc(S.ctaTitle||'') + '</h2><p' + dk('ctaDesc') + '>' + esc(S.ctaDesc||'') + '</p>' +
-  '<div class="btns"><a href="/services/" class="btn btn-primary">預約服務諮詢</a><a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-warm">先加入 LINE 聊聊</a></div>' +
 '</div></section>'
 ) +
 '</main>' +
