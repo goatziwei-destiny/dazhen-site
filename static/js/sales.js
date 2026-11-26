@@ -40,8 +40,7 @@ var lead = function (k) { return T(k, 'p').replace('<p ', '<p class="lead" '); }
 var steps = function (pre) { return '<ol class="steps">' + [1, 2, 3, 4].map(function (n) { return '<li><div class="sn"><small>STEP</small><b>' + n + '</b></div><div class="bx">' + T(pre + n + 'T', 'b') + T(pre + n + 'D') + '</div></li>'; }).join('') + '</ol>'; };
 var NOTES = (CFG.rules || []).map(function (r, i) { return { t: r[0], d: r[1], n: i + 1 }; });   // 語音頁完整預約規則（後台「預約須知」note1~6）
 var rules = function () {
- var list = KIND === 'text' ? [1, 2, 3].map(function (n) { return '<li>' + T(P + 'Rule' + n + 'L', 'b') + T(P + 'Rule' + n + 'D') + '</li>'; })
-  : NOTES.map(function (r) { return '<li><b data-k="note' + r.n + 'Title">' + esc(r.t) + '</b><span data-k="note' + r.n + 'Desc">' + br(r.d) + '</span></li>'; });
+ var list = NOTES.map(function (r) { return '<li><b data-k="note' + r.n + 'Title">' + esc(r.t) + '</b><span data-k="note' + r.n + 'Desc">' + br(r.d) + '</span></li>'; });
  return '<ul class="rules" style="margin-top:18px;max-width:760px">' + list.join('') + '</ul><a class="more" href="/services/#faq" style="display:inline-block;margin-top:16px;font-weight:700;color:var(--clay);border-bottom:2px solid currentColor">還有其他問題？看常見問題 →</a>';
 };
 var memtip = function (kt, kd) { return '<div class="memtip">' + T(kt, 'b') + T(kd) + '</div>'; };
@@ -105,7 +104,7 @@ Stage.prototype.render = function () {
 var SV = {
  get: function () { return '<section class="sec"><div class="wrap">' + title('svGetTitle') + lead('svGetLead') + '<div class="stack">' + card('call', 'svGet1T', 'svGet1D') + card('chart', 'svGet2T', 'svGet2D') + card('face', 'svGet3T', 'svGet3D') + '</div></div></section>'; },
  prep: function () { return '<section class="sec paper"><div class="wrap">' + title('svPrepTitle') + lead('svPrepLead') + '<div class="grid2"><div class="card"><ul class="prep" data-k="svPrepList">' + lines('svPrepList').map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div><div class="card"><ul class="note" style="list-style:disc" data-k="svPrepNotes">' + lines('svPrepNotes').map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div></div></div></section>'; },
- call: function () { return '<section class="sec"><div class="wrap">' + title('svCallTitle') + lead('svCallLead') + '<div class="grid2">' + card('call', 'svCall1T', 'svCall1D') + card('line', 'svCall2T', 'svCall2D') + '</div></div></section>'; },
+ call: function () { return '<section class="sec"><div class="wrap">' + title('svCallTitle') + lead('svCallLead') + '<div class="stack">' + card('call', 'svCall1T', 'svCall1D') + card('line', 'svCall2T', 'svCall2D') + '</div></div></section>'; },
  how: function () { return '<section class="sec"><div class="wrap">' + title('svHowTitle') + lead('svHowLead') + '<ol class="steps flow">' + [1, 2, 3, 4, 5].map(function (n) { return V['svFlow' + n + 'T'] ? '<li><div class="sn"><small>STEP</small><b>' + n + '</b></div><div class="bx">' + T('svFlow' + n + 'W', 'small') + T('svFlow' + n + 'T', 'b') + T('svFlow' + n + 'D') + '</div></li>' : ''; }).join('') + '</ol>' + memtip('svFlowTipT', 'svFlowTipD') + '</div></section>'; },
  refund: function () { return '<section class="sec paper"><div class="wrap">' + title('svRefundTitle') + '<div class="refund" style="margin-top:18px">' + T('svRefundBadge', 'div').replace('<div ', '<div class="badge" ') + '<div class="card"><p style="font-size:16.5px;color:var(--body)" data-k="svRefundBody">' + br(V.svRefundBody) + '</p></div></div></div></section>'; },
  rules: function () { return '<section class="sec" id="rules"><div class="wrap">' + title('svRulesTitle') + rules() + '</div></section>'; },
@@ -144,6 +143,22 @@ function mountV(mob, scope, so) {
   st.on(function (ch) { var c = $('.cap2', root); if (c.dataset.cur != ch) { c.dataset.cur = ch; c.innerHTML = '<b>' + chs[ch].title + '</b>'; } });
   /* 動畫永遠對準「最靠近畫面中間」的那一段字（捲太快也不會錯位；不用 IntersectionObserver 的入場事件） */
   var ss = $$('.ssec', scope), raf = 0;
+  /* 首頁預約流程（2026-11-26 大正）：四步像疊積木，一步滑上來定在原本的位置，下一步再疊上去；捲動距離短一點 */
+  var col = so.stack && $('.pcol', scope), pin = col && $('.pin', col);
+  if (col) {
+   var seg = 0, fit = function () { seg = Math.round(innerHeight * .22); col.style.height = (pin.offsetHeight + seg * 3.6) + 'px'; };
+   fit();
+   var pickS = function () {
+    raf = 0; if (!st.alive) return; var r = col.getBoundingClientRect(), top = parseFloat(getComputedStyle(pin).top) || 0;
+    var y = top - r.top, ch = y < 0 ? 0 : Math.min(ss.length - 1, Math.floor(y / seg)), shown = r.top < innerHeight * .78;
+    ss.forEach(function (e, i) { e.classList.toggle('in', shown && i <= ch); e.classList.toggle('act', shown && i === ch); });
+    if (st.cur !== ch) st.go(ch);
+   };
+   var onS2 = function () { if (!raf) raf = requestAnimationFrame(pickS); }, onR2 = function () { fit(); onS2(); };
+   addEventListener('scroll', onS2, { passive: true }); addEventListener('resize', onR2);
+   stages.push({ set alive(v) { if (!v) { removeEventListener('scroll', onS2); removeEventListener('resize', onR2); } } }); pickS();
+   return;
+  }
   var pick = function () {
    raf = 0; if (!st.alive) return; var m = innerHeight * .5, best = null, bd = 1e9;
    ss.forEach(function (e) { var r = e.getBoundingClientRect(), c = (r.top + r.bottom) / 2, d = (r.top <= m && r.bottom >= m) ? 0 : Math.min(Math.abs(r.top - m), Math.abs(r.bottom - m)), dd = d * 1000 + Math.abs(c - m); if (dd < bd) { bd = dd; best = e; } });
@@ -152,15 +167,22 @@ function mountV(mob, scope, so) {
   var onS = function () { if (!raf) raf = requestAnimationFrame(pick); };
   addEventListener('scroll', onS, { passive: true }); addEventListener('resize', onS);
   stages.push({ set alive(v) { if (!v) { removeEventListener('scroll', onS); removeEventListener('resize', onS); } } }); pick();
- } else $$('.sm .mini, .ssec .mini', scope).forEach(function (m) { stages.push(new Stage(m, Object.assign({ pw: 290, bare: true, advance: false, only: +m.dataset.mini, restartOnView: true }, so))); });
+ } else {
+  $$('.sm .mini, .ssec .mini', scope).forEach(function (m) { stages.push(new Stage(m, Object.assign({ pw: 290, bare: true, advance: false, only: +m.dataset.mini, restartOnView: true }, so))); });
+  if (so.stack) {   /* 手機：每一步滑進畫面時往上浮到定位，之後就停在那裡 */
+   var ms = $$('.ssec', scope), rr = 0, upd = function () { rr = 0; ms.forEach(function (e) { if (e.getBoundingClientRect().top < innerHeight * .88) e.classList.add('in'); }); };
+   var onM = function () { if (!rr) rr = requestAnimationFrame(upd); };
+   addEventListener('scroll', onM, { passive: true }); stages.push({ set alive(v) { if (!v) removeEventListener('scroll', onM); } }); upd();
+  }
+ }
 }
 
 /* ================= 文字版：真實閱讀頁的三個動畫（示範內容固定） ================= */
 var NM = '小安', DT = '二〇二六年十一月二十六日';
 var chH = function (n, sub, t) { return '<div class="ch-h"><div class="ch-n">' + n + '</div><div class="ch-t">' + sub + '<b>' + t + '</b></div></div>'; };
-var CH1 = '<section class="ch">' + chH('壹', '你問的第一件事', '換工作的方向') + '<div class="q"><span class="qt">最近在考慮換工作，想知道現在這個方向對不對？</span></div><p>先說結論：方向沒有錯，只是時間還沒到。</p><p>你的命盤事業宮很穩，適合在原本的領域往上走，不適合大幅轉行。今年上半年的運勢偏收斂，下半年才開始打開。</p></section>';
-var CH2 = '<section class="ch">' + chH('貳', '你問的第二件事', '感情的進展') + '<div class="q"><span class="qt">今年感情有機會往前走嗎？</span></div><p>有機會，但要等到下半年。</p><p>你的感情宮今年被點亮，會遇到談得來的人，重點是先把工作的事放一放。</p></section>';
-var CH3 = '<section class="ch">' + chH('參', '命盤裡的你', '三個重點') + '<ul class="keys"><li class="fade"><b>命宮：</b>做事穩，想清楚才動，缺點是想太久，機會容易從旁邊溜走。</li><li class="fade"><b>事業宮：</b>適合在原本的領域往上走，有人帶的環境最能發揮。</li><li class="fade"><b>今年流年：</b>下半年工作和感情，都有一個明顯的轉折點。</li></ul></section>';
+var CH1 = '<section class="ch">' + chH('壹', '你問的第一件事', '換工作的方向') + '<div class="q"><span class="qt">最近在考慮換工作，想知道現在這個方向對不對？</span></div><p>先說結論：方向沒有錯，只是時間還沒到。</p><p>你的命盤官祿宮很穩，適合在原本的領域往上走，不適合大幅轉行。今年上半年的運勢偏收斂，下半年才開始打開。</p></section>';
+var CH2 = '<section class="ch">' + chH('貳', '你問的第二件事', '感情的進展') + '<div class="q"><span class="qt">今年感情有機會往前走嗎？</span></div><p>有機會，但要等到下半年。</p><p>你的夫妻宮今年被點亮，會遇到談得來的人，重點是先把工作的事放一放。</p></section>';
+var CH3 = '<section class="ch">' + chH('參', '命盤裡的你', '三個重點') + '<ul class="keys"><li class="fade"><b>命宮：</b>做事穩，想清楚才動，缺點是想太久，機會容易從旁邊溜走。</li><li class="fade"><b>官祿宮：</b>適合在原本的領域往上走，有人帶的環境最能發揮。</li><li class="fade"><b>今年流年：</b>下半年工作和感情，都有一個明顯的轉折點。</li></ul></section>';
 var CH4 = '<section class="ch fade">' + chH('肆', '帶走一件事', '給你的建議') + '<div class="take"><p>先把手上的案子收尾，年中前不急著遞辭呈。</p><p>下半年再動，成功率比現在高很多。</p></div></section>';
 var HEADP = '<div class="run">' + NM + '文字諮詢</div><img class="head" alt="" src="' + IM('emblem2') + '"><h1>紫微斗數文字諮詢</h1><div class="who">' + NM + '　' + DT + '</div><span class="dv" aria-hidden="true"></span><p class="greet">' + NM + ' 你好：<br>謝謝你的耐心等待。你問的事，我都對著你的命盤看過了，下面一題一題跟你說。</p>';
 var SIGN = '<div class="sign"><div class="tx"><b>大正</b><span class="dt">' + DT + '</span><img class="seal pre" alt="" src="' + IM('seal-goat') + '"></div></div>';
@@ -200,9 +222,9 @@ function mountScene(box) {
 var TP = function (n, t, s, k, nx) { return '<section class="tp" data-pg="' + k + '"><div class="tpin"><div class="tx"><div class="step">' + n + '／3</div><h2>' + t + '</h2><p>' + s + '</p><div class="nxt">' + CHEV.replace('class="chev"', 'class="chev" style="width:20px;height:22px"') + nx + '</div></div><div class="tcol"><div class="tfw"><div class="tfs" data-sc="' + k + '"></div></div><div class="tpg"><div class="tpb"><i></i></div><span>動畫播放中…</span></div></div></div></section>'; };
 var ST = {
  how: function () { return '<section class="sec"><div class="wrap">' + title('txHowTitle') + lead('txHowLead') + steps('txStep') + '</div></section>'; },
- notes: function () { return '<section class="sec paper"><div class="wrap">' + title('txMemTitle') + lead('txMemLead') + '<div class="stack">' + card('line', 'txMem1T', 'txMem1D') + card('msg', 'txMem2T', 'txMem2D') + card('dl', 'txMem3T', 'txMem3D') + '</div>' + memtip('txMemTipT', 'txMemTipD') + '</div></section>'; },
+ /* 2026-11-26 大正：金框取代「到會員中心回看」標題；LINE 會員那張卡重複拿掉；「預約前先知道」整段拿掉（付款期限併進 STEP 1，保存 3 年在這裡） */
+ notes: function () { return '<section class="sec paper"><div class="wrap"><div class="memtip membox">' + T('txMemTitle', 'b') + T('txMemLead') + '<div class="mrows">' + [['msg', 1], ['dl', 2]].map(function (x) { return '<div class="mrow"><i>' + ICON[x[0]] + '</i><div>' + T('txMem' + x[1] + 'T', 'b') + T('txMem' + x[1] + 'D') + '</div></div>'; }).join('') + '</div></div></div></section>'; },
  refund: function () { return '<section class="sec paper"><div class="wrap">' + title('txRefundTitle') + '<div class="refund" style="margin-top:18px">' + [1, 2].map(function (n) { return '<div class="card"><b style="font-size:19px" data-k="txRefund' + n + 'T">' + br(V['txRefund' + n + 'T']) + '</b><p style="font-size:16.5px;color:var(--body);margin-top:6px" data-k="txRefund' + n + 'D">' + br(V['txRefund' + n + 'D']) + '</p></div>'; }).join('') + '</div><p class="lead" style="margin:18px 0 0" data-k="txRefundHow">' + br(V.txRefundHow) + '</p></div></section>'; },
- rules: function () { return '<section class="sec"><div class="wrap">' + title('txRulesTitle') + rules() + '</div></section>'; },
  cta: ctaBand
 };
 function renderT() {
@@ -213,7 +235,7 @@ function renderT() {
   TP(1, '你的問題、我的回覆', '你寫下兩個問題，我對著你的命盤，一題一題寫給你。', 'A', '下一頁：重點整理') +
   TP(2, '重點整理', '命盤裡的你、給你的建議，整理成幾個重點，一眼就看懂。', 'B', '下一頁：多久會收到') +
   TP(3, '多久會收到看盤', '確認收款後 7–10 個工作天，寫好會通知你，到 LINE 或 Email 收信就能讀。', 'C', '下面是完整說明') + '<div class="sm-end"></div>' +
-  ['how', 'notes', 'refund', 'rules', 'cta'].map(function (k) { return ST[k](); }).join('');
+  ['how', 'notes', 'refund', 'cta'].map(function (k) { return ST[k](); }).join('');
 }
 function mountT() {
  var ms = new Map(), tm = new Map();
@@ -261,11 +283,11 @@ if (CFG.mode === 'home') {
   stages.forEach(function (s) { s.alive = false; }); stages = [];
   var mob = mq.matches; lastMob = mob;
   el.innerHTML = '<div class="sp sp-home sp-proc"><div class="wrap">' + '<h2 class="section-title"><span class="hl">' + T('hpProcTitle') + '</span></h2>' + T('hpProcLead', 'p').replace('<p ', '<p class="lead" ') + (mob ? '' : '<p class="sp-hint">往下捲，左邊的手機會跟著播。</p>') + '</div>' +
-   '<div class="wrap"><div class="story"><div class="stick" id="stC"><div class="ph"></div><div class="cap2"></div></div><div class="col">' +
+   '<div class="wrap"><div class="story"><div class="stick" id="stC"><div class="ph"></div><div class="cap2"></div></div><div class="col pcol"><div class="pin">' +
    [1, 2, 3, 4].map(function (n) { return '<div class="ssec" data-ch="' + (n - 1) + '"><div class="mini" data-mini="' + (n - 1) + '"></div><ol class="steps pstep"><li><div class="sn"><small>STEP</small><b>' + n + '</b></div><div class="bx">' + T('hpStep' + n + 'T', 'b') + T('hpStep' + n + 'D') + '</div></li></ol></div>'; }).join('') +
-   '</div></div></div>' +
+   '</div></div></div></div>' +
    '<div class="wrap pgo"><a class="btn btn-brass" href="/services/">立即預約服務諮詢</a></div></div>';
-  mountV(mob, el, { scene: sceneP, chs: CH_P });
+  mountV(mob, el, { scene: sceneP, chs: CH_P, stack: true });
  };
  window.DZStory = {
   mount: homeMount,

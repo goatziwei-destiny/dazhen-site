@@ -341,8 +341,8 @@ body{letter-spacing:.02em}
 .cp-row{display:grid;grid-template-columns:150px repeat(3,minmax(0,1fr));border-top:1px dashed var(--line)}
 .cp-n2 .cp-row{grid-template-columns:150px repeat(2,minmax(0,1fr))}
 .cp-row:first-child{border-top:0}
-.cp-k{padding:16px 18px;font-weight:700;font-size:15px;color:var(--navy);background:#f6f1e6}
-.cp-c{padding:16px 18px;font-size:15px;line-height:1.7;color:var(--body);text-wrap:pretty;text-align:center}
+.cp-k{padding:16px 18px;font-weight:700;font-size:15px;color:var(--navy);background:#f6f1e6;display:flex;align-items:center}
+.cp-c{padding:16px 18px;font-size:15px;line-height:1.7;color:var(--body);text-wrap:pretty;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .cp-c em{display:none}
 .cp-ai{color:#8b8579;background:#fbfaf7}
 .cp-head .cp-k{background:var(--navy)}
@@ -354,19 +354,19 @@ body{letter-spacing:.02em}
   .cp-head{display:none}
   .cp-row,.cp-n2 .cp-row{grid-template-columns:1fr;padding:14px 16px 12px}
   .cp-k{background:none;padding:0 0 6px;font-size:16px}
-  .cp-c{padding:6px 0 6px 12px;border-left:3px solid var(--brass);margin:4px 0;font-size:15px;background:none;text-align:left}
+  .cp-c{padding:6px 0 6px 12px;border-left:3px solid var(--brass);margin:4px 0;font-size:15px;background:none;text-align:left;display:block}
   .cp-c em{display:block;font-style:normal;font-size:13px;font-weight:700;color:var(--clay)}
   .cp-ai{border-left-color:#d8d3c8;color:#8b8579}.cp-ai em{color:#a09a8e}
 }
 </style>
-{{ if eq $.page "home" }}<link rel="stylesheet" href="/css/sales.css?v=20261126c">{{ end }}
+{{ if eq $.page "home" }}<link rel="stylesheet" href="/css/sales.css?v=20261126e">{{ end }}
 {{ partial "analytics.html" $.ctx }}
 </head>
 <body>
 <div id="app"></div>
 {{- if eq $.page "home" }}{{- $defs := dict -}}{{- range index site.Data.sales "home" }}{{ $defs = merge $defs (dict (index . 0) (index . 3)) }}{{ end }}
 <script>window.SALES = { mode: "home", kind: "voice", defaults: {{ $defs | jsonify | safeJS }}, fee: 3600, lineUrl: {{ site.Params.lineUrl }}, lineId: {{ site.Params.lineBasicId }}, bookUrl: "/booking/" };</script>
-<script src="/js/sales.js?v=20261126d"></script>{{ end }}
+<script src="/js/sales.js?v=20261126e"></script>{{ end }}
 <script src="/booking-bridge.js?v=20261108"></script>
 <script src="/line-qr.js?v=20261011" defer></script>
 <script>
@@ -464,7 +464,7 @@ const SITE = {
   textServicePriceUnit: "每次最多 2 題，每題 500 字內",
   serviceRows: '60 分鐘，時間內不限題數\n可加看面相，不另收費\n先定盤，對上才開始計時',
   compareTitle: '三種方式，差在哪裡',
-  compareRows: '誰幫你看盤｜大正本人｜大正本人｜程式自動產生\n怎麼進行｜60 分鐘語音通話，不開鏡頭｜寫下 2 個問題，收到文字回覆｜輸入生日，馬上出結果\n多久拿到｜約好的時段當天｜確認收款後 7–10 個工作天｜幾秒鐘\n最大的好處｜當下就能問清楚｜回覆隨時拿出來反覆讀｜馬上就有結果\n事後回看｜重點整理成文字，會員中心可讀｜會員中心可讀，可下載 PDF｜看各網站\n退費｜無法定盤全額退；開始前 24 小時取消全額退｜付款 7 天內還沒開始寫，或超過 10 個工作天沒寄出｜看各網站\n適合誰｜想一次問清楚、來回討論的人｜預算有限、不喜歡電話對談的人｜好奇，想先玩玩看',
+  compareRows: '誰幫你看盤｜大正本人｜大正本人｜程式自動產生\n怎麼進行｜60 分鐘語音通話，不開鏡頭｜寫下 2 個問題，收到文字回覆｜輸入生日，馬上出結果\n多久拿到｜約好的時段當天｜確認收款後 7–10 個工作天｜幾秒鐘\n最大的好處｜當下就能問清楚｜回覆隨時拿出來反覆讀｜馬上就有結果\n事後回看｜重點整理成文字，會員中心可讀，可下載 PDF｜會員中心可讀，可下載 PDF｜看各網站\n退費｜無法定盤全額退；開始前 24 小時取消全額退｜付款 7 天內還沒開始寫，或超過 10 個工作天沒寄出｜看各網站\n適合誰｜想一次問清楚、來回討論的人｜預算有限、不喜歡電話對談的人｜好奇，想先玩玩看',
   textServiceRows: '2 個問題，每題 500 字內\n不用約時間、不用講電話\n寫好用 LINE 和 Email 通知你',
   textServiceDetail: "✍️ 在預約表單寫下問題（最多 2 題，每題 500 字內），不用約時段、不通話<br>⏳ 確認收款後 7-10 個工作天內，用文字回覆到你的 Email<br>📲 預約後掃描 QR Code 綁定 LINE，匯款末五碼在網頁或 LINE 都能回報，完成會同步通知<br>🕐 要填確定的出生時間（文字版不核對過去發生的事）<br>↩️ 付款後 7 天內、我還沒開始撰寫，可以退款；沒有改約、遲到的問題",
   textServiceBtn: "預約文字版諮詢",
