@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ if eq $.page "home" }}{{ site.Title }}{{ else }}{{ $.ctx.Title }}｜大正命理諮詢{{ end }}</title>
+<meta name="description" content="{{ if eq $.page "home" }}{{ site.Params.description }}{{ else }}{{ $.ctx.Description }}{{ end }}">
+<link rel="canonical" href="{{ $.ctx.Permalink }}">
+{{ with site.Params.googleSiteVerification }}<meta name="google-site-verification" content="{{ . }}">{{ end }}
+<meta property="og:title" content="{{ if eq $.page "home" }}{{ site.Title }}{{ else }}{{ $.ctx.Title }}｜大正命理諮詢{{ end }}">
+<meta property="og:description" content="{{ site.Params.description }}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ $.ctx.Permalink }}">
+<meta property="og:image" content="{{ "/images/og-default.png" | absURL }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:locale" content="zh_TW">
+{{/* 結構化資料（2026-10-28）：讓搜尋引擎與 AI 工具不用跑 JS 就讀得到「誰、提供什麼、在哪預約」。
+     價格與常見問題可以在預約系統後台即時改，網站要重新建置才會跟上，所以先不放（GPT #9：不能保證同步就不輸出，免得搜尋結果顯示舊價格）。
+     日後若做到「後台存檔就自動重新建置網站」，再把價格和常見問題加回來。 */}}
+{{ $base := "/" | absURL }}{{ $about := "/about/" | absURL }}{{ $same := slice }}{{ range site.Params.social }}{{ with .url }}{{ if hasPrefix . "http" }}{{ $same = $same | append . }}{{ end }}{{ end }}{{ end }}
+{{ if eq $.page "home" }}<script type="application/ld+json" id="schema-ld">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"WebSite","@id":{{ printf "%s#website" $base }},"url":{{ $base }},"name":"大正命理諮詢","inLanguage":"zh-Hant","publisher":{"@id":{{ printf "%s#person" $about }}}},
+ {"@type":"Person","@id":{{ printf "%s#person" $about }},"name":"大正","jobTitle":"紫微斗數命理師","url":{{ $about }},"image":{{ "/images/avatar-goat.webp" | absURL }},"knowsAbout":["紫微斗數","命盤","流年運勢","大限"],"sameAs":{{ $same }}},
+ {"@type":"Service","@id":{{ printf "%s#consultation" $base }},"name":"一對一線上紫微斗數諮詢","serviceType":"紫微斗數命理諮詢","description":{{ site.Params.description }},"provider":{"@id":{{ printf "%s#person" $about }}},"areaServed":{"@type":"Country","name":"台灣"},"availableChannel":{"@type":"ServiceChannel","serviceUrl":{{ "/booking/" | absURL }},"name":"Google Meet 或 LINE 語音（只用語音）"}}
+]}
+</script>{{ end }}
+<link rel="stylesheet" href="/fonts/huninn.css?v=20261125">
+<style>
+/* 2026-10-11 首頁改版：開場 → 服務與價格 → 關於大正（精簡）→ 第一次諮詢 → 預約流程 → 預約規則 → 常見問題 → 最新文章 → 結尾 */
+:root{--navy:#1b2845;--navy-2:#21304c;--navy-3:#3d5467;--cream:#f5f3ef;--accent:#6292ab;--accent-d:#4f7d94;--warm:#cc8854;--warm-d:#b07545;--text-light:#c8cdd4;--text-muted:#8a95a5;--body:#57534e;--line:#e5e8ec}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;line-break:strict;word-break:auto-phrase;text-autospace:normal;overflow-wrap:break-word}
+body{font-family:"Dazhen Round","PingFang TC","Microsoft JhengHei",sans-serif;color:var(--navy);background:var(--cream);line-height:1.8;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}a{color:inherit;text-decoration:none}
+h1,h2,h3,h4{text-wrap:balance}p,li{text-wrap:pretty}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+@media(max-width:480px){.container{padding:0 18px}}
+.sec{padding:72px 0}
+.section-dark{background:var(--navy);color:#fff}.section-light{background:var(--cream)}.section-white{background:#fff}
+.eyebrow{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--navy-3);font-weight:700;margin-bottom:8px}
+.section-dark .eyebrow{color:var(--accent)}
+.section-title{font-size:clamp(26px,5vw,38px);font-weight:700;line-height:1.3;margin-bottom:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 26px;border-radius:8px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;transition:background .2s,transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn:focus-visible,a:focus-visible,button:focus-visible{outline:3px solid var(--warm);outline-offset:2px}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-d)}
+.btn-warm{background:var(--warm);color:#fff}.btn-warm:hover{background:var(--warm-d)}
+.btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.45)}.btn-ghost:hover{background:rgba(255,255,255,.08)}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.nav{position:sticky;top:0;z-index:100;background:rgba(27,40,69,.96);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-inner{display:flex;justify-content:space-between;align-items:center;height:56px;gap:16px}
+.nav-brand{font-weight:700;color:#fff;letter-spacing:1px}.nav-brand i{font-style:normal;color:var(--warm)}
+.nav-links{display:flex;gap:22px;margin-left:auto;margin-right:28px}.nav-links a{font-size:13px;color:var(--text-light)}.nav-links a:hover{color:#fff}
+.nav-cta{background:var(--accent);color:#fff;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:700;white-space:nowrap}
+@media(max-width:900px){.nav-inner{flex-wrap:wrap;height:auto;padding-top:10px;row-gap:6px}.nav-links{order:3;width:100%;display:flex;gap:18px;overflow-x:auto;white-space:nowrap;padding:2px 0 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.nav-links::-webkit-scrollbar{display:none}.nav-links a{padding:8px 0}.nav-links{padding-bottom:2px;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}[id]{scroll-margin-top:112px}}/* 手機：選單放第二行，可以左右滑（以前直接隱藏，手機看不到「關於大正」等項目） */
+@media(max-width:900px){.nav-links{margin:0}}
+.hero{padding:64px 0 56px}
+.hero-inner{display:grid;grid-template-columns:1.25fr .75fr;gap:48px;align-items:center}
+.hero h1{font-size:clamp(36px,6vw,56px);line-height:1.2;color:#fff;margin-bottom:12px}.hero h1 i{font-style:normal;color:var(--warm)}
+.hero-badge{display:inline-block;background:rgba(98,146,171,.15);border:1px solid rgba(98,146,171,.3);padding:4px 14px;border-radius:20px;font-size:11px;letter-spacing:2px;color:var(--accent);font-weight:700;margin-bottom:18px}
+.tagline{font-size:20px;color:#fff;font-weight:700;margin-bottom:14px;letter-spacing:1px}
+.hero-desc{color:var(--text-light);font-size:16px;line-height:1.9;margin-bottom:28px;max-width:34em}
+.stats{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:26px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12);font-size:14px;color:var(--text-light)}
+.stats span b{color:#fff;font-size:17px;margin-right:4px}
+.lib-entry{padding:0 0 56px}
+.lib-card{display:block;max-width:760px;margin:0 auto;background:var(--navy-2);border:1px solid rgba(204,136,84,.35);border-radius:16px;overflow:hidden;color:#fff;text-decoration:none;text-align:center;transition:border-color .15s,transform .15s}
+.lib-card:hover{border-color:var(--warm);transform:translateY(-2px)}
+.lib-img{position:relative;display:block;aspect-ratio:16/9}.lib-img img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated}
+.lib-play{position:absolute;right:16px;bottom:16px;width:58px;height:58px;border-radius:50%;background:rgba(204,136,84,.92);display:flex;align-items:center;justify-content:center;font-size:22px;padding-left:4px;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+.lib-txt{display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px 28px 28px}
+.lib-h{font-size:24px;font-weight:700;line-height:1.4}.lib-p{color:var(--text-light);font-size:15px;line-height:1.8;max-width:30em}
+.lib-btn{margin-top:6px;background:var(--warm);color:#fff;padding:9px 22px;border-radius:8px;font-weight:700;font-size:14px}
+.stat-lib{display:inline-flex;align-items:center;gap:7px;color:#fff;font-size:14px;border-bottom:1px dashed rgba(204,136,84,.7);padding-bottom:1px}.stat-lib:hover{color:var(--warm)}.stat-lib img{width:18px;height:auto;image-rendering:pixelated}
+@media(max-width:768px){.lib-entry{padding:0 0 44px}.lib-txt{padding:18px 20px 22px}.lib-h{font-size:20px}}
+.hero-goat img{width:min(280px,100%);aspect-ratio:1;border-radius:50%;object-fit:cover;margin:0 auto}
+@media(max-width:768px){.hero{padding:40px 0 44px}.hero-inner{grid-template-columns:1fr}.hero-goat{display:none}}
+.svc-wrap{padding:8px 0 72px}
+.svc-cards{display:grid;gap:24px}
+/* 11/10 介紹影片（YouTube）：先放 YouTube 的縮圖，按了才載入播放器（沒按之前不連 YouTube、不吃網站流量） */
+.yt{position:relative;width:100%;border-radius:14px;overflow:hidden;background:#1b2845;cursor:pointer;border:0;padding:0;display:block}
+.yt.r169{aspect-ratio:16/9}.yt.r916{aspect-ratio:9/16}
+.yt img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.yt .yt-play{position:absolute;left:50%;top:50%;width:68px;height:68px;margin:-34px 0 0 -34px;border-radius:50%;background:rgba(27,40,69,.82);box-shadow:0 4px 18px rgba(0,0,0,.25)}
+.yt .yt-play::after{content:"";position:absolute;left:27px;top:21px;border-style:solid;border-width:13px 0 13px 21px;border-color:transparent transparent transparent #fff}
+.yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.yt-cap{font-size:13px;color:var(--text-muted);text-align:center;margin:8px 0 0}
+.svc-card.svc-card-v{grid-template-columns:minmax(0,480px) 300px;justify-content:space-between;gap:48px;align-items:center;padding-top:32px}
+.svc-card-v .price{font-size:30px}
+.svc-paper .svc-card.svc-card-v{padding-top:32px}
+.svc-card-v .svc-sub{font-size:14px;margin:0 0 14px}
+.yt-soon{cursor:default;display:flex;align-items:center;justify-content:center}.yt-soon img{object-fit:contain;padding:18px 18px 46px}.yt-soon span{position:absolute;left:0;right:0;bottom:16px;text-align:center;color:#e3c38f;font-size:13px;letter-spacing:2px}
+.svc-line{display:block;text-align:center;margin-top:12px;font-size:14px;font-weight:700;color:var(--warm);text-decoration:none}
+@media(max-width:768px){.svc-card.svc-card-v{grid-template-columns:1fr;gap:20px}.svc-card-v .svc-vid{max-width:300px;width:100%;margin:0 auto;order:-1}}
+/* 預約流程：影片＋一條直線 1～5 點 */
+.proc-wrap{display:grid;grid-template-columns:minmax(0,480px) 300px;justify-content:space-between;gap:48px;align-items:center;margin-top:28px}
+.proc-line{list-style:none;margin:0;padding:0;position:relative;display:grid;gap:22px}
+.proc-line li:not(:last-child)::after{content:"";position:absolute;left:15px;top:32px;bottom:-22px;width:2px;background:rgba(98,146,171,.35)}
+.proc-line li{position:relative;display:grid;grid-template-columns:32px minmax(0,1fr);gap:14px;align-items:start}
+.proc-num{width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;position:relative;z-index:1}
+.proc-line .step-title{margin:4px 0 2px}.proc-line .step-desc{margin:0}
+@media(max-width:768px){.proc-wrap{grid-template-columns:1fr;gap:28px}.proc-wrap .proc-vid{max-width:300px;margin:0 auto;width:100%;order:-1}}
+.svc-card{background:var(--navy-2);border-radius:16px;padding:36px;display:grid;grid-template-columns:1.2fr .8fr;gap:32px;align-items:start}
+.svc-card h3{font-size:24px;margin:4px 0 12px}.svc-card p{color:var(--text-light);line-height:1.9}
+.svc-label{color:var(--warm);font-size:12px;letter-spacing:2px;font-weight:700}
+.price{font-size:38px;font-weight:700;line-height:1.1}.price-unit{color:var(--text-muted);font-size:13px;margin-bottom:16px}
+.svc-list{list-style:none;margin:0 0 22px;padding:0;display:grid;gap:10px;font-size:14px;color:var(--text-light)}
+.svc-list li{display:flex;gap:10px;line-height:1.7}
+.svc-list svg{flex:0 0 20px;width:20px;height:20px;margin-top:2px;fill:none;stroke:var(--warm);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.svc-card .btn{width:100%}
+@media(max-width:768px){.svc-card{grid-template-columns:1fr;padding:26px 22px;gap:20px}}
+.about-inner{display:grid;grid-template-columns:220px 1fr;gap:48px;align-items:start}
+.about-photo{text-align:center}
+.about-photo img,.about-photo .ph{width:180px;height:180px;border-radius:50%;object-fit:cover;margin:0 auto 12px}
+.about-photo .ph{background:var(--navy-2);display:flex;align-items:center;justify-content:center;font-size:64px}
+.about-photo strong{display:block;font-size:19px}.about-photo span{font-size:13px;color:var(--text-muted)}
+.about-lead{color:var(--body);line-height:2;margin-bottom:22px;max-width:40em}
+.dd,.fit{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.dd>div{border-radius:12px;padding:18px 20px}.dd .do{background:rgba(98,146,171,.09)}.dd .dont{background:rgba(204,136,84,.09)}
+.dd h4,.fit h4{font-size:15px;margin-bottom:8px}.dd .do h4{color:var(--accent-d)}.dd .dont h4{color:var(--warm-d)}
+.dd ul{list-style:none;font-size:14px;color:var(--body);line-height:1.9}
+.dd .do li::before{content:"✓ ";color:var(--accent);font-weight:700}.dd .dont li::before{content:"✗ ";color:var(--warm);font-weight:700}
+.fit{margin-top:16px}.fit>div{border:1px solid var(--line);background:#fff;border-radius:12px;padding:16px 20px}
+.fit ul{padding-left:1.2em;font-size:14px;color:var(--body);line-height:1.9}
+.about-inner.about-solo{grid-template-columns:1fr}.about-solo>div{max-width:900px}
+/* 11/26 晚：首頁「我會做／我不會做／適合／不適合」四個方框往中間放（上面的字不動）；最下面「還在猶豫」縮成短短一條 */
+.about-solo>div{max-width:none}.about-solo .dd,.about-solo .fit{max-width:900px;margin-left:auto;margin-right:auto}.about-solo .dd{margin-top:0}
+.sec.cta.section-dark{padding:40px 0}.sec.cta.section-dark p:last-child{margin-bottom:0}
+@media(max-width:768px){.about-title{display:none}}
+.more{display:inline-block;margin-top:22px;font-weight:700;color:var(--accent-d);border-bottom:2px solid currentColor;padding-bottom:1px}
+@media(max-width:768px){.about-inner{grid-template-columns:1fr;gap:20px}.about-photo{display:flex;align-items:center;gap:14px;text-align:left}.about-photo img,.about-photo .ph{width:84px;height:84px;margin:0;font-size:36px}.dd,.fit{grid-template-columns:1fr}}
+.first-intro{color:var(--body);max-width:40em;margin-bottom:30px}
+/* 第一次諮詢（收合清單） */.first-acc{max-width:760px;display:grid;gap:8px}.fa-item{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.fa-item summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:10px 16px}.fa-item summary::-webkit-details-marker{display:none}
+.fa-item summary::after{content:"+";margin-left:auto;font-size:20px;color:var(--accent)}.fa-item[open] summary::after{content:"–"}
+.fa-item .first-num{width:30px;height:30px;font-size:14px;flex:0 0 30px}.fa-when{font-size:12px;font-weight:700;color:var(--warm);letter-spacing:1px;min-width:4.5em}.fa-t{font-weight:700;font-size:16px}
+.fa-body{padding:0 16px 14px 58px}
+.first-wrap{display:grid;grid-template-columns:minmax(0,640px) 300px;justify-content:space-between;gap:48px;align-items:start}
+@media(max-width:768px){.first-wrap{grid-template-columns:1fr;gap:20px}.first-prep{position:static}}
+.first-list{list-style:none;max-width:760px;position:relative;display:grid;gap:22px}
+.first-list::before{content:"";position:absolute;left:19px;top:20px;bottom:20px;width:2px;background:rgba(27,40,69,.12)}
+.first-item{display:grid;grid-template-columns:40px 1fr;gap:16px;position:relative}
+.first-num{width:40px;height:40px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;position:relative;z-index:1}
+.first-body{background:#fff;border-radius:14px;padding:16px 20px;box-shadow:0 2px 10px rgba(0,0,0,.04);min-width:0}
+.first-when{font-size:12px;font-weight:700;color:var(--warm);letter-spacing:1px}
+.first-title{font-size:17px;font-weight:700;margin:2px 0 4px}.first-desc{font-size:15px;color:var(--body);line-height:1.85}
+.agenda{display:grid;grid-template-columns:repeat(4,max-content);gap:6px;list-style:none;padding:0;margin:8px 0 0}
+.agenda li{display:flex;align-items:center;font-size:13px;line-height:1.6;background:var(--cream);border-radius:999px;padding:3px 10px;white-space:nowrap}
+@media(max-width:520px){.agenda{grid-template-columns:repeat(2,minmax(0,1fr))}.agenda li{justify-content:flex-start}}
+/* 11/11 第一次諮詢縮小一點 */.first-list{gap:14px}.first-body{padding:12px 16px}.first-title{font-size:16px}.first-desc{font-size:14px;line-height:1.7}.agenda b{color:var(--warm);margin-right:4px}
+.process-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:20px;margin-top:28px}
+.process-grid.n4{grid-template-columns:repeat(4,1fr)}.process-grid.n6{grid-template-columns:repeat(3,1fr)}
+.step-label{font-size:11px;letter-spacing:1px;color:var(--text-muted)}
+.step-title{font-size:16px;font-weight:700;margin:4px 0 6px}.step-desc{font-size:13.5px;color:#78716c;line-height:1.75}
+.step{position:relative}
+.step-dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--accent);margin-bottom:10px;background:#fff;position:relative;z-index:1}.step-dot.done{background:var(--accent)}
+.step:not(:last-child)::after{content:"";position:absolute;top:5px;left:16px;right:-16px;height:2px;background:rgba(98,146,171,.35)}
+@media(min-width:901px){.process-grid.n6 .step:nth-child(3n)::after{display:none}}
+@media(max-width:900px){.process-grid,.process-grid.n4,.process-grid.n6{grid-template-columns:1fr 1fr}.process-grid .step:nth-child(2n)::after{display:none}}
+@media(max-width:480px){.process-grid,.process-grid.n4,.process-grid.n6{grid-template-columns:1fr}.process-grid .step:not(:last-child)::after{display:block;top:16px;bottom:-26px;left:5px;right:auto;width:2px;height:auto}.step{padding-left:24px}.step-dot{position:absolute;left:0;top:0;margin:0}}
+.rules{max-width:860px;margin-top:24px;border-top:2px solid var(--navy)}
+.rule{display:grid;grid-template-columns:150px 1fr;gap:20px;padding:16px 0;border-bottom:1px solid var(--line)}
+.rule dt{font-weight:700;font-size:15px}.rule dd{color:var(--body);font-size:15px;line-height:1.85;min-width:0}
+@media(max-width:560px){.rule{grid-template-columns:1fr;gap:2px}}
+.faq-list{max-width:760px;margin:24px auto 0}
+.faq-item{border-bottom:1px solid var(--line)}
+.faq-q{width:100%;background:none;border:none;text-align:left;font-family:inherit;display:flex;justify-content:space-between;gap:12px;align-items:center;padding:18px 0;font-size:15px;font-weight:700;color:var(--navy);cursor:pointer}
+.faq-q::after{content:"+";font-size:20px;color:var(--accent);transition:transform .2s}
+.faq-item.open .faq-q::after{transform:rotate(45deg)}
+.faq-a{display:none;padding-bottom:18px;color:var(--body);font-size:14.5px;line-height:1.9}.faq-item.open .faq-a{display:block}
+.posts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:22px}
+.post{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.05);display:flex;flex-direction:column;transition:transform .15s}
+.post:hover{transform:translateY(-3px)}
+.post-img{aspect-ratio:3/2;background:var(--navy-2)}.post-img img{width:100%;height:100%;object-fit:cover}
+.post-body{padding:14px 18px 18px;min-width:0}
+.post-cat{font-size:12px;color:var(--warm);font-weight:700}
+.post-title{font-size:17px;font-weight:700;line-height:1.5;margin-top:2px}
+.post-desc{font-size:14px;color:var(--text-muted);line-height:1.7;margin-top:6px}
+@media(max-width:820px){.posts{grid-template-columns:1fr;gap:12px}.post{flex-direction:row}.post-img{flex:0 0 112px;aspect-ratio:auto;min-height:112px}.post-body{padding:12px 14px}.post-title{font-size:15px}.post-desc{display:none}}
+.cta{text-align:center}.cta p{color:var(--text-light);max-width:36em;margin:0 auto 26px}.cta .btns{justify-content:center}
+.footer{background:var(--navy);border-top:1px solid rgba(255,255,255,.06);padding:24px 0;text-align:center;font-size:12px;color:var(--text-muted)}
+.social-links{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.social-icon{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.social-icon:hover{transform:translateY(-2px)}
+.social-icon svg{width:20px;height:20px;fill:#fff;display:block}
+.social-icon.si-facebook{background:#fff}.social-icon.si-facebook svg{width:38px;height:38px;fill:#0866FF}
+.social-icon.si-instagram{background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285aeb 90%)}
+.social-icon.si-threads{background:#000;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+.social-icon.si-line{background:#06C755}.social-icon.si-line svg{width:22px;height:22px}
+.sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:150;background:rgba(27,40,69,.97);border-top:1px solid rgba(255,255,255,.12);padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));display:none;gap:8px;align-items:center;transform:translateY(110%);transition:transform .25s}
+.sticky-cta.show{transform:none}
+.sticky-cta .btn{flex:1;padding:11px 10px;font-size:14px}
+.sticky-cta .x{flex:0 0 32px;height:32px;border:none;background:none;color:var(--text-muted);font-size:20px;cursor:pointer;font-family:inherit}
+@media(max-width:767px){.sticky-cta{display:flex}body{padding-bottom:64px}}
+/* 電腦版也顯示（2026-10-29 大正）：置中的浮動條，不佔滿整個寬度 */
+@media(min-width:768px){.sticky-cta{display:flex;left:50%;right:auto;bottom:18px;width:min(560px,calc(100% - 40px));transform:translate(-50%,140%);border-radius:14px;border:1px solid rgba(227,195,143,.35);padding:12px 14px 12px 20px;box-shadow:0 10px 30px rgba(0,0,0,.25)}.sticky-cta.show{transform:translate(-50%,0)}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn,.faq-q::after,.sticky-cta,.post{transition:none}}
+/* ===== 2026-10-28 外觀改版（大正選：主視覺 C、數字列 A、服務卡 C、底部預約鈕 B；設計見 docs/site-look-1028.md）===== */
+:root{--paper:#fbf8f2;--paper-2:#f3ece0;--rule:#e3dccf;--clay:#a4643a;--gold:#e3c38f;--night:#0f1628}
+.hero.hero-paper{background:var(--paper);color:var(--navy);border-top:2px solid var(--navy)}
+.hero-paper .hero-eyebrow{display:flex;align-items:center;gap:10px;font-size:14px;letter-spacing:2px;color:var(--clay);margin-bottom:14px;font-weight:700}
+.hero-paper .hero-eyebrow svg{width:26px;height:26px;flex:none;fill:none;stroke:var(--clay);stroke-width:1.4}
+.hero-paper h1{color:var(--navy);font-size:clamp(38px,6.4vw,58px);line-height:1.25;margin-bottom:16px}
+.hero-paper .hero-desc{color:#4a443e;font-size:17px}
+.hero-paper .btn-ghost{color:var(--navy);border-color:rgba(27,40,69,.4)}.hero-paper .btn-ghost:hover{background:rgba(27,40,69,.05)}
+.hero-paper .btn-primary{background:var(--navy)}.hero-paper .btn-primary:hover{background:#21304c}
+.hero-me{display:none;align-items:center;gap:12px;margin:0 0 22px;font-size:14px;color:#6b635b;line-height:1.7}
+.hero-me img{width:60px;height:60px;border-radius:50%;object-fit:cover;flex:none}
+@media(max-width:768px){.hero-me{display:flex}}
+.stats-row{background:#fff;border-bottom:1px solid var(--line)}
+.stats-row .container{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding-top:20px;padding-bottom:20px;text-align:center}
+.stats-row .st{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:13px;color:var(--body)}
+.stats-row .st svg{width:24px;height:24px;fill:none;stroke:var(--navy);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;margin-bottom:2px}
+.stats-row .st b{font-size:19px;color:var(--navy)}
+.stats-row .stat-lib-row{grid-column:1/-1;justify-self:center;color:var(--navy);border-bottom-color:var(--clay)}
+.svc-wrap.svc-paper{background:var(--paper);color:var(--body);padding:56px 0 64px}
+.svc-paper .eyebrow{color:var(--clay)}.svc-paper .section-title{color:var(--navy)}
+.svc-paper .svc-card{background:transparent;border-radius:0;padding:0;border-top:2px solid var(--navy)}
+.svc-paper .svc-card h3{color:var(--navy)}.svc-paper .svc-card p{color:#4a443e}
+.svc-paper .svc-label{color:var(--clay)}
+.svc-paper .price{color:var(--navy);margin-top:18px}.svc-paper .price-unit{color:#6b635b}
+.svc-paper .svc-list,.ch-card .svc-list{gap:0;color:var(--body);border-top:1px solid var(--rule);font-size:15px;margin-bottom:0}
+.svc-paper .svc-list li,.ch-card .svc-list li{padding:12px 0;border-bottom:1px solid var(--rule)}
+.svc-paper .svc-list svg,.ch-card .svc-list svg{stroke:var(--navy)}
+.svc-paper .btn-primary{background:var(--navy)}
+.sticky-cta.cta-night{background:var(--night);border-top:1px solid rgba(227,195,143,.3)}
+.cta-night .when{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;font-size:12px;line-height:1.45;color:#9aa3b5}
+.cta-night .when b{font-size:15px;color:#f5f3ef}
+.cta-night .btn-gold{flex:0 0 auto;background:var(--gold);color:var(--night);border-radius:4px;padding:11px 18px;font-size:15px}
+.cta-night .x{color:#9aa3b5}
+/* ── 2026-11-03 精修（參考 Impeccable 的「去 AI 感」原則；大正審過才上線）──
+   1. 一個重點色：深藍＝主要動作、金色＝深色底上的主要動作（跟信件、LINE 卡片同一套）；拿掉藍灰、橘色按鈕
+   2. 拿掉每一區上面的英文小字（SERVICE／ABOUT…）：中文網站不需要，標題自己就夠清楚
+   3. 「3 年／500+／60 分鐘」從圖示數字格改成一行安靜的文字（大數字＋小標籤＋圖示是最典型的 AI 模板）
+   4. 第一次諮詢的步驟、關於大正的四個小框：拿掉卡片裡再包卡片、拿掉底色框，改用留白和細線分段
+   5. 小字放大到看得清楚（最小 13px）、灰字加深對比 */
+:root{--brass:#c99a45;--brass-d:#a87d33;--brass-ink:#7a5a1e;--ink-2:#44403c}
+.btn-primary{background:var(--navy);color:#fff}.btn-primary:hover{background:var(--navy-2)}
+.section-dark .btn-primary,.cta .btn-primary{background:var(--brass);color:var(--navy)}
+.section-dark .btn-primary:hover,.cta .btn-primary:hover{background:#d6aa5a}
+.btn-warm{background:var(--brass);color:var(--navy)}.btn-warm:hover{background:#d6aa5a}
+.cta .btn-warm,.section-dark .btn-warm{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5)}
+.cta .btn-warm:hover,.section-dark .btn-warm:hover{background:rgba(255,255,255,.08)}
+.nav-cta{background:var(--brass);color:var(--navy)}
+.lib-btn{background:var(--brass);color:var(--navy)}
+.btn:focus-visible,a:focus-visible,button:focus-visible{outline-color:var(--brass)}
+.eyebrow{display:none}.lib-txt .eyebrow{display:block}
+.section-title{margin-bottom:6px}
+.stats-row .container{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 0;padding-top:14px;padding-bottom:14px}
+.stats-row .st{flex-direction:row;gap:6px;font-size:14px;color:var(--ink-2)}
+.stats-row .st svg{display:none}
+.stats-row .st b{font-size:15px}
+.stats-row .container{column-gap:26px}
+.first-list{gap:26px}
+.first-body{background:none;box-shadow:none;border-radius:0;padding:6px 0 0}
+.first-when{color:var(--brass-ink);font-size:13px}
+.first-title{font-size:18px}
+.dd,.fit{gap:28px}
+.dd>div,.fit>div{background:none!important;border:0;border-top:1px solid var(--line);border-radius:0;padding:14px 0 0}
+.dd .do h4,.dd .dont h4,.fit h4{color:var(--navy)}
+.dd .do li::before{color:var(--navy)}.dd .dont li::before{color:var(--warm-d)}
+.fit ul{font-size:14.5px}
+.step-label{font-size:12px;color:#6b7280}
+.step-desc{font-size:14.5px;color:var(--body)}
+.step-dot{border-color:var(--navy)}.step-dot.done{background:var(--navy)}
+.step:not(:last-child)::after{background:rgba(27,40,69,.18)}
+@media(min-width:901px){.process-grid{grid-template-columns:repeat(3,1fr);row-gap:34px}.process-grid .step:nth-child(3n)::after{display:none}}
+.faq-q::after{color:var(--navy)}
+.about-photo span,.post-meta{color:#6b7280}
+.post-img:empty{background:var(--paper-2) radial-gradient(circle at 70% 30%,rgba(201,154,69,.18),transparent 55%);display:flex;align-items:center;justify-content:center}
+.post-img:empty::after{content:"✦";font-size:30px;color:var(--brass)}
+.post{box-shadow:none;border:1px solid var(--line)}
+/* 底部預約列（手機）：細一點、不做滑入動畫，出現後就固定在原位 */
+@media(max-width:767px){.sticky-cta{transition:none;padding:7px 12px calc(7px + env(safe-area-inset-bottom,0px))}.sticky-cta:not(.show){display:none}.cta-night .btn-gold{padding:9px 16px;font-size:14px}.cta-night .when b{font-size:14px}body{padding-bottom:58px}}
+@media(prefers-reduced-motion:reduce){.btn:hover{transform:none}}
+/* ===== 2026-11-25 風格改版（粉圓字體＋問題卡片＋STEP 虛線時間線＋打勾卡片＋螢光筆底線）（圓潤風格） ===== */
+body{letter-spacing:.02em}
+.hero-paper .hero-desc{font-size:18px}.about-lead{font-size:17.5px}.fit ul,.dd ul{font-size:15.5px}.first-desc{font-size:15.5px;line-height:1.8}.first-title{font-size:17px}
+.step-desc,.rule dd{font-size:16px}.faq-q{font-size:16.5px}.faq-a{font-size:16px}.post-desc{font-size:15px}.post-title{font-size:18px}.rule dt{font-size:16px}
+.hl{background:linear-gradient(transparent 62%,rgba(201,154,69,.42) 62%);padding:0 .08em;color:inherit}
+/* 問題卡片「你是不是也卡在這邊？」 */
+.stuck{padding:64px 0 56px}.stuck .section-title{margin-bottom:26px}
+.pains{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.pain{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px 20px 64px;position:relative;font-size:17px;font-weight:700;line-height:1.6;color:var(--navy)}
+.pain::before{content:"";position:absolute;left:22px;top:23px;width:24px;height:24px;border-radius:50%;border:2px solid var(--brass)}
+.pain::after{content:"?";position:absolute;left:22px;top:23px;width:24px;line-height:24px;text-align:center;color:var(--brass-d);font-weight:700;font-size:14px}
+.pain small{display:block;margin-top:4px;font-size:15px;font-weight:400;color:#6b635b;line-height:1.75}
+.stuck-line{margin-top:28px;font-size:clamp(19px,2.6vw,24px);font-weight:700;color:var(--navy);border-left:4px solid var(--brass);padding-left:16px;line-height:1.6}
+@media(max-width:768px){.pains{grid-template-columns:1fr;gap:12px}.stuck{padding:44px 0 40px}.pain{font-size:16.5px;padding:18px 18px 18px 58px}.pain::before,.pain::after{left:18px}}
+/* 打勾卡片（我會做／我不會做、適合／不適合） */
+.dd>div,.fit>div{background:#fff!important;border:1px solid var(--line)!important;border-radius:16px!important;padding:20px 22px!important}
+.dd ul,.fit ul{list-style:none;padding:0}
+.dd li,.fit li{position:relative;padding:9px 0 9px 30px;border-top:1px dashed var(--line)}.dd li:first-child,.fit li:first-child{border-top:0}
+.dd .do li::before,.fit>div:first-child li::before{content:"";position:absolute;left:3px;top:17px;width:13px;height:7px;border-left:2.5px solid var(--navy);border-bottom:2.5px solid var(--navy);transform:rotate(-45deg)}
+.dd .dont li::before,.fit>div:last-child li::before{content:"×";position:absolute;left:3px;top:7px;color:#9a8f84;font-size:19px;font-weight:400;line-height:1.6;transform:none;width:auto;height:auto;border:0}
+.dd .dont li,.fit>div:last-child li{color:#6b635b}
+.dd .dont h4,.fit>div:last-child h4{color:#7a7068!important}
+.dd h4,.fit h4{font-size:17px;margin-bottom:6px}
+/* 預約流程：STEP 圓圈＋虛線 */
+.proc-line{gap:0}
+.proc-line li{grid-template-columns:68px minmax(0,1fr);gap:18px;padding-bottom:28px}
+.proc-line li:last-child{padding-bottom:0}
+.proc-line li:not(:last-child)::after{left:33px;top:72px;bottom:6px;width:0;background:none;border-left:2px dashed rgba(27,40,69,.3)}
+.proc-num{width:68px;height:68px;background:#fff;color:var(--navy);border:2px solid var(--navy);flex-direction:column;gap:0;line-height:1}
+.proc-num small{font-size:10px;letter-spacing:.2em;font-weight:400;margin-bottom:3px}.proc-num b{font-size:26px;font-weight:700}
+.proc-line .step-title{font-size:18px;margin:8px 0 2px}.proc-line .step-desc{font-size:16px;color:var(--body)}
+@media(max-width:480px){.proc-line li{grid-template-columns:56px minmax(0,1fr);gap:14px}.proc-num{width:56px;height:56px}.proc-num b{font-size:22px}.proc-line li:not(:last-child)::after{left:27px;top:60px}}
+/* ── 圓潤卡片（暖色＋柔和陰影） ── */
+.stuck{background:var(--paper)}
+.pain{border:0;border-radius:20px;box-shadow:0 12px 30px -20px rgba(27,40,69,.4)}
+.pain::before{background:var(--brass);border-color:var(--brass);width:26px;height:26px}.pain::after{color:#fff;width:26px;line-height:26px}
+.stuck-line{border-left-color:var(--brass);background:#fff;border-radius:0 14px 14px 0;padding:16px 20px;box-shadow:0 12px 30px -22px rgba(27,40,69,.4)}
+.dd>div,.fit>div{border:0!important;border-radius:20px!important;box-shadow:0 12px 30px -20px rgba(27,40,69,.4)}
+.fit>div:first-child{outline:2px solid var(--navy)}
+.proc-num{border-color:var(--brass);background:var(--paper);color:var(--navy)}.proc-num small{color:var(--brass-d)}
+.proc-line li:not(:last-child)::after{border-left-color:rgba(201,154,69,.7)}
+.proc-line li>div:last-child{background:#fff;border-radius:16px;padding:14px 18px;box-shadow:0 10px 26px -20px rgba(27,40,69,.4)}
+.proc-line .step-title{margin-top:0}
+.section-white{background:#fff}.section-light{background:var(--paper)}
+/* ===== 2026-11-26 按鈕統一（大正：首頁的預約按鈕一律品牌金，跟銷售頁一致；「先加 LINE」在淺色底用深藍、深色底維持白框） ===== */
+.btn-primary,.hero-paper .btn-primary,.svc-paper .btn-primary{background:var(--brass);color:var(--navy)}
+.btn-primary:hover,.hero-paper .btn-primary:hover,.svc-paper .btn-primary:hover{background:#d6aa5a}
+.hero-paper .btn-ghost{background:var(--navy);color:#fff;border-color:var(--navy)}.hero-paper .btn-ghost:hover{background:var(--navy-2)}
+.cta-night .btn-gold{background:var(--brass);color:var(--navy)}
+.svc-more{display:block;text-align:center;margin-top:10px;font-size:14px;font-weight:700;color:var(--navy);text-decoration:underline;text-underline-offset:3px}
+/* 選擇服務（2026-11-26）：整張卡都可以點（金色按鈕撐滿卡片），「先看完整介紹」和影片在上面一層 */
+.choose .ch-lead{color:var(--body);font-size:17px;margin:-4px 0 26px}
+.ch-card{position:relative;background:#fff;border:1px solid var(--line);border-radius:20px;padding:26px 26px 22px;box-shadow:0 12px 30px -22px rgba(27,40,69,.5);transition:transform .15s,box-shadow .15s;min-width:0}
+.ch-card:hover{transform:translateY(-2px);box-shadow:0 18px 36px -22px rgba(27,40,69,.6)}
+.ch-card .ch-go{display:flex;width:100%;margin-top:18px;font-size:16px;padding:14px}
+.ch-card .ch-go::after{content:"";position:absolute;inset:0;border-radius:20px}
+.ch-label{font-size:13px;letter-spacing:2px;font-weight:700;color:var(--clay);margin-bottom:6px}
+.ch-price{font-size:34px;font-weight:700;color:var(--navy);line-height:1.15;margin:4px 0 12px}
+.ch-unit{font-size:14px;color:#6b635b;margin:-8px 0 12px}
+.ch-pv{display:inline-block;align-self:flex-start;font-size:12px;font-weight:700;color:#8f3a4a;border:1.5px dashed #8f3a4a;border-radius:20px;padding:2px 10px;margin-bottom:10px}
+.ch-cmp .ch-card{display:flex;flex-direction:column}.ch-cmp .ch-card .ch-go{margin-top:auto}.ch-cmp .ch-rows{margin-bottom:18px}
+.ch-cmp{display:grid;gap:20px}.ch-cmp.ch-n2{grid-template-columns:repeat(2,minmax(0,1fr))}.ch-cmp.ch-n1{max-width:460px}
+.ch-rows{list-style:none;padding:0;margin:4px 0 0}.ch-rows li{position:relative;padding:10px 0 10px 30px;border-top:1px dashed var(--line);font-size:16px}.ch-rows li:first-child{border-top:0}
+.ch-rows li::before{content:"";position:absolute;left:3px;top:18px;width:13px;height:7px;border-left:2.5px solid var(--navy);border-bottom:2.5px solid var(--navy);transform:rotate(-45deg)}
+@media(max-width:760px){.ch-cmp.ch-n2{grid-template-columns:1fr}.ch-card{padding:22px 20px 18px}}
+/* 比較表（2026-11-26）：電腦是表格（左邊項目、大正兩欄深色字、AI 一欄淡色）；手機每個項目一塊，三種方式往下排 */
+.cp{margin-top:44px}
+.cp-title{font-size:22px;color:var(--navy);margin:0 0 14px;line-height:1.4}
+.cp-tbl{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 12px 30px -24px rgba(27,40,69,.5)}
+.cp-row{display:grid;grid-template-columns:150px repeat(3,minmax(0,1fr));border-top:1px dashed var(--line)}
+.cp-n2 .cp-row{grid-template-columns:150px repeat(2,minmax(0,1fr))}
+.cp-row:first-child{border-top:0}
+.cp-k{padding:16px 18px;font-weight:700;font-size:15px;color:var(--navy);background:#f6f1e6;display:flex;align-items:center}
+.cp-c{padding:16px 18px;font-size:15px;line-height:1.7;color:var(--body);text-wrap:pretty;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.cp-c em{display:none}
+.cp-ai{color:#8b8579;background:#fbfaf7}
+.cp-head .cp-k{background:var(--navy)}
+.cp-head .cp-c{background:var(--navy);color:#fff;padding:16px 18px 14px;text-align:center}
+.cp-head .cp-c b{display:block;font-size:16px}
+.cp-head .cp-c small{display:block;font-size:14px;color:#e3c38f;font-weight:700;margin-top:2px}
+.cp-head .cp-ai{background:#3a4560;color:#cfd4de}.cp-head .cp-ai small{color:#cfd4de;font-weight:400}
+@media(max-width:760px){
+  .cp-head{display:none}
+  .cp-row,.cp-n2 .cp-row{grid-template-columns:1fr;padding:14px 16px 12px}
+  .cp-k{background:none;padding:0 0 6px;font-size:16px}
+  .cp-c{padding:6px 0 6px 12px;border-left:3px solid var(--brass);margin:4px 0;font-size:15px;background:none;text-align:left;display:block}
+  .cp-c em{display:block;font-style:normal;font-size:13px;font-weight:700;color:var(--clay)}
+  .cp-ai{border-left-color:#d8d3c8;color:#8b8579}.cp-ai em{color:#a09a8e}
+}
+</style>
+{{ if eq $.page "home" }}<link rel="stylesheet" href="/css/sales.css?v=20261127a">{{ end }}
+{{ partial "analytics.html" $.ctx }}
+</head>
+<body>
+<div id="app"></div>
+{{- if eq $.page "home" }}{{- $defs := dict -}}{{- range index site.Data.sales "home" }}{{ $defs = merge $defs (dict (index . 0) (index . 3)) }}{{ end }}
+<script>window.SALES = { mode: "home", kind: "voice", defaults: {{ $defs | jsonify | safeJS }}, fee: 3600, lineUrl: {{ site.Params.lineUrl }}, lineId: {{ site.Params.lineBasicId }}, bookUrl: "/booking/" };</script>
+<script src="/js/sales.js?v=20261127a"></script>{{ end }}
+<script src="/booking-bridge.js?v=20261108"></script>
+<script src="/line-qr.js?v=20261011" defer></script>
+<script>
+// ╔═══════════════════════════════════════════════════════════════════════════╗
+// ║  🔧 網站內容設定區：所有你想改的文字、圖片、連結都在這裡                    ║
+// ║  改完存檔、重新部署到 Netlify 就會生效，不用動下面的 HTML 結構              ║
+// ╚═══════════════════════════════════════════════════════════════════════════╝
+const LATEST_POSTS = [{{ range $i, $p := first 3 (where site.RegularPages "Section" "blog").ByDate.Reverse }}{{ if $i }},{{ end }}{ "title": {{ $p.Title }}, "url": {{ $p.RelPermalink }}, "image": {{ with $p.Params.image }}{{ partial "img.html" (dict "src" . "w" 720) }}{{ else }}""{{ end }}, "cat": {{ with $p.Params.categories }}{{ index . 0 }}{{ else }}""{{ end }}, "desc": {{ with $p.Description }}{{ . }}{{ else }}{{ $p.Summary | plainify | truncate 60 }}{{ end }} }{{ end }}];
+const TESTIMONIALS_URL = {{ with site.GetPage "/testimonials" }}{{ .RelPermalink }}{{ else }}""{{ end }};
+const PAGE = {{ $.page }};   // home＝首頁、services＝預約服務諮詢頁（/services/），兩頁共用這一份程式和文字（2026-11-26）
+const SHOW_TEXT_SERVICE = {{ if site.Params.showTextService }}true{{ else }}false{{ end }};
+const SITE = {
+
+  // ── 基本資訊（SEO、社群分享會用到）──
+  siteTitle: "大正命理諮詢｜紫微斗數線上諮詢・本命盤・流年運勢",
+  siteDescription: "大正紫微斗數命理諮詢。不批評、好好聊，用命盤讀懂你的命運脈絡，找到屬於你的節奏與方向。線上預約，60 分鐘深度諮詢。",
+  siteKeywords: "紫微斗數,命理諮詢,算命,本命盤,流年運勢,線上算命,大正",
+  siteUrl: "",              // 你正式的網址，例如 https://yourdomain.com
+  ogImage: "",              // 社群分享預覽圖（建議 1200×630px），貼圖片網址在這裡
+  lineUrl: "https://lin.ee/vlvPoMa",
+
+  // ── 社群連結（填了 url 才會顯示圖示，留空的平台自動隱藏）──
+  // ⚠️ 這份是首頁專用的設定；文章頁/列表頁的社群連結是另外在 config.toml 的 [[params.social]] 設定，
+  //    兩邊要各自填一次（跟 lineUrl 目前的作法一樣）。
+  socialLinks: [
+    { key: "facebook",    label: "Facebook",  url: "https://www.facebook.com/profile.php?id=61583191583142", color: "#1877F2" },
+    { key: "instagram",   label: "Instagram", url: "https://www.instagram.com/ray011512155/", color: "#E4405F" },
+    { key: "threads",     label: "Threads",   url: "https://www.threads.com/@ray01151215", color: "#000000" },
+    { key: "line",        label: "LINE",      url: "https://lin.ee/vlvPoMa", color: "#06C755" },
+    { key: "youtube",     label: "YouTube",   url: "", color: "#FF0000" },
+    { key: "tiktok",      label: "TikTok",    url: "", color: "#000000" },
+    { key: "xiaohongshu", label: "小紅書",     url: "", color: "#FF2442" },
+    { key: "x",           label: "X",         url: "", color: "#000000" },
+    { key: "telegram",    label: "Telegram",  url: "", color: "#26A5E4" },
+    { key: "email",       label: "Email",     url: "", color: "#57534e" },
+  ],
+
+  // ── 品牌名稱 ──
+  brandName: "大正",
+  brandTitle: "大正·紫微斗數",
+  brandTagline: "不批評，好好聊。",
+  brandBadge: "",
+
+  // ── Hero 區塊 ──
+  heroDesc: "用紫微斗數，把你現在的位置、可能的發展，和可以選的路說清楚。<br>命盤給線索，人生還是你決定。",
+  heroInfoCard: [
+    { label: "諮詢經驗", value: "3 年" },
+    { label: "張命盤", value: "500+" },
+    { label: "不限題數", value: "60 分鐘" },
+  ],
+
+  // ── 關於我 ──
+  aboutPhoto: "/images/avatar-goat.webp",   // 大頭貼（後台「關於我」可改）
+  aboutName: "大正",
+  aboutRole: "紫微斗數命理師",
+  aboutLead: "我學命理，是想知道自己什麼時候會過得好。後來明白命盤說的是傾向和時機。所以我不用一顆星替你貼標籤，會把線索放回你的生活，講清楚你有哪些選項。",
+  fitYes: "心裡有一件卡住的事，想好好說一次\n想看清楚自己的選項，再自己做決定\n願意說說自己的狀況，一起討論",
+  fitNo: "只想把決定權交到我手上的人\n想聽「一定會怎樣」的保證\n想要開運、改運的方法",
+  aboutTitle: "我是大正，一隻會算命的羊",
+  aboutParagraphs: [
+    "我會學命理，老實說是因為想知道自己什麼時候會過得比較好。結果第一次認真看懂自己的命盤，發現好像都不太好。",
+    "後來繼續學、繼續過日子，才慢慢明白：命盤說的是傾向和時機，不是你只能怎麼活。",
+    "所以我不會用一顆星替你貼標籤，也不會用「注定」幫你做決定。我會把命盤裡的線索一條一條講清楚，放回你的生活裡，把眼前有哪些選項講明白。",
+  ],
+  aboutDo: ["把命盤訊號講成你聽得懂的話", "說明每個選項的機會、風險和代價", "把命盤跟你的現實條件放在一起看", "坦白說哪些事命理判斷不了，最後的決定留給你"],
+  aboutDont: ["賣開運、改運商品", "算壽命、判斷重大疾病", "用合八字替你決定要不要分手", "給投資建議，或違反道德、傷害他人的建議"],
+  aboutTopics: "感情、工作、家庭、性向與自我認同",
+  aboutNotFor: "已經在同一個問題上卡很久，這次也還沒打算做任何行動的人。我可以把路講清楚，但走出去那一步，要你自己來。",
+
+  // ── 我的諮詢風格 ──
+  styleIntro: "算命不是魔法，我也不是神仙。我在意的是這三件事：",
+  styleItems: [
+    { title: "互動感", sub: "算命是一起合作的事", desc: "你補充的一句話，常常會改變整張盤的讀法。所以我會問，也會請你多說一點，不是我一個人在台上講。" },
+    { title: "現實感", sub: "規劃要能落地", desc: "命盤再漂亮，也要對上你的時間、關係、資源和限制。說得出做不到的建議，對你沒有用。" },
+    { title: "方向感", sub: "先把問題問對", desc: "你嘴上問的，不一定是心裡真正擔心的。問題對了，答案才有用。" },
+  ],
+
+  // ── 結尾推一把 ──
+  ctaTitle: "還在猶豫，很正常。",
+  ctaDesc: "要把心裡的事說給一個陌生人聽，本來就需要一點勇氣。你可以先加入 LINE 問問題，看看我們聊不聊得來；覺得對了，再預約也不遲。我不會催你，羊講話本來就慢。",
+
+  // ── 服務介紹 ──
+  serviceLabel: "一對一線上諮詢",
+  serviceTitle: "把卡住的事，一來一往談清楚",
+  serviceDesc: "適合心裡卡著一件事的人。談完你會更清楚自己的處境、手上有哪些選項，和下一步可以先做什麼。",
+  servicePrice: "NT$3,600",
+  servicePriceUnit: "每次 60 分鐘",
+  serviceDetail: "⏱ 60 分鐘，時間內不限題數<br>💻 語音通話：Google Meet 或 LINE（選 LINE，時間到由大正撥給你）<br>📷 想一起看面相：事先傳一張正面、兩張側面照片（最多可傳 5 張；露出額頭和左右耳朵，可以素顏最好）；不傳也可以",
+
+  // ── 文字版諮詢（config.toml 的 showTextService 控制是否顯示）──
+  textServiceLabel: "文字版諮詢",
+  textServiceTitle: "用文字慢慢問，回覆可以反覆看",
+  textServiceDesc: "適合不方便通話、講話會緊張，或想把回答留下來慢慢看的人。你用文字寫下想問的事，我看完命盤後，用文字一題一題回覆。",
+  textServicePrice: "NT$990",
+  textServicePriceUnit: "每次最多 2 題，每題 500 字內",
+  serviceRows: '60 分鐘，時間內不限題數\n可加看面相，不另收費\n先定盤，對上才開始計時',
+  compareTitle: '三種方式，差在哪裡',
+  compareRows: '誰幫你看盤｜大正本人｜大正本人｜程式自動產生\n怎麼進行｜60 分鐘語音通話，不開鏡頭｜寫下 2 個問題，收到文字回覆｜輸入生日，馬上出結果\n多久拿到｜約好的時段當天｜確認收款後 7–10 個工作天｜幾秒鐘\n最大的好處｜當下就能問清楚｜回覆隨時拿出來反覆讀｜馬上就有結果\n事後回看｜重點整理成文字，會員中心可讀，可下載 PDF｜會員中心可讀，可下載 PDF｜看各網站\n退費｜無法定盤全額退；開始前 24 小時取消全額退｜付款 7 天內還沒開始寫，或超過 10 個工作天沒寄出｜看各網站\n適合誰｜想一次問清楚、來回討論的人｜預算有限、不喜歡電話對談的人｜好奇，想先玩玩看',
+  textServiceRows: '2 個問題，每題 500 字內\n不用約時間、不用講電話\n寫好用 LINE 和 Email 通知你',
+  textServiceDetail: "✍️ 在預約表單寫下問題（最多 2 題，每題 500 字內），不用約時段、不通話<br>⏳ 確認收款後 7-10 個工作天內，用文字回覆到你的 Email<br>📲 預約後掃描 QR Code 綁定 LINE，匯款末五碼在網頁或 LINE 都能回報，完成會同步通知<br>🕐 要填確定的出生時間（文字版不核對過去發生的事）<br>↩️ 付款後 7 天內、我還沒開始撰寫，可以退款；沒有改約、遲到的問題",
+  textServiceBtn: "預約文字版諮詢",
+
+
+  // ── 排盤體驗（iframe 嵌入）──
+  // chartToolUrl 已移除（排盤體驗區塊暫時不使用）
+
+  // ── 預約流程 ──
+
+  // ── 注意事項 ──
+
+  // ── FAQ ──
+  faqItems: [
+    { q: "我完全不懂算命，這樣可以嗎？", a: "完全可以，大部分來找我的人都不懂。命盤我來讀，你只要帶著問題、說說你的狀況就好，我會用一般人聽得懂的話解釋。" },
+    { q: "不知道確切的出生時辰怎麼辦？", a: "時辰是排盤最關鍵的資料，預約時要填確定的出生時間（到分鐘）。不確定的話，可以先問家人，或到戶政事務所申請出生證明（上面有登記的出生時間）；查不到確定的時間，暫時無法預約。" },
+    { q: "60 分鐘可以問什麼？有限制嗎？", a: "感情、工作、家庭、人生方向都可以，不限題數。建議先聚焦一兩件事，談得深比問得多有用。" },
+    { q: "可以問家人或伴侶的事嗎？", a: "可以，表單最多填 5 位。問別人的事，從你的觀察和你們的互動談起；非本人的盤請先取得同意（家人、伴侶除外）。" },
+    { q: "我在國外出生，或是雙胞胎，可以諮詢嗎？", a: "可以。國外出生請填出生國家和城市（要換算時區）；雙胞胎請勾選並寫出生順序。" },
+    { q: "我說的事會保密嗎？", a: "會。資料只用在這次諮詢，不公開、不給別人；未經你同意，不會把你的例子寫進文章。詳見隱私權政策。" },
+    { q: "你能保證結果嗎？", a: "不能。命盤幫你看清傾向、時機和選項；健康、法律、財務的事，請同時找專業協助。" },
+  ],
+
+  // ── 線上預約（iframe 嵌入）──
+  bookingFormUrl: "https://script.google.com/macros/s/AKfycbx3aDlFDBayTKgvGtQMrWrpDMx3WuU5Yd3Uh4c6BJK5kmKpZnBsXH7fK97yrkQkgx9fkQ/exec",
+
+  // ── 頁尾 ──
+  footerText: "© 2026 大正命理諮詢．保留所有權利",
+};
+
+// ╔═══════════════════════════════════════════════════════════════════════════╗
+// ║  以下是自動渲染程式碼，不用動                                              ║
+// ╚═══════════════════════════════════════════════════════════════════════════╝
+// 看過命運書庫了嗎：書庫會在同一個網站留下 dz_seen；在 LINE 裡打開網站一律當作看過（多半剛在 LINE 看完）
+// 預覽用：網址加 ?seen=1／?seen=0 可以直接看兩種畫面
+function libSeen_() {
+  var q = /[?&]seen=([01])/.exec(location.search); if (q) return q[1] === '1';
+  if (/Line\//i.test(navigator.userAgent)) return true;
+  try { return localStorage.getItem('dz_seen') === '1'; } catch (e) { return false; }
+}
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }   // 也轉引號：放進屬性（href、alt）時不會被斷開
+
+// 10 個社群平台的簡化圖示（單色線條/色塊，配合各平台官方色當底色）
+var SOCIAL_ICONS = {
+  facebook: '<path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/>',
+  instagram: '<path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/>',
+  threads: '<path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 0 1 3.02.142c-.126-.742-.375-1.332-.75-1.757-.513-.586-1.308-.883-2.359-.89h-.029c-.844 0-1.992.232-2.721 1.32L7.734 7.847c.98-1.454 2.568-2.256 4.478-2.256h.044c3.194.02 5.097 1.975 5.287 5.388.108.046.216.094.321.142 1.49.7 2.58 1.761 3.154 3.07.797 1.82.871 4.79-1.548 7.158-1.85 1.81-4.094 2.628-7.277 2.65Zm1.003-11.69c-.242 0-.487.007-.739.021-1.836.103-2.98.946-2.916 2.143.067 1.256 1.452 1.839 2.784 1.767 1.224-.065 2.818-.543 3.086-3.71a10.5 10.5 0 0 0-2.215-.221z"/>',
+  line: '<path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>',
+  youtube: '<path fill="#fff" d="M9.5 7.5l8 4.5-8 4.5v-9z"/>',
+  tiktok: '<path fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M9 18V6l9-1.5v9"/><circle cx="7" cy="18" r="2.3" fill="#fff"/><circle cx="16" cy="13" r="2.3" fill="#fff"/>',
+  xiaohongshu: '<path fill="#fff" d="M6 3h12a1 1 0 0 1 1 1v16l-7-4-7 4V4a1 1 0 0 1 1-1z"/>',
+  x: '<path stroke="#fff" stroke-width="2" stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/>',
+  telegram: '<path fill="#fff" d="M21 3L2 11l6 2 2 6 3-4 5 4z"/>',
+  email: '<path fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3.5 6h17v12h-17V6zm0 0l8.5 6.5L20.5 6"/>',
+};
+
+function renderSocialLinks(list) {
+  var items = (list || []).filter(function(s) { return s.url && String(s.url).trim(); });
+  if (!items.length) return '';
+  return '<div class="social-links">' + items.map(function(s) {
+    var href = s.key === 'email' ? ('mailto:' + s.url) : s.url;
+    if (!/^(https?:|mailto:)/i.test(String(href).trim())) return '';   // 只放一般網址，javascript: 之類的不輸出
+    var icon = SOCIAL_ICONS[s.key] || '';
+    var brand = /^(facebook|instagram|threads|line)$/.test(s.key);
+    return '<a href="' + esc(href) + '" target="_blank" rel="noopener" class="social-icon si-' + s.key + '"' + (brand ? '' : ' style="background:' + s.color + '"') + ' title="' + esc(s.label) + '" aria-label="' + esc(s.label) + '"' + (s.key === 'line' ? ' data-line' : '') + '><svg viewBox="0 0 24 24" aria-hidden="true">' + icon + '</svg></a>';
+  }).join('') + '</div>';
+}
+
+// 服務說明：每一行換成精緻的線條圖示（取代表情符號）
+var SVC_ICONS = {
+  time:  '<path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="8"/>',
+  video: '<rect x="3" y="7" width="13" height="10" rx="2"/><path d="M16 11l5-3v8l-5-3"/>',
+  camera:'<path d="M4 8h3l2-2h6l2 2h3v10H4z"/><circle cx="12" cy="13" r="3.2"/>',
+  chat:  '<path d="M5 5h14v10H9l-4 4z"/>',
+  pen:   '<path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/>',
+  dot:   '<circle cx="12" cy="12" r="2.5"/>'
+};
+function renderServiceDetail(html) {
+  var lines = String(html).split(/<br\s*\/?>|\n/i).map(function (l) {
+    return l.replace(/<[^>]*>/g, '').replace(/^[\s\u2190-\u2BFF\uFE0F\u200D]+/, '').replace(/^(?:\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|\uD83E[\uDC00-\uDFFF])+\s*/, '').trim();
+  }).filter(Boolean);
+  return '<ul class="svc-list">' + lines.map(function (l) {
+    var k = /分鐘|題數/.test(l) ? 'time' : /面相|相機|照片/.test(l) ? 'camera' : /LINE|語音|通話|Meet/.test(l) ? 'chat' : /視訊|線上/.test(l) ? 'video' : /文字|書面/.test(l) ? 'pen' : 'dot';
+    return '<li><svg viewBox="0 0 24 24" aria-hidden="true">' + SVC_ICONS[k] + '</svg><span>' + esc(l) + '</span></li>';
+  }).join('') + '</ul>';
+}
+
+// 預覽模式（新版後台的設定頁嵌這一頁）用：每段可改的字標上欄位代號，點了就跳回後台那一格；正式頁面也標，不影響顯示
+function dk(k) { return k ? ' data-k="' + k + '"' : ''; }
+var DZ_PREVIEW = /[?&]dzpreview=1(&|$)/.test(location.search) && window.parent !== window;   // 預覽模式（說明在檔案下方）
+function lines_(t) { return String(t || '').split(/\n|<br\s*\/?>/i).map(function (s) { return s.trim(); }).filter(Boolean); }
+var LINE_ATTR = ' target="_blank" rel="noopener" data-line';
+// 介紹影片（大正 11/10 上傳到 YouTube「大正-紫微命理」頻道）
+var VIDEO_VOICE = 'WTGYqHe9-nA', VIDEO_LINE_BOOK = '7ism5VDFHRo';
+var VIDEO_TEXT = 'Ea43vqiVgf0';   // 文字版介紹影片（Shorts）；空的時候會顯示「製作中」圖
+function ytLite(id, ratio, label) {
+  // 11/11 大正：手機上原本要點兩次（第一次載入播放器、第二次才播），改成直接放 YouTube 播放器（捲到附近才載入），點一次就播。
+  // 影片從 YouTube 播，不吃網站流量；用 youtube-nocookie 網域。
+  return '<div class="yt ' + ratio + '"><iframe src="https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?playsinline=1&rel=0&modestbranding=1" title="' + esc(label) + '" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>';
+}
+if (typeof document !== 'undefined' && document.addEventListener) document.addEventListener('click', function (e) {
+  var t = e.target && e.target.closest ? e.target : null; if (!t) return;
+  var y = t.closest('.yt[data-yt]');
+  if (y && !y.querySelector('iframe')) {
+    var f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(y.getAttribute('data-yt')) + '?autoplay=1&playsinline=1&rel=0&modestbranding=1&vq=hd1080';
+    f.title = y.getAttribute('aria-label') || '影片'; f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.allowFullscreen = true;
+    y.appendChild(f); y.removeAttribute('aria-label'); return;
+  }
+});
+
+
+// ── 預約服務諮詢（2026-11-26 大正：取代「諮詢服務」，放在常見問題下面；選精簡款 C，每張卡三行重點；點卡片先到 /voice/、/text/ 動畫介紹頁，那裡的預約按鈕才進表單；下面一張比較表）──
+// 三行重點在後台「設定 → 網站 → 預約服務諮詢」改（serviceRows／textServiceRows，一行一項）。Netlify 預覽網址上文字版卡片先顯示，正式網站照 showTextService
+// 舊連結的錨點搬家了（11/26 首頁改版）：#choose／#service → /services/（#faq 首頁又有了），#rules／#first-time → /voice/
+(function () { try { if (PAGE !== 'home') return; var h = location.hash; var m = { '#choose': '/services/', '#service': '/services/', '#rules': '/voice/#rules', '#first-time': '/voice/' }; if (m[h]) location.replace(m[h]); } catch (e) {} })();
+var PV_TEXT = (function () { try { return /^deploy-preview-/.test(location.hostname); } catch (e) { return false; } })();
+function chooseBlock_(S) {
+  var list = [{ label: S.serviceLabel || '', lk: 'serviceLabel', price: S.servicePrice || '', unit: S.servicePriceUnit || '', rows: lines_(S.serviceRows), rk: 'serviceRows', go: '/voice/', btn: '預約一對一語音諮詢' }];
+  if (SHOW_TEXT_SERVICE || PV_TEXT) list.push({ label: S.textServiceLabel || '', price: S.textServicePrice || '', unit: S.textServicePriceUnit || '', rows: lines_(S.textServiceRows), rk: 'textServiceRows', go: '/text/', btn: S.textServiceBtn || '預約文字版諮詢', pv: !SHOW_TEXT_SERVICE });
+  return '<section id="choose" class="sec section-light choose"><div class="container">' +
+    '<h2 class="section-title"><span class="hl">預約服務諮詢</span></h2>' +
+    '<p class="ch-lead">' + '點一下，先看這個服務怎麼進行，看完就能直接預約。' + '</p>' +
+    '<div class="ch-cmp ch-n' + list.length + '">' + list.map(function (c) {
+      return '<div class="ch-card">' + (c.pv ? '<div class="ch-pv">預覽：文字版開放後才會出現</div>' : '') +
+        '<div class="ch-label"' + (c.lk ? dk(c.lk) : '') + '>' + esc(c.label) + '</div><div class="ch-price">' + esc(c.price) + '</div><div class="ch-unit">' + esc(c.unit) + '</div>' +
+        '<ul class="ch-rows"' + dk(c.rk) + '>' + c.rows.map(function (r) { return '<li>' + esc(r) + '</li>'; }).join('') + '</ul>' +
+        '<a class="btn btn-primary ch-go" href="' + c.go + '">' + esc(c.btn) + '</a></div>';
+    }).join('') + '</div>' + compareBlock_(S, list.length > 1) + '</div></section>';
+}
+// 常見問題：首頁和 /services/ 都放（後台「常見問題」）
+function faqBlock_(S) {
+  return '<section id="faq" class="sec section-white"><div class="container">' +
+  '<div class="eyebrow" style="text-align:center">FAQ</div><h2 class="section-title" style="text-align:center">常見問題</h2>' +
+  '<div class="faq-list">' + (S.faqItems||[]).map(function (f, i) {
+    return '<div class="faq-item"><button type="button" class="faq-q" aria-expanded="false" onclick="var o=this.parentElement.classList.toggle(\'open\');this.setAttribute(\'aria-expanded\',o)"' + dk(f.n && 'faq' + f.n + 'Q') + '>' + esc(f.q) + '</button><div class="faq-a"' + dk(f.n && 'faq' + f.n + 'A') + '>' + esc(f.a) + '</div></div>';
+  }).join('') + '</div>' +
+'</div></section>';
+}
+// 比較表：後台 compareRows 一行一列，用「｜」分成：項目｜一對一語音｜文字版｜AI 算命。文字版沒開放時那一欄不顯示
+function compareBlock_(S, withText) {
+  var rows = lines_(S.compareRows).map(function (l) { return l.split(/[｜|]/).map(function (x) { return x.trim(); }); }).filter(function (r) { return r.length >= 4 && r[0]; });
+  if (!rows.length) return '';
+  var cols = [{ i: 1, name: '一對一語音諮詢', sub: S.servicePrice || '', me: true }];
+  if (withText) cols.push({ i: 2, name: '文字版諮詢', sub: S.textServicePrice || '', me: true });
+  cols.push({ i: 3, name: 'AI 算命網站', sub: '各網站不同', ai: true });
+  var head = '<div class="cp-row cp-head"><div class="cp-k"></div>' + cols.map(function (c) { return '<div class="cp-c' + (c.ai ? ' cp-ai' : '') + '"><b>' + esc(c.name) + '</b><small>' + esc(c.sub) + '</small></div>'; }).join('') + '</div>';
+  var body = rows.map(function (r) {
+    return '<div class="cp-row"><div class="cp-k">' + esc(r[0]) + '</div>' + cols.map(function (c) { return '<div class="cp-c' + (c.ai ? ' cp-ai' : '') + '"><em>' + esc(c.name) + '</em>' + esc(r[c.i] || '—') + '</div>'; }).join('') + '</div>';
+  }).join('');
+  return '<div class="cp"' + dk('compareRows') + '><h3 class="cp-title"' + dk('compareTitle') + '>' + esc(S.compareTitle || '') + '</h3><div class="cp-tbl cp-n' + cols.length + '">' + head + body + '</div></div>';
+}
+// ── 「你是不是也卡在這邊？」問題卡片（2026-11-25 大正：參考別人網站的問題卡片）──
+// 文字在後台「首頁：你是不是也卡在這邊」改；後台沒送來時用下面的預設
+var STUCK_DEFAULT = [
+  ['想問感情，又怕被貼標籤', '「命不好」「沒正緣」這種話，聽完只會更慌。'],
+  ['看過別人的命盤解說，還是不知道自己怎麼辦', '網路上的說法很多，但沒有一句是對著你的處境說的。'],
+  ['想知道今年適不適合動一動，又不想只聽一句好或不好', '你要的是選項和代價，不是一句結論。'],
+  ['事情很多想問，又怕時間不夠', '60 分鐘不限題數，一件一件慢慢問。']
+];
+function stuckBlock_(S) {
+  var hasCfg = false, cards = [], i;
+  for (i = 1; i <= 6; i++) if (S['stuck' + i + 'Q'] !== undefined) hasCfg = true;
+  if (hasCfg) { for (i = 1; i <= 6; i++) { var q = String(S['stuck' + i + 'Q'] || '').trim(); if (q) cards.push({ n: i, q: q, a: String(S['stuck' + i + 'A'] || '').trim() }); } }
+  else cards = STUCK_DEFAULT.map(function (c, j) { return { n: j + 1, q: c[0], a: c[1] }; });
+  if (!cards.length) return '';
+  var title = S.stuckTitle === undefined ? '你是不是也卡在這邊？' : S.stuckTitle;
+  var line = S.stuckLine === undefined ? '這些，都可以好好聊。' : S.stuckLine;
+  return '<section id="stuck" class="sec section-white stuck"><div class="container">' +
+    (title ? '<h2 class="section-title"' + dk('stuckTitle') + '><span class="hl">' + esc(title) + '</span></h2>' : '') +
+    '<div class="pains">' + cards.map(function (c) { return '<div class="pain"' + dk('stuck' + c.n + 'Q') + '>' + esc(c.q) + (c.a ? '<small' + dk('stuck' + c.n + 'A') + '>' + esc(c.a) + '</small>' : '') + '</div>'; }).join('') + '</div>' +
+    (line ? '<p class="stuck-line"' + dk('stuckLine') + '>' + esc(line) + '</p>' : '') + '</div></section>';
+}
+function renderSite(S) {
+  if (PAGE === 'home') {   // 標題、說明、canonical 只有首頁用後台的；/services/ 用自己的
+    document.title = S.siteTitle || '';
+    try { document.querySelector('meta[name="description"]').content = S.siteDescription || ''; } catch(e){}
+    if (S.siteUrl) { try { document.querySelector('link[rel="canonical"]').href = S.siteUrl; } catch(e){} }
+  }
+  var heroDesc = (S.heroDesc || '').replace(/\\n/g, '\n').replace(/<br\s*\/?>/gi, '\n').split('\n').map(esc).join('<br>');
+  var aboutDo = S.aboutDo || [], aboutDont = S.aboutDont || [];
+  var fitYes = lines_(S.fitYes), fitNo = lines_(S.fitNo);
+  var lead = S.aboutLead || (S.aboutParagraphs || [])[0] || '';
+  var photo = S.aboutPhoto || '';
+  var STAT_ICONS = ['<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', '<rect x="3" y="3" width="18" height="18"/><path d="M7.5 3v18M16.5 3v18M3 7.5h18M3 16.5h18"/>', '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4.6A8 8 0 1 1 21 12z"/>'];
+  var stats = (S.heroInfoCard || []).map(function (r, i) { return '<div class="st"><svg viewBox="0 0 24 24" aria-hidden="true">' + STAT_ICONS[i % 3] + '</svg><b' + dk(r.n && 'heroCard' + r.n + 'Value') + '>' + esc(r.value) + '</b><span' + dk(r.n && 'heroCard' + r.n + 'Label') + '>' + esc(r.label) + '</span></div>'; }).join('');
+
+  var LIB_SEEN = libSeen_();
+  document.getElementById('app').innerHTML =
+'<nav class="nav"><div class="container nav-inner">' +
+  '<a class="nav-brand" href="/">' + esc(S.brandName||'') + '<i>·</i>命理諮詢</a>' +
+  '<div class="nav-links"><a href="/about/">關於大正</a><a href="/blog/">命理文章</a><a href="/member/">會員中心</a>' +
+    (TESTIMONIALS_URL ? '<a href="' + TESTIMONIALS_URL + '">顧客好評</a>' : '') + '</div>' +
+  '<a href="/services/" class="nav-cta">立即預約服務諮詢</a>' +
+'</div></nav>' +
+
+'<main>' +
+(PAGE === 'services' ?
+/* 預約服務諮詢頁（/services/）：卡片＋比較表 → 常見問題 → 還在猶豫 */
+chooseBlock_(S) +
+faqBlock_(S) +
+
+'<section class="sec cta section-dark"><div class="container">' +
+  '<h2 class="section-title"' + dk('ctaTitle') + '>' + esc(S.ctaTitle||'') + '</h2><p' + dk('ctaDesc') + '>' + esc(S.ctaDesc||'') + '</p>' +
+  '<div class="btns"><a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-warm">先加入 LINE 聊聊</a></div>' +
+'</div></section>'
+:
+/* 首頁：開場 → 卡住的事 → 關於大正 → 預約流程（動畫） → 最新文章 → 還在猶豫（11/26 大正：第一次諮詢、規則、常見問題、服務卡片移到 /voice/、/services/） */
+'<section class="hero hero-paper"><div class="container hero-inner"><div>' +
+  (S.brandBadge ? '<div class="hero-badge"' + dk('brandBadge') + '>' + esc(S.brandBadge) + '</div>' : '') +
+  '<h1><span class="hero-eyebrow"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20"/><path d="M7 2v20M17 2v20M2 7h20M2 17h20"/></svg>' + '<span' + dk('brandTitle') + '>' + esc(S.brandTitle||'') + '</span></span><span' + dk(S.brandTagline ? 'brandTagline' : 'brandTitle') + '>' + esc(S.brandTagline||S.brandTitle||'') + '</span></h1>' +
+  '<p class="hero-desc"' + dk('heroDesc') + '>' + heroDesc + '</p>' +
+  (photo ? '<div class="hero-me"><img src="' + esc(photo) + '" alt="" width="60" height="60">' + esc(S.heroMeLine || '我是大正，一隻會算命的羊。') + '</div>' : '') +
+  '<div class="btns"><a href="' + esc(S.lineUrl||'') + '"' + LINE_ATTR + ' class="btn btn-primary">先加入 LINE 聊聊</a></div>' +
+  '</div>' + (photo ? '<div class="hero-goat"><img src="' + esc(photo) + '" alt="' + esc(S.aboutName||'大正') + '的頭像" width="280" height="280"></div>' : '') +
+'</div></section>' +
+'<section class="stats-row" aria-label="大正的諮詢經驗"><div class="container">' + stats + '<a class="stat-lib stat-lib-row" href="/library/"><img src="/images/library-book-icon.png" alt="" width="18" height="25">' + (LIB_SEEN ? '回命運書庫逛逛' : '逛逛命運書庫') + '</a></div></section>' +
+
+stuckBlock_(S) +
+
+/* 命運書庫（11/11 大正）：首頁不放大卡片（主要放在 LINE），數字列最後留一個小連結 */
+
+
+'<section id="about" class="sec section-light"><div class="container about-inner about-solo">' +
+  // 11/11 大正：頭像和「一隻會算命的羊」上面開場已經有了，這裡不再放頭像；手機上標題也藏起來（開場那行已經說了）
+  '<div style="min-width:0">' +
+    '<div class="eyebrow">ABOUT</div><h2 class="section-title about-title"' + dk('aboutTitle') + '>' + esc(S.aboutTitle||'') + '</h2>' +
+    (lead ? '<p class="about-lead"' + dk(S.aboutLead ? 'aboutLead' : 'aboutP1') + '>' + esc(lead) + '</p>' : '') +
+    (aboutDo.length || aboutDont.length ? '<div class="dd">' +
+      (aboutDo.length ? '<div class="do"><h4>我會做的事</h4><ul>' + aboutDo.map(function (i, j) { return '<li' + dk(S.aboutDoK && S.aboutDoK[j]) + '>' + esc(i) + '</li>'; }).join('') + '</ul></div>' : '') +
+      (aboutDont.length ? '<div class="dont"><h4>我不會做的事</h4><ul>' + aboutDont.map(function (i, j) { return '<li' + dk(S.aboutDontK && S.aboutDontK[j]) + '>' + esc(i) + '</li>'; }).join('') + '</ul></div>' : '') + '</div>' : '') +
+    (fitYes.length || fitNo.length ? '<div class="fit">' +
+      (fitYes.length ? '<div' + dk('fitYes') + '><h4>適合找我的人</h4><ul>' + fitYes.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') + '</ul></div>' : '') +
+      (fitNo.length ? '<div' + dk('fitNo') + '><h4>可能不適合的人</h4><ul>' + fitNo.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') + '</ul></div>' : '') + '</div>' : '') +
+    '<a class="more" href="/about/">更多關於大正與諮詢風格 →</a>' +
+  '</div>' +
+'</div></section>' +
+
+'<section id="process"><div id="dzProcess"></div></section>' +
+
+/* 11/26 大正：首頁不放最新文章（只在命理文章頁），這裡改放常見問題 */
+faqBlock_(S) +
+
+'<section class="sec cta section-dark"><div class="container">' +
+  '<h2 class="section-title"' + dk('ctaTitle') + '>' + esc(S.ctaTitle||'') + '</h2><p' + dk('ctaDesc') + '>' + esc(S.ctaDesc||'') + '</p>' +
+'</div></section>'
+) +
+'</main>' +
+
+'<footer class="footer"><div class="container">' + renderSocialLinks(S.socialLinks) +
+  '<p><span' + dk('footerText') + '>' + (DZ_PREVIEW ? esc(S.footerText||'') : (S.footerText||'')) + '</span>　·　<a href="/privacy-policy/" style="color:inherit">隱私權政策</a></p>' +
+'</div></footer>' +
+
+(PAGE === 'services' ? '' : '<div class="sticky-cta cta-night" id="stickyCta"><div class="when" id="ctaWhen"><span>最快可約時間</span><b>查詢中…</b></div><a href="/voice/" class="btn btn-gold">預約諮詢</a><button type="button" class="x" id="stickyClose" aria-label="關閉預約列">×</button></div>');
+  if (PAGE !== 'services') setupStickyCta_();
+  if (typeof window !== 'undefined' && window.DZStory) window.DZStory.mount();   // 首頁「預約流程」的動畫（sales.js）
+}
+
+// 底部固定預約列（手機貼底、電腦置中浮動）：捲過開場才出現，按 × 關掉後這次瀏覽不再出現
+var stickyClosed_ = false;
+// 「最早可約」：向預約系統要即時空檔的第一天；讀不到、逾時或格式不對就維持顯示價格，不寫死日期
+var nextSlot_ = null, nextSlotAsked_ = false;
+// 2026-11-03 大正：底部不放價格（畫面裡已經出現很多次），直接給「最快可約」的日期＋時間，客人一看就知道最快什麼時候能聊
+function nextSlotTime_(iso) {
+  try { var d = new Date(iso); if (isNaN(d)) return ''; return new Intl.DateTimeFormat('zh-TW', { timeZone: 'Asia/Taipei', hour: '2-digit', minute: '2-digit', hour12: false }).format(d).replace(/^24/, '00'); } catch (e) { return ''; }
+}
+function showNextSlot_(failed) {
+  var w = document.getElementById('ctaWhen'); if (!w) return;
+  if (nextSlot_ && nextSlot_.ok && nextSlot_.label) w.innerHTML = '<span>最快可約時間</span><b>' + esc(String(nextSlot_.label).replace(/（農曆.*?）/, '').replace('（週', '（') + ' ' + nextSlotTime_(nextSlot_.iso)).trim() + '</b>';
+  else if (failed) w.innerHTML = '<span>最快可約時間</span><b>點右邊看所有空檔</b>';
+}
+function askNextSlot_() {
+  if (DZ_PREVIEW || nextSlotAsked_ || !SITE.bookingFormUrl || typeof document.createElement !== 'function' || !document.head) return;
+  nextSlotAsked_ = true;
+  var done = false, give = setTimeout(function () { if (!done) showNextSlot_(true); }, 8000);   // 8 秒還沒回來就先說「點右邊看空檔」
+  window._nextSlotCb = function (d) { done = true; clearTimeout(give); if (d && d.ok && typeof d.label === 'string' && d.label.length < 40) { nextSlot_ = d; showNextSlot_(); } else showNextSlot_(true); };
+  var s = document.createElement('script'); s.async = true; s.src = SITE.bookingFormUrl + '?page=nextSlot&callback=_nextSlotCb';
+  s.onerror = function () { done = true; clearTimeout(give); nextSlot_ = null; showNextSlot_(true); };
+  document.head.appendChild(s);
+}
+function setupStickyCta_() {
+  var bar = document.getElementById('stickyCta'), hero = document.querySelector('.hero');
+  if (!bar || !hero) return;
+  showNextSlot_(); askNextSlot_();
+  document.getElementById('stickyClose').onclick = function () { stickyClosed_ = true; bar.classList.remove('show'); };
+  // 2026-11-03 大正：手機上預約列跟著捲動一下出現一下消失，會擋視線。改成：捲過開場出現一次之後就固定在底部，不再進進出出（按 × 才收起）
+  var past = function (h) { return h.getBoundingClientRect().bottom < 0; };
+  var upd = function () { if (!stickyClosed_ && past(hero)) bar.classList.add('show'); };
+  if (!window.__stickyBound) { window.addEventListener('scroll', function () { var b = document.getElementById('stickyCta'), h = document.querySelector('.hero'); if (b && h && !stickyClosed_ && past(h)) b.classList.add('show'); }, { passive: true }); window.__stickyBound = true; }
+  upd();
+}
+
+// 先用 SITE 預設值立即渲染（SEO + 快速顯示）；建置時已預先寫好內容的話（scripts/prerender-home.js），就先沿用，只接上互動功能
+if (document.getElementById('app').children && document.getElementById('app').children.length) { setupStickyCta_(); if (window.DZStory) window.DZStory.mount(); } else renderSite(SITE);
+
+// 後台資料（攤平的欄位）→ 首頁用的格式。正式頁面和預覽模式共用
+function mergeSiteConfig_(data) {
+    var merged = {};
+    for (var k in SITE) merged[k] = SITE[k];
+    for (var k in data) if (data[k] !== '' && data[k] !== undefined) merged[k] = data[k];
+
+    // 「關於我」三段文字（後台是拆成 aboutP1/aboutP2/aboutP3 三個欄位存的）
+    if (data.aboutP1 || data.aboutP2 || data.aboutP3) {
+      merged.aboutParagraphs = [data.aboutP1, data.aboutP2, data.aboutP3].filter(Boolean);
+    }
+
+    // 「我會做的事／不會做的事」（後台是 aboutDo1~4／aboutDont1~4 四個欄位存的，留空的那格不會出現在清單裡）
+    var aboutDoK = ['aboutDo1', 'aboutDo2', 'aboutDo3', 'aboutDo4'].filter(function (k) { return data[k]; }), aboutDo = aboutDoK.map(function (k) { return data[k]; });
+    if (aboutDo.length) { merged.aboutDo = aboutDo; merged.aboutDoK = aboutDoK; }
+    var aboutDontK = ['aboutDont1', 'aboutDont2', 'aboutDont3', 'aboutDont4'].filter(function (k) { return data[k]; }), aboutDont = aboutDontK.map(function (k) { return data[k]; });
+    if (aboutDont.length) { merged.aboutDont = aboutDont; merged.aboutDontK = aboutDontK; }
+
+    // 我的諮詢風格（後台 style1~3 的 Title/Sub/Desc，標題留空代表這張不顯示）
+    var styleItems = [];
+    for (var si = 1; si <= 3; si++) {
+      var st = data['style' + si + 'Title'];
+      if (st) styleItems.push({ title: st, sub: data['style' + si + 'Sub'] || '', desc: data['style' + si + 'Desc'] || '' });
+    }
+    if (styleItems.length) merged.styleItems = styleItems;
+
+    // Hero 資訊卡（後台開了 5 格 heroCard1Label/Value ~ heroCard5Label/Value，標籤跟內容都填了才算一格）
+    var heroCards = [];
+    for (var i = 1; i <= 5; i++) {
+      var label = data['heroCard' + i + 'Label'], value = data['heroCard' + i + 'Value'];
+      if (label && value) heroCards.push({ label: label, value: value, n: i });
+    }
+    if (heroCards.length) merged.heroInfoCard = heroCards;
+
+
+
+
+    // 常見問題（後台開了 8 格，問題留空代表這格不使用）
+    var faqs = [];
+    for (var i = 1; i <= 8; i++) {
+      var q = data['faq' + i + 'Q'];
+      if (q) faqs.push({ q: q, a: data['faq' + i + 'A'] || '', n: i });
+    }
+    if (faqs.length) merged.faqItems = faqs;
+
+    // 社群連結（後台用 social_facebook／social_instagram... 這種攤平欄位存網址，key／label／color 還是用網頁預設的）
+    merged.socialLinks = (SITE.socialLinks || []).map(function (s) {
+      var url = data['social_' + s.key];
+      return url ? Object.assign({}, s, { url: url }) : s;
+    });
+
+    return merged;
+}
+
+// 預覽模式（?dzpreview=1）：新版後台的設定頁把這一頁嵌進來，用還沒存的草稿畫出首頁。
+// 不讀後台資料、不查空檔；只接受「嵌我的那一頁」傳來的資料；點到有欄位代號的字，告訴後台是哪一格；連結一律不跳走。
+if (DZ_PREVIEW) {
+  document.documentElement.classList.add('dz-preview');
+  var pst = document.createElement('style');
+  pst.textContent = '.dz-preview [data-k]{cursor:pointer;outline:1px dashed transparent;outline-offset:3px;border-radius:3px;transition:outline-color .15s,background .15s}.dz-preview [data-k]:hover{outline-color:#c99a45}.dz-preview [data-k].dz-lit{background:rgba(201,154,69,.25);outline-color:#c99a45}.dz-preview .sticky-cta{display:none!important}';
+  document.head.appendChild(pst);
+  // 只接受大正預約系統後台這一個 Apps Script 的網頁來源（2026-10-28 從正式預約頁核對）；本機測試另外允許 127.0.0.1／localhost
+  // 預約系統若換成新的 Apps Script 專案，網址會變，要回來更新這一行（變了的話預覽只是不會動，不會放行別人）
+  var DZ_ADMIN_ORIGINS = ['https://n-zsa5kblf6utdjampxzvdtwmrj3x3y4uiblx5uwq-0lu-script.googleusercontent.com'];
+  var dzTrusted = function (o) { return DZ_ADMIN_ORIGINS.indexOf(o) >= 0 || (/^(127\.0\.0\.1|localhost)$/.test(location.hostname) && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(o)); };
+  // 只收網站設定會用到的欄位名稱、每欄最多 4000 字、整包最多 400 欄
+  var DZ_KEY_RE = /^(aboutP[1-3]|aboutDo[1-4]|aboutDont[1-4]|style[1-3](Title|Sub|Desc)|heroCard[1-5](Label|Value)|(sv|hp)[A-Za-z0-9]{2,20}|processStep[1-6](Title|Desc|Done)|note[1-6](Title|Desc)|faq[1-8][QA]|social_[a-z]{1,20})$/;
+  var dzKeyOk = function (k) { return typeof k === 'string' && k.length <= 40 && (DZ_KEY_RE.test(k) || (Object.prototype.hasOwnProperty.call(SITE, k) && typeof SITE[k] !== 'object') || !!document.querySelector('[data-k="' + k.replace(/[^\w]/g, '') + '"]')); };
+  var dzValOk = function (v) { return typeof v === 'boolean' || (typeof v === 'number' && isFinite(v)) || (typeof v === 'string' && v.length <= 4000); };
+  var dzParent = null;   // 第一次收到合格資料的來源；點字只回傳給它
+  window.addEventListener('message', function (e) {
+    if (e.source !== window.parent || !dzTrusted(e.origin)) return;
+    var m = e.data;
+    if (!m || typeof m !== 'object' || m.type !== 'dz-preview') return;
+    dzParent = e.origin;
+    if (m.data && typeof m.data === 'object' && !Array.isArray(m.data) && Object.keys(m.data).length <= 400 && JSON.stringify(m.data).length < 200000) {
+      var d = {}; Object.keys(m.data).forEach(function (k) { if (dzKeyOk(k) && dzValOk(m.data[k])) d[k] = m.data[k]; });
+      if (window.DZStory) window.DZStory.preview(d);
+      renderSite(mergeSiteConfig_(d));
+    }
+    if (typeof m.lit === 'string') {
+      var on = document.querySelectorAll('.dz-lit'); for (var i = 0; i < on.length; i++) on[i].classList.remove('dz-lit');
+      var t = document.querySelector('[data-k="' + m.lit.replace(/[^\w]/g, '') + '"]');
+      if (t) {
+        var fq = t.closest('.faq-item'); if (fq && !fq.classList.contains('open')) { fq.classList.add('open'); var qb = fq.querySelector('.faq-q'); if (qb) qb.setAttribute('aria-expanded', 'true'); }   // 常見問題的答案平常收著，要先展開才看得到
+        t.classList.add('dz-lit'); if (m.scroll) t.scrollIntoView({ block: 'center' });
+      }
+    }
+  });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a,button'); if (a && !(a.classList && a.classList.contains('faq-q'))) e.preventDefault();
+    var el = e.target.closest && e.target.closest('[data-k]');
+    if (el && dzParent) { e.preventDefault(); window.parent.postMessage({ type: 'dz-pick', k: el.getAttribute('data-k') }, dzParent); }
+  }, true);
+  window.parent.postMessage({ type: 'dz-ready' }, '*');   // 只說「我準備好了」，不帶任何資料
+}
+
+// 背景載入試算表最新資料，有更新就重新渲染（不用重新部署 Netlify）
+(function() {
+  if (DZ_PREVIEW) return;
+  var apiBase = SITE.bookingFormUrl;
+  if (!apiBase || apiBase === 'YOUR_APPS_SCRIPT_URL') return;
+  var s = document.createElement('script');
+  s.src = apiBase + '?page=siteConfig&callback=_siteConfigCb';
+  window._siteConfigCb = function(data) {
+    if (!data) return;
+    if (window.DZStory) window.DZStory.apply(data);
+    renderSite(mergeSiteConfig_(data));
+  };
+  document.body.appendChild(s);
+})();
+</script>
+</body>
+</html>
