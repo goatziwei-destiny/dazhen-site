@@ -260,7 +260,7 @@ if (CFG.mode === 'home') {
   var el = document.getElementById('dzProcess'); if (!el) return;
   stages.forEach(function (s) { s.alive = false; }); stages = [];
   var mob = mq.matches; lastMob = mob;
-  el.innerHTML = '<div class="sp sp-home sp-proc"><div class="wrap">' + T('hpProcTitle', 'h2').replace('<h2 ', '<h2 class="section-title" ') + T('hpProcLead', 'p').replace('<p ', '<p class="lead" ') + (mob ? '' : '<p class="sp-hint">往下捲，左邊的手機會跟著播。</p>') + '</div>' +
+  el.innerHTML = '<div class="sp sp-home sp-proc"><div class="wrap">' + '<h2 class="section-title"><span class="hl">' + T('hpProcTitle') + '</span></h2>' + T('hpProcLead', 'p').replace('<p ', '<p class="lead" ') + (mob ? '' : '<p class="sp-hint">往下捲，左邊的手機會跟著播。</p>') + '</div>' +
    '<div class="wrap"><div class="story"><div class="stick" id="stC"><div class="ph"></div><div class="cap2"></div></div><div class="col">' +
    [1, 2, 3, 4].map(function (n) { return '<div class="ssec" data-ch="' + (n - 1) + '"><div class="mini" data-mini="' + (n - 1) + '"></div><ol class="steps pstep"><li><div class="sn"><small>STEP</small><b>' + n + '</b></div><div class="bx">' + T('hpStep' + n + 'T', 'b') + T('hpStep' + n + 'D') + '</div></li></ol></div>'; }).join('') +
    '</div></div></div>' +
