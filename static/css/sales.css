@@ -354,3 +354,13 @@ html.pg .tp{scroll-snap-stop:always}
  .sp .hsteps li:not(:last-child)::after{left:calc(50% + 44px);right:auto;top:34px;bottom:auto;width:calc(100% - 68px + 20px - 20px);border-left:0;border-top:2px dashed rgba(201,154,69,.7)}
  .sp .hsteps .bx{width:100%}
 }
+
+/* 首頁預約流程・手機版：一支動畫從頭播到尾，下面只放步驟名稱和進度 */
+.sp-proc .mph{display:flex;flex-direction:column;align-items:center;padding-top:8px}
+.sp-proc .mcap{margin-top:16px;text-align:center;min-height:56px}
+.sp-proc .mcap>b{display:block;font-size:18px;color:var(--navy)}
+.sp-proc .mcap .pbar2{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px}
+.sp-proc .mcap .pseg{display:flex;gap:6px;width:200px}
+.sp-proc .mcap .pseg i{flex:1;height:5px;border-radius:5px;background:rgba(27,40,69,.14);border-top:0}
+.sp-proc .mcap .pseg i.on{background:var(--brass)}
+.sp-proc .mcap .pnum{font-size:13px;color:var(--muted)}

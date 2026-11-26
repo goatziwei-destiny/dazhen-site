@@ -283,6 +283,14 @@ if (CFG.mode === 'home') {
   var el = document.getElementById('dzProcess'); if (!el) return;
   stages.forEach(function (s) { s.alive = false; }); stages = [];
   var mob = mq.matches; lastMob = mob;
+  if (mob) {   /* 手機（11/26 大正）：只放一支手機動畫，四步從頭播到尾，不放文字說明卡 */
+   el.innerHTML = '<div class="sp sp-home sp-proc"><div class="wrap">' + '<h2 class="section-title"><span class="hl">' + T('hpProcTitle') + '</span></h2>' + T('hpProcLead', 'p').replace('<p ', '<p class="lead" ') + '</div>' +
+    '<div class="wrap mph"><div class="mphone"></div><div class="mcap"></div></div>' +
+    '<div class="wrap pgo"><a class="btn btn-brass" href="/services/">立即預約服務諮詢</a></div></div>';
+   var mst = new Stage($('.mphone', el), { pw: 270, advance: true, scene: sceneP, chs: CH_P }); stages.push(mst);
+   mst.on(function (ch) { $('.mcap', el).innerHTML = '<b>' + CH_P[ch].title + '</b><div class="pbar pbar2"><div class="pseg">' + CH_P.map(function (_, i) { return '<i class="' + (i <= ch ? 'on' : '') + '"></i>'; }).join('') + '</div><b class="pnum">' + (ch + 1) + '／' + CH_P.length + '</b></div>'; });
+   return;
+  }
   el.innerHTML = '<div class="sp sp-home sp-proc"><div class="wrap">' + '<h2 class="section-title"><span class="hl">' + T('hpProcTitle') + '</span></h2>' + T('hpProcLead', 'p').replace('<p ', '<p class="lead" ') + '</div>' +
    '<div class="wrap"><div class="story"><div class="stick" id="stC"><div class="ph"></div><div class="cap2"></div></div><div class="col pcol"><div class="pin">' + (mob ? '' : '<div class="pbar"><span>請捲動滑鼠</span><div class="pseg">' + [0, 1, 2, 3].map(function () { return '<i></i>'; }).join('') + '</div><b class="pnum">1／4</b></div>') +
    [1, 2, 3, 4].map(function (n) { return '<div class="ssec" data-ch="' + (n - 1) + '"><div class="mini" data-mini="' + (n - 1) + '"></div><ol class="steps pstep"><li><div class="sn"><small>STEP</small><b>' + n + '</b></div><div class="bx">' + T('hpStep' + n + 'T', 'b') + T('hpStep' + n + 'D') + '</div></li></ol></div>'; }).join('') +
