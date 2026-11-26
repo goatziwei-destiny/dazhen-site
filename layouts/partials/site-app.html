@@ -630,9 +630,11 @@ function stuckBlock_(S) {
     (line ? '<p class="stuck-line"' + dk('stuckLine') + '>' + esc(line) + '</p>' : '') + '</div></section>';
 }
 function renderSite(S) {
-  document.title = S.siteTitle || '';
-  try { document.querySelector('meta[name="description"]').content = S.siteDescription || ''; } catch(e){}
-  if (S.siteUrl) { try { document.querySelector('link[rel="canonical"]').href = S.siteUrl; } catch(e){} }
+  if (PAGE === 'home') {   // 標題、說明、canonical 只有首頁用後台的；/services/ 用自己的
+    document.title = S.siteTitle || '';
+    try { document.querySelector('meta[name="description"]').content = S.siteDescription || ''; } catch(e){}
+    if (S.siteUrl) { try { document.querySelector('link[rel="canonical"]').href = S.siteUrl; } catch(e){} }
+  }
   var heroDesc = (S.heroDesc || '').replace(/\\n/g, '\n').replace(/<br\s*\/?>/gi, '\n').split('\n').map(esc).join('<br>');
   var aboutDo = S.aboutDo || [], aboutDont = S.aboutDont || [];
   var fitYes = lines_(S.fitYes), fitNo = lines_(S.fitNo);
