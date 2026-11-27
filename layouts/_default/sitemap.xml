@@ -1,0 +1,22 @@
+{{- /*
+  網站地圖（覆寫 Hugo 預設樣板）：只列「允許搜尋引擎收錄」的頁面。
+  凡是頁面自己標了 noindex、尚未開放的文字版諮詢頁、沒有文章的空主題頁，
+  這些頁面會輸出 <meta name="robots" content="noindex">（見 baseof.html／sales/single.html），
+  就不該再出現在 sitemap，免得兩邊互相矛盾。判斷條件要和這兩個檔案保持一致。
+*/ -}}
+{{ printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  {{- range .Data.Pages }}
+    {{- $emptyTerm := and (eq .Kind "term") (in (slice "topics" "subtopics") .Data.Plural) (not .Pages) }}
+    {{- $textClosed := and (eq .Params.salesKind "text") (not site.Params.showTextService) }}
+    {{- if and .Permalink (not .Sitemap.Disable) (not .Params.noindex) (not $emptyTerm) (not $textClosed) }}
+  <url>
+    <loc>{{ .Permalink }}</loc>{{ if not .Lastmod.IsZero }}
+    <lastmod>{{ safeHTML (.Lastmod.Format "2006-01-02T15:04:05-07:00") }}</lastmod>{{ end }}{{ with .Sitemap.ChangeFreq }}
+    <changefreq>{{ . }}</changefreq>{{ end }}{{ if ge .Sitemap.Priority 0.0 }}
+    <priority>{{ .Sitemap.Priority }}</priority>{{ end }}
+  </url>
+    {{- end }}
+  {{- end }}
+</urlset>

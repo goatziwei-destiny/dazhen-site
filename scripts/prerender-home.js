@@ -13,14 +13,19 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
-const FILE = path.join(__dirname, '..', 'public', 'index.html');
+const PUBLIC = path.join(__dirname, '..', 'public');
+// 要預先寫入的頁面：首頁，以及跟首頁共用同一份程式的「預約服務諮詢」頁（/services/）
+const TARGETS = [
+  { file: path.join(PUBLIC, 'index.html'), pathname: '/', label: '首頁' },
+  { file: path.join(PUBLIC, 'services', 'index.html'), pathname: '/services/', label: '預約服務諮詢頁' },
+];
 
 function escHtml(s) {
   return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 function escAttr(s) { return escHtml(s).replace(/"/g, '&quot;'); }
 
-function makeSandbox() {
+function makeSandbox(pathname) {
   const app = { innerHTML: '' };
   const metaDesc = { content: '' }, canonical = { href: '' };
   const document = {
@@ -38,7 +43,7 @@ function makeSandbox() {
   };
   const window = { addEventListener: () => {} };
   // 首頁程式會讀 navigator（判斷是不是在 LINE 裡）、location.search、localStorage（看過命運書庫沒）；沒有的話整段會失敗、首頁變成空白給搜尋引擎
-  const sandbox = { document, window, console, setTimeout: () => 0, location: { pathname: '/', search: '' }, navigator: { userAgent: '' }, localStorage: { getItem: () => null, setItem: () => {} } };
+  const sandbox = { document, window, console, setTimeout: () => 0, location: { pathname: pathname || '/', search: '' }, navigator: { userAgent: '' }, localStorage: { getItem: () => null, setItem: () => {} } };
   sandbox.window = sandbox;  // 頁面程式把 window._siteConfigCb 掛在 window 上
   sandbox.window.document = document;
   return { sandbox, app, metaDesc };
@@ -57,19 +62,21 @@ async function fetchSiteConfig(url) {
   } finally { clearTimeout(timer); }
 }
 
-(async () => {
+async function prerender(target) {
+  const FILE = target.file;
+  const name = target.label;
   let html;
-  try { html = fs.readFileSync(FILE, 'utf8'); } catch (e) { console.warn('[prerender] 找不到 public/index.html，略過'); return; }
+  try { html = fs.readFileSync(FILE, 'utf8'); } catch (e) { console.warn('[prerender] 找不到 ' + path.relative(PUBLIC, FILE) + '，略過'); return; }
   const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
   const code = scripts.find((s) => s.includes('const SITE = {') && s.includes('function renderSite'));
-  if (!code) { console.warn('[prerender] 找不到首頁程式，略過'); return; }
+  if (!code) { console.warn('[prerender] 找不到' + name + '程式，略過'); return; }
 
-  const { sandbox, app, metaDesc } = makeSandbox();
+  const { sandbox, app, metaDesc } = makeSandbox(target.pathname);
   try {
     vm.createContext(sandbox);
     // const/function 宣告留在 context 裡，最後把 SITE 交出來
     vm.runInContext(code + '\n;this.__SITE = SITE;', sandbox, { timeout: 5000 });
-  } catch (e) { console.warn('[prerender] 執行首頁程式失敗，保留原檔：' + e.message); return; }
+  } catch (e) { console.warn('[prerender] 執行' + name + '程式失敗，保留原檔：' + e.message); return; }
 
   let source = '預設文字';
   try {
@@ -80,7 +87,7 @@ async function fetchSiteConfig(url) {
     }
   } catch (e) { console.warn('[prerender] 抓不到後台網站內容，改用預設文字：' + e.message); }
 
-  if (!app.innerHTML || app.innerHTML.length < 500) { console.warn('[prerender] 畫出來的內容太少，保留原檔'); return; }
+  if (!app.innerHTML || app.innerHTML.length < 500) { console.warn('[prerender] ' + name + '畫出來的內容太少，保留原檔'); return; }
 
   let out = html.replace('<div id="app"></div>', () => '<div id="app">' + app.innerHTML + '</div>');
   if (sandbox.document.title) out = out.replace(/<title>[\s\S]*?<\/title>/, () => '<title>' + escHtml(sandbox.document.title) + '</title>');
@@ -90,5 +97,11 @@ async function fetchSiteConfig(url) {
   }
   if (sandbox.document.title) out = out.replace(/<meta property="og:title" content="[^"]*">/, () => '<meta property="og:title" content="' + escAttr(sandbox.document.title) + '">');
   fs.writeFileSync(FILE, out);
-  console.log('[prerender] 首頁已預先寫入（' + source + '），' + app.innerHTML.length + ' 字元');
-})().catch((e) => console.warn('[prerender] 未預期的錯誤，保留原檔：' + e.message));
+  console.log('[prerender] ' + name + '已預先寫入（' + source + '），' + app.innerHTML.length + ' 字元');
+}
+
+(async () => {
+  for (const t of TARGETS) {
+    try { await prerender(t); } catch (e) { console.warn('[prerender] ' + t.label + '發生未預期的錯誤，保留原檔：' + e.message); }
+  }
+})();
