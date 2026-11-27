@@ -581,7 +581,7 @@ function chooseBlock_(S) {
   var list = [{ label: S.serviceLabel || '', lk: 'serviceLabel', price: S.servicePrice || '', unit: S.servicePriceUnit || '', rows: lines_(S.serviceRows), rk: 'serviceRows', go: '/voice/', btn: '預約一對一語音諮詢' }];
   if (SHOW_TEXT_SERVICE || PV_TEXT) list.push({ label: S.textServiceLabel || '', price: S.textServicePrice || '', unit: S.textServicePriceUnit || '', rows: lines_(S.textServiceRows), rk: 'textServiceRows', go: '/text/', btn: S.textServiceBtn || '預約文字版諮詢', pv: !SHOW_TEXT_SERVICE });
   return '<section id="choose" class="sec section-light choose"><div class="container">' +
-    '<h2 class="section-title"><span class="hl">預約服務諮詢</span></h2>' +
+    '<h1 class="section-title"><span class="hl">預約服務諮詢</span></h1>' +   /* 這頁唯一的 H1（SEO）；樣式沿用 section-title，畫面不變 */
     '<p class="ch-lead">' + '點一下，先看這個服務怎麼進行，看完就能直接預約。' + '</p>' +
     '<div class="ch-cmp ch-n' + list.length + '">' + list.map(function (c) {
       return '<div class="ch-card">' + (c.pv ? '<div class="ch-pv">預覽：文字版開放後才會出現</div>' : '') +

@@ -15,7 +15,7 @@
    ],
    "noindex": false,
    "orphan": false,
-   "textLen": 1220,
+   "textLen": 1214,
    "title": "大正命理諮詢｜紫微斗數線上諮詢・本命盤・流年運勢"
   },
   "/about/": {
@@ -54,7 +54,7 @@
    "jsonld": [],
    "noindex": false,
    "orphan": false,
-   "textLen": 2983,
+   "textLen": 2989,
    "title": "命理文章 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/blog/ai-companionship-and-real-support/": {
@@ -547,8 +547,8 @@
   "/services/": {
    "canonicalOK": true,
    "desc": "大正的紫微斗數諮詢方案：一對一語音諮詢與文字版諮詢，價格、進行方式、差在哪裡和常見問題。",
-   "h1": 0,
-   "headingSkip": false,
+   "h1": 1,
+   "headingSkip": true,
    "inSitemap": true,
    "jsonld": [],
    "noindex": false,
@@ -1188,7 +1188,7 @@
    "inSitemap": true,
    "jsonld": [],
    "noindex": false,
-   "orphan": true,
+   "orphan": false,
    "textLen": 288,
    "title": "文章主題 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
@@ -1206,7 +1206,7 @@
    ],
    "noindex": false,
    "orphan": false,
-   "textLen": 1252,
+   "textLen": 1258,
    "title": "紫微斗數入門 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/topics/career/": {
@@ -1223,7 +1223,7 @@
    ],
    "noindex": false,
    "orphan": false,
-   "textLen": 553,
+   "textLen": 559,
    "title": "工作與財運 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/topics/family/": {
@@ -1240,7 +1240,7 @@
    ],
    "noindex": false,
    "orphan": false,
-   "textLen": 687,
+   "textLen": 693,
    "title": "家庭與親子 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/topics/love/": {
@@ -1257,7 +1257,7 @@
    ],
    "noindex": false,
    "orphan": false,
-   "textLen": 794,
+   "textLen": 800,
    "title": "感情與婚姻 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/topics/notes/": {
@@ -1274,7 +1274,7 @@
    ],
    "noindex": false,
    "orphan": false,
-   "textLen": 988,
+   "textLen": 994,
    "title": "羊的手札 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/topics/sub/basics-palaces/": {
@@ -1289,7 +1289,7 @@
    ],
    "noindex": true,
    "orphan": false,
-   "textLen": 332,
+   "textLen": 338,
    "title": "十二宮 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/topics/sub/basics-reading/": {
@@ -1304,7 +1304,7 @@
    ],
    "noindex": false,
    "orphan": false,
-   "textLen": 599,
+   "textLen": 605,
    "title": "看盤觀念 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/topics/sub/basics-sihua/": {
@@ -1319,7 +1319,7 @@
    ],
    "noindex": true,
    "orphan": false,
-   "textLen": 328,
+   "textLen": 334,
    "title": "四化 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/topics/sub/basics-stars/": {
@@ -1334,7 +1334,7 @@
    ],
    "noindex": false,
    "orphan": false,
-   "textLen": 902,
+   "textLen": 908,
    "title": "星曜 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/topics/sub/basics-timing/": {
@@ -1349,7 +1349,7 @@
    ],
    "noindex": true,
    "orphan": false,
-   "textLen": 344,
+   "textLen": 350,
    "title": "大限與流年 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/topics/sub/career-direction/": {
@@ -1364,7 +1364,7 @@
    ],
    "noindex": true,
    "orphan": false,
-   "textLen": 347,
+   "textLen": 353,
    "title": "工作方向與轉職 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/topics/sub/career-wealth/": {
@@ -1379,7 +1379,7 @@
    ],
    "noindex": false,
    "orphan": false,
-   "textLen": 488,
+   "textLen": 494,
    "title": "財運與金錢觀 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/topics/sub/family-children/": {
@@ -1394,7 +1394,7 @@
    ],
    "noindex": false,
    "orphan": false,
-   "textLen": 467,
+   "textLen": 473,
    "title": "子女與教養 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/topics/sub/family-parents/": {
@@ -1409,7 +1409,7 @@
    ],
    "noindex": false,
    "orphan": false,
-   "textLen": 478,
+   "textLen": 484,
    "title": "父母與原生家庭 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/topics/sub/family-siblings/": {
@@ -1424,7 +1424,7 @@
    ],
    "noindex": true,
    "orphan": false,
-   "textLen": 325,
+   "textLen": 331,
    "title": "手足 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/topics/sub/love-boundaries/": {
@@ -1439,7 +1439,7 @@
    ],
    "noindex": false,
    "orphan": false,
-   "textLen": 598,
+   "textLen": 604,
    "title": "相處與界線 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/topics/sub/love-marriage/": {
@@ -1454,7 +1454,7 @@
    ],
    "noindex": true,
    "orphan": false,
-   "textLen": 338,
+   "textLen": 344,
    "title": "婚姻選擇 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/topics/sub/love-romance/": {
@@ -1469,7 +1469,7 @@
    ],
    "noindex": true,
    "orphan": false,
-   "textLen": 348,
+   "textLen": 354,
    "title": "正緣與桃花 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/topics/sub/notes-consulting/": {
@@ -1484,7 +1484,7 @@
    ],
    "noindex": false,
    "orphan": false,
-   "textLen": 609,
+   "textLen": 615,
    "title": "諮詢裡的觀察 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/topics/sub/notes-seasonal/": {
@@ -1499,7 +1499,7 @@
    ],
    "noindex": false,
    "orphan": false,
-   "textLen": 480,
+   "textLen": 486,
    "title": "節日與時事 — 大正命理諮詢｜紫微斗數線上諮詢"
   },
   "/voice/": {
@@ -1515,8 +1515,5 @@
    "title": "一對一語音諮詢 — 大正命理諮詢｜紫微斗數線上諮詢"
   }
  },
- "problems": [
-  "/services/ H1 數量為 0（應為 1）",
-  "/topics/ 在 sitemap 但站內沒有任何連結指向它（孤兒頁）"
- ]
+ "problems": []
 }

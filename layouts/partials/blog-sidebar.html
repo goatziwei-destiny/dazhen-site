@@ -17,6 +17,7 @@
     <summary>依主題閱讀</summary>
     <ul class="side-list">
       <li><a href="/blog/" class="side-all{{ if and (eq $cur.Section "blog") (eq $cur.Kind "section") }} on{{ end }}">全部文章 <span>{{ len $all }}</span></a></li>
+      <li><a href="/topics/" class="side-all{{ if and (eq $cur.Kind "section") (eq $cur.Section "topics") }} on{{ end }}">所有主題一覽</a></li>
       {{ range (site.GetPage "/topics").Pages.ByWeight }}
         {{ $t := . }}{{ $tslug := .Params.slug }}
         {{ $n := len (where $all "Params.topics" "intersect" (slice $tslug)) }}
