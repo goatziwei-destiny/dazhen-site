@@ -363,14 +363,14 @@ body{letter-spacing:.02em}
   .cp-ai{border-left-color:#d8d3c8;color:#8b8579}.cp-ai em{color:#a09a8e}
 }
 </style>
-{{ if eq $.page "home" }}<link rel="stylesheet" href="/css/sales.css?v=20261127a">{{ end }}
+{{ if eq $.page "home" }}<link rel="stylesheet" href="/css/sales.css?v=20261127c">{{ end }}
 {{ partial "analytics.html" $.ctx }}
 </head>
 <body>
 <div id="app"></div>
 {{- if eq $.page "home" }}{{- $defs := dict -}}{{- range index site.Data.sales "home" }}{{ $defs = merge $defs (dict (index . 0) (index . 3)) }}{{ end }}
 <script>window.SALES = { mode: "home", kind: "voice", defaults: {{ $defs | jsonify | safeJS }}, fee: 3600, lineUrl: {{ site.Params.lineUrl }}, lineId: {{ site.Params.lineBasicId }}, bookUrl: "/booking/" };</script>
-<script src="/js/sales.js?v=20261127a"></script>{{ end }}
+<script src="/js/sales.js?v=20261127c"></script>{{ end }}
 <script src="/booking-bridge.js?v=20261108"></script>
 <script src="/line-qr.js?v=20261011" defer></script>
 <script>

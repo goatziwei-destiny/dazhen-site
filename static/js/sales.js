@@ -317,10 +317,29 @@ function render() {
  var mob = mq.matches; lastMob = mob;
  app.innerHTML = KIND === 'text' ? renderT() : (mob ? renderVM() : renderVD());
  if (KIND === 'text') mountT(); else mountV(mob);
- sbar.innerHTML = '<div class="p">' + price() + '<small>' + esc(KIND === 'text' ? V.txPriceUnit : V.svPriceUnit) + '</small></div>' + BOOK('btn btn-brass', P + 'BookBtn');
+ /* 底部浮出欄（11/27 大正）：只放「最快可約時間」＋預約鈕，不放價格；文字版不用約時間，所以不放 */
+ sbar.innerHTML = KIND === 'text' ? '' : '<div class="p when"><small>最快可約時間</small><b>' + esc(slotLabel()) + '</b></div>' + BOOK('btn btn-brass', P + 'BookBtn');
+ if (KIND !== 'text') askSlot();
  onScroll();
 }
-function onScroll() { var e = $('.sm-end'); sbar.classList.toggle('show', e ? e.getBoundingClientRect().top < innerHeight * .5 : scrollY > 420); }
+var NS = null, NSFail = false, NSAsked = false;
+function slotLabel() {
+ if (NS && NS.ok && typeof NS.label === 'string' && NS.label.length < 40) {
+  var t = ''; try { t = new Intl.DateTimeFormat('zh-TW', { timeZone: 'Asia/Taipei', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date(NS.iso)).replace(/^24/, '00'); } catch (e) {}
+  return (String(NS.label).replace(/（農曆.*?）/, '').replace('（週', '（') + ' ' + t).trim();
+ }
+ return NSFail ? '點右邊看所有空檔' : '查詢中…';
+}
+function paintSlot() { var b = $('#sbar .when b'); if (b) b.textContent = slotLabel(); }
+function askSlot() {
+ if (NSAsked || !CFG.api || window.__dzPreview || document.documentElement.classList.contains('dz-preview')) return; NSAsked = true;
+ var done = false, give = setTimeout(function () { if (!done) { done = true; NSFail = true; paintSlot(); } }, 8000);
+ window._salesNextCb = function (d) { if (done) return; done = true; clearTimeout(give); if (d && d.ok) NS = d; else NSFail = true; paintSlot(); };
+ var sc = document.createElement('script'); sc.async = true; sc.src = CFG.api + '?page=nextSlot&callback=_salesNextCb';
+ sc.onerror = function () { if (done) return; done = true; clearTimeout(give); NSFail = true; paintSlot(); };
+ document.head.appendChild(sc);
+}
+function onScroll() { if (KIND === 'text') return; var e = $('.sm-end'); sbar.classList.toggle('show', e ? e.getBoundingClientRect().top < innerHeight * .5 : scrollY > 420); }
 addEventListener('scroll', onScroll, { passive: true });
 var onMq = function () { if (KIND !== 'text' && mq.matches !== lastMob) render(); };
 if (mq.addEventListener) mq.addEventListener('change', onMq); else mq.addListener(onMq);
